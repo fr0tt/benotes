@@ -3,19 +3,18 @@
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\DatabaseTransactions;
 
-class ExampleTest extends TestCase
+class PostTest extends TestCase
 {
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
     public function testExample()
     {
-        $this->get('/');
+        $contents = [
+            'https://laravel.com'
+        ];
+        foreach ($contents as &$content) {
+            $this->json('POST', 'api/posts', ['content' => $content]);
+            $this->assertEquals(201, $this->response->status());
+            dd($this->response);
+        }
 
-        $this->assertEquals(
-            $this->app->version(), $this->response->getContent()
-        );
     }
 }

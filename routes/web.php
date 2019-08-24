@@ -14,3 +14,6 @@
 $router->get('/{any:.*}', function () {
     return view('app');
 });
+
+$router->get('api/posts', ['uses' => 'PostController@index']);
+$router->post('api/posts', ['uses' => 'PostController@store']);
