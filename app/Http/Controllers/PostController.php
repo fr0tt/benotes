@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Post;
 
 use ColorThief\ColorThief;
@@ -12,7 +13,7 @@ class PostController extends Controller
 
     public function index()
     {
-        $posts = Post::all();
+        $posts = Post::where('user_id', Auth::user()->id)->get();
         return response()->json(['data' => $posts]);
     }
 
@@ -40,10 +41,24 @@ class PostController extends Controller
             'title' => $info['title'],
             'description' => $info['description'],
             'color' => $info['color'],
-            'image_path' => $info['image_path']
+            'image_path' => $info['image_path'],
+            'user_id' => Auth::user()->id
         ]);
         
         return response()->json(['data' => $post], 201);
+    }
+
+    public function destroy($id)
+    {
+
+        $post = Post::find($id);
+        if (!$post) {
+            return response()->json('Post not found.', 400);
+        }
+        $post->delete();
+
+        return response()->json('', 204);
+
     }
 
     private function getInfo($url)

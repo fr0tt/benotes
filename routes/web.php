@@ -25,6 +25,7 @@ Route::group([
 
     Route::get('api/posts', 'PostController@index');
     Route::post('api/posts', 'PostController@store');
+    Route::delete('api/posts/{id}', 'PostController@destroy');
 
 }); 
 

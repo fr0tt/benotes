@@ -3,12 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
+    use SoftDeletes;
 
     const POST_TYPE_TEXT = 1;
     const POST_TYPE_LINK = 2;
+
 
     /**
      * The attributes that are mass assignable.
@@ -16,7 +19,7 @@ class Post extends Model
      * @var array
      */
     protected $fillable = [
-        'content', 'type', 'base_url', 'title', 'description', 'color', 'image_path'
+        'content', 'type', 'base_url', 'title', 'description', 'color', 'image_path', 'user_id'
     ];
 
     /**
@@ -25,7 +28,7 @@ class Post extends Model
      * @var array
      */
     protected $hidden = [
-        
+        'user_id', 'deleted_at'
     ];
 
     public function getTypeAttribute($value)
