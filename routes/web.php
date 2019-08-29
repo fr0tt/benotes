@@ -14,13 +14,13 @@
 
 Route::post('api/auth/login', 'AuthController@login');
 Route::post('api/auth/register', 'AuthController@register');
+Route::post('api/auth/refresh', 'AuthController@refresh');
 
 Route::group([
     'middleware' => 'auth'
 ], function () {
 
     Route::get('api/auth/me', 'AuthController@me');
-    Route::post('api/auth/refresh', 'AuthController@refresh');
     Route::post('api/auth/logout', 'AuthController@logout');
 
     Route::get('api/posts', 'PostController@index');
