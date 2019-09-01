@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 use App\Post;
+use App\Collection;
 
 use ColorThief\ColorThief;
 
@@ -21,7 +23,15 @@ class PostController extends Controller
     {
         $this->validate($request, [
             'content' => 'required|string',
+            'collection_id' => 'integer' 
         ]);
+
+        if (isset($request->collection_id)) {
+            $collection = Collection::find($request->collection_id);
+            if (!$collection) {
+                return response()->json('Collection not found.', 404);
+            }
+        }
 
         preg_match_all('/(https|http)(:\/\/)(\w+\.)+(\w+)/', $request->content, $matches);
         $matches = $matches[0];
@@ -33,7 +43,7 @@ class PostController extends Controller
         } else {
             $type = Post::POST_TYPE_TEXT;
         }
-
+        
         $post = Post::create([
             'content' => $request->content,
             'type' => $type,
@@ -42,6 +52,7 @@ class PostController extends Controller
             'description' => $info['description'],
             'color' => $info['color'],
             'image_path' => $info['image_path'],
+            'collection_id' => $request->collection_id,
             'user_id' => Auth::user()->id
         ]);
         

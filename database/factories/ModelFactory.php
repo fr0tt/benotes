@@ -1,5 +1,11 @@
 <?php
 
+use Faker\Generator as Faker;
+use Illuminate\Support\Facades\Hash;
+
+use App\User;
+use App\Collection;
+
 /*
 |--------------------------------------------------------------------------
 | Model Factories
@@ -11,9 +17,17 @@
 |
 */
 
-$factory->define(App\User::class, function (Faker\Generator $faker) {
+$factory->define(User::class, function (Faker $faker) {
     return [
         'name' => $faker->name,
         'email' => $faker->email,
+        'password' => Hash::make('test')
+    ];
+});
+
+$factory->define(Collection::class, function (Faker $faker) {
+    return [
+        'name' => $faker->company,
+        'user_id' => User::first()
     ];
 });
