@@ -27,6 +27,11 @@ Route::group([
     Route::post('api/posts', 'PostController@store');
     Route::delete('api/posts/{id}', 'PostController@destroy');
 
+    Route::get('api/collections', 'CollectionController@index');
+    Route::get('api/collections/{id}', 'CollectionController@show');
+    Route::post('api/collections', 'CollectionController@store');
+    Route::delete('api/collections/{id}', 'CollectionController@destroy');
+
 }); 
 
 
