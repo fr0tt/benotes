@@ -103,7 +103,7 @@ class PostController extends Controller
             }
         }
 
-        if (!empty($color)) {
+        if (empty($color)) {
             $color = $this->getDominantColor($base_url);
         }
 

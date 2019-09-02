@@ -15,7 +15,8 @@ class PostTest extends TestCase
 
         $contents = [
             'https://laravel.com',
-            'Lorem ipsum https://fonts.adobe.com/fonts/realist'
+            'Lorem ipsum https://fonts.adobe.com/fonts/realist',
+            'https://gamesindustry.biz'
         ];
 
         foreach ($contents as &$content) {
