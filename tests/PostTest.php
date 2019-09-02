@@ -27,6 +27,7 @@ class PostTest extends TestCase
             $data = $this->response->getData()->data;
             if ($data->type === 'link') {
                 $this->assertNotEquals(null, $data->color);
+                $this->assertNotEquals(null, $data->url);
             }
             $this->assertNotEquals(null, $data->collection_id);
         }

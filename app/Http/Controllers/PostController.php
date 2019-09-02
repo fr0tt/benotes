@@ -38,15 +38,17 @@ class PostController extends Controller
         if (count($matches) > 0) {
             $info = $this->getInfo($matches[0]);
         }
-        if ($request->content > strlen($matches[0])) {
+        
+        if (strlen($request->content) > strlen($matches[0])) {
             $type = Post::POST_TYPE_TEXT;
         } else {
-            $type = Post::POST_TYPE_TEXT;
+            $type = Post::POST_TYPE_LINK;
         }
         
         $post = Post::create([
             'content' => $request->content,
             'type' => $type,
+            'url' => $info['url'],
             'base_url' => $info['base_url'],
             'title' => $info['title'],
             'description' => $info['description'],
@@ -106,6 +108,7 @@ class PostController extends Controller
         }
 
         return [
+            'url' => $url,
             'base_url' => $base_url,
             'title' => $title,
             'description' => (empty($description)) ? null : $description,
