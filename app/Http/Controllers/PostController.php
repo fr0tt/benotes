@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Intervention\Image\Facades\Image;
 
 use App\Post;
 use App\Collection;
@@ -55,11 +56,21 @@ class PostController extends Controller
             'title' => $info['title'],
             'description' => $info['description'],
             'color' => $info['color'],
-            'image_path' => $info['image_path'],
             'collection_id' => $request->collection_id,
             'user_id' => Auth::user()->id
         ]);
-        
+            
+        if (!empty($info['image_path'])) {
+            $image = Image::make($info['image_path']);
+            if ($image) {
+                $image->fit(400, 210);
+                $filename = 'thumbnail_'.$post->id.'.jpg';
+                $image->save('../storage/app/public/thumbnails/'.$filename, 100);
+                $post->image_path = $filename;
+                $post->save();
+            }
+        }
+
         return response()->json(['data' => $post], 201);
     }
 
