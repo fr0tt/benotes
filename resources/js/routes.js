@@ -1,11 +1,11 @@
-import Example from './components/ExampleComponent'
+import Home from './components/HomeComponent'
 import Login from './components/LoginComponent'
 
 export default [
     {
         path: '/',
-        name: 'example',
-        component: Example,
+        name: 'home',
+        component: Home,
         meta: {
             requiresAuth: true
         }
