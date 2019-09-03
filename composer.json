@@ -6,6 +6,7 @@
     "type": "project",
     "require": {
         "php": ">=7.1.3",
+        "intervention/image": "^2.5",
         "ksubileau/color-thief-php": "^1.4",
         "laravel/lumen-framework": "5.8.*",
         "tymon/jwt-auth": "^1.0"
