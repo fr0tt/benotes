@@ -7,12 +7,12 @@
 
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email</label>
-                <input type="email" class="input" v-model="email" placeholder="Email Address">
+                <input type="email" class="input" v-model="email" placeholder="Email Address" required>
             </div>
 
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password</label>
-                <input type="password" class="input" v-model="password" placeholder="Password">
+                <input type="password" class="input" v-model="password" placeholder="Password" required>
             </div>
 
             <div class="mb-6">
@@ -57,13 +57,12 @@ export default {
                 .then(response => {
                     const token = response.data.data.token.access_token
                     this.$cookie.set('token', token)
-                    console.log(token)
-                    axios.defaults.headers.common = {'Authorization': `Bearer ${token}`}
+                    axios.defaults.headers.common = { 'Authorization': `Bearer ${token}` }
                     this.$store.dispatch('fetchAuthUser')
                     this.$router.push({ path: '/' })
                 })
                 .catch(error => {
-                    this.error = error
+                    this.error = error.response.data
                 })
         }
     }
