@@ -33,13 +33,15 @@ class PostController extends Controller
             }
         }
 
-        preg_match_all('/(https|http)(:\/\/)(\w+\.)+(\w+)/', $request->content, $matches);
+        preg_match_all('/(https|http)(:\/\/)(\w+\.)+(\w+)(\S+)/', $request->content, $matches);
         $matches = $matches[0];
         if (count($matches) > 0) {
             $info = $this->getInfo($matches[0]);
         }
-        
-        if (strlen($request->content) > strlen($matches[0])) {
+
+        if (empty($matches)) {
+            $type = Post::POST_TYPE_TEXT;
+        } else if (strlen($request->content) > strlen($matches[0])) {
             $type = Post::POST_TYPE_TEXT;
         } else {
             $type = Post::POST_TYPE_LINK;
