@@ -14,9 +14,31 @@ use ColorThief\ColorThief;
 class PostController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::where('user_id', Auth::user()->id)->get();
+
+        $this->validate($request, [
+            'collection_id' => ['regex:/^(null|\d+)$/'],
+            'limit' => 'integer'
+        ]);
+
+        if ($request->collection_id === 'null') {
+            $posts = Post::where([
+                ['collection_id', '=', null],
+                ['user_id', '=', Auth::user()->id]
+            ]);
+        } else {
+            $posts = Post::where([
+                ['collection_id', '=', $request->collection_id],
+                ['user_id', '=', Auth::user()->id]
+            ]);
+        }
+
+        if (isset($request->limit)) {
+            $posts = $posts->limit($request->limit);
+        }
+        $posts = $posts->get();
+
         return response()->json(['data' => $posts]);
     }
 
