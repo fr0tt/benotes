@@ -12,7 +12,7 @@
     </head>
     <body class="h-full">
         <div id="app" class="h-full">
-            <div class="w-full mx-auto px-6 h-full">
+            <div class="w-full mx-auto h-full">
                 <router-view></router-view>
             </div>
         </div>

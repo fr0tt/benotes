@@ -1,6 +1,6 @@
 <template>
     <li v-if="post.type === 'link'" class="inline-block m-4">
-        <div class="max-w-sm rounded overflow-hidden shadow-lg">
+        <div class="w-card rounded overflow-hidden shadow-lg">
             <a :href="post.url" target="_blank">
                 <div v-if="post.image_path" class="cover w-full bg-cover bg-center" :style="image"></div>
                 <div v-else class="cover w-full flex items-center justify-center" :style="color">
@@ -36,6 +36,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+    .w-card {
+        width: 22rem;
+    }
     .cover {
         height: 200px;
     }
