@@ -1,7 +1,9 @@
 <template>
-    <div class="w-full">
-        <div class="card">
-            <h1>{{ authUser.name }}</h1>
+    <div class="flex w-full">
+        <div class="max-w-xs w-1/6">
+            <Sidebar/>
+        </div>
+        <div class="w-5/6 pr-6">
             <ol>
                 <Post v-for="(post, i) in posts" 
                     :key="i" 
@@ -12,10 +14,12 @@
 </template>
 
 <script>
+import Sidebar from './SidebarComponent.vue'
 import Post from './PostComponent.vue'
 
     export default {
         components: { 
+            Sidebar,
             Post 
         },
         methods: {
