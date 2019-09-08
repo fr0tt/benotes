@@ -1,14 +1,41 @@
-import Home from './components/HomeComponent'
+import App from './components/AppComponent'
+import Collection from './components/CollectionComponent'
+import CreateCollection from './components/CreateCollectionComponent'
 import Login from './components/LoginComponent'
 
 export default [
     {
         path: '/',
-        name: 'home',
-        component: Home,
+        component: App,
         meta: {
             requiresAuth: true
-        }
+        },
+        children: [
+            {
+                path: '',
+                component: Collection,
+                props: true,
+                meta: {
+                    requiresAuth: true
+                }
+            },
+            {
+                path: 'c/create',
+                component: CreateCollection,
+                meta: {
+                    requiresAuth: true
+                }
+            },
+            {
+                path: 'c/:id',
+                name: 'collection',
+                component: Collection,
+                props: true,
+                meta: {
+                    requiresAuth: true
+                }
+            }
+        ]
     },
     {
         path: '/login',
