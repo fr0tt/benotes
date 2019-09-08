@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 export default {
+    namespaced: true,
     state: {
         posts: null
     },
@@ -10,8 +11,12 @@ export default {
         }
     },
     actions: {
-        fetchPosts (context) {
-            axios.get('/api/posts')
+        fetchPosts (context, collectionId) {
+            axios.get('/api/posts', {
+                params: {
+                    collection_id: collectionId
+                }
+            })
                 .then(response => {
                     const posts = response.data.data
                     context.commit('setPosts', posts)
