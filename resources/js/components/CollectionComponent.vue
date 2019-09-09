@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1 class="text-2xl font-bold text-blue-800">{{ currentCollectionName }}</h1>
+        <h1 class="text-3xl my-4 font-bold text-blue-800">{{ currentCollectionName }}</h1>
         <ol>
             <Post v-for="post in posts" 
                 :key="post.id" 
@@ -18,12 +18,14 @@ export default {
     },
     methods: {
         init () {
+            this.$store.dispatch('route/setCurrentRoute', this.$route)
             this.$store.dispatch('post/fetchPosts', this.id)
         }
     },
     watch: {
         id () {
             this.init()
+            this.$store.dispatch('collection/getCurrentCollectionName')
         }
     },
     computed: {
@@ -36,6 +38,7 @@ export default {
     },
     created () {
         this.init()
+        // this.$store.dispatch('collection/fetchCollections')
     }
 }
 </script>

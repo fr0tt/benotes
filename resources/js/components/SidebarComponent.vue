@@ -43,9 +43,6 @@ export default {
     },
     mounted () {
         this.init()
-    },
-    updated () {
-        this.$store.dispatch('collection/getCurrentCollectionName', parseInt(this.$route.params.id))
     }
 }
 </script>
