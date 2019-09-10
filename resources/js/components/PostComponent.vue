@@ -9,7 +9,12 @@
             </a>
             <div class="px-6 pt-4">
                 <div class="font-bold text-xl mb-2 truncate" :title="post.title">{{ post.title }}</div>
-                <p class="text-gray-700 text-base overflow-hidden description">{{ post.description }}</p>
+                <p v-if="post.description !== null" class="text-gray-700 text-base overflow-hidden description">
+                    {{ post.description }}
+                </p>
+                <p v-else class="text-gray-700 text-base italic overflow-hidden description">
+                    No description
+                </p>
             </div>
             <div class="px-6 py-4 truncate">
                 <img :src="'https://www.google.com/s2/u/0/favicons?domain=' + domain" class="inline img-vertical-align">
