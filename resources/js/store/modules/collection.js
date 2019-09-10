@@ -4,7 +4,10 @@ export default {
     namespaced: true,
     state: {
         collections: null,
-        currentCollectionName: null
+        currentCollection: {
+            'id': null,
+            'name': ''
+        }
     },
     mutations: {
         setCollections (state, collections) {
@@ -13,8 +16,8 @@ export default {
         addCollection (state, collection) {
             state.collections.push(collection)
         },
-        setCurrentCollectionName (state, collection) {
-            state.currentCollectionName = collection
+        setCurrentCollection (state, collection) {
+            state.currentCollection = collection
         }
     },
     actions: {
@@ -23,7 +26,7 @@ export default {
                 .then(response => {
                     const collections = response.data.data
                     context.commit('setCollections', collections)
-                    context.dispatch('getCurrentCollectionName', context.rootState.route.currentRoute.params.id)
+                    context.dispatch('getCurrentCollection')
                 })
                 .catch(error => {
                     console.log(error)
@@ -32,15 +35,19 @@ export default {
         addCollection (context, collection) {
             context.commit('addCollection', collection)
         },
-        getCurrentCollectionName (context) {
+        getCurrentCollection (context) {
             if (Object.keys(context.rootState.route.currentRoute.params).length === 0) {
-                context.commit('setCurrentCollectionName', 'Uncategorized')
+                const collection = {
+                    'id': null,
+                    'name': 'Uncategorized'
+                }
+                context.commit('setCurrentCollection', collection)
                 return
             }
             const id = parseInt(context.rootState.route.currentRoute.params.id)
             context.state.collections.map((collection) => {
                 if (collection.id === id) {
-                    context.commit('setCurrentCollectionName', collection.name)
+                    context.commit('setCurrentCollection', collection)
                 }
             })
         }

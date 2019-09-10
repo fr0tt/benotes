@@ -1,7 +1,7 @@
 <template>
     <div>
-        <h1 class="text-3xl my-4 font-bold text-blue-800">{{ currentCollectionName }}</h1>
-        <ol>
+        <!-- <h1 class="text-3xl my-4 font-bold text-blue-500">{{ currentCollection.name }}</h1> -->
+        <ol class="mt-4 mb-40">
             <Post v-for="post in posts" 
                 :key="post.id" 
                 :post="post" />
@@ -25,7 +25,7 @@ export default {
     watch: {
         id () {
             this.init()
-            this.$store.dispatch('collection/getCurrentCollectionName')
+            this.$store.dispatch('collection/getCurrentCollection')
         }
     },
     computed: {
@@ -33,7 +33,7 @@ export default {
             'posts'
         ]),
         ...mapState('collection', [
-            'currentCollectionName'
+            'currentCollection'
         ])
     },
     created () {
