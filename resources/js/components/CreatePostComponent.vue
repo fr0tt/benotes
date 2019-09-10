@@ -1,6 +1,6 @@
 <template>
     <div class="fixed bottom-0 w-full left-0 bg-gray-200">
-        <form @submit.prevent="create" class="flex mx-6 my-8">
+        <form @submit.prevent="create" @keyup.ctrl.enter="create" class="flex mx-6 my-8">
             <div class="w-1/6"></div>
             <div class="w-4/6">
                 <textarea v-model="content" class="w-full rounded-full border-2 outline-none border-gray-400 bg-white py-2 px-5 
@@ -12,6 +12,7 @@
             <div class="w-1/6">
                 <button class="border-2 border-blue-500 rounded-full py-2 px-3 text-blue-600 bg-white
                     leading-tight text-xl font-semibold mx-4 my-1 px-6 hover:bg-blue-500 hover:text-white">Save</button>
+                <p class="ml-6 text-sm text-gray-600">Strg + Enter</p>
             </div>
         </form>
     </div>
