@@ -20,7 +20,7 @@
             </div>
 
             <div class="flex items-center justify-between">
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4
                     focus:outline-none focus:shadow-outline" type="submit">
                     Sign In
                 </button>
