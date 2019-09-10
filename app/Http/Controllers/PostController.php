@@ -46,7 +46,7 @@ class PostController extends Controller
     {
         $this->validate($request, [
             'content' => 'required|string',
-            'collection_id' => 'integer' 
+            'collection_id' => 'integer|nullable' 
         ]);
 
         if (isset($request->collection_id)) {
@@ -58,6 +58,7 @@ class PostController extends Controller
 
         preg_match_all('/(https|http)(:\/\/)(\w+\.)+(\w+)(\S+)/', $request->content, $matches);
         $matches = $matches[0];
+        $info = null;
         if (count($matches) > 0) {
             $info = $this->getInfo($matches[0]);
         }
