@@ -12,8 +12,8 @@
             </div>
             <div class="w-1/5">
                 <div class="text-center mt-6">
-                    <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold 
-                        hover:text-white py-3 px-8 border border-blue-500 hover:border-transparent uppercase">save</button>
+                    <button class="text-blue-700 font-semibold text-xl
+                        hover:text-white py-2 px-8 border-2 border-blue-500 hover:bg-blue-500">Save</button>
                 </div>
             </div>
 
