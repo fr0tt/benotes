@@ -8,6 +8,9 @@ export default {
     mutations: {
         setPosts (state, posts) {
             state.posts = posts
+        },
+        addPost (state, post) {
+            state.posts.push(post)
         }
     },
     actions: {
@@ -24,6 +27,9 @@ export default {
                 .catch(error => {
                     console.log(error)
                 })
+        },
+        addPost (context, post) {
+            context.commit('addPost', post)
         }
     }
 }

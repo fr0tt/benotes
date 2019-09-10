@@ -5,16 +5,19 @@
         </div>
         <div class="w-5/6 pr-6">
             <router-view></router-view>
+            <CreatePost/>
         </div>
     </div>
 </template>
 
 <script>
 import Sidebar from './SidebarComponent.vue'
+import CreatePost from './CreatePostComponent.vue'
 
     export default {
         components: { 
-            Sidebar
+            Sidebar,
+            CreatePost
         },
         computed: {
             authUser () {
@@ -23,3 +26,8 @@ import Sidebar from './SidebarComponent.vue'
         }
     }
 </script>
+<style lang="scss">
+    button {
+        transition: color, background-color 0.2s;
+    }
+</style>
