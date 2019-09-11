@@ -3,15 +3,17 @@
         <form @submit.prevent="create" @keyup.ctrl.enter="create" class="flex mx-6 my-8">
             <div class="w-1/6"></div>
             <div class="w-4/6">
-                <textarea v-model="content" class="w-full rounded-full border-2 outline-none border-gray-400 bg-white py-2 px-5 
-                    text-lg leading-snug focus:border-blue-400"></textarea>
+                <textarea ref="content" class="w-full rounded-full border-2 outline-none border-gray-400 
+                    bg-white py-2 px-5 text-lg leading-snug focus:border-blue-400"></textarea>
                 <!--<div class="">
                     <span> save in: </span> <input class="text-bold text-blue-600">Uncateogirzed</input>
                 </div>-->
             </div>
             <div class="w-1/6">
                 <button class="border-2 border-blue-500 rounded-full py-2 px-3 text-blue-600 bg-white
-                    leading-tight text-xl font-semibold mx-4 my-1 px-6 hover:bg-blue-500 hover:text-white">Save</button>
+                    leading-tight text-xl font-semibold mx-4 my-1 px-6 hover:bg-blue-500 hover:text-white">
+                    Save
+                </button>
                 <p class="ml-6 text-sm text-gray-600">Strg + Enter</p>
             </div>
         </form>
@@ -21,18 +23,13 @@
 import axios from 'axios'
 import { mapState } from 'vuex'
 export default {
-    data () {
-        return {
-            content: ''
-        }
-    },
     methods: {
         create () {
-            if (this.content === '' || this.collection === null) {
+            if (this.$refs.content.value === '' || this.collection === null) {
                 return
             }
             axios.post('/api/posts', {
-                content: this.content,
+                content: this.$refs.content.value,
                 collection_id: this.currentCollection.id
             })
                 .then(response => {
@@ -46,14 +43,25 @@ export default {
     computed: {
         ...mapState('collection', [
             'currentCollection'
+        ]),
+        ...mapState('post', [
+            'currentPost'
         ])
+    },
+    watch: {
+        currentPost (post) {
+            this.$refs.content.value = post.content
+            this.$refs.content.focus()
+        }
     }
 }
 </script>
 <style lang="scss" scoped>
+
 textarea {
     resize: none;
 }
+
 ::-webkit-scrollbar {
 	width: 4px;
 	background-color: #F5F5F5;
@@ -68,4 +76,5 @@ textarea {
 	@apply bg-blue-600;
     border-radius: 8px;
 }
+
 </style>

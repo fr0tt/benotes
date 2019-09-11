@@ -27,7 +27,7 @@
         <div v-else class="card bg-gray-100">
             <svg class="three-dots-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
             <div class="p-6">
-                <p class="text-gray-900 text-xl overflow-hidden">{{ post.content }}</p>
+                <p class="text-gray-900 text-xl overflow-hidden" @click="edit(post)">{{ post.content }}</p>
             </div>
         </div>
     </li>
@@ -36,6 +36,11 @@
 export default {
     name: 'Post',
     props: ['post'],
+    methods: {
+        edit (post) {
+            this.$store.dispatch('post/setCurrentPost', post)
+        }
+    },
     computed: {
         image () {
             return 'background-image: url(\'' + this.post.image_path + '\')'
