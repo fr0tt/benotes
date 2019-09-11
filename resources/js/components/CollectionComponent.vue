@@ -1,20 +1,25 @@
 <template>
     <div>
-        <!-- <h1 class="text-3xl my-4 font-bold text-blue-500">{{ currentCollection.name }}</h1> -->
-        <ol class="mt-4 mb-40">
-            <Post v-for="post in posts" 
-                :key="post.id" 
-                :post="post" />
-        </ol>
+        <div>
+            <!-- <h1 class="text-3xl my-4 font-bold text-blue-500">{{ currentCollection.name }}</h1> -->
+            <ol class="mt-4 mb-40">
+                <Post v-for="post in posts" 
+                    :key="post.id" 
+                    :post="post" />
+            </ol>
+        </div>
+        <CreatePost/>
     </div>
 </template>
 <script>
 import { mapState } from 'vuex'
 import Post from './PostComponent.vue'
+import CreatePost from './CreatePostComponent.vue'
 export default {
     props: ['id'],
     components: {
-        Post
+        Post,
+        CreatePost
     },
     methods: {
         init () {

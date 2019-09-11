@@ -5,19 +5,16 @@
         </div>
         <div class="w-5/6 pr-6">
             <router-view></router-view>
-            <CreatePost/>
         </div>
     </div>
 </template>
 
 <script>
 import Sidebar from './SidebarComponent.vue'
-import CreatePost from './CreatePostComponent.vue'
 
     export default {
         components: { 
-            Sidebar,
-            CreatePost
+            Sidebar
         },
         computed: {
             authUser () {
