@@ -3,7 +3,8 @@ import axios from 'axios'
 export default {
     namespaced: true,
     state: {
-        posts: null
+        posts: null,
+        currentPost: null
     },
     mutations: {
         setPosts (state, posts) {
@@ -11,6 +12,9 @@ export default {
         },
         addPost (state, post) {
             state.posts.push(post)
+        },
+        setCurrentPost (state, post) {
+            state.currentPost = post
         }
     },
     actions: {
@@ -30,6 +34,9 @@ export default {
         },
         addPost (context, post) {
             context.commit('addPost', post)
+        },
+        setCurrentPost (context, post) {
+            context.commit('setCurrentPost', post)
         }
     }
 }
