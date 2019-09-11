@@ -36,6 +36,9 @@ export default {
             context.commit('addCollection', collection)
         },
         getCurrentCollection (context) {
+            if (context.rootState.route.currentRoute === null) {
+                return
+            }
             if (Object.keys(context.rootState.route.currentRoute.params).length === 0) {
                 const collection = {
                     'id': null,
