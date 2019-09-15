@@ -43,7 +43,6 @@ export default {
     },
     created () {
         this.init()
-        // this.$store.dispatch('collection/fetchCollections')
     }
 }
 </script>
