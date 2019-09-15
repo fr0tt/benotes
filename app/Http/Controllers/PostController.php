@@ -18,20 +18,23 @@ class PostController extends Controller
     {
 
         $this->validate($request, [
-            'collection_id' => ['regex:/^(null|\d+)$/'],
+            'collection_id' => 'integer|nullable',
+            'is_uncategorized' => 'boolean',
             'limit' => 'integer'
         ]);
 
-        if ($request->collection_id === 'null') {
+        if (isset($request->collection_id)) {
+            $posts = Post::where([
+                ['collection_id', '=', $request->collection_id],
+                ['user_id', '=', Auth::user()->id]
+            ]);
+        } else if (isset($request->is_uncategorized)) {
             $posts = Post::where([
                 ['collection_id', '=', null],
                 ['user_id', '=', Auth::user()->id]
             ]);
         } else {
-            $posts = Post::where([
-                ['collection_id', '=', $request->collection_id],
-                ['user_id', '=', Auth::user()->id]
-            ]);
+            $posts = Post::where('user_id', Auth::user()->id);
         }
 
         if (isset($request->limit)) {
@@ -39,7 +42,7 @@ class PostController extends Controller
         }
         $posts = $posts->get();
 
-        return response()->json(['data' => $posts]);
+        return response()->json(['data' => $posts], 200);
     }
 
     public function store(Request $request)
@@ -56,24 +59,11 @@ class PostController extends Controller
             }
         }
 
-        preg_match_all('/(https|http)(:\/\/)(\w+\.)+(\w+)(\S+)/', $request->content, $matches);
-        $matches = $matches[0];
-        $info = null;
-        if (count($matches) > 0) {
-            $info = $this->getInfo($matches[0]);
-        }
-
-        if (empty($matches)) {
-            $type = Post::POST_TYPE_TEXT;
-        } else if (strlen($request->content) > strlen($matches[0])) {
-            $type = Post::POST_TYPE_TEXT;
-        } else {
-            $type = Post::POST_TYPE_LINK;
-        }
+        $info = $this->computePostData($request->content);
         
         $post = Post::create([
             'content' => $request->content,
-            'type' => $type,
+            'type' => $info['type'],
             'url' => $info['url'],
             'base_url' => $info['base_url'],
             'title' => $info['title'],
@@ -83,18 +73,47 @@ class PostController extends Controller
             'user_id' => Auth::user()->id
         ]);
             
-        if (!empty($info['image_path'])) {
-            $image = Image::make($info['image_path']);
-            if ($image) {
-                $image->fit(400, 210);
-                $filename = 'thumbnail_'.$post->id.'.jpg';
-                $image->save('../storage/app/public/thumbnails/'.$filename, 100);
-                $post->image_path = $filename;
-                $post->save();
+        $this->saveImage($info['image_path'], $post);
+
+        return response()->json(['data' => $post], 201);
+    }
+
+    public function update(Request $request, $id)
+    {
+
+        $this->validate($request, [
+            'content' => 'required|string',
+            'collection_id' => 'integer|nullable'
+        ]);
+
+        $post = Post::find($id);
+        if (!$post) {
+            return response()->json('Post not found.', 404);
+        }
+
+        if (isset($request->collection_id)) {
+            $collection = Collection::find($request->collection_id);
+            if (!$collection) {
+                return response()->json('Collection not found.', 404);
             }
         }
 
-        return response()->json(['data' => $post], 201);
+        $info = $this->computePostData($request->content);
+
+        $post->update([
+            'content' => $request->content,
+            'type' => $info['type'],
+            'url' => $info['url'],
+            'base_url' => $info['base_url'],
+            'title' => $info['title'],
+            'description' => $info['description'],
+            'color' => $info['color'],
+            'collection_id' => $request->collection_id
+        ]);
+
+        $this->saveImage($info['image_path'], $post);
+
+        return response()->json(['data' => $post], 200);
     }
 
     public function destroy($id)
@@ -102,12 +121,32 @@ class PostController extends Controller
 
         $post = Post::find($id);
         if (!$post) {
-            return response()->json('Post not found.', 400);
+            return response()->json('Post not found.', 404);
         }
         $post->delete();
 
         return response()->json('', 204);
 
+    }
+
+    private function computePostData($content)
+    {
+        preg_match_all('/(https|http)(:\/\/)(\w+\.)+(\w+)(\S+)/', $content, $matches);
+        $matches = $matches[0];
+        $info = null;
+        if (count($matches) > 0) {
+            $info = $this->getInfo($matches[0]);
+        }
+
+        if (empty($matches)) {
+            $info['type'] = Post::POST_TYPE_TEXT;
+        } else if (strlen($content) > strlen($matches[0])) {
+            $info['type'] = Post::POST_TYPE_TEXT;
+        } else {
+            $info['type'] = Post::POST_TYPE_LINK;
+        }
+
+        return $info;
     }
 
     private function getInfo($url)
@@ -158,6 +197,22 @@ class PostController extends Controller
         $rgb = ColorThief::getColor('http://www.google.com/s2/favicons?domain=' . $base_url);
         $hex = sprintf("#%02x%02x%02x", $rgb[0], $rgb[1], $rgb[2]);
         return $hex;
+    }
+
+    private function saveImage($image_path, $post)
+    {
+        if (!empty($image_path)) {
+            $image = Image::make($image_path);
+            if ($image) {
+                $image->fit(400, 210);
+                $filename = 'thumbnail_' . $post->id . '.jpg';
+                $image->save('../storage/app/public/thumbnails/' . $filename, 100);
+                if (empty($post->image_path)) {
+                    $post->image_path = $filename;
+                    $post->save();
+                }
+            }
+        }
     }
 
 }
