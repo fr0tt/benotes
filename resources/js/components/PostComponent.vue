@@ -1,7 +1,7 @@
 <template>
     <li class="inline-block m-4">
         <div v-if="post.type === 'link'" class="card">
-            <svg class="three-dots-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>                    
+            <svg @click="showContextMenu($event)" class="three-dots-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
             <a :href="post.url" target="_blank">
                 <div v-if="post.image_path" class="h-cover w-full bg-cover bg-center" :style="image"></div>
                 <div v-else class="h-cover w-full flex items-center justify-center" :style="color">
@@ -24,21 +24,48 @@
                 <a :href="post.url" :title="post.url" target="_blank" class="text-blue-600">{{ post.url }}</a>
             </div>
         </div>
-        <div v-else class="card bg-gray-100">
-            <svg class="three-dots-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
-            <div class="p-6">
-                <p class="text-gray-900 text-xl overflow-hidden" @click="edit(post)">{{ post.content }}</p>
+        <div v-else class="card bg-gray-100" :class="{ 'active' : isActive() }">
+            <svg @click="showContextMenu($event)" class="three-dots-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
+            <div class="p-6 h-full">
+                <textarea :value="post.content" @click="edit($event)" @input="watchEdit($event)" :readonly="!isActive()" 
+                    class="text-gray-900 text-xl overflow-hidden outline-none h-full w-full">
+                </textarea>
             </div>
         </div>
     </li>
 </template>
 <script>
+import { mapState } from 'vuex'
 export default {
     name: 'Post',
     props: ['post'],
     methods: {
-        edit (post) {
-            this.$store.dispatch('post/setCurrentPost', post)
+        edit (event) {
+            if (this.currentPost !== null) {
+                if (this.currentPost.id === this.post.id) {
+                    return
+                }
+            }
+            this.post.target = event.target
+            this.$store.dispatch('post/setCurrentPost', this.post)
+        },
+        isActive () {
+            if (this.currentPost === null) {
+                return false
+            }
+            return this.currentPost.id === this.post.id
+        },
+        watchEdit (event) {
+            this.$store.dispatch('post/setCurrentPostContent', event.target.value)
+        },
+        showContextMenu (event) {
+            this.$store.dispatch('post/setContextMenu', {
+                isVisible: true,
+                top: event.pageY,
+                left: event.pageX,
+                post: this.post,
+                target: event.target
+            })
         }
     },
     computed: {
@@ -50,7 +77,13 @@ export default {
         },
         domain () {
             return this.post.base_url.replace(/(https|http):\/\//,'')
-        }
+        },
+        ...mapState('post', [
+            'currentPost'
+        ]),
+        ...mapState('post', [
+            'contextMenu'
+        ])
     }
 }
 </script>
@@ -59,6 +92,7 @@ export default {
         @apply rounded relative overflow-hidden shadow-lg;
         width: 22rem;
         height: 22.5rem;
+        transition: background-color 0.1s;
     }
     .h-cover {
         height: 12.5rem;
@@ -70,10 +104,17 @@ export default {
         margin-top: -4px;
     }
     .three-dots-svg {
-        @apply w-5 h-5 absolute;
+        @apply w-5 h-5 absolute cursor-pointer;
         /* right: 0.5rem;
         top: 0.75rem; */
         right: 0.75rem;
         bottom: 1.25rem;
+    }
+    .active {
+        @apply bg-yellow-300 border border-yellow-400;
+    }
+    textarea {
+        resize: none;
+        background: transparent;
     }
 </style>

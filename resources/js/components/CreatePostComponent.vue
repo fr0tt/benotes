@@ -25,7 +25,7 @@ import { mapState } from 'vuex'
 export default {
     methods: {
         create () {
-            if (this.$refs.content.value === '' || this.collection === null) {
+            if (this.$refs.content.value === '' || this.currentCollection === null) {
                 return
             }
             axios.post('/api/posts', {
@@ -50,8 +50,13 @@ export default {
     },
     watch: {
         currentPost (post) {
-            this.$refs.content.value = post.content
-            this.$refs.content.focus()
+            if (post === null) {
+                return
+            }
+            if (post.type === 'link') {
+                this.$refs.content.value = post.content
+                this.$refs.content.focus()
+            }
         }
     }
 }

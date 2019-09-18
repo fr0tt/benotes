@@ -4,7 +4,12 @@ export default {
     namespaced: true,
     state: {
         posts: null,
-        currentPost: null
+        currentPost: null,
+        contextMenu: {
+            isVisible: false,
+            left: 0,
+            top: 0
+        }
     },
     mutations: {
         setPosts (state, posts) {
@@ -16,11 +21,17 @@ export default {
         setPost (state, post, index) {
             state.posts[index] = post
         },
+        deletePost (state, index) {
+            state.posts.splice(index, 1)
+        },
         setCurrentPost (state, post) {
             state.currentPost = post
         },
         setCurrentPostContent (state, content) {
             state.currentPost.content = content
+        },
+        setContextMenu (state, contextMenu) {
+            state.contextMenu = contextMenu
         }
     },
     actions: {
@@ -47,12 +58,6 @@ export default {
         addPost (context, post) {
             context.commit('addPost', post)
         },
-        setCurrentPost (context, post) {
-            context.commit('setCurrentPost', post)
-        },
-        setCurrentPostContent (context, content) {
-            context.commit('setCurrentPostContent', content)
-        },
         updatePost (context, currentPost) {
             axios.patch('/api/posts/' + currentPost.id, {
                 content: currentPost.content
@@ -69,6 +74,27 @@ export default {
                 .catch(error => {
                     console.log(error)
                 })
+        },
+        deletePost (context, id) {
+            axios.delete('/api/posts/' + id)
+                .then(response => {
+                    const index = context.state.posts.findIndex((post) => {
+                        return post.id === id
+                    })
+                    context.commit('deletePost', index)
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        },
+        setCurrentPost (context, post) {
+            context.commit('setCurrentPost', post)
+        },
+        setCurrentPostContent (context, content) {
+            context.commit('setCurrentPostContent', content)
+        },
+        setContextMenu (context, contextMenu) {
+            context.commit('setContextMenu', contextMenu)
         }
     }
 }

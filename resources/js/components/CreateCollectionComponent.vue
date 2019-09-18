@@ -63,7 +63,7 @@ export default {
         ])
     },
     created () {
-        this.$store.dispatch('post/fetchPosts', 'null')
+        this.$store.dispatch('post/fetchPosts', null)
     }
 }
 </script>
