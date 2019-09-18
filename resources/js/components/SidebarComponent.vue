@@ -15,12 +15,12 @@
             New Collection
         </div>-->
         <div class="max-w-14 list">
-            <div class="font-bold text-xl text-gray-800 mb-4">
-                <router-link to="/" class="inline-block w-full pl-2">Uncategorized</router-link>
+            <div class="text-xl text-gray-800 mb-4">
+                <router-link to="/" class="inline-block w-full pl-2 font-semibold">Uncategorized</router-link>
             </div>
             <div v-for="(collection) in collections" :key="collection.id" 
-                class="font-bold text-xl text-gray-800 mb-2">
-                <router-link :to="'/c/' + collection.id" class="inline-block w-full pl-2">{{ collection.name }}</router-link>
+                class="text-xl text-gray-800 mb-2">
+                <router-link :to="'/c/' + collection.id" class="inline-block w-full pl-2 font-semibold">{{ collection.name }}</router-link>
             </div>
         </div>
     </div>
@@ -57,6 +57,6 @@ export default {
         max-width: 14rem;
     }
     .list .router-link-exact-active {
-        @apply bg-gray-800 text-white;
+        @apply text-blue-500 font-bold;
     }
 </style>
