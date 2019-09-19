@@ -46,7 +46,7 @@ export default {
                     collection_id: collectionId
                 }
             }
-            axios.get('/api/posts', params)
+            axios.get('/api/posts', { params: params })
                 .then(response => {
                     const posts = response.data.data
                     context.commit('setPosts', posts)

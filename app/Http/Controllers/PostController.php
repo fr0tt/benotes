@@ -19,16 +19,16 @@ class PostController extends Controller
 
         $this->validate($request, [
             'collection_id' => 'integer|nullable',
-            'is_uncategorized' => 'boolean',
             'limit' => 'integer'
         ]);
+        $request->is_uncategorized = filter_var($request->is_uncategorized, FILTER_VALIDATE_BOOLEAN);
 
         if (isset($request->collection_id)) {
             $posts = Post::where([
                 ['collection_id', '=', $request->collection_id],
                 ['user_id', '=', Auth::user()->id]
             ]);
-        } else if (isset($request->is_uncategorized)) {
+        } else if ($request->is_uncategorized === true) {
             $posts = Post::where([
                 ['collection_id', '=', null],
                 ['user_id', '=', Auth::user()->id]
