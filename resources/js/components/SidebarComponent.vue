@@ -16,11 +16,11 @@
         </div>-->
         <div class="max-w-14 list">
             <div class="text-xl text-gray-800 mb-4">
-                <router-link to="/" class="inline-block w-full pl-2 font-semibold">Uncategorized</router-link>
+                <router-link to="/" class="inline-block w-full font-semibold">Uncategorized</router-link>
             </div>
             <div v-for="(collection) in collections" :key="collection.id" 
                 class="text-xl text-gray-800 mb-2">
-                <router-link :to="'/c/' + collection.id" class="inline-block w-full pl-2 font-semibold">{{ collection.name }}</router-link>
+                <router-link :to="'/c/' + collection.id" class="inline-block w-full font-semibold">{{ collection.name }}</router-link>
             </div>
         </div>
     </div>

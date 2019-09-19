@@ -1,6 +1,6 @@
 <template>
     <div class="fixed bottom-0 w-full left-0 bg-gray-200">
-        <form @submit.prevent="create" @keyup.ctrl.enter="create" class="flex mx-6 my-8">
+        <form @submit.prevent="create" @keyup.ctrl.enter="create" class="flex mx-6 my-6">
             <div class="w-1/6"></div>
             <div class="w-4/6">
                 <textarea ref="content" class="w-full rounded-full border-2 outline-none border-gray-400 

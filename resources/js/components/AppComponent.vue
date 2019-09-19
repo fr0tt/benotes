@@ -1,6 +1,6 @@
 <template>
     <div class="flex w-full" @click="globalClickEvent($event)">
-        <div class="max-w-xs w-1/6">
+        <div class="max-w-xs md:w-56 lg:w-1/6">
             <Sidebar/>
         </div>
         <div class="w-5/6 pr-6">
