@@ -1,7 +1,6 @@
 <template>
     <div>
         <div>
-            <!-- <h1 class="text-3xl my-4 font-bold text-blue-500">{{ currentCollection.name }}</h1> -->
             <ol class="mt-4 mb-40">
                 <transition-group name="grid-fade">
                 <Post v-for="post in posts" class="item"

@@ -43,9 +43,6 @@ import Sidebar from './SidebarComponent.vue'
             }
         },
         computed: {
-            ...mapState([
-                'authUser'
-            ]),
             ...mapState('post', [
                 'currentPost'
             ]),

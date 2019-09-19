@@ -18,13 +18,13 @@
             </div>
 
         </div>
-
+        <!-- 
         <div class="mb-20">
             <label class="block uppercase text-gray-600 font-medium">Add existing Posts</label>
             <Post v-for="post in posts" 
                 :key="post.id" 
                 :post="post" />
-        </div>
+        </div> -->
 
     </form>
 </template>
