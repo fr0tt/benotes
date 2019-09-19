@@ -1,19 +1,18 @@
 <template>
     <div class="m-4 mx-6">
-        <p class="text-lg">{{ authUser.name }}</p>
+        <router-link to="/users/me">
+            <p class="text-lg">{{ authUser.name }}</p>
+        </router-link>
         <br><br><br><br>
         <div class="mb-4">
             <span class="text-sm text-gray-800 tracking-wider uppercase">Collections</span>
             <router-link to="/c/create">
                 <svg class="ml-4 w-4 add-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                     <title>New Collection</title>
-                    <path d="M11 9V5H9v4H5v2h4v4h2v-4h4V9h-4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20z"/>
+                    <path d="M11 9h4v2h-4v4H9v-4H5V9h4V5h2v4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/>
                 </svg>
             </router-link>
         </div>
-        <!--<div class="font-normal text-base text-gray-800 my-2">
-            New Collection
-        </div>-->
         <div class="max-w-14 list">
             <div class="text-xl text-gray-800 mb-4">
                 <router-link to="/" class="inline-block w-full font-semibold">Uncategorized</router-link>
@@ -25,7 +24,9 @@
         </div>
     </div>
 </template>
+
 <script>
+import { mapState } from 'vuex'
 export default {
     name: 'Sidebar',
     methods: {
@@ -34,18 +35,19 @@ export default {
         }
     },
     computed: {
-        authUser () {
-            return this.$store.state.auth.authUser
-        },
-        collections () {
-            return this.$store.state.collection.collections
-        }
+        ...mapState('auth', [
+            'authUser'
+        ]),
+        ...mapState('collection', [
+            'collections'
+        ])
     },
     mounted () {
         this.init()
     }
 }
 </script>
+
 <style lang="scss">
     svg {
         display: inline-block;

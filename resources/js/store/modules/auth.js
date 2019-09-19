@@ -2,6 +2,7 @@ import Vue from 'vue'
 import axios from 'axios'
 
 export default {
+    namespaced: true,
     state: {
         isAuthenticated: false,
         authUser: null
