@@ -37,6 +37,16 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
+        if (env('ALLOW_USER_REGISTRATION') === false) {
+            return response()->json('Not allowed.', 403);
+        }
+
+        $alreadyExistingUser = User::where('email', $request->email)->first();
+
+        if (!empty($alreadyExistingUser)) {
+            return response()->json('Email is already in use.', 400);
+        }
+        
         $user = new User;
         $user->name = $request->name;
         $user->email = $request->email;
