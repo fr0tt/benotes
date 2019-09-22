@@ -15,6 +15,18 @@ require('laravel-mix-purgecss')
 
 mix.disableSuccessNotifications()
 
+/*
+
+// does not work with current webpack version, results in empty css file in production
+
+mix.babelConfig({
+    plugins: ['@babel/plugin-syntax-dynamic-import']
+})
+
+mix.extract()
+
+*/
+
 mix.js('resources/js/app.js', 'public/js')
     .sass('resources/sass/app.scss', 'public/css')
     .options({
@@ -22,3 +34,4 @@ mix.js('resources/js/app.js', 'public/js')
         postCss: [tailwindcss('./tailwind.config.js')]
     })
     .purgeCss()
+
