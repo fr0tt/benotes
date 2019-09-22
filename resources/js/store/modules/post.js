@@ -36,17 +36,13 @@ export default {
     },
     actions: {
         fetchPosts (context, collectionId) {
-            let params = null
+            const params = {}
             if (typeof collectionId === 'undefined' || collectionId === null) {
-                params = {
-                    is_uncategorized: true
-                }
+                params.is_uncategorized = true
             } else {
-                params = {
-                    collection_id: collectionId
-                }
+                params.ollection_id = collectionId
             }
-            axios.get('/api/posts', { params: params })
+            axios.get('/api/posts', params)
                 .then(response => {
                     const posts = response.data.data
                     context.commit('setPosts', posts)

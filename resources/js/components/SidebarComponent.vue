@@ -1,7 +1,8 @@
 <template>
     <div class="m-4 mx-6">
         <router-link to="/users/me">
-            <p class="text-lg">{{ authUser.name }}</p>
+            <svg class="w-5 mr-2 align-text-bottom fill-current text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 20a10 10 0 1 1 0-20 10 10 0 0 1 0 20zM7 6v2a3 3 0 1 0 6 0V6a3 3 0 1 0-6 0zm-3.65 8.44a8 8 0 0 0 13.3 0 15.94 15.94 0 0 0-13.3 0z"/></svg>
+            <span class="text-lg">{{ authUser.name }}</span>
         </router-link>
         <br><br><br><br>
         <div class="mb-4">
