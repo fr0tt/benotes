@@ -11,8 +11,8 @@ export default {
         isAuthenticated (state, isAuthenticated) {
             state.isAuthenticated = isAuthenticated
         },
-        setAuthUser (state, authUser) {
-            state.authUser = authUser
+        setAuthUser (state, user) {
+            state.authUser = user
         }
     },
     actions: {
@@ -65,6 +65,9 @@ export default {
                         }
                     })
             })
+        },
+        setAuthUser (context, user) {
+            context.commit('setAuthUser', user)
         }
     }
 }
