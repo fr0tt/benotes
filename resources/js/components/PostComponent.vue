@@ -19,7 +19,7 @@
                     No description
                 </p>
             </div>
-            <div class="px-6 py-4 truncate">
+            <div class="px-6 py-4 mr-2 truncate">
                 <img :src="'https://www.google.com/s2/u/0/favicons?domain=' + domain" class="inline img-vertical-align">
                 <a :href="post.url" :title="post.url" target="_blank" class="text-blue-600">{{ post.url }}</a>
             </div>
