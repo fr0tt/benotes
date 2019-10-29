@@ -40,9 +40,9 @@ export default {
             if (typeof collectionId === 'undefined' || collectionId === null) {
                 params.is_uncategorized = true
             } else {
-                params.ollection_id = collectionId
+                params.collection_id = collectionId
             }
-            axios.get('/api/posts', params)
+            axios.get('/api/posts', { params })
                 .then(response => {
                     const posts = response.data.data
                     context.commit('setPosts', posts)
