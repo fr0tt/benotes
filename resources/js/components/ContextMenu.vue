@@ -53,7 +53,7 @@ export default {
             @apply bg-gray-200;
         }
         .context-icon {
-            @apply mb-1 ml-2 w-4 fill-current;
+            @apply mb-1 ml-2 w-4 fill-current inline-block;
         }
     }
     .fade-enter-active, .fade-leave-active {
