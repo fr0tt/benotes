@@ -7,7 +7,7 @@
 
             <div class="mb-8">
                 <label class="label" for="email">Email</label>
-                <input type="email" class="input" v-model="email" placeholder="Email Address" autocomplete required>
+                <input type="email" class="input" v-model="email" placeholder="Email Address" autofocus required>
             </div>
 
             <div class="mb-8">
@@ -20,7 +20,7 @@
             </div>
 
             <div class="flex items-center justify-between">
-                <button class="bg-blue-500 hover:bg-blue-700 text-white text-lg font-bold py-2 px-6
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6
                     focus:outline-none focus:shadow-outline" type="submit">
                     Sign In
                 </button>

@@ -92,7 +92,9 @@ export default {
         @apply rounded relative overflow-hidden shadow-lg;
         width: 22rem;
         height: 22.5rem;
-        transition: background-color 0.1s;
+        transition: background-color 0.2s;
+        -webkit-transition: background-color 0.2s;
+        -moz-transition: background-color 0.2s;
     }
     .h-cover {
         height: 12.5rem;
