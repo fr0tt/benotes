@@ -1,10 +1,10 @@
 <template>
     <div class="flex w-full" @click="globalClickEvent($event)">
-        <div class="max-w-xs md:w-56 lg:w-1/6">
-            <Sidebar/>
-        </div>
-        <div class="w-5/6 pr-6">
+        <Sidebar/>
+        <div class="flex-1 h-screen overflow-y-scroll">
+            <transition name="router-fade" mode="out-in">
             <router-view></router-view>
+            </transition>
         </div>
     </div>
 </template>
@@ -55,5 +55,11 @@ import Sidebar from './SidebarComponent.vue'
 <style lang="scss">
     button {
         transition: color, background-color 0.2s;
+    }
+    .router-fade-enter-active, .router-fade-leave-active {
+        transition: opacity .2s ease;
+    }
+    .router-fade-enter, .router-fade-leave-to {
+        opacity: 0;
     }
 </style>
