@@ -5,6 +5,7 @@ export default {
     state: {
         posts: null,
         currentPost: null,
+        isLoading: false,
         contextMenu: {
             isVisible: false,
             left: 0,
@@ -32,10 +33,14 @@ export default {
         },
         setContextMenu (state, contextMenu) {
             state.contextMenu = contextMenu
+        },
+        isLoading (state, isLoading) {
+            state.isLoading = isLoading
         }
     },
     actions: {
         fetchPosts (context, collectionId) {
+            context.commit('isLoading', true)
             const params = {}
             if (typeof collectionId === 'undefined' || collectionId === null) {
                 params.is_uncategorized = true
@@ -46,9 +51,11 @@ export default {
                 .then(response => {
                     const posts = response.data.data
                     context.commit('setPosts', posts)
+                    context.commit('isLoading', false)
                 })
                 .catch(error => {
                     console.log(error)
+                    context.commit('isLoading', false)
                 })
         },
         addPost (context, post) {

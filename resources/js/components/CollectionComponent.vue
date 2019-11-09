@@ -1,13 +1,15 @@
 <template>
     <div>
         <div>
-            <ol class="mt-4 mb-40">
-                <transition-group name="grid-fade">
-                <Post v-for="post in posts" class="item"
-                    :key="post.id" 
-                    :post="post" />
-                </transition-group>
-            </ol>
+            <transition name="collection-fade">
+                <ol class="mt-4 mb-40" v-if="!isLoading">
+                    <transition-group name="grid-fade">
+                        <Post v-for="post in posts" class="item"
+                            :key="post.id" 
+                            :post="post" />
+                    </transition-group>
+                </ol>
+            </transition>
             <ContextMenu/>
         </div>
         <CreatePost/>
@@ -43,6 +45,9 @@ export default {
         ]),
         ...mapState('collection', [
             'currentCollection'
+        ]),
+        ...mapState('post', [
+            'isLoading'
         ])
     },
     created () {
@@ -51,6 +56,12 @@ export default {
 }
 </script>
 <style lang="scss">
+    .collection-fade-enter-active, .collection-fade-leave-active {
+        transition: opacity .8s;
+    }
+    .collection-fade-enter, .collection-fade-leave-to{
+        opacity: 0;
+    }
     .item {
         transition: all 0.8s;
     }
