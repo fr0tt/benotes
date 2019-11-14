@@ -1,11 +1,11 @@
 <template>
-    <div class="fixed bottom-0 w-full left-0 bg-gray-200">
+    <div class="fixed bottom-0 w-full left-0 bg-gray-200" v-if="!isMobile || (isMobile && currentPost === null)">
         <form @submit.prevent="create" @keyup.ctrl.enter="create" class="flex md:mx-6 mx-1 md:my-6 mt-2">
             <div class="lg:w-1/6"></div>
             <div class="lg:w-4/6 flex-1">
                 <textarea ref="content" class="w-full rounded-full border-2 outline-none border-gray-400 
                     bg-white py-2 px-5 text-lg leading-snug focus:border-blue-400" 
-                    :rows="isMobile() ? '1' : '2'"></textarea>
+                    :rows="isMobile ? '1' : '2'"></textarea>
                 <!--<div class="">
                     <span> save in: </span> <input class="text-bold text-blue-600">Uncateogirzed</input>
                 </div>-->
@@ -40,9 +40,6 @@ export default {
                 .catch(error => {
                     console.log(error)
                 })
-        },
-        isMobile () {
-            return (screen.width <= 600) ? true : false
         }
     },
     computed: {
@@ -51,7 +48,8 @@ export default {
         ]),
         ...mapState('post', [
             'currentPost'
-        ])
+        ]),
+        ...mapState(['isMobile'])
     },
     watch: {
         currentPost (post) {
