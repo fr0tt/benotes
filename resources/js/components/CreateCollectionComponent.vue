@@ -1,19 +1,19 @@
 <template>
-    <form @submit.prevent="create" class="my-8 mx-20">
+    <form @submit.prevent="create" class="my-8 lg:mx-20 mx-10">
 
-        <div class="flex">
+        <div class="xl:flex">
 
-            <div class="w-4/5">
-                <div class="mb-20">
+            <div class="xl:w-4/5 w-full">
+                <div class="mb-10">
                     <label class="block uppercase text-gray-600 font-medium">Name</label>
                     <input v-model="name" placeholder="Name" 
-                        class="w-full text-5xl text-gray-800 font-bold bg-gray-300 outline-none py-1"/>
+                        class="w-full text-5xl text-gray-800 font-bold bg-gray-300 outline-none py-1 px-2"/>
                 </div>
             </div>
             <div class="w-1/5">
                 <div class="text-center mt-6">
-                    <button class="text-blue-700 font-semibold text-xl
-                        hover:text-white py-2 px-8 border-2 border-blue-500 hover:bg-blue-500">Save</button>
+                    <button class="text-blue-700 font-semibold text-lg
+                        hover:text-white py-1 px-8 border-2 border-blue-500 hover:bg-blue-500">Save</button>
                 </div>
             </div>
 
