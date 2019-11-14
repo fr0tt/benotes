@@ -23,9 +23,11 @@
                 <button class="text-blue-700 font-semibold text-lg bg-transparent
                     hover:text-white py-1 px-8 border-2 border-blue-500 hover:bg-blue-500" type="submit">Save
                 </button>
+                <!--
                 <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="#">
                     Forgot Password?
                 </a>
+                -->
             </div>
         </form>
 
