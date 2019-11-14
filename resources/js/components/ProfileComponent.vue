@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="update()" class="mt-20 mx-20">
+    <form @submit.prevent="update()" class="mt-20 lg:mx-20 mx-10">
         <div class="max-w-2xl">
 
             <div class="mb-8">
@@ -25,10 +25,8 @@
             </div>
             
             <div class="mt-16">
-                <button class="button bg-blue-500 px-8 text-white border-transparent
-                    hover:text-blue-500 hover:bg-transparent hover:border-blue-500">
-                    Save
-                </button>
+                <button class="text-blue-700 font-semibold text-lg
+                    hover:text-white py-1 px-8 border-2 border-blue-500 hover:bg-blue-500">Save</button>
             </div>
 
             <p v-if="error" class="text-red-500 mt-4">{{ error }}</p>

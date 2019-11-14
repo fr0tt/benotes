@@ -20,19 +20,14 @@
             </div>
 
             <div class="flex items-center justify-between">
-                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6
-                    focus:outline-none focus:shadow-outline" type="submit">
-                    Sign In
+                <button class="text-blue-700 font-semibold text-lg bg-transparent
+                    hover:text-white py-1 px-8 border-2 border-blue-500 hover:bg-blue-500" type="submit">Save
                 </button>
                 <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="#">
                     Forgot Password?
                 </a>
             </div>
         </form>
-
-        <p class="text-center text-gray-500 text-xs">
-            &copy;2019 Acme Corp. All rights reserved.
-        </p>
 
     </div>
 </div>
