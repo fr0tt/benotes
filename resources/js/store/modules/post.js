@@ -7,9 +7,9 @@ export default {
         currentPost: null,
         isLoading: false,
         contextMenu: {
-            isVisible: false,
-            left: 0,
-            top: 0
+            post: null,
+            target: null,
+            positionX: 0
         }
     },
     mutations: {
@@ -98,6 +98,13 @@ export default {
         },
         setContextMenu (context, contextMenu) {
             context.commit('setContextMenu', contextMenu)
+        },
+        hideContextMenu (context) {
+            context.commit('setContextMenu', {
+                post: null,
+                target: null,
+                positionX: 0
+            })
         }
     }
 }

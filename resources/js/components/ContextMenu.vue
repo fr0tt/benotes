@@ -1,7 +1,6 @@
 <template>
     <transition name="fade">
-        <ol v-if="contextMenu.isVisible" :style="{ top: contextMenu.top + 20 + 'px', left: contextMenu.left - 5 + 'px' }"
-            class="absolute bg-white shadow-lg contextmenu">
+        <ol v-if="show" class="absolute bg-white shadow-lg contextmenu" :style="position">
             <li v-if="contextMenu.post.type === 'link'" @click="edit()">
                 Edit
                 <svg class="context-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/></svg>
@@ -18,6 +17,7 @@
 import { mapState } from 'vuex'
 export default {
     name: 'ContextMenu',
+    props: ['postId'],
     methods: {
         edit () {
             this.$store.dispatch('post/setCurrentPost', this.contextMenu.post)
@@ -28,22 +28,32 @@ export default {
             this.hide()
         },
         hide () {
-            this.$store.dispatch('post/setContextMenu', {
-                isVisible: false,
-                post: null
-            })  
+            this.$store.dispatch('post/hideContextMenu') 
         }
     },
     computed: {
         ...mapState('post', [
             'contextMenu'
-        ])
+        ]),
+        show () {
+            return this.contextMenu.post !== null && this.contextMenu.post.id === this.postId
+        },
+        position () {
+            if ((this.contextMenu.positionX + 150) > screen.availWidth) {
+                return {
+                    right: 1 + 'rem'
+                }
+            }
+        }
     }
 }
 </script>
 
 <style lang="scss">
 	.contextmenu {
+        top: 21.75rem;
+        right: -5.0rem;
+        z-index: 100;
         li {
             @apply py-2 px-4 text-gray-800 font-medium cursor-pointer;
             min-width: 6rem;
@@ -57,7 +67,7 @@ export default {
         }
     }
     .fade-enter-active, .fade-leave-active {
-        transition: opacity .2s;
+        transition: opacity .3s;
     }
     .fade-enter, .fade-leave-to {
         opacity: 0;

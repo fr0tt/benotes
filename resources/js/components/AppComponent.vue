@@ -26,18 +26,13 @@ import Sidebar from './SidebarComponent.vue'
             },
             hideContextMenu (event) {
                 if (this.contextMenu.target !== event.target) {
-                    this.$store.dispatch('post/setContextMenu', {
-                        isVisible: false,
-                        post: null
-                    })  
+                    this.$store.dispatch('post/hideContextMenu')  
                 }
             },
             globalClickEvent (event) {
                 if (this.currentPost) {
-                    console.log('i')
                     this.stopEditing(event)
-                } else if (this.contextMenu.isVisible) {
-                    console.log('a ' + this.contextMenu.isVisible)
+                } else if (this.contextMenu.post !== null) {
                     this.hideContextMenu(event)
                 }
             }
@@ -49,6 +44,9 @@ import Sidebar from './SidebarComponent.vue'
             ...mapState('post', [
                 'contextMenu'
             ])
+        },
+        created () {
+            this.$store.dispatch('checkDevice')
         }
     }
 </script>

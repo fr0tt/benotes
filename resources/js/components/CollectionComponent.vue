@@ -10,7 +10,6 @@
                     </transition-group>
                 </ol>
             </transition>
-            <ContextMenu/>
         </div>
         <CreatePost/>
     </div>
@@ -19,13 +18,12 @@
 import { mapState } from 'vuex'
 import Post from './PostComponent.vue'
 import CreatePost from './CreatePostComponent.vue'
-import ContextMenu from './ContextMenu.vue'
+
 export default {
     props: ['id'],
     components: {
         Post,
-        CreatePost,
-        ContextMenu
+        CreatePost
     },
     methods: {
         init () {
