@@ -1,7 +1,7 @@
 <template>
     <div class="sidebar max-w-xs my-4" :class="isOpen ? 'md:w-48 xl:w-64 mx-6' : 'w-0 mx-3 md:mx-6'">
         <div class="relative z-50">
-            <svg class="menu-icon" @click="isOpen = !isOpen" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path d="M3 18h13v-2H3v2zm0-5h10v-2H3v2zm0-7v2h13V6H3zm18 9.59L17.42 12 21 8.41 19.59 7l-5 5 5 5L21 15.59z"/></svg>
+            <svg class="menu-icon" @click="toggle()" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" d="M0 0h24v24H0V0z"/><path d="M3 18h13v-2H3v2zm0-5h10v-2H3v2zm0-7v2h13V6H3zm18 9.59L17.42 12 21 8.41 19.59 7l-5 5 5 5L21 15.59z"/></svg>
         </div>
         <div :class="{ 'overflow-hidden': !isOpen }">
             <div class="relative">
@@ -39,12 +39,16 @@ export default {
     name: 'Sidebar',
     data () {
         return {
-            isOpen: true
+            isOpen: (localStorage.getItem('sidebar') === 'false') ? false : true
         }
     },
     methods: {
         init () {
             this.$store.dispatch('collection/fetchCollections')       
+        },
+        toggle () {
+            localStorage.setItem('sidebar', !this.isOpen)
+            this.isOpen = !this.isOpen
         }
     },
     computed: {
