@@ -33,11 +33,11 @@ class InstallCommand extends Command
         $bar->start();
         
         // jwt secret
-        //$this->call('jwt:secret');
+        $this->call('jwt:secret');
         $bar->advance();
 
         // database migration
-        //$this->call('migrate');
+        $this->call('migrate');
         $bar->advance();
         $this->line(PHP_EOL);
 
