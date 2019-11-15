@@ -18,22 +18,11 @@ import Sidebar from './SidebarComponent.vue'
             Sidebar
         },
         methods: {
-            stopEditing (event) {
-                if (this.currentPost.target !== event.target) {
-                    this.$store.dispatch('post/updatePost', this.currentPost)
-                    this.$store.dispatch('post/setCurrentPost', null)
-                }
-            },
-            hideContextMenu (event) {
-                if (this.contextMenu.target !== event.target) {
-                    this.$store.dispatch('post/hideContextMenu')  
-                }
-            },
             globalClickEvent (event) {
-                if (this.currentPost) {
-                    this.stopEditing(event)
-                } else if (this.contextMenu.post !== null) {
-                    this.hideContextMenu(event)
+                if (this.contextMenu.post !== null) {
+                    if (this.contextMenu.target !== event.target) {
+                        this.$store.dispatch('post/hideContextMenu')  
+                    }
                 }
             }
         },

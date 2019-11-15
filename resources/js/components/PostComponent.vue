@@ -1,6 +1,6 @@
 <template>
-    <li class="inline-block m-4 relative"><!-- :post-id="post.id"> -->
-        <div v-if="post.type === 'link'" class="card">
+    <li class="inline-block m-4 relative" :post-id="post.id">
+        <div v-if="post.type === 'link' && !isActive()" class="card">
             <a :href="post.url" target="_blank">
                 <div v-if="post.image_path" class="h-cover w-full bg-cover bg-center" :style="image"></div>
                 <div v-else class="h-cover w-full flex items-center justify-center" :style="color">
@@ -26,7 +26,8 @@
         </div>
         <div v-else class="card bg-gray-100" :class="{ 'active' : isActive() }">
             <div class="p-6 h-full">
-                <textarea :value="post.content" @click="edit($event)" @input="watchEdit($event)" :readonly="!isActive()" 
+                <textarea :value="post.content" @click="edit($event)" @input="watchEdit($event)" 
+                    :readonly="!isActive()" :autofocus="isActive()"
                     class="text-gray-900 text-xl overflow-hidden outline-none h-full w-full">
                 </textarea>
             </div>
@@ -51,8 +52,8 @@ export default {
                     return
                 }
             }
-            this.post.target = event.target
             this.$store.dispatch('post/setCurrentPost', this.post)
+            document.querySelector('#app').addEventListener('click', this.stopEditing, true)
         },
         isActive () {
             if (this.currentPost === null) {
@@ -62,6 +63,14 @@ export default {
         },
         watchEdit (event) {
             this.$store.dispatch('post/setCurrentPostContent', event.target.value)
+        },
+        stopEditing (event) {
+            const currentPostTarget = document.querySelector(`[post-id="${this.currentPost.id}"] textarea`)
+            if (currentPostTarget !== event.target) {
+                document.querySelector('#app').removeEventListener('click', this.stopEditing, true)
+                this.$store.dispatch('post/updatePost', this.currentPost)
+                this.$store.dispatch('post/setCurrentPost', null)
+            }
         },
         showContextMenu (event) {
             this.$store.dispatch('post/setContextMenu', {

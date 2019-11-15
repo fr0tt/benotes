@@ -33,13 +33,11 @@ export default {
             axios.post('/api/posts', {
                 content: this.$refs.content.value,
                 collection_id: this.currentCollection.id
+            }).then(response => {
+                this.$store.dispatch('post/addPost', response.data.data)
+            }).catch(error => {
+                console.log(error)
             })
-                .then(response => {
-                    this.$store.dispatch('post/addPost', response.data.data)
-                })
-                .catch(error => {
-                    console.log(error)
-                })
         }
     },
     computed: {
@@ -50,17 +48,6 @@ export default {
             'currentPost'
         ]),
         ...mapState(['isMobile'])
-    },
-    watch: {
-        currentPost (post) {
-            if (post === null) {
-                return
-            }
-            if (post.type === 'link') {
-                this.$refs.content.value = post.content
-                this.$refs.content.focus()
-            }
-        }
     }
 }
 </script>

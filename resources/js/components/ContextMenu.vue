@@ -1,7 +1,7 @@
 <template>
     <transition name="fade">
         <ol v-if="show" class="absolute bg-white shadow-lg contextmenu" :style="position">
-            <li v-if="contextMenu.post.type === 'link'" @click="edit()">
+            <li @click="edit()">
                 Edit
                 <svg class="context-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/></svg>
             </li>
@@ -20,8 +20,10 @@ export default {
     props: ['postId'],
     methods: {
         edit () {
-            this.$store.dispatch('post/setCurrentPost', this.contextMenu.post)
+            const post = this.contextMenu.post
             this.hide()
+            this.$store.dispatch('post/setCurrentPost', post)
+            document.querySelector('#app').addEventListener('click', this.stopEditing, true)
         },
         del () {
             this.$store.dispatch('post/deletePost', this.contextMenu.post.id)
@@ -29,11 +31,22 @@ export default {
         },
         hide () {
             this.$store.dispatch('post/hideContextMenu') 
+        },
+        stopEditing (event) {
+            const currentPostTarget = document.querySelector(`[post-id="${this.currentPost.id}"] textarea`)
+            if (currentPostTarget !== event.target) {
+                document.querySelector('#app').removeEventListener('click', this.stopEditing, true)
+                this.$store.dispatch('post/updatePost', this.currentPost)
+                this.$store.dispatch('post/setCurrentPost', null)
+            }
         }
     },
     computed: {
         ...mapState('post', [
             'contextMenu'
+        ]),
+        ...mapState('post', [
+            'currentPost'
         ]),
         show () {
             return this.contextMenu.post !== null && this.contextMenu.post.id === this.postId
