@@ -18,3 +18,4 @@ Installation:
 - generate a random string for APP_KEY e.g. openssl rand -base64 32
 - edit .env file  (_in order to be able to connect to your database_)
 - php artisan install  (_amongst other: creates database tables and fills them_)
+- ln -sfn ../storage/app/public/ public/storage (_create symlink for storage_)
