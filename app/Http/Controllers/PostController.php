@@ -61,19 +61,27 @@ class PostController extends Controller
 
         $info = $this->computePostData($request->content);
         
-        $post = Post::create([
-            'content' => $request->content,
-            'type' => $info['type'],
-            'url' => $info['url'],
-            'base_url' => $info['base_url'],
-            'title' => $info['title'],
-            'description' => $info['description'],
-            'color' => $info['color'],
-            'collection_id' => $request->collection_id,
-            'user_id' => Auth::user()->id
-        ]);
-            
-        $this->saveImage($info['image_path'], $post);
+        if ($info['type'] === Post::POST_TYPE_LINK) {
+            $post = Post::create([
+                'content' => $request->content,
+                'type' => $info['type'],
+                'url' => $info['url'],
+                'base_url' => $info['base_url'],
+                'title' => $info['title'],
+                'description' => $info['description'],
+                'color' => $info['color'],
+                'collection_id' => $request->collection_id,
+                'user_id' => Auth::user()->id
+            ]);
+            $this->saveImage($info['image_path'], $post);
+        } else {
+            $post = Post::create([
+                'content' => $request->content,
+                'type' => $info['type'],
+                'collection_id' => $request->collection_id,
+                'user_id' => Auth::user()->id
+            ]);
+        }
 
         return response()->json(['data' => $post], 201);
     }
@@ -99,7 +107,7 @@ class PostController extends Controller
         }
 
         $info = $this->computePostData($request->content);
-
+        
         $post->update([
             'content' => $request->content,
             'type' => $info['type'],
