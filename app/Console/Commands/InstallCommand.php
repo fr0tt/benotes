@@ -69,6 +69,7 @@ class InstallCommand extends Command
         $user->save();
 
         $bar->finish();
+        $this->line(PHP_EOL);
         $this->info('Installation complete');
     }
 
