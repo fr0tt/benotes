@@ -7,6 +7,10 @@ export default {
         currentCollection: {
             'id': null,
             'name': ''
+        },
+        collectionMenu: {
+            isVisible: false,
+            post: null
         }
     },
     mutations: {
@@ -18,6 +22,9 @@ export default {
         },
         setCurrentCollection (state, collection) {
             state.currentCollection = collection
+        },
+        setCollectionMenu (state, collectionMenu) {
+            state.collectionMenu = collectionMenu
         }
     },
     actions: {
@@ -53,6 +60,9 @@ export default {
                     context.commit('setCurrentCollection', collection)
                 }
             })
+        },
+        setCollectionMenu (context, collectionMenu) {
+            context.commit('setCollectionMenu', collectionMenu)
         }
     }
 }

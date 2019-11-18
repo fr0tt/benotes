@@ -33,11 +33,13 @@ export default {
             axios.post('/api/posts', {
                 content: this.$refs.content.value,
                 collection_id: this.currentCollection.id
-            }).then(response => {
-                this.$store.dispatch('post/addPost', response.data.data)
-            }).catch(error => {
-                console.log(error)
             })
+                .then(response => {
+                    this.$store.dispatch('post/addPost', response.data.data)
+                })
+                .catch(error => {
+                    console.log(error)
+                })
         }
     },
     computed: {

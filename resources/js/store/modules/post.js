@@ -61,10 +61,17 @@ export default {
         addPost (context, post) {
             context.commit('addPost', post)
         },
-        updatePost (context, currentPost) {
-            axios.patch('/api/posts/' + currentPost.id, {
-                content: currentPost.content
-            })
+        updatePost (context, { post, newCollectionId }) {
+            const params = {}
+            params.content = post.content
+            if (typeof newCollectionId !== 'undefined') {
+                if (newCollectionId === null) {
+                    params.is_uncategorized = true
+                } else {
+                    params.collection_id = newCollectionId
+                }
+            }
+            axios.patch('/api/posts/' + post.id, params)
                 .then(response => {
                     const newPost = response.data.data
                     context.state.posts.find((post, i) => {
@@ -76,6 +83,9 @@ export default {
                 })
                 .catch(error => {
                     console.log(error)
+                    if (typeof error.response !== 'undefined') {
+                        console.log(error.response.data)
+                    }
                 })
         },
         deletePost (context, id) {

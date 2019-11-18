@@ -1,6 +1,10 @@
 <template>
     <transition name="fade">
         <ol v-if="show" class="absolute bg-white shadow-lg contextmenu" :style="position">
+            <li @click="transfer()">
+                Transfer
+                <svg class="context-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 1l10 6-10 6L0 7l10-6zm6.67 10L20 13l-10 6-10-6 3.33-2L10 15l6.67-4z"/></svg>
+            </li>
             <li @click="edit()">
                 Edit
                 <svg class="context-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/></svg>
@@ -20,13 +24,19 @@ export default {
     props: ['postId'],
     methods: {
         edit () {
-            const post = this.contextMenu.post
             this.hide()
-            this.$store.dispatch('post/setCurrentPost', post)
+            this.$store.dispatch('post/setCurrentPost', this.contextMenu.post)
             document.querySelector('#app').addEventListener('click', this.stopEditing, true)
         },
         del () {
             this.$store.dispatch('post/deletePost', this.contextMenu.post.id)
+            this.hide()
+        },
+        transfer () {
+            this.$store.dispatch('collection/setCollectionMenu', {
+                isVisible: true,
+                post: this.contextMenu.post
+            })
             this.hide()
         },
         hide () {

@@ -49,4 +49,7 @@ import Sidebar from './SidebarComponent.vue'
     .router-fade-enter, .router-fade-leave-to {
         opacity: 0;
     }
+    .open-sans {
+        font-family: -apple-system, BlinkMacSystemFont, 'Open Sans', 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    }
 </style>

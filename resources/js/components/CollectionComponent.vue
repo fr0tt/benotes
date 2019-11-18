@@ -12,18 +12,21 @@
             </transition>
         </div>
         <CreatePost/>
+        <CollectionMenu v-if="collectionMenu.isVisible"/>
     </div>
 </template>
 <script>
 import { mapState } from 'vuex'
 import Post from './PostComponent.vue'
 import CreatePost from './CreatePostComponent.vue'
+import CollectionMenu from './CollectionMenuComponent.vue'
 
 export default {
     props: ['id'],
     components: {
         Post,
-        CreatePost
+        CreatePost,
+        CollectionMenu
     },
     methods: {
         init () {
@@ -41,12 +44,12 @@ export default {
         ...mapState('post', [
             'posts'
         ]),
-        ...mapState('collection', [
-            'currentCollection'
-        ]),
         ...mapState('post', [
             'isLoading'
-        ])
+        ]),
+        ...mapState('collection', [
+            'collectionMenu'
+        ]),
     },
     created () {
         this.init()
@@ -55,16 +58,16 @@ export default {
 </script>
 <style lang="scss">
     .collection-fade-enter-active, .collection-fade-leave-active {
-        transition: opacity .8s;
+        transition: opacity .6s;
     }
     .collection-fade-enter, .collection-fade-leave-to{
         opacity: 0;
     }
     .item {
-        transition: all 0.8s;
+        transition: all 0.6s;
     }
     .grid-fade-enter-active {
-        transition: all 0.3s;
+        transition: all 0.2s;
     }
     .grid-fade-leave-active {
         position: absolute;
