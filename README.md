@@ -19,3 +19,4 @@ Installation:
 - edit .env file  (_in order to be able to connect to your database_)
 - php artisan install  (_amongst other: creates database tables and fills them_)
 - ln -sfn ../storage/app/public/ public/storage (_create symlink for storage_)
+- chmod -R 774 storage (_make storage directory writable for webserver_)
