@@ -18,13 +18,6 @@
             </div>
 
         </div>
-        <!-- 
-        <div class="mb-20">
-            <label class="block uppercase text-gray-600 font-medium">Add existing Posts</label>
-            <Post v-for="post in posts" 
-                :key="post.id" 
-                :post="post" />
-        </div> -->
 
     </form>
 </template>
@@ -61,9 +54,6 @@ export default {
         ...mapState('post', [
             'posts'
         ])
-    },
-    created () {
-        this.$store.dispatch('post/fetchPosts', null)
     }
 }
 </script>
