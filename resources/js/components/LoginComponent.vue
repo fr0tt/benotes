@@ -53,7 +53,7 @@ export default {
             })
                 .then(response => {
                     const token = response.data.data.token.access_token
-                    this.$cookie.set('token', token)
+                    this.$cookie.set('token', token, 14)
                     axios.defaults.headers.common = { 'Authorization': `Bearer ${token}` }
                     this.$store.dispatch('auth/fetchAuthUser')
                     this.$router.push({ path: '/' })

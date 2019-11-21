@@ -48,7 +48,7 @@ export default {
                             axios.post('/api/auth/refresh')
                                 .then(response => {
                                     const token = response.data.data.token.access_token
-                                    Vue.cookie.set('token', token)
+                                    Vue.cookie.set('token', token, 14)
                                     axios.defaults.headers.common = { 'Authorization': `Bearer ${token}` }
                                     axios.get('api/auth/me')
                                         .then(response => {
