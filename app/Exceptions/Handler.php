@@ -50,6 +50,8 @@ class Handler extends ExceptionHandler
         } else if ($exception instanceof \Tymon\JWTAuth\Exceptions\TokenBlacklistedException ||
                    $exception instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
             return response()->json('Token is invalid', 401);
+        } else if ($exception instanceof \Intervention\Image\Exception\NotWritableException) {
+            return response()->json('Storage path not writable.', 403);
         }
 
         return parent::render($request, $exception);
