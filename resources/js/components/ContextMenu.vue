@@ -24,9 +24,9 @@ export default {
     props: ['postId'],
     methods: {
         edit () {
-            this.hide()
             this.$store.dispatch('post/setCurrentPost', this.contextMenu.post)
             document.querySelector('#app').addEventListener('click', this.stopEditing, true)
+            this.hide()
         },
         del () {
             this.$store.dispatch('post/deletePost', this.contextMenu.post.id)
@@ -43,8 +43,8 @@ export default {
             this.$store.dispatch('post/hideContextMenu') 
         },
         stopEditing (event) {
-            const currentPostTarget = document.querySelector(`[post-id="${this.currentPost.id}"] textarea`)
-            if (currentPostTarget !== event.target) {
+            const currentPostTarget = document.querySelector(`[post-id="${this.currentPost.id}"] .ProseMirror`)
+            if (currentPostTarget !== event.target.parentElement) {
                 document.querySelector('#app').removeEventListener('click', this.stopEditing, true)
                 this.$store.dispatch('post/updatePost', { post: this.currentPost })
                 this.$store.dispatch('post/setCurrentPost', null)

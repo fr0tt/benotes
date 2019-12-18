@@ -1,5 +1,5 @@
 <template>
-    <li class="inline-block m-4 relative" :post-id="post.id">
+    <li class="inline-block m-4 relative post" :post-id="post.id">
         <div v-if="post.type === 'link' && !isActive()" class="card">
             <a :href="post.url" target="_blank">
                 <div v-if="post.image_path" class="h-cover w-full bg-cover bg-center" :style="image"></div>
@@ -26,10 +26,9 @@
         </div>
         <div v-else class="card bg-gray-100" :class="{ 'active' : isActive() }">
             <div class="p-6 h-full">
-                <textarea :value="post.content" @click="edit($event)" @input="watchEdit($event)" 
-                    :readonly="!isActive()" :autofocus="isActive()"
-                    class="text-gray-900 text-xl overflow-hidden outline-none h-full w-full">
-                </textarea>
+                <div @click="edit($event)" class="text-gray-900 text-xl overflow-hidden outline-none h-full w-full">
+                    <EditorContent :editor="editor" class="editor__content" />
+                </div>
             </div>
             <svg @click="showContextMenu($event)" class="three-dots-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
         </div>
@@ -38,12 +37,34 @@
 </template>
 <script>
 import { mapState } from 'vuex'
+import { Editor, EditorContent } from 'tiptap'
+import { HardBreak, Heading, Bold, Code, Italic, Link } from 'tiptap-extensions'
 import ContextMenu from './ContextMenu.vue'
 export default {
     name: 'Post',
     props: ['post'],
     components: {
-        ContextMenu
+        ContextMenu,
+        EditorContent
+    },
+    data() {
+        return {
+            editor: new Editor({
+                editable: false,
+                extensions: [
+                    new HardBreak(),
+                    new Heading({ levels: [1, 2, 3] }),
+                    new Link(),
+                    new Bold(),
+                    new Code(),
+                    new Italic(),
+                ],
+                content: this.post.content,
+                onUpdate: ({ getHTML }) => {
+                    this.$store.dispatch('post/setCurrentPostContent', getHTML())
+                }
+            })
+        }
     },
     methods: {
         edit (event) {
@@ -61,12 +82,12 @@ export default {
             }
             return this.currentPost.id === this.post.id
         },
-        watchEdit (event) {
-            this.$store.dispatch('post/setCurrentPostContent', event.target.value)
-        },
         stopEditing (event) {
-            const currentPostTarget = document.querySelector(`[post-id="${this.currentPost.id}"] textarea`)
-            if (currentPostTarget !== event.target) {
+            const currentPostTarget = document.querySelector(`[post-id="${this.currentPost.id}"] .ProseMirror`)
+            if (currentPostTarget !== event.target.parentElement) {
+                this.editor.setOptions({
+                    editable: false,
+                })
                 document.querySelector('#app').removeEventListener('click', this.stopEditing, true)
                 this.$store.dispatch('post/updatePost', { post: this.currentPost })
                 this.$store.dispatch('post/setCurrentPost', null)
@@ -96,6 +117,21 @@ export default {
         ...mapState('post', [
             'contextMenu'
         ])
+    },
+    watch: {
+        currentPost (value) {
+            if (value === null)
+                return
+            if (value.id !== this.post.id)
+                return
+            this.editor.setOptions({
+                editable: true
+            })
+            this.editor.focus()
+        }
+    },
+    beforeDestroy() {
+        this.editor.destroy()
     }
 }
 </script>
@@ -104,9 +140,9 @@ export default {
         @apply rounded relative overflow-hidden shadow-lg;
         width: 22rem;
         height: 22.5rem;
-        transition: background-color 0.2s;
-        -webkit-transition: background-color 0.2s;
-        -moz-transition: background-color 0.2s;
+        transition: background-color 0.3s;
+        -webkit-transition: background-color 0.3s;
+        -moz-transition: background-color 0.3s;
     }
     .h-cover {
         height: 12.5rem;
@@ -127,8 +163,24 @@ export default {
     .active {
         @apply bg-yellow-300 border border-yellow-400;
     }
-    textarea {
+    /*textarea { @TODO remove
         resize: none;
         background: transparent;
+    }*/
+</style>
+<style lang="scss">
+    .ProseMirror {
+        outline: none;
+    }
+    .post .ProseMirror {
+        h1 {
+            @apply text-3xl font-bold
+        }
+        h2 {
+            @apply text-2xl font-medium
+        }
+        h3 {
+            @apply text-xl font-medium
+        }
     }
 </style>

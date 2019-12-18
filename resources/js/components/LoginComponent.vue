@@ -16,7 +16,7 @@
             </div>
 
             <div class="mb-12">
-                <p v-if="error" class="text-red-500 text-xs italic">{{ error }}</p>
+                <p v-if="error" class="text-red-500 text-sm italic">{{ error }}</p>
             </div>
 
             <div class="flex items-center justify-between">
