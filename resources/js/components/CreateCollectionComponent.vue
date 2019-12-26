@@ -25,12 +25,8 @@
 <script>
 import axios from 'axios'
 import { mapState } from 'vuex'
-import Post from './PostComponent.vue'
 export default {
     name: 'CreateCollection',
-    components: {
-        Post
-    },
     data () {
         return {
             name: ''
