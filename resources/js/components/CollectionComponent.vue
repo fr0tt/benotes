@@ -17,7 +17,7 @@
 </template>
 <script>
 import { mapState } from 'vuex'
-import Post from './PostComponent.vue'
+import Post from './PostItem.vue'
 import CreatePost from './CreatePostComponent.vue'
 import CollectionMenu from './CollectionMenuComponent.vue'
 
