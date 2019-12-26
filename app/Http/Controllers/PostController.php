@@ -45,6 +45,15 @@ class PostController extends Controller
         return response()->json(['data' => $posts], 200);
     }
 
+    public function show(int $id) 
+    {
+        $post = Post::find($id);
+        if ($post === null) {
+            return response()->json('Post does not exist', 404);
+        }
+        return response()->json(['data' => $post], 200);
+    }
+
     public function store(Request $request)
     {
         $this->validate($request, [

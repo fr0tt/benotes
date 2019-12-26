@@ -24,6 +24,7 @@ Route::group([
     Route::post('api/auth/logout', 'AuthController@logout');
 
     Route::get('api/posts', 'PostController@index');
+    Route::get('api/posts/{post}', 'PostController@show');
     Route::post('api/posts', 'PostController@store');
     Route::patch('api/posts/{id}', 'PostController@update');
     Route::delete('api/posts/{id}', 'PostController@destroy');
