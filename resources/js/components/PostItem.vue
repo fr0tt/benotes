@@ -41,13 +41,13 @@ import { Editor, EditorContent } from 'tiptap'
 import { HardBreak, Heading, Bold, Code, Italic, Link } from 'tiptap-extensions'
 import ContextMenu from './ContextMenu.vue'
 export default {
-    name: 'Post',
+    name: 'PostItem',
     props: ['post'],
     components: {
         ContextMenu,
         EditorContent
     },
-    data() {
+    data () {
         return {
             editor: new Editor({
                 editable: false,
@@ -57,7 +57,7 @@ export default {
                     new Link(),
                     new Bold(),
                     new Code(),
-                    new Italic(),
+                    new Italic()
                 ],
                 content: this.post.content,
                 onUpdate: ({ getHTML }) => {
@@ -130,7 +130,7 @@ export default {
             this.editor.focus()
         }
     },
-    beforeDestroy() {
+    beforeDestroy () {
         this.editor.destroy()
     }
 }
