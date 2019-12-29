@@ -35,5 +35,11 @@ mix.js('resources/js/app.js', 'public/js')
         postCss: [tailwindcss('./tailwind.config.js')]
     })
     .purgeCss()
-    .svgVue()
+    .svgVue({
+        svgoSettings: [
+            { removeTitle: false },
+            { removeViewBox: false },
+            { removeDimensions: true }
+        ]
+    })
 
