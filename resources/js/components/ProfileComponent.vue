@@ -51,9 +51,9 @@ export default {
     },
     methods: {
         update () {
-
-            if (this.name === this.authUser.name && this.email === this.authUser.email 
-                && this.password_old === null && this.password_new === null) {
+            
+            if (this.name === this.authUser.name && this.email === this.authUser.email &&
+                this.password_old === null && this.password_new === null) {
                 return
             }
 
@@ -65,12 +65,12 @@ export default {
             if (this.password_new) params.password_new = this.password_new
 
             axios.patch('/api/users/' + this.authUser.id, params)
-            .then(response => {
-                const user = response.data.data
-                this.$store.dispatch('auth/setAuthUser', user)
-            }).catch(error => {
-                this.error = error
-            })
+                .then(response => {
+                    const user = response.data.data
+                    this.$store.dispatch('auth/setAuthUser', user)
+                }).catch(error => {
+                    this.error = error
+                })
             
         }
     },

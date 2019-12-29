@@ -13,31 +13,31 @@
 import { mapState } from 'vuex'
 import Sidebar from './SidebarComponent.vue'
 
-    export default {
-        components: { 
-            Sidebar
-        },
-        methods: {
-            globalClickEvent (event) {
-                if (this.contextMenu.post !== null) {
-                    if (this.contextMenu.target !== event.target) {
-                        this.$store.dispatch('post/hideContextMenu')  
-                    }
+export default {
+    components: {
+        Sidebar
+    },
+    methods: {
+        globalClickEvent (event) {
+            if (this.contextMenu.post !== null) {
+                if (this.contextMenu.target !== event.target) {
+                    this.$store.dispatch('post/hideContextMenu')
                 }
             }
-        },
-        computed: {
-            ...mapState('post', [
-                'currentPost'
-            ]),
-            ...mapState('post', [
-                'contextMenu'
-            ])
-        },
-        created () {
-            this.$store.dispatch('checkDevice')
         }
+    },
+    computed: {
+        ...mapState('post', [
+            'currentPost'
+        ]),
+        ...mapState('post', [
+            'contextMenu'
+        ])
+    },
+    created () {
+        this.$store.dispatch('checkDevice')
     }
+}
 </script>
 <style lang="scss">
     button {
