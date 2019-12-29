@@ -23,6 +23,7 @@
     },
     "dependencies": {
         "laravel-mix-purgecss": "^4.1.0",
+        "laravel-mix-svg-vue": "^0.2.6",
         "tailwindcss": "^1.0.6",
         "tiptap": "^1.26.5",
         "tiptap-extensions": "^1.28.5",
