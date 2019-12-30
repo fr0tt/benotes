@@ -40,8 +40,22 @@ export default {
 }
 </script>
 <style lang="scss">
+    .py-1\.5 {
+        padding-top: 0.375rem;
+        padding-bottom: 0.375rem;
+    }
     button {
         transition: color, background-color 0.2s;
+    }
+    .button {
+        @apply border-2 border-orange-500 bg-orange-500 text-white rounded-full
+            outline-none leading-tight text-xl font-semibold px-5 py-1.5;
+        .button-icon {
+            @apply w-5 mr-1 fill-current align-bottom inline-block;
+        }
+    }
+    .button:hover {
+        @apply text-orange-500 bg-white;
     }
     .router-fade-enter-active, .router-fade-leave-active {
         transition: opacity .2s ease;

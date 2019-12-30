@@ -20,9 +20,7 @@
             </div>
 
             <div class="flex items-center justify-between">
-                <button class="text-blue-700 font-semibold text-lg bg-transparent
-                    hover:text-white py-1 px-8 border-2 border-blue-500 hover:bg-blue-500" type="submit">Save
-                </button>
+                <button class="button" type="submit">Save</button>
                 <!--
                 <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="#">
                     Forgot Password?
@@ -71,7 +69,8 @@ export default {
         @apply appearance-none w-full py-3 px-3 text-gray-700 bg-gray-input leading-tight;
     }
     .input:focus {
-        @apply outline-none shadow-outline;
+        @apply outline-none;
+        box-shadow: 0 0 0 2px rgba(225, 125, 66, 0.5);
     }
     label.label {
         @apply block text-gray-600 font-semibold text-sm uppercase mb-2;
