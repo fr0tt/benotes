@@ -137,7 +137,7 @@ export default {
 </script>
 <style lang="scss" scoped>
     .card {
-        @apply rounded relative overflow-hidden shadow-lg;
+        @apply relative overflow-hidden shadow-lg;
         width: 22rem;
         height: 22.5rem;
         transition: background-color 0.3s;
@@ -161,7 +161,7 @@ export default {
         bottom: 1.25rem;
     }
     .active {
-        @apply bg-yellow-300 border border-yellow-400;
+        @apply bg-orange-100 border border-orange-300;
     }
     /*textarea { @TODO remove
         resize: none;

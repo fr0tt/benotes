@@ -20,7 +20,7 @@
             </div>
 
             <div class="flex items-center justify-between">
-                <button class="button" type="submit">Save</button>
+                <button class="button" type="submit">Login</button>
                 <!--
                 <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="#">
                     Forgot Password?

@@ -48,14 +48,14 @@ export default {
         transition: color, background-color 0.2s;
     }
     .button {
-        @apply border-2 border-orange-500 bg-orange-500 text-white rounded-full
-            outline-none leading-tight text-xl font-semibold px-5 py-1.5;
+        @apply border-2 border-orange-500 text-orange-500 bg-white rounded-lg
+            outline-none leading-tight text-xl font-semibold px-4 py-1;
         .button-icon {
             @apply w-5 mr-1 fill-current align-bottom inline-block;
         }
     }
     .button:hover {
-        @apply text-orange-500 bg-white;
+        @apply bg-orange-500 text-white;
     }
     .router-fade-enter-active, .router-fade-leave-active {
         transition: opacity .2s ease;
