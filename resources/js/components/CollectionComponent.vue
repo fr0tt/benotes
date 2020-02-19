@@ -1,11 +1,21 @@
 <template>
     <div>
+        <div class="flex pl-5 pr-8 py-4">
+            <div class="flex-1">
+                <span class="text-orange-600 font-semibold text-2xl">{{ currentCollection.name }}</span>
+            </div>
+            <div class="">
+                <button class="button">
+                    Create
+                </button>
+            </div>
+        </div>
         <div>
             <transition name="collection-fade">
                 <ol class="mt-4 mb-40" v-if="!isLoading">
                     <transition-group name="grid-fade">
                         <Post v-for="post in posts" class="item"
-                            :key="post.id" 
+                            :key="post.id"
                             :post="post" />
                     </transition-group>
                 </ol>
@@ -50,6 +60,9 @@ export default {
         ...mapState('collection', [
             'collectionMenu'
         ]),
+        ...mapState('collection', [
+            'currentCollection'
+        ])
     },
     created () {
         this.init()
