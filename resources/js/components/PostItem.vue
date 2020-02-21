@@ -138,14 +138,14 @@ export default {
 <style lang="scss" scoped>
     .card {
         @apply relative overflow-hidden shadow-lg;
-        width: 22rem;
-        height: 22.5rem;
+        width: 20rem;
+        height: 20.5rem;
         transition: background-color 0.3s;
         -webkit-transition: background-color 0.3s;
         -moz-transition: background-color 0.3s;
     }
     .h-cover {
-        height: 12.5rem;
+        height: 10.5rem;
     }
     .description {
         height: 3rem;
