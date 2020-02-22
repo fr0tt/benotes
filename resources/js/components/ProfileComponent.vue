@@ -1,6 +1,6 @@
 <template>
     <form @submit.prevent="update()" class="mt-20 lg:mx-20 mx-10">
-        <div class="max-w-2xl">
+        <div class="max-w-xl">
 
             <div class="mb-8">
                 <h2 class="text-3xl font-medium text-gray-800">{{ authUser.name }}</h2>
@@ -24,9 +24,8 @@
                 <input v-model="password_new" placeholder="New Password" type="password" class="input"/>
             </div>
             
-            <div class="mt-16">
-                <button class="text-blue-700 font-semibold text-lg
-                    hover:text-white py-1 px-8 border-2 border-blue-500 hover:bg-blue-500">Save</button>
+            <div class="mt-8 float-right">
+                <button class="button">Save</button>
             </div>
 
             <p v-if="error" class="text-red-500 mt-4">{{ error }}</p>
@@ -95,8 +94,5 @@ export default {
     }
     .input {
         @apply w-full text-lg text-gray-800 font-medium bg-gray-300 outline-none py-2 px-4 my-1;
-    }
-    .button {
-        @apply font-semibold text-lg tracking-wider py-1 border-2;
     }
 </style>
