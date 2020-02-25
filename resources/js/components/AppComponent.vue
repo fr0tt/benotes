@@ -48,7 +48,7 @@ export default {
         transition: color, background-color 0.2s;
     }
     .button {
-        @apply border-2 border-orange-500 text-orange-500 bg-white rounded-lg
+        @apply border-2 border-orange-600 text-orange-600 bg-white rounded-lg
             outline-none leading-tight text-xl font-semibold px-4 py-1;
         .button-icon {
             @apply w-5 mr-1 fill-current align-bottom inline-block;
