@@ -57,7 +57,6 @@ export default {
                     collection_id: this.currentCollection.id
                 })
                     .then(response => {
-                        console.log(response)
                         this.$store.dispatch('post/addPost', response.data.data)
                     })
                     .catch(error => {
