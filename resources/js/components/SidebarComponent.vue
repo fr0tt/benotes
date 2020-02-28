@@ -1,13 +1,13 @@
 <template>
     <transition name="slide" mode="out-in">
-        <div v-if="isOpen" class="sidebar pb-6 box-shadow mr-4 md:w-48 xl:w-1/6">
+        <div v-if="isOpen" class="sidebar pb-6 md:w-48 xl:w-1/6">
             <div class="flex px-8 py-4">
                 <div class="relative flex-1">
                     <div class="absolute mt--4 min-w-48 bg-white" :class="{ 'rounded shadow': menuIsOpen }">
                         <div @click="menuIsOpen = !menuIsOpen" class="p-4 cursor-pointer">
                             <svg class="w-5 mr-2 align-text-bottom fill-current text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 20a10 10 0 1 1 0-20 10 10 0 0 1 0 20zM7 6v2a3 3 0 1 0 6 0V6a3 3 0 1 0-6 0zm-3.65 8.44a8 8 0 0 0 13.3 0 15.94 15.94 0 0 0-13.3 0z"/></svg>
-                            <span class="text-lg text-gray-700">{{ authUser.name }}</span>
-                            <svg-vue class="w-2.5 ml-2 text-gray-700 cursor-pointer fill-current inline-block" icon="arrow_down"/>
+                            <span class="text-gray-700">{{ authUser.name }}</span>
+                            <svg-vue class="w-2 ml-2 text-gray-700 cursor-pointer fill-current inline-block" icon="arrow_down"/>
                         </div>
                         <transition name="fade">
                             <div v-if="menuIsOpen" @click="menuIsOpen = false" class="pb-1">
@@ -53,11 +53,11 @@
                 </router-link>
             </div>
             <br><br><br><br><br>
-            <div class="px-8 absolute bottom-0">
+            <div class="px-8 absolute bottom-4">
                 <span class="flex-1 text-orange-600 text-xl font-medium">Benote</span>
             </div>
         </div>
-        <div v-else class="sidebar pb-6 box-shadow mr-4 w-12 text-center py-4">
+        <div v-else class="sidebar pb-6 mr-4 w-12 text-center py-4">
             <svg @click="toggle()" class="menu-icon text-gray-500 cursor-pointer fill-current inline-block"
                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0V0z"></path><path d="M3 18h13v-2H3v2zm0-5h10v-2H3v2zm0-7v2h13V6H3zm18 9.59L17.42 12 21 8.41 19.59 7l-5 5 5 5L21 15.59z"></path>
             </svg>
@@ -109,9 +109,6 @@ export default {
     .mt--4 {
         margin-top: -1rem;
     }
-    .w-2\.5 {
-        width: 0.625rem;
-    }
     .min-w-48 {
         min-width: 12rem;
     }
@@ -119,7 +116,11 @@ export default {
         padding-top: 0.375rem;
         padding-bottom: 0.375rem;
     }
+    .bottom-4 {
+        bottom: 1rem;
+    }
     .sidebar {
+        font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         box-shadow: 2px 3px 3px 0 rgba(0, 0, 0, 0.1);
         transition: width cubic-bezier(0.4, 0, 0.2, 1) 0.35s;
         -webkit-transition: width cubic-bezier(0.4, 0, 0.2, 1) 0.35s;
@@ -152,10 +153,10 @@ export default {
         .list {
             .collection {
                 @apply inline-block w-full px-8 py-1;
-                @apply font-semibold text-gray-500 text-lg cursor-pointer;
+                @apply font-medium text-gray-500 cursor-pointer;
             }
             .router-link-exact-active {
-                @apply bg-orange-200 text-gray-700;
+                @apply bg-orange-200 text-gray-700 font-semibold;
             }
         }
     }
