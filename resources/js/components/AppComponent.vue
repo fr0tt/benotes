@@ -47,11 +47,16 @@ export default {
     button {
         transition: color, background-color 0.2s;
     }
+    button:focus {
+        outline: none;
+    }
     .button {
         @apply border-2 border-orange-600 text-orange-600 bg-white rounded-lg
             outline-none leading-tight text-xl font-semibold px-4 py-1;
         .button-icon {
-            @apply w-5 mr-1 fill-current align-bottom inline-block;
+            @apply mr-1 fill-current align-middle inline-block;
+            width: 1.1rem;
+            margin-top: -0.3rem;
         }
     }
     .button:hover {
