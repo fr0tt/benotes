@@ -17,10 +17,10 @@ export default {
             state.posts = posts
         },
         addPost (state, post) {
-            state.posts.push(post)
+            state.posts.unshift(post)
         },
-        setPost (state, post, index) {
-            state.posts[index] = post
+        setPost (state, { post, index }) {
+            state.posts.splice(index, 1, post)
         },
         deletePost (state, index) {
             state.posts.splice(index, 1)
@@ -58,11 +58,26 @@ export default {
                     context.commit('isLoading', false)
                 })
         },
+        getPost (context, id) {
+            return new Promise((resolve, reject) => {
+                axios.get('/api/posts/' + id)
+                    .then(response => {
+                        const post = response.data.data
+                        // context.commit('setCurrentPost', post)
+                        resolve(post)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        reject(error)
+                    })
+            })
+        },
         addPost (context, post) {
             context.commit('addPost', post)
         },
         updatePost (context, { post, newCollectionId }) {
             const params = {}
+            params.title = post.title
             params.content = post.content
             if (typeof newCollectionId !== 'undefined') {
                 if (newCollectionId === null) {
@@ -74,9 +89,15 @@ export default {
             axios.patch('/api/posts/' + post.id, params)
                 .then(response => {
                     const newPost = response.data.data
+                    if (context.state.posts === null) {
+                        return
+                    }
                     context.state.posts.find((post, i) => {
                         if (post.id === newPost.id) {
-                            context.commit('setPost', post, i)
+                            context.commit('setPost', { 
+                                post: newPost,
+                                index: i
+                            })
                             return
                         }
                     })
