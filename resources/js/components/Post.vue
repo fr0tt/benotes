@@ -5,7 +5,7 @@
             <div class="flex-1 mr-8 editor">
 
                 <input class="block w-full text-3xl font-medium placeholder-orange-500 text-orange-500 outline-none mb-4"
-                    v-model="title" placeholder="Title" tabindex="1"/>
+                    v-model="title" placeholder="Title" tabindex="1" autofocus/>
 
                 <EditorMenuBar :editor="editor"/>
                 <EditorContent :editor="editor" class="editorContent h-full text-lg my-4"/>
@@ -60,6 +60,13 @@ export default {
             if (content === '' || this.currentCollection === null) {
                 return
             }
+            const matches = content.match(/^<p>(?<content>.(?:(?!<p>)(?!<\/p>).)*)<\/p>$/)
+            if (matches !== null) {
+                content = matches[1]
+            }
+
+            this.$router.push({ path: '/' })
+
             if (this.isNewPost) {
                 axios.post('/api/posts', {
                     title: this.title,
@@ -67,26 +74,26 @@ export default {
                     collection_id: this.currentCollection.id
                 })
                     .then(response => {
-                        this.$store.dispatch('post/addPost', response.data.data)
+                        if (this.posts !== null) {
+                            this.$store.dispatch('post/addPost', response.data.data)
+                        }
                     })
                     .catch(error => {
                         console.log(error)
                     })
             } else {
                 this.post.title = this.title
-                const matches = content.match(/^<p>(?<content>.(?:(?!<p>)(?!<\/p>).)*)<\/p>$/)
-                if (matches !== null) {
-                    content = matches[1]
-                }
                 this.post.content = content
                 this.$store.dispatch('post/updatePost', { post: this.post })
-                this.$router.push({ path: '/' })
             }
         }
     },
     computed: {
         ...mapState('collection', [
             'currentCollection'
+        ]),
+        ...mapState('post', [
+            'posts'
         ])
     },
     created () {
