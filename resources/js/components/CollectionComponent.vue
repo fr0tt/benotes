@@ -48,20 +48,22 @@ export default {
         },
         pasteNewPost () {
             // may only work with a secure connection
-            const content = navigator.clipboard.readText()
-            if (content === '' || content === null) {
-                return
-            }
-            axios.post('/api/posts', {
-                content: content,
-                collection_id: this.currentCollection.id
+            navigator.clipboard.readText().then(content => {
+                if (content === '' || content === null) {
+                    return
+                }
+                axios.post('/api/posts', {
+                    content: content,
+                    collection_id: this.currentCollection.id
+                })
+                    .then(response => {
+                        console.log(response)
+                        this.$store.dispatch('post/addPost', response.data.data)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
             })
-                .then(response => {
-                    this.$store.dispatch('post/addPost', response.data.data)
-                })
-                .catch(error => {
-                    console.log(error)
-                })
         }
     },
     watch: {
