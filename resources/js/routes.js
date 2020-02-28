@@ -1,4 +1,5 @@
 import App from './components/AppComponent'
+import Post from './components/Post'
 import Collection from './components/CollectionComponent'
 import CreateCollection from './components/CreateCollectionComponent'
 import Profile from './components/ProfileComponent'
@@ -31,6 +32,22 @@ export default [
                 path: 'c/:id',
                 name: 'collection',
                 component: Collection,
+                props: true,
+                meta: {
+                    requiresAuth: true
+                }
+            },
+            {
+                path: 'p/create',
+                component: Post,
+                meta: {
+                    requiresAuth: true
+                }
+            },
+            {
+                path: 'p/:id',
+                name: 'post',
+                component: Post,
                 props: true,
                 meta: {
                     requiresAuth: true
