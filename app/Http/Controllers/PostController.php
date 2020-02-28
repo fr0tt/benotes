@@ -40,7 +40,7 @@ class PostController extends Controller
         if (isset($request->limit)) {
             $posts = $posts->limit($request->limit);
         }
-        $posts = $posts->get();
+        $posts = $posts->orderBy('created_at', 'desc')->get();
 
         return response()->json(['data' => $posts], 200);
     }
@@ -57,6 +57,7 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
+            'title' => 'string|nullable',
             'content' => 'required|string',
             'collection_id' => 'integer|nullable' 
         ]);
@@ -68,6 +69,11 @@ class PostController extends Controller
             }
         }
 
+        $title = null;
+        if (isset($request->title)) {
+            $title = $request->title;
+        }
+
         $info = $this->computePostData($request->content);
         
         if ($info['type'] === Post::POST_TYPE_LINK) {
@@ -76,7 +82,7 @@ class PostController extends Controller
                 'type' => $info['type'],
                 'url' => $info['url'],
                 'base_url' => $info['base_url'],
-                'title' => $info['title'],
+                'title' => ($title === null) ? $info['title'] : $title,
                 'description' => $info['description'],
                 'color' => $info['color'],
                 'collection_id' => $request->collection_id,
@@ -85,6 +91,7 @@ class PostController extends Controller
             $this->saveImage($info['image_path'], $post);
         } else {
             $post = Post::create([
+                'title' => $title,
                 'content' => $request->content,
                 'type' => $info['type'],
                 'collection_id' => $request->collection_id,
@@ -99,6 +106,7 @@ class PostController extends Controller
     {
 
         $this->validate($request, [
+            'title' => 'string|nullable',
             'content' => 'required|string',
             'collection_id' => 'integer|nullable'
         ]);
@@ -115,6 +123,11 @@ class PostController extends Controller
             }
         }
 
+        $title = null;
+        if (isset($request->title)) {
+            $title = $request->title;
+        }
+
         $info = $this->computePostData($request->content);
 
         if ($info['type'] === Post::POST_TYPE_LINK) {
@@ -123,7 +136,7 @@ class PostController extends Controller
                 'type' => $info['type'],
                 'url' => $info['url'],
                 'base_url' => $info['base_url'],
-                'title' => $info['title'],
+                'title' => ($title === null) ? $info['title'] : $title,
                 'description' => $info['description'],
                 'color' => $info['color'],
                 'collection_id' => $request->collection_id
@@ -131,6 +144,7 @@ class PostController extends Controller
             $this->saveImage($info['image_path'], $post);
         } else {
             $post->update([
+                'title' => $title,
                 'content' => $request->content,
                 'type' => $info['type'],
                 'collection_id' => $request->collection_id,
