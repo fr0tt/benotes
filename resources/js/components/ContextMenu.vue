@@ -24,8 +24,11 @@ export default {
     props: ['postId'],
     methods: {
         edit () {
+            /*
             this.$store.dispatch('post/setCurrentPost', this.contextMenu.post)
             document.querySelector('#app').addEventListener('click', this.stopEditing, true)
+            */
+            this.$router.push({ path: '/p/' + this.contextMenu.post.id })
             this.hide()
         },
         del () {
@@ -40,7 +43,7 @@ export default {
             this.hide()
         },
         hide () {
-            this.$store.dispatch('post/hideContextMenu') 
+            this.$store.dispatch('post/hideContextMenu')
         },
         stopEditing (event) {
             const currentPostTarget = document.querySelector(`[post-id="${this.currentPost.id}"] .ProseMirror`)
