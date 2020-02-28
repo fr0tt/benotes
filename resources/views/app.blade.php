@@ -5,7 +5,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>SPA</title>
-        <link rel="stylesheet" type="text/css" href="/css/app.css">
+        <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+        <link href="/css/app.css" type="text/css" rel="stylesheet">
     </head>
     <body class="h-full">
         <div id="app" class="h-full">
