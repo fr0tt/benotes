@@ -4,6 +4,7 @@ export default {
     namespaced: true,
     state: {
         posts: null,
+        maxOrder: 0,
         currentPost: null,
         isLoading: false,
         contextMenu: {
@@ -36,6 +37,9 @@ export default {
         },
         isLoading (state, isLoading) {
             state.isLoading = isLoading
+        },
+        setMaxOrder (state, order) {
+            state.maxOrder = order
         }
     },
     actions: {
@@ -51,6 +55,7 @@ export default {
                 .then(response => {
                     const posts = response.data.data
                     context.commit('setPosts', posts)
+                    context.commit('setMaxOrder', posts[0].order)
                     context.commit('isLoading', false)
                 })
                 .catch(error => {
@@ -94,7 +99,7 @@ export default {
                     }
                     context.state.posts.find((post, i) => {
                         if (post.id === newPost.id) {
-                            context.commit('setPost', { 
+                            context.commit('setPost', {
                                 post: newPost,
                                 index: i
                             })
