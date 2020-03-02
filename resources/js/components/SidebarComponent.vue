@@ -3,7 +3,7 @@
         <div v-if="isOpen" class="sidebar pb-6 md:w-48 xl:w-1/6">
             <div class="flex px-8 py-4">
                 <div class="relative flex-1">
-                    <div class="absolute mt--4 min-w-48 bg-white" :class="{ 'rounded shadow': menuIsOpen }">
+                    <div class="absolute menu min-w-48 bg-white" :class="{ 'rounded shadow': menuIsOpen }">
                         <div @click="menuIsOpen = !menuIsOpen" class="p-4 cursor-pointer">
                             <svg class="w-5 mr-2 align-text-bottom fill-current text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 20a10 10 0 1 1 0-20 10 10 0 0 1 0 20zM7 6v2a3 3 0 1 0 6 0V6a3 3 0 1 0-6 0zm-3.65 8.44a8 8 0 0 0 13.3 0 15.94 15.94 0 0 0-13.3 0z"/></svg>
                             <span class="text-gray-700">{{ authUser.name }}</span>
@@ -106,9 +106,6 @@ export default {
 </script>
 
 <style lang="scss">
-    .mt--4 {
-        margin-top: -1rem;
-    }
     .min-w-48 {
         min-width: 12rem;
     }
@@ -140,15 +137,18 @@ export default {
         svg {
             display: inline-block;
         }
+        .menu {
+            margin-top: -0.9rem;
+            .menuItem {
+                @apply block py-1.5 px-4 font-medium text-gray-700;
+                transition: 0.2s background-color;
+            }
+            .menuItem:hover {
+                @apply bg-gray-300;
+            }
+        }
         .menu-icon {
             width: 1.75rem;
-        }
-        .menuItem {
-            @apply block py-1.5 px-4 font-medium text-gray-700;
-            transition: 0.2s background-color;
-        }
-        .menuItem:hover {
-            @apply bg-gray-300;
         }
         .list {
             .collection {
