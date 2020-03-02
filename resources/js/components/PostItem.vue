@@ -7,7 +7,7 @@
                     <span class="text-white text-2xl font-medium">{{ domain }}</span>
                 </div>
             </a>
-            <div class="px-6 pt-4">
+            <div class="px-6 pt-4 cursor-pointer">
                 <div class="font-bold text-xl mb-2 truncate" :title="post.title">
                     {{ post.title }}
                 </div>

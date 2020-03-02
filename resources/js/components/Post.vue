@@ -4,11 +4,13 @@
 
             <div class="flex-1 mr-8 editor">
 
-                <input class="block w-full text-3xl font-medium placeholder-orange-500 text-orange-500 outline-none mb-4"
-                    v-model="title" placeholder="Title" tabindex="1" autofocus/>
+                <div class="max-w-5xl">
+                    <input class="block w-full text-3xl font-medium placeholder-orange-500 text-orange-500
+                        outline-none mb-4 border-b border-orange-400" v-model="title" placeholder="Title" tabindex="1" autofocus/>
 
-                <EditorMenuBar :editor="editor"/>
-                <EditorContent :editor="editor" class="editorContent h-full text-lg my-4"/>
+                    <EditorMenuBar :editor="editor" class="w-full"/>
+                    <EditorContent :editor="editor" class="editorContent h-full text-lg my-4"/>
+                </div>
 
             </div>
             <div class="w-40">
