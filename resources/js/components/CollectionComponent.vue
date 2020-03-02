@@ -17,13 +17,14 @@
         </div>
         <div class="ml-4">
             <transition name="collection-fade">
-                <ol class="mt-4 mb-40" v-if="!isLoading">
+                <Draggable v-if="!isLoading" tag="ol" v-model="posts" :move="dragged"
+                    @start="drag = true" @end="drag = false"
+                    v-bind="{ animation: 200 }" class="mt-4 mb-40" >
                     <transition-group name="grid-fade">
-                        <Post v-for="post in posts" class="item"
-                            :key="post.id"
-                            :post="post" />
+                        <Post v-for="post in posts" :class="drag ? null : 'item-transition'"
+                            :key="post.order" :post="post" />
                     </transition-group>
-                </ol>
+                </Draggable>
             </transition>
         </div>
         <CollectionMenu v-if="collectionMenu.isVisible"/>
@@ -34,12 +35,19 @@ import axios from 'axios'
 import { mapState } from 'vuex'
 import Post from './PostItem.vue'
 import CollectionMenu from './CollectionMenuComponent.vue'
+import Draggable from 'vuedraggable'
 
 export default {
     props: ['id'],
     components: {
         Post,
-        CollectionMenu
+        CollectionMenu,
+        Draggable
+    },
+    data () {
+        return {
+            drag: false
+        }
     },
     methods: {
         init () {
@@ -63,6 +71,14 @@ export default {
                         console.log(error)
                     })
             })
+        },
+        dragged (event) {
+            axios.patch('/api/posts/' + event.draggedContext.element.id, {
+                order: this.maxOrder - event.draggedContext.futureIndex
+            })
+                .catch(error => {
+                    console.log(error)
+                })
         }
     },
     watch: {
@@ -72,8 +88,16 @@ export default {
         }
     },
     computed: {
+        posts: {
+            get () {
+                return this.$store.state.post.posts
+            },
+            set (value) {
+                this.$store.commit('post/setPosts', value)
+            }
+        },
         ...mapState('post', [
-            'posts'
+            'maxOrder'
         ]),
         ...mapState('post', [
             'isLoading'
@@ -97,7 +121,7 @@ export default {
     .collection-fade-enter, .collection-fade-leave-to{
         opacity: 0;
     }
-    .item {
+    .item-transition {
         transition: all 0.6s;
     }
     .grid-fade-enter-active {
