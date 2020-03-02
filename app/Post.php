@@ -21,7 +21,7 @@ class Post extends Model
      */
     protected $fillable = [
         'content', 'type', 'url', 'base_url', 'title', 'description', 
-        'color', 'image_path', 'user_id', 'collection_id'
+        'color', 'image_path', 'user_id', 'collection_id', 'order'
     ];
 
     /**
@@ -39,6 +39,15 @@ class Post extends Model
             return 'text';
         } else if ($value === self::POST_TYPE_LINK) {
             return 'link';
+        }
+    }
+
+    public static function getTypeFromString($value)
+    {
+        if ($value === 'text') {
+            return self::POST_TYPE_TEXT;
+        } else if ($value === 'link') {
+            return self::POST_TYPE_LINK;
         }
     }
 

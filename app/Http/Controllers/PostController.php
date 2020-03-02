@@ -40,7 +40,7 @@ class PostController extends Controller
         if (isset($request->limit)) {
             $posts = $posts->limit($request->limit);
         }
-        $posts = $posts->orderBy('created_at', 'desc')->get();
+        $posts = $posts->orderBy('order', 'desc')->get();
 
         return response()->json(['data' => $posts], 200);
     }
@@ -56,7 +56,7 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-        $this->validate($request, [
+        $validatedData = $this->validate($request, [
             'title' => 'string|nullable',
             'content' => 'required|string',
             'collection_id' => 'integer|nullable' 
@@ -69,34 +69,16 @@ class PostController extends Controller
             }
         }
 
-        $title = null;
-        if (isset($request->title)) {
-            $title = $request->title;
-        }
-
         $info = $this->computePostData($request->content);
+
+        $attributes = array_merge($validatedData, $info);
+        $attributes['user_id'] = Auth::user()->id;
+        $attributes['order'] = Post::where('collection_id', $request->collection_id)->max('order') + 1;
         
+        $post = Post::create($attributes);
+
         if ($info['type'] === Post::POST_TYPE_LINK) {
-            $post = Post::create([
-                'content' => $request->content,
-                'type' => $info['type'],
-                'url' => $info['url'],
-                'base_url' => $info['base_url'],
-                'title' => ($title === null) ? $info['title'] : $title,
-                'description' => $info['description'],
-                'color' => $info['color'],
-                'collection_id' => $request->collection_id,
-                'user_id' => Auth::user()->id
-            ]);
             $this->saveImage($info['image_path'], $post);
-        } else {
-            $post = Post::create([
-                'title' => $title,
-                'content' => $request->content,
-                'type' => $info['type'],
-                'collection_id' => $request->collection_id,
-                'user_id' => Auth::user()->id
-            ]);
         }
 
         return response()->json(['data' => $post], 201);
@@ -105,10 +87,11 @@ class PostController extends Controller
     public function update(Request $request, $id)
     {
 
-        $this->validate($request, [
+        $validatedData = $this->validate($request, [
             'title' => 'string|nullable',
-            'content' => 'required|string',
-            'collection_id' => 'integer|nullable'
+            'content' => 'string',
+            'collection_id' => 'integer|nullable',
+            'order' => 'integer'
         ]);
 
         $post = Post::find($id);
@@ -123,33 +106,34 @@ class PostController extends Controller
             }
         }
 
-        $title = null;
-        if (isset($request->title)) {
-            $title = $request->title;
+        if (isset($request->content)) {
+            $info = $this->computePostData($request->content);
+        } else {
+            $info = array();
+            $info['type'] = Post::getTypeFromString($post->type);
         }
 
-        $info = $this->computePostData($request->content);
+        $newValues = array_merge($validatedData, $info);
+        $newValues['user_id'] = Auth::user()->id;
 
-        if ($info['type'] === Post::POST_TYPE_LINK) {
-            $post->update([
-                'content' => $request->content,
-                'type' => $info['type'],
-                'url' => $info['url'],
-                'base_url' => $info['base_url'],
-                'title' => ($title === null) ? $info['title'] : $title,
-                'description' => $info['description'],
-                'color' => $info['color'],
-                'collection_id' => $request->collection_id
-            ]);
+        if (isset($request->order)) {
+            $newOrder = $request->order;
+            $oldOrder = $post->order;
+            if ($newOrder !== $oldOrder) {
+                if ($newOrder > $oldOrder) {
+                    Post::where('collection_id', $post->collection_id)
+                        ->whereBetween('order', [$oldOrder + 1, $newOrder])->decrement('order');
+                } else {
+                    Post::where('collection_id', $post->collection_id)
+                        ->whereBetween('order', [$newOrder, $oldOrder - 1])->increment('order');
+                }
+            }
+        }
+
+        $post->update($newValues); 
+
+        if ($info['type'] === Post::POST_TYPE_LINK && isset($request->content)) {
             $this->saveImage($info['image_path'], $post);
-        } else {
-            $post->update([
-                'title' => $title,
-                'content' => $request->content,
-                'type' => $info['type'],
-                'collection_id' => $request->collection_id,
-                'user_id' => Auth::user()->id
-            ]);
         }
 
         return response()->json(['data' => $post], 200);
