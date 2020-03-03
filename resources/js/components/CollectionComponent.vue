@@ -1,21 +1,21 @@
 <template>
     <div>
-        <div class="flex pl-8 pr-8 py-3 shadow-md">
+        <div class="sm:flex sm:px-8 px-2 py-3 shadow-md">
             <div class="flex-1">
                 <span class="text-orange-600 font-semibold text-2xl">{{ currentCollection.name }}</span>
             </div>
-            <div class="">
-                <button class="button mx-2" @click="pasteNewPost()">
+            <div class="mt-2 sm:mt-0">
+                <button class="button" @click="pasteNewPost()">
                     <svg-vue class="button-icon" icon="zondicons/paste"/>
                     Paste
                 </button>
-                <router-link to="/p/create" class="button mx-2" tag="button">
+                <router-link to="/p/create" class="button ml-4" tag="button">
                     <svg-vue class="button-icon" icon="zondicons/add-outline"/>
                     Create
                 </router-link>
             </div>
         </div>
-        <div class="ml-4">
+        <div class="sm:ml-4 -ml-2">
             <transition name="collection-fade">
                 <Draggable v-if="!isLoading" tag="ol" v-model="posts" :move="dragged"
                     @start="drag = true" @end="drag = false"
