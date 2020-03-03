@@ -27,8 +27,8 @@
         </div>
         <div v-else class="card bg-gray-100" :class="{ 'active' : isActive() }">
             <div class="p-6 h-full">
-                <div @click="edit($event)" class="text-gray-900 text-xl outline-none h-full w-full cursor-pointer"
-                    :class="{ 'overflow-hidden' : !isActive() }">
+                <div @click="edit($event)" class="text-gray-900 text-xl outline-none h-full w-full"
+                    :class="{ 'overflow-hidden cursor-pointer' : !isActive() }">
                     <EditorContent :editor="editor" class="editorContent" />
                 </div>
             </div>
@@ -70,7 +70,6 @@ export default {
     },
     methods: {
         edit (event) {
-            /*
             if (this.currentPost !== null) {
                 if (this.currentPost.id === this.post.id) {
                     return
@@ -78,17 +77,13 @@ export default {
             }
             this.$store.dispatch('post/setCurrentPost', this.post)
             document.querySelector('#app').addEventListener('click', this.stopEditing, true)
-            */
-            this.$router.push({ path: '/p/' + this.post.id })
+            /* this.$router.push({ path: '/p/' + this.post.id }) */
         },
         isActive () {
-            return false
-            /*
             if (this.currentPost === null) {
                 return false
             }
             return this.currentPost.id === this.post.id
-            */
         },
         stopEditing (event) {
             const currentPostTarget = document.querySelector(`[post-id="${this.currentPost.id}"] .ProseMirror`)
@@ -125,7 +120,7 @@ export default {
         ...mapState('post', [
             'contextMenu'
         ])
-    }, /*
+    },
     watch: {
         currentPost (value) {
             if (value === null)
@@ -137,7 +132,7 @@ export default {
             })
             this.editor.focus()
         } 
-    }, */
+    },
     beforeDestroy () {
         this.editor.destroy()
     }

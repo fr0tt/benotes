@@ -9,7 +9,7 @@
                         outline-none mb-4 border-b border-orange-400" v-model="title" placeholder="Title" tabindex="1" autofocus/>
 
                     <EditorMenuBar :editor="editor" class="w-full"/>
-                    <EditorContent :editor="editor" class="editorContent h-full text-lg my-4"/>
+                    <EditorContent :editor="editor" class="editorContent h-32 text-lg my-4"/>
                 </div>
 
             </div>
