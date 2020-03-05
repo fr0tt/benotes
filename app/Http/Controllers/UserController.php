@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Hash;
 
@@ -10,6 +11,37 @@ use App\User;
 
 class UserController extends Controller
 {
+
+    public function index()
+    {
+        $users = User::all();
+        return response()->json(['data' => $users], 200);
+    }
+
+    public function show(User $user)
+    {
+        return response()->json(['data', $user], 200);
+    }
+
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'name'     => 'required|alpha_dash',
+            'email'    => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        if (Auth::user()->permission < User::ADMIN) {
+            return response()->json('Not allowed', 403);
+        }
+
+        $user = new User;
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($user->password);
+
+        return response()->json([['data' => $user]], 201);
+    }
 
     public function update(Request $request, int $id)
     {

@@ -34,6 +34,9 @@ Route::group([
     Route::post('api/collections', 'CollectionController@store');
     Route::delete('api/collections/{id}', 'CollectionController@destroy');
     
+    Route::get('api/users', 'UserController@index');
+    Route::get('api/users/{id}', 'UserController@show');
+    Route::post('api/users', 'UserController@store');
     Route::patch('api/users/{id}', 'UserController@update');
 
 }); 

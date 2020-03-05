@@ -2,7 +2,8 @@ import App from './components/AppComponent'
 import Post from './components/Post'
 import Collection from './components/CollectionComponent'
 import CreateCollection from './components/CreateCollectionComponent'
-import Profile from './components/ProfileComponent'
+import Users from './components/Users'
+import User from './components/User'
 import Login from './components/LoginComponent'
 
 export default [
@@ -54,9 +55,18 @@ export default [
                 }
             },
             {
-                path: '/users/me',
-                name: 'profile',
-                component: Profile,
+                path: '/users',
+                name: 'users',
+                component: Users,
+                meta: {
+                    requiresAuth: true
+                }
+            },
+            {
+                path: '/users/:id',
+                name: 'user',
+                component: User,
+                props: true,
                 meta: {
                     requiresAuth: true
                 }
