@@ -67,6 +67,7 @@ class InstallCommand extends Command
         $user->name = $username;
         $user->email = $email;
         $user->password = Hash::make($password);
+        $user->permission = User::ADMIN;
         $user->save();
 
         $bar->finish();
