@@ -38,7 +38,8 @@
 import axios from 'axios'
 import { mapState } from 'vuex'
 export default {
-    name: 'Profile',
+    name: 'User',
+    props: ['id'],
     data () {
         return {
             name: '',
