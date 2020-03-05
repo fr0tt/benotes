@@ -181,6 +181,7 @@ class PostController extends Controller
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36');
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         $html = curl_exec($ch);
         curl_close($ch);
@@ -190,6 +191,7 @@ class PostController extends Controller
         $titles = $document->getElementsByTagName('title');
         $title = trim($titles->item(0)->nodeValue); 
         $metas = $document->getElementsByTagName('meta');
+        
         for ($i = 0; $i < $metas->length; $i++) {
             $meta = $metas->item($i);
             if ($meta->getAttribute('name') === 'description') {
