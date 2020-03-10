@@ -1,10 +1,10 @@
 <template>
     <form @submit.prevent="update()" class="mt-20 lg:mx-20 mx-10">
-        <div class="max-w-xl">
+        <div class="max-w-lg">
 
             <div class="mb-8">
-                <h2 class="text-3xl font-medium text-gray-800">{{ authUser.name }}</h2>
-                <p class="text-right italic">{{ authUser.name }} is registered since {{ created_at }}</p>
+                <h2 class="text-3xl font-medium text-gray-800">{{ name }}</h2>
+                <p class="text-right italic">{{ name }} is registered since {{ created_at }}</p>
             </div>
 
             <div class="mb-8">
@@ -23,9 +23,12 @@
                 <label class="label">New Password</label>
                 <input v-model="password_new" placeholder="New Password" type="password" class="input"/>
             </div>
-            
+
             <div class="mt-8 float-right">
-                <button class="button">Save</button>
+                <button class="button">
+                    <svg-vue class="button-icon" icon="zondicons/checkmark-outline"/>
+                    Save
+                </button>
             </div>
 
             <p v-if="error" class="text-red-500 mt-4">{{ error }}</p>
@@ -42,8 +45,8 @@ export default {
     props: ['id'],
     data () {
         return {
-            name: '',
-            email: '',
+            name: null,
+            email: null,
             password_old: null,
             password_new: null,
             error: null
@@ -51,7 +54,7 @@ export default {
     },
     methods: {
         update () {
-            
+
             if (this.name === this.authUser.name && this.email === this.authUser.email &&
                 this.password_old === null && this.password_new === null) {
                 return
@@ -71,7 +74,7 @@ export default {
                 }).catch(error => {
                     this.error = error
                 })
-            
+
         }
     },
     computed: {
@@ -83,8 +86,14 @@ export default {
         }
     },
     created () {
-        this.name = this.authUser.name
-        this.email = this.authUser.email
+        axios.get('/api/users/' + this.id)
+            .then(response => {
+                const user = response.data.data
+                this.name = user.name
+                this.email = user.email
+            }).catch(error => {
+                this.error = error
+            })
     }
 }
 </script>
