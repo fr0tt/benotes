@@ -3,6 +3,23 @@
         <div class="sm:flex sm:px-8 px-2 py-3 shadow-md">
             <div class="flex-1">
                 <span class="text-orange-600 font-semibold text-2xl">{{ currentCollection.name }}</span>
+                <div class="relative inline-block" v-if="currentCollection.id !== null">
+                    <button @click="showContextMenu = !showContextMenu" class="align-text-bottom">
+                        <svg-vue class="w-5 mb-1/5" icon="material/more_vert"/>
+                    </button>
+                    <transition name="fade">
+                        <ol v-if="showContextMenu" class="absolute bg-white shadow-lg contextmenu z-50">
+                            <li @click="edit()">
+                                Edit
+                                <svg class="context-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.3 3.7l4 4L4 20H0v-4L12.3 3.7zm1.4-1.4L16 0l4 4-2.3 2.3-4-4z"/></svg>
+                            </li>
+                            <li @click="del()">
+                                Delete
+                                <svg class="context-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M6 2l2-2h4l2 2h4v2H2V2h4zM3 6h14l-1 14H4L3 6zm5 2v10h1V8H8zm3 0v10h1V8h-1z"/></svg>
+                            </li>
+                        </ol>
+                    </transition>
+                </div>
             </div>
             <div class="mt-2 sm:mt-0">
                 <button class="button" @click="pasteNewPost()">
@@ -46,7 +63,8 @@ export default {
     },
     data () {
         return {
-            drag: false
+            drag: false,
+            showContextMenu: false
         }
     },
     methods: {
@@ -79,6 +97,15 @@ export default {
                 .catch(error => {
                     console.log(error)
                 })
+        },
+        edit () {
+            this.showContextMenu = false
+            this.$router.push({ path: '/c/' + this.currentCollection.id + '/edit' })
+        },
+        del () {
+            this.showContextMenu = false
+            this.$store.dispatch('collection/deleteCollection', this.currentCollection.id)
+            this.$router.push({ path: '/' })
         }
     },
     watch: {
@@ -136,5 +163,8 @@ export default {
     }
     .grid-fade-enter {
         opacity: 0;
+    }
+    .mb-1\/5 {
+        margin-bottom: 0.05rem;
     }
 </style>
