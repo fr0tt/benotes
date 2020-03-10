@@ -18,9 +18,13 @@ class UserController extends Controller
         return response()->json(['data' => $users], 200);
     }
 
-    public function show(User $user)
+    public function show(int $id)
     {
-        return response()->json(['data', $user], 200);
+        $user = User::find($id);
+        if ($user === null) {
+            return response()->json('User not found', 404);
+        }
+        return response()->json(['data' => $user], 200);
     }
 
     public function store(Request $request)
