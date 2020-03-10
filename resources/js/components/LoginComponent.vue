@@ -57,7 +57,9 @@ export default {
                     this.$router.push({ path: '/' })
                 })
                 .catch(error => {
-                    this.error = error.response.data
+                    if (error.response.data.length > 200) {
+                        this.error = error.response.data
+                    }
                 })
         }
     }
