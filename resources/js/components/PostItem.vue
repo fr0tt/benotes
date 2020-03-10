@@ -23,7 +23,7 @@
                     class="w-4 inline img-vertical-align">
                 <a :href="post.url" :title="post.url" target="_blank" class="text-blue-600">{{ post.url }}</a>
             </div>
-            <svg @click="showContextMenu($event)" class="three-dots-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
+            <svg @click="showContextMenu($event)" class="more-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
         </div>
         <div v-else class="card bg-gray-100" :class="{ 'active' : isActive() }">
             <div class="p-6 h-full">
@@ -32,7 +32,7 @@
                     <EditorContent :editor="editor" class="editorContent" />
                 </div>
             </div>
-            <svg @click="showContextMenu($event)" class="three-dots-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
+            <svg @click="showContextMenu($event)" class="more-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
         </div>
         <ContextMenu :postId="post.id"/>
     </li>
@@ -41,7 +41,7 @@
 import { mapState } from 'vuex'
 import { Editor, EditorContent } from 'tiptap'
 import { HardBreak, Heading, Bold, Code, Italic, Link } from 'tiptap-extensions'
-import ContextMenu from './ContextMenu.vue'
+import ContextMenu from './PostContextMenu.vue'
 export default {
     name: 'PostItem',
     props: ['post'],
@@ -157,7 +157,7 @@ export default {
         .img-vertical-align {
             margin-top: -4px;
         }
-        .three-dots-svg {
+        .more-svg {
             @apply w-5 h-5 absolute cursor-pointer;
             /* right: 0.5rem;
             top: 0.75rem; */
