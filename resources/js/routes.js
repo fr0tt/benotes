@@ -1,7 +1,7 @@
 import App from './components/AppComponent'
 import Post from './components/Post'
 import Collection from './components/CollectionComponent'
-import CreateCollection from './components/CreateCollectionComponent'
+import EditCollection from './components/EditCollection'
 import Users from './components/Users'
 import User from './components/User'
 import Login from './components/LoginComponent'
@@ -24,7 +24,21 @@ export default [
             },
             {
                 path: 'c/create',
-                component: CreateCollection,
+                component: EditCollection,
+                props: {
+                    isNew: true
+                },
+                meta: {
+                    requiresAuth: true
+                }
+            },
+            {
+                path: 'c/:id/edit',
+                component: EditCollection,
+                props: (route) => ({
+                    id: route.params.id,
+                    isNew: false
+                }),
                 meta: {
                     requiresAuth: true
                 }
