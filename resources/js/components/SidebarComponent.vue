@@ -12,10 +12,10 @@
                         <transition name="fade">
                             <div v-if="menuIsOpen" @click="menuIsOpen = false" class="pb-1">
                                 <hr class="m-0 mb-1 border-t border-gray-200">
-                                <!-- <router-link class="block py-1 px-4 font-medium text-gray-700">
-                                    Settings
-                                </router-link> -->
-                                <router-link to="/users/me" class="menuItem">
+                                <router-link to="/users" class="menuItem">
+                                    Users
+                                </router-link>
+                                <router-link :to="'/users/' + authUser.id" class="menuItem">
                                     My Account
                                 </router-link>
                                 <!-- <hr class="m-0 mt-1 border-t border-gray-200"> -->
