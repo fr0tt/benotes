@@ -41,6 +41,19 @@ class CollectionController extends Controller
         return response()->json(['data' => $collection], 201);
     }
 
+    public function update(Request $request, $id)
+    {
+        $this->validate($request, [
+            'name' => 'required|string',
+        ]);
+
+        $collection = Collection::find($id);
+        $collection->name = $request->name;
+        $collection->save();
+
+        return response()->json(['data' => $collection], 200);
+    }
+
     public function destroy($id)
     {
 
