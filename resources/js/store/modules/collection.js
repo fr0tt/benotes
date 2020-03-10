@@ -20,6 +20,12 @@ export default {
         addCollection (state, collection) {
             state.collections.push(collection)
         },
+        deleteCollection (state, index) {
+            state.collections.splice(index, 1)
+        },
+        setCollection (state, { index, collection }) {
+            state.collections.splice(index, 1, collection)
+        },
         setCurrentCollection (state, collection) {
             state.currentCollection = collection
         },
@@ -41,6 +47,33 @@ export default {
         },
         addCollection (context, collection) {
             context.commit('addCollection', collection)
+        },
+        updateCollection (context, { id, name }) {
+            axios.patch('/api/collections/' + id, {
+                name: name
+            })
+                .then((response) => {
+                    const newCollection = response.data.data
+                    const index = context.state.collections.findIndex((collection) => {
+                        return collection.id === newCollection.id
+                    })
+                    context.commit('setCollection', { index, collection: newCollection })
+                })
+                .catch(error => {
+                    console.log(error.response.data)
+                })
+        },
+        deleteCollection (context, id) {
+            axios.delete('/api/collections/' + id)
+                .then(response => {
+                    const index = context.state.collections.findIndex((collection) => {
+                        return collection.id === id
+                    })
+                    context.commit('deleteCollection', index)
+                })
+                .catch(error => {
+                    console.log(error)
+                })
         },
         getCurrentCollection (context) {
             if (context.rootState.route.currentRoute === null) {
