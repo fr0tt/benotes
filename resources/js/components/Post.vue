@@ -2,13 +2,12 @@
     <div class="w-full">
         <div class="flex md:mx-6 mx-1 md:my-6 mt-2">
 
-            <div class="flex-1 mr-8 editor">
+            <div class="flex-1 mx-4 editor">
 
                 <div class="max-w-5xl">
+                    <EditorMenuBar :editor="editor" class="w-full my-4"/>
                     <input class="block w-full text-3xl font-medium placeholder-orange-500 text-orange-500
-                        outline-none mb-4 border-b border-orange-400" v-model="title" placeholder="Title" tabindex="1" autofocus/>
-
-                    <EditorMenuBar :editor="editor" class="w-full"/>
+                        outline-none mb-4" v-model="title" placeholder="Title" tabindex="1" autofocus/>
                     <EditorContent :editor="editor" class="editorContent h-32 text-lg my-4"/>
                 </div>
 
