@@ -1,7 +1,7 @@
 <template>
     <div>
-        <div class="sm:flex sm:px-8 px-2 py-3 shadow-md">
-            <div class="flex-1">
+        <div class="md:flex sm:px-8 px-2 py-3 shadow-md">
+            <div class="flex-1 md:mb-0 mb-2">
                 <span class="text-orange-600 font-semibold text-2xl">{{ currentCollection.name }}</span>
                 <div class="relative inline-block" v-if="currentCollection.id !== null">
                     <button @click="showContextMenu = !showContextMenu" class="align-text-bottom">
@@ -21,7 +21,7 @@
                     </transition>
                 </div>
             </div>
-            <div class="mt-2 sm:mt-0">
+            <div class="">
                 <button class="button" @click="pasteNewPost()">
                     <svg-vue class="button-icon" icon="zondicons/paste"/>
                     Paste

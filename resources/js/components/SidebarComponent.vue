@@ -1,7 +1,7 @@
 <template>
     <transition name="slide" mode="out-in">
         <div v-if="isOpen" class="sidebar pb-6 md:w-48 xl:w-1/6">
-            <div class="flex px-8 py-4">
+            <div class="flex md:px-8 px-4 py-4">
                 <div class="relative flex-1">
                     <div class="absolute menu min-w-48 bg-white" :class="{ 'rounded shadow': menuIsOpen }">
                         <div @click="menuIsOpen = !menuIsOpen" class="p-4 cursor-pointer">
@@ -34,11 +34,11 @@
             <div>
                 <br><br><br>
                 <div class="list">
-                    <router-link to="/" tag="li" class="collection mb-4">
+                    <router-link to="/" tag="li" class="collection md:px-8 px-4 mb-4">
                         <svg-vue class="w-4 fill-current mr-2" icon="zondicons/folder-outline-unknown"/>
                         <span class="align-middle text-gray-700">Uncategorized</span>
                     </router-link>
-                    <span class="mb-2 px-8 block text-xs text-gray-700 font-medium uppercase">Collections</span>
+                    <span class="mb-2 md:px-8 px-4 block text-xs text-gray-700 font-medium uppercase">Collections</span>
                     <ol>
                         <router-link v-for="(collection) in collections" :key="collection.id"
                             :to="'/c/' + collection.id" tag="li" class="collection">
@@ -47,7 +47,7 @@
                         </router-link>
                     </ol>
                 </div>
-                <router-link to="/c/create" class="block ml-8 mt-4 text-orange-600 font-medium">
+                <router-link to="/c/create" class="block md:ml-8 ml-4 mt-4 text-orange-600 font-medium">
                     <svg-vue class="w-4 mr-2 fill-current" icon="zondicons/add-solid"/>
                     <span class="align-middle">Create a new collection</span>
                 </router-link>
@@ -156,7 +156,7 @@ export default {
         }
         .list {
             .collection {
-                @apply inline-block w-full px-8 py-1;
+                @apply inline-block w-full py-1;
                 @apply font-medium text-gray-500 cursor-pointer;
             }
             .router-link-exact-active {
