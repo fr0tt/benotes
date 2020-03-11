@@ -1,5 +1,37 @@
 <template>
-    <form @submit.prevent="update()" class="mt-20 lg:mx-20 mx-10">
+    <form v-if="isNew" @submit.prevent="create()" class="mt-16 lg:mx-20 mx-10">
+        <div class="max-w-lg">
+
+            <div class="mb-8">
+                <h1 class="text-3xl font-medium text-gray-800">Create new User</h1>
+            </div>
+
+            <div class="mb-8">
+                <label class="label">Name</label>
+                <input v-model="name" placeholder="Name" type="text" class="input" required/>
+            </div>
+            <div class="mb-8">
+                <label class="label">Email</label>
+                <input v-model="email" placeholder="Email" type="email" class="input" required/>
+            </div>
+            <div class="mb-8">
+                <label class="label">Password</label>
+                <input v-model="password" placeholder="Password" type="password" class="input"/>
+            </div>
+
+            <div class="mt-8 float-right">
+                <button class="button">
+                    <svg-vue class="button-icon" icon="zondicons/add-outline"/>
+                    Create
+                </button>
+            </div>
+
+            <p v-if="error" class="text-red-500 mt-4">{{ error }}</p>
+
+        </div>
+    </form>
+
+    <div v-else class="mt-20 lg:mx-20 mx-10">
         <div class="max-w-lg">
 
             <div class="mb-8">
@@ -24,8 +56,14 @@
                 <input v-model="password_new" placeholder="New Password" type="password" class="input"/>
             </div>
 
-            <div class="mt-8 float-right">
-                <button class="button">
+            <div class="mt-8 flex">
+                <div class="flex-1">
+                    <button class="button red" @click="del()">
+                        <svg-vue class="button-icon" icon="zondicons/trash"/>
+                        Delete
+                    </button>
+                </div>
+                <button class="button" @click="update()">
                     <svg-vue class="button-icon" icon="zondicons/checkmark-outline"/>
                     Save
                 </button>
@@ -34,7 +72,7 @@
             <p v-if="error" class="text-red-500 mt-4">{{ error }}</p>
 
         </div>
-    </form>
+    </div>
 </template>
 
 <script>
@@ -42,11 +80,12 @@ import axios from 'axios'
 import { mapState } from 'vuex'
 export default {
     name: 'User',
-    props: ['id'],
+    props: ['id', 'isNew'],
     data () {
         return {
             name: null,
             email: null,
+            password: null,
             password_old: null,
             password_new: null,
             error: null
@@ -54,7 +93,6 @@ export default {
     },
     methods: {
         update () {
-
             if (this.name === this.authUser.name && this.email === this.authUser.email &&
                 this.password_old === null && this.password_new === null) {
                 return
@@ -67,14 +105,35 @@ export default {
             if (this.password_old) params.password_old = this.password_old
             if (this.password_new) params.password_new = this.password_new
 
-            axios.patch('/api/users/' + this.authUser.id, params)
+            axios.patch('/api/users/' + this.id, params)
                 .then(response => {
                     const user = response.data.data
                     this.$store.dispatch('auth/setAuthUser', user)
                 }).catch(error => {
                     this.error = error
                 })
-
+        },
+        create () {
+            axios.post('/api/users', {
+                name: this.name,
+                email: this.email,
+                password: this.password
+            })
+                .then(response => {
+                    this.$router.push({ path: '/users' })
+                }).catch(error => {
+                    console.log(error)
+                    this.error = error
+                })
+        },
+        del () {
+            axios.delete('/api/users/' + this.id)
+                .then(response => {
+                    this.$router.push({ path: '/users' })
+                }).catch(error => {
+                    console.log(error)
+                    this.error = error
+                })
         }
     },
     computed: {
@@ -86,14 +145,16 @@ export default {
         }
     },
     created () {
-        axios.get('/api/users/' + this.id)
-            .then(response => {
-                const user = response.data.data
-                this.name = user.name
-                this.email = user.email
-            }).catch(error => {
-                this.error = error
-            })
+        if (!this.isNew) {
+            axios.get('/api/users/' + this.id)
+                .then(response => {
+                    const user = response.data.data
+                    this.name = user.name
+                    this.email = user.email
+                }).catch(error => {
+                    this.error = error
+                })
+        }
     }
 }
 </script>

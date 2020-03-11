@@ -39,6 +39,7 @@ Route::group([
     Route::get('api/users/{id}', 'UserController@show');
     Route::post('api/users', 'UserController@store');
     Route::patch('api/users/{id}', 'UserController@update');
+    Route::delete('api/users/{id}', 'UserController@destroy');
 
 }); 
 

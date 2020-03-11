@@ -5,10 +5,10 @@
                 <h1 class="text-3xl font-medium text-gray-800">Users</h1>
             </div>
             <div>
-                <button class="button">
+                <router-link to="/users/create" tag="button" class="button">
                     <svg-vue class="button-icon" icon="zondicons/add-outline"/>
                     Create
-                </button>
+                </router-link>
             </div>
         </div>
         <table class="users table w-full">
@@ -34,10 +34,6 @@ export default {
         return {
             users: null
         }
-    },
-    methods: {
-    },
-    computed: {
     },
     created () {
         axios.get('/api/users/')

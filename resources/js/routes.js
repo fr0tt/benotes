@@ -77,10 +77,23 @@ export default [
                 }
             },
             {
+                path: '/users/create',
+                component: User,
+                props: {
+                    isNew: true
+                },
+                meta: {
+                    requiresAuth: true
+                }
+            },
+            {
                 path: '/users/:id',
                 name: 'user',
                 component: User,
-                props: true,
+                props: (route) => ({
+                    id: route.params.id,
+                    isNew: false
+                }),
                 meta: {
                     requiresAuth: true
                 }

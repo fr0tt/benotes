@@ -59,8 +59,14 @@ export default {
             margin-top: -0.3rem;
         }
     }
+    .button.red {
+        @apply border-red-500 text-red-500;
+    }
     .button:hover {
-        @apply bg-orange-500 text-white;
+        @apply bg-orange-600 text-white;
+    }
+    .button.red:hover {
+        @apply bg-red-500;
     }
     .router-fade-enter-active, .router-fade-leave-active {
         transition: opacity .2s ease;

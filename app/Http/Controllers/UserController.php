@@ -43,12 +43,14 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = Hash::make($user->password);
+        $user->permission = 0;
+        $user->save();
 
-        return response()->json([['data' => $user]], 201);
+        return response()->json(['data' => $user], 201);
     }
 
     public function update(Request $request, int $id)
-    {
+    { 
         $this->validate($request, [
             'name' => 'alpha_dash',
             'email' => 'email',
@@ -81,6 +83,21 @@ class UserController extends Controller
         }
 
         return response()->json(['data' => $user], 200);
+    }
+
+    public function destroy($id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json('User not found.', 404);
+        }
+        if ($user->id === Auth::user()->id || Auth::user()->permission === User::ADMIN) {
+            $user->delete();
+            return response()->json('', 204);
+        } else {
+            return response()->json('Not allowed', 403);
+        }
+
     }
 
 }
