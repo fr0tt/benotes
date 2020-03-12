@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 
 use App\Post;
 use App\Collection;
@@ -147,6 +148,7 @@ class PostController extends Controller
             return response()->json('Post not found.', 404);
         }
         $post->delete();
+        Storage::delete('/public/thumbnails/' . $post->getOriginal()['image_path']);
 
         return response()->json('', 204);
 
@@ -219,7 +221,7 @@ class PostController extends Controller
 
     private function getDominantColor($base_url)
     {
-        $rgb = ColorThief::getColor('http://www.google.com/s2/favicons?domain=' . $base_url);
+        $rgb = ColorThief::getColor('https://external-content.duckduckgo.com/ip3/' . $base_url . '.ico');
         $hex = sprintf("#%02x%02x%02x", $rgb[0], $rgb[1], $rgb[2]);
         return $hex;
     }
@@ -232,10 +234,8 @@ class PostController extends Controller
                 $image->fit(400, 210);
                 $filename = 'thumbnail_' . $post->id . '.jpg';
                 $image->save('../storage/app/public/thumbnails/' . $filename, 100);
-                if (empty($post->image_path)) {
-                    $post->image_path = $filename;
-                    $post->save();
-                }
+                $post->image_path = $filename;
+                $post->save();
             }
         }
     }

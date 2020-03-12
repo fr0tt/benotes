@@ -9,6 +9,7 @@
         "intervention/image": "^2.5",
         "ksubileau/color-thief-php": "^1.4",
         "laravel/lumen-framework": "5.8.*",
+        "league/flysystem": "^1.0",
         "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {
