@@ -26,7 +26,8 @@
 import axios from 'axios'
 import { mapState } from 'vuex'
 import { Editor, EditorContent } from 'tiptap'
-import { HardBreak, Blockquote, Heading, Bold, Italic, Underline, Link, Code, History } from 'tiptap-extensions'
+import { HardBreak, Blockquote, Heading, Bold, Italic,
+    Underline, Link, Code, History, Placeholder } from 'tiptap-extensions'
 import EditorMenuBar from './EditorMenuBar.vue'
 export default {
     props: ['id'],
@@ -50,7 +51,12 @@ export default {
                     new Blockquote(),
                     new Link(),
                     new Code(),
-                    new History()
+                    new History(),
+                    new Placeholder({
+                        emptyNodeClass: 'is-empty',
+                        showOnlyWhenEditable: true,
+                        showOnlyCurrent: true
+                    })
                 ]
             })
         }
@@ -124,7 +130,15 @@ export default {
 <style lang="scss">
     .editor {
         .editorContent {
-            font-family: 'Noto Sans', 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif
+            font-family: 'Noto Sans', 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+            p.is-empty::before {
+                content: 'Write...';
+                color: #aaa;
+                float: left;
+                pointer-events: none;
+                height: 0;
+                font-style: italic;
+            }
         }
     }
     .ProseMirror {
