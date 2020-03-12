@@ -112,7 +112,7 @@ export default {
             return 'background-color: ' + this.post.color
         },
         domain () {
-            return this.post.base_url.replace(/(https|http):\/\//,'')
+            return this.post.base_url.replace(/(https|http):\/\//, '')
         },
         ...mapState('post', [
             'currentPost'
@@ -143,7 +143,7 @@ export default {
         @apply relative overflow-hidden shadow-lg;
         width: 20.5rem;
         height: 20.5rem;
-        font-family: Noto Sans, Roboto, Fira Sans;
+        font-family: Inter, Noto Sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         transition: background-color 0.3s;
         -webkit-transition: background-color 0.3s;
         -moz-transition: background-color 0.3s;
@@ -159,15 +159,9 @@ export default {
         }
         .more-svg {
             @apply w-5 h-5 absolute cursor-pointer;
-            /* right: 0.5rem;
-            top: 0.75rem; */
             right: 0.75rem;
             bottom: 1.25rem;
         }
-        /*textarea { @TODO remove
-            resize: none;
-            background: transparent;
-        }*/
         .editorContent {
             font-size: 1.1rem;
             // line-height: 1.45;
