@@ -63,6 +63,10 @@ export default {
     },
     created () {
         if (!this.isNew) {
+            if (this.id == 0) {
+                this.$router.push({ path: '/' })
+                return
+            }
             axios.get('/api/collections/' + this.id)
                 .then(response => {
                     const collection = response.data.data

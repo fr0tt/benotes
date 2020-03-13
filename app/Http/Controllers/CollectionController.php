@@ -56,7 +56,6 @@ class CollectionController extends Controller
 
     public function destroy($id)
     {
-
         $collection = Collection::find($id);
         if (!$collection) {
             return response()->json('Collection not found.', 400);

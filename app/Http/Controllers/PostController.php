@@ -22,16 +22,10 @@ class PostController extends Controller
             'collection_id' => 'integer|nullable',
             'limit' => 'integer'
         ]);
-        $request->is_uncategorized = filter_var($request->is_uncategorized, FILTER_VALIDATE_BOOLEAN);
 
         if (isset($request->collection_id)) {
             $posts = Post::where([
                 ['collection_id', '=', $request->collection_id],
-                ['user_id', '=', Auth::user()->id]
-            ]);
-        } else if ($request->is_uncategorized === true) {
-            $posts = Post::where([
-                ['collection_id', '=', null],
                 ['user_id', '=', Auth::user()->id]
             ]);
         } else {
@@ -64,9 +58,11 @@ class PostController extends Controller
         ]);
 
         if (isset($request->collection_id)) {
-            $collection = Collection::find($request->collection_id);
-            if (!$collection) {
-                return response()->json('Collection not found.', 404);
+            if ($request->collection_id > Collection::UNCATEGORIZED) {
+                $collection = Collection::find($request->collection_id);
+                if (!$collection) {
+                    return response()->json('Collection not found.', 404);
+                }
             }
         }
 
@@ -90,9 +86,9 @@ class PostController extends Controller
 
         $validatedData = $this->validate($request, [
             'title' => 'string|nullable',
-            'content' => 'string',
+            'content' => 'string|nullable',
             'collection_id' => 'integer|nullable',
-            'order' => 'integer'
+            'order' => 'integer|nullable'
         ]);
 
         $post = Post::find($id);
@@ -101,9 +97,11 @@ class PostController extends Controller
         }
 
         if (isset($request->collection_id)) {
-            $collection = Collection::find($request->collection_id);
-            if (!$collection) {
-                return response()->json('Collection not found.', 404);
+            if ($request->colllection_id > Collection::UNCATEGORIZED) {
+                $collection = Collection::find($request->collection_id);
+                if (!$collection) {
+                    return response()->json('Collection not found.', 404);
+                }
             }
         }
 

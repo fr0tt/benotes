@@ -2,8 +2,8 @@
     <div>
         <div class="md:flex sm:px-8 px-2 py-3 shadow-md">
             <div class="flex-1 md:mb-0 mb-2">
-                <span class="text-orange-600 font-semibold text-2xl">{{ currentCollection.name }}</span>
-                <div class="relative inline-block" v-if="currentCollection.id !== null">
+                <span class="text-orange-600 font-semibold text-2xl font-sans">{{ currentCollection.name }}</span>
+                <div class="relative inline-block" v-if="currentCollection.id > 0">
                     <button @click="showContextMenu = !showContextMenu" class="align-text-bottom">
                         <svg-vue class="w-5 mb-1/5" icon="material/more_vert"/>
                     </button>
@@ -69,6 +69,9 @@ export default {
     },
     methods: {
         init () {
+            if (this.id === null) {
+                this.id = 0
+            }
             this.$store.dispatch('route/setCurrentRoute', this.$route)
             this.$store.dispatch('post/fetchPosts', this.id)
         },

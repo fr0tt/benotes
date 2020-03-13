@@ -10,6 +10,8 @@ class Collection extends Model
     public $timestamps = false;
     use SoftDeletes;
 
+    const UNCATEGORIZED = 0;
+
     /**
      * The attributes that are mass assignable.
      *

@@ -45,13 +45,9 @@ export default {
     actions: {
         fetchPosts (context, collectionId) {
             context.commit('isLoading', true)
-            const params = {}
-            if (typeof collectionId === 'undefined' || collectionId === null) {
-                params.is_uncategorized = true
-            } else {
-                params.collection_id = collectionId
-            }
-            axios.get('/api/posts', { params })
+            axios.get('/api/posts', {
+                collection_id: collectionId
+            })
                 .then(response => {
                     const posts = response.data.data
                     context.commit('setPosts', posts)
@@ -84,13 +80,7 @@ export default {
             const params = {}
             params.title = post.title
             params.content = post.content
-            if (typeof newCollectionId !== 'undefined') {
-                if (newCollectionId === null) {
-                    params.is_uncategorized = true
-                } else {
-                    params.collection_id = newCollectionId
-                }
-            }
+            params.collection_id = newCollectionId
             axios.patch('/api/posts/' + post.id, params)
                 .then(response => {
                     const newPost = response.data.data

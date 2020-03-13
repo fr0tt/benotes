@@ -59,4 +59,18 @@ class Post extends Model
         return $value;
     }
 
+    public function getCollectionIdAttribute($value)
+    {
+        return ($value === null) ? 0 : $value;
+    }
+
+    public function setCollectionIdAttribute($value)
+    {
+        if ($value === 0) {
+            $this->attributes['collection_id'] = null;
+        } else {
+            $this->attributes['collection_id'] = $value;
+        }
+    }
+
 }

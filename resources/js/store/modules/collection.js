@@ -81,7 +81,7 @@ export default {
             }
             if (Object.keys(context.rootState.route.currentRoute.params).length === 0) {
                 const collection = {
-                    'id': null,
+                    'id': 0,
                     'name': 'Uncategorized'
                 }
                 context.commit('setCurrentCollection', collection)
@@ -91,6 +91,7 @@ export default {
             context.state.collections.map((collection) => {
                 if (collection.id === id) {
                     context.commit('setCurrentCollection', collection)
+                    return
                 }
             })
         },
