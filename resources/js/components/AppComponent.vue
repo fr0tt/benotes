@@ -52,7 +52,7 @@ export default {
     }
     .button {
         @apply border-2 border-orange-600 text-orange-600 bg-white rounded-lg
-            outline-none leading-tight text-xl font-semibold px-4 py-1;
+            outline-none leading-tight text-xl font-semibold px-4 py-1 font-sans;
         .button-icon {
             @apply mr-1 fill-current align-middle inline-block;
             width: 1.1rem;

@@ -54,7 +54,7 @@
             </div>
             <br><br><br><br><br>
             <div class="px-8 absolute bottom-4">
-                <span class="flex-1 text-orange-600 text-xl font-medium">Benote</span>
+                <span class="flex-1 text-orange-600 text-xl font-medium">Benotes</span>
             </div>
         </div>
         <div v-else class="sidebar relative pb-6 sm:mr-4 mr-2 w-12 text-center py-4">
