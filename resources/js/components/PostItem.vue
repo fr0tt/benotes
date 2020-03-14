@@ -29,6 +29,8 @@
             <div class="p-6 h-full">
                 <div @click="edit($event)" class="text-gray-900 text-xl outline-none h-full w-full"
                     :class="{ 'overflow-hidden cursor-pointer' : !isActive() }">
+                    <input v-if="post.title" :value="post.title" @input="updateTitle"
+                        class="text-orange-600 text-xl bg-transparent font-semibold"/>
                     <EditorContent :editor="editor" class="editorContent" />
                 </div>
             </div>
@@ -96,6 +98,9 @@ export default {
                 this.$store.dispatch('post/setCurrentPost', null)
             }
         },
+        updateTitle (event) {
+            this.$store.dispatch('post/setCurrentPostTitle', event.target.value)
+        },
         showContextMenu (event) {
             this.$store.dispatch('post/setContextMenu', {
                 post: this.post,
@@ -130,7 +135,6 @@ export default {
             this.editor.setOptions({
                 editable: true
             })
-            this.editor.focus()
         } 
     },
     beforeDestroy () {

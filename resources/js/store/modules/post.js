@@ -32,6 +32,9 @@ export default {
         setCurrentPostContent (state, content) {
             state.currentPost.content = content
         },
+        setCurrentPostTitle (state, title) {
+            state.currentPost.title = title
+        },
         setContextMenu (state, contextMenu) {
             state.contextMenu = contextMenu
         },
@@ -121,6 +124,9 @@ export default {
         },
         setCurrentPostContent (context, content) {
             context.commit('setCurrentPostContent', content)
+        },
+        setCurrentPostTitle (context, title) {
+            context.commit('setCurrentPostTitle', title)
         },
         setContextMenu (context, contextMenu) {
             context.commit('setContextMenu', contextMenu)
