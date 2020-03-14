@@ -145,8 +145,11 @@ class PostController extends Controller
         if (!$post) {
             return response()->json('Post not found.', 404);
         }
+
+        Post::where('collection_id', $post->collection_id)
+            ->where('order', '>', $post->order)->decrement('order');
+
         $post->delete();
-        Storage::delete('/public/thumbnails/' . $post->getOriginal()['image_path']);
 
         return response()->json('', 204);
 
@@ -219,7 +222,8 @@ class PostController extends Controller
 
     private function getDominantColor($base_url)
     {
-        $rgb = ColorThief::getColor('https://external-content.duckduckgo.com/ip3/' . $base_url . '.ico');
+        $host = parse_url($base_url)['host'];
+        $rgb = ColorThief::getColor('https://www.google.com/s2/favicons?domain=' . $host);
         $hex = sprintf("#%02x%02x%02x", $rgb[0], $rgb[1], $rgb[2]);
         return $hex;
     }
