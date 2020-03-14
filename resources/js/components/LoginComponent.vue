@@ -3,7 +3,12 @@
 <div class="flex justify-center mt-32 h-full">
     <div class="w-full max-w-2xl">
 
-        <form @submit.prevent="authenticate" class="bg-white shadow-md rounded px-12 py-16 mb-4">
+        <form @submit.prevent="authenticate" class="bg-white shadow-md px-12 pt-12 pb-16 mb-4">
+
+            <div class="mb-4">
+                <svg-vue class="w-16 block m-auto" icon="logo_64x64"/>
+                <span class="block my-2 text-2xl text-orange-600 font-semibold text-center align-middle">Benotes</span>
+            </div>
 
             <div class="mb-8">
                 <label class="label" for="email">Email</label>
