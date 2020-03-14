@@ -63,7 +63,7 @@ export default {
     },
     created () {
         if (!this.isNew) {
-            if (this.id == 0) {
+            if (parseInt(this.id) === 0) {
                 this.$router.push({ path: '/' })
                 return
             }

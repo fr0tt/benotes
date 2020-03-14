@@ -78,7 +78,7 @@ export default {
                 axios.post('/api/posts', {
                     title: this.title,
                     content: content,
-                    collection_id: this.collectionId
+                    collection_id: parseInt(this.collectionId)
                 })
                     .then(response => {
                         if (this.posts !== null) {
@@ -86,6 +86,7 @@ export default {
                         }
                     })
                     .catch(error => {
+                        console.log(error.response.data)
                         console.log(error)
                     })
             } else {

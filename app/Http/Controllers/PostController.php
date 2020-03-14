@@ -70,7 +70,12 @@ class PostController extends Controller
 
         $attributes = array_merge($validatedData, $info);
         $attributes['user_id'] = Auth::user()->id;
-        $attributes['order'] = Post::where('collection_id', $request->collection_id)->max('order') + 1;
+
+        $collection_id = $request->collection_id;
+        if ($collection_id === 0) {
+            $collection_id = null;
+        }
+        $attributes['order'] = Post::where('collection_id', $collection_id)->max('order') + 1;
         
         $post = Post::create($attributes);
 
