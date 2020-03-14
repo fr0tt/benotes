@@ -4,7 +4,7 @@
 
             <div class="flex-1 mx-4 editor">
 
-                <div class="max-w-5xl" @keyup.ctrl.shift.83="keySave">
+                <div class="max-w-5xl" @keyup.ctrl.alt.83="keySave">
                     <EditorMenuBar :editor="editor" class="w-full my-4"/>
                     <input class="block w-full text-3xl font-medium placeholder-orange-500 text-orange-500
                         outline-none mb-4" v-model="title" placeholder="Title" tabindex="1" autofocus/>
