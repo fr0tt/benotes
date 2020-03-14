@@ -49,7 +49,9 @@ export default {
         fetchPosts (context, collectionId) {
             context.commit('isLoading', true)
             axios.get('/api/posts', {
-                collection_id: collectionId
+                params: {
+                    collection_id: collectionId
+                }
             })
                 .then(response => {
                     const posts = response.data.data

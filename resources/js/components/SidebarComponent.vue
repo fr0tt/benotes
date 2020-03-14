@@ -41,7 +41,7 @@
                     <span class="mb-2 md:px-8 px-4 block text-xs text-gray-700 font-medium uppercase">Collections</span>
                     <ol>
                         <router-link v-for="(collection) in collections" :key="collection.id"
-                            :to="'/c/' + collection.id" tag="li" class="collection">
+                            :to="'/c/' + collection.id" tag="li" class="collection md:px-8 px-4">
                                 <svg-vue class="w-4 fill-current mr-2" icon="zondicons/folder"/>
                                 <span class="align-middle text-gray-700">{{ collection.name }}</span>
                         </router-link>

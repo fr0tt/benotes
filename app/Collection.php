@@ -30,4 +30,9 @@ class Collection extends Model
         'user_id', 'deleted_at'
     ];
 
+    public static function getCollectionId($value)
+    {
+        return ($value == 0) ? null : $value;
+    }
+
 }

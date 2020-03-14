@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
-use Illuminate\Support\Facades\Storage;
 
 use App\Post;
 use App\Collection;
@@ -25,7 +24,7 @@ class PostController extends Controller
 
         if (isset($request->collection_id)) {
             $posts = Post::where([
-                ['collection_id', '=', $request->collection_id],
+                ['collection_id', '=', Collection::getCollectionId($request->collection_id)],
                 ['user_id', '=', Auth::user()->id]
             ]);
         } else {
@@ -71,11 +70,8 @@ class PostController extends Controller
         $attributes = array_merge($validatedData, $info);
         $attributes['user_id'] = Auth::user()->id;
 
-        $collection_id = $request->collection_id;
-        if ($collection_id === 0) {
-            $collection_id = null;
-        }
-        $attributes['order'] = Post::where('collection_id', $collection_id)->max('order') + 1;
+        $attributes['order'] = Post::where('collection_id', Collection::getCollectionId($request->collection_id))
+            ->max('order') + 1;
         
         $post = Post::create($attributes);
 
