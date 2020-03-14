@@ -26,7 +26,7 @@
                     <svg-vue class="button-icon" icon="zondicons/paste"/>
                     Paste
                 </button>
-                <router-link to="/p/create" class="button ml-4" tag="button">
+                <router-link :to="`/c/${this.id}/p/create`" class="button ml-4" tag="button">
                     <svg-vue class="button-icon" icon="zondicons/add-outline"/>
                     Create
                 </router-link>
@@ -69,9 +69,6 @@ export default {
     },
     methods: {
         init () {
-            if (this.id === null) {
-                this.id = 0
-            }
             this.$store.dispatch('route/setCurrentRoute', this.$route)
             this.$store.dispatch('post/fetchPosts', this.id)
         },

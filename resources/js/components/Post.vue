@@ -30,7 +30,7 @@ import { HardBreak, Blockquote, Heading, Bold, Italic,
     Underline, Link, Code, History, Placeholder } from 'tiptap-extensions'
 import EditorMenuBar from './EditorMenuBar.vue'
 export default {
-    props: ['id'],
+    props: ['collectionId', 'id'],
     components: {
         EditorContent,
         EditorMenuBar
@@ -72,13 +72,13 @@ export default {
                 content = matches[1]
             }
 
-            this.$router.push({ path: '/' })
+            this.$router.push({ path: '/c/' + this.collectionId })
 
             if (this.isNewPost) {
                 axios.post('/api/posts', {
                     title: this.title,
                     content: content,
-                    collection_id: this.currentCollection.id
+                    collection_id: this.collectionId
                 })
                     .then(response => {
                         if (this.posts !== null) {

@@ -27,10 +27,13 @@ export default {
             }
         },
         createNewPost () {
-            this.$router.push({ path: '/p/create' })
+            this.$router.push({ path: `/c/${this.currentCollection.id}/p/create` })
         }
     },
     computed: {
+        ...mapState('collection', [
+            'currentCollection'
+        ]),
         ...mapState('post', [
             'currentPost'
         ]),

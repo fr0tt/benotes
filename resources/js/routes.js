@@ -17,7 +17,9 @@ export default [
             {
                 path: '',
                 component: Collection,
-                props: true,
+                props: {
+                    id: 0
+                },
                 meta: {
                     requiresAuth: true
                 }
@@ -53,8 +55,9 @@ export default [
                 }
             },
             {
-                path: 'p/create',
+                path: 'c/:collectionId/p/create',
                 component: Post,
+                props: true,
                 meta: {
                     requiresAuth: true
                 }
