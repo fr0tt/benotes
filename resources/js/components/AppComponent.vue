@@ -1,5 +1,6 @@
 <template>
-    <div class="flex w-full" @click="globalClickEvent($event)">
+    <div class="flex w-full outline-none" @click="globalClickEvent($event)"
+        @keyup.alt.78="createNewPost()" tabindex="0" autofocus>
         <Sidebar/>
         <div class="flex-1 h-screen overflow-y-scroll">
             <transition name="router-fade" mode="out-in">
@@ -24,6 +25,9 @@ export default {
                     this.$store.dispatch('post/hideContextMenu')
                 }
             }
+        },
+        createNewPost () {
+            this.$router.push({ path: '/p/create' })
         }
     },
     computed: {
