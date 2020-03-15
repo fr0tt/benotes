@@ -34,15 +34,21 @@ class UserController extends Controller
             'email'    => 'required|email',
             'password' => 'required|string',
         ]);
-
+        
         if (Auth::user()->permission < User::ADMIN) {
             return response()->json('Not allowed', 403);
         }
 
+        $alreadyExistingUser = User::where('email', $request->email)->first();
+
+        if (!empty($alreadyExistingUser)) {
+            return response()->json('Email is already in use.', 400);
+        }
+
         $user = new User;
         $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = Hash::make($user->password);
+        $user->email = $request->email; 
+        $user->password = Hash::make($request->password);
         $user->permission = 0;
         $user->save();
 
