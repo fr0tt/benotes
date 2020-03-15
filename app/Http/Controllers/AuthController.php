@@ -29,33 +29,6 @@ class AuthController extends Controller
         return response()->json(compact('data'));
     }
 
-    public function register(Request $request) 
-    {
-        $this->validate($request, [
-            'name' => 'required|alpha_dash',
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
-
-        if (env('ALLOW_USER_REGISTRATION') === false) {
-            return response()->json('Not allowed.', 403);
-        }
-
-        $alreadyExistingUser = User::where('email', $request->email)->first();
-
-        if (!empty($alreadyExistingUser)) {
-            return response()->json('Email is already in use.', 400);
-        }
-        
-        $user = new User;
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = Hash::make($request->password);
-        $user->save();
-
-        return response()->json(['data' => $user], 200);
-    }
-
     public function me(Request $request)
     {
         return response()->json(['data' => $request->user()]);

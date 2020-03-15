@@ -13,7 +13,6 @@
 
 
 Route::post('api/auth/login', 'AuthController@login');
-Route::post('api/auth/register', 'AuthController@register');
 Route::post('api/auth/refresh', 'AuthController@refresh');
 
 Route::group([
