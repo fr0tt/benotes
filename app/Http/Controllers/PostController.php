@@ -69,12 +69,10 @@ class PostController extends Controller
 
         $attributes = array_merge($validatedData, $info);
         $attributes['user_id'] = Auth::user()->id;
-
         $attributes['order'] = Post::where('collection_id', Collection::getCollectionId($request->collection_id))
             ->max('order') + 1;
         
         $post = Post::create($attributes);
-
         if ($info['type'] === Post::POST_TYPE_LINK) {
             $this->saveImage($info['image_path'], $post);
         }
@@ -158,7 +156,7 @@ class PostController extends Controller
 
     private function computePostData($content)
     {
-        preg_match_all('/(https|http)(:\/\/)(\w+\.)+(\w+)(\S+)/', $content, $matches);
+        preg_match_all('/(https|http)(:\/\/)(\w+\.)+(\w+)(\S+)(?<!")/', $content, $matches);
         $matches = $matches[0];
         $info = null;
         if (count($matches) > 0) {
@@ -167,7 +165,9 @@ class PostController extends Controller
 
         if (empty($matches)) {
             $info['type'] = Post::POST_TYPE_TEXT;
-        } else if (strlen($content) > strlen($matches[0])) {
+        } else if (substr_count($content, '<a href="') === 1 && substr_count($content, '>') === 2) {
+            $info['type'] = Post::POST_TYPE_LINK;
+        } else if (strlen($content) > strlen($matches[0])) { // seems to contain more than just a link
             $info['type'] = Post::POST_TYPE_TEXT;
         } else {
             $info['type'] = Post::POST_TYPE_LINK;
@@ -178,22 +178,22 @@ class PostController extends Controller
 
     private function getInfo($url)
     {
-
         $base_url = parse_url($url);
         $base_url = $base_url['scheme'] . '://' . $base_url['host'];
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_AUTOREFERER, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36');
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_URL, $url);
         $html = curl_exec($ch);
         curl_close($ch);
 
         $document = new \DOMDocument();
         @$document->loadHTML($html);
         $titles = $document->getElementsByTagName('title');
-        $title = trim($titles->item(0)->nodeValue); 
+        $title = trim($titles->item(0)->nodeValue);
         $metas = $document->getElementsByTagName('meta');
         
         for ($i = 0; $i < $metas->length; $i++) {
