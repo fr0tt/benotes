@@ -34,10 +34,8 @@ class UserController extends Controller
             'email'    => 'required|email',
             'password' => 'required|string',
         ]);
-        
-        if (Auth::user()->permission < User::ADMIN) {
-            return response()->json('Not allowed', 403);
-        }
+
+        $this->authorize('create');
 
         $alreadyExistingUser = User::where('email', $request->email)->first();
 
@@ -70,15 +68,12 @@ class UserController extends Controller
                 return response()->json('Email is already in use.', 400);
             }
         }
-
-        if ($request->user()->id !== $id) {
-            return response()->json('Not allowed', 403);
-        }
-
+        
         $user = User::find($id);
         if (!$user) {
             return response()->json('User not found.', 404);
         }
+        $this->authorize('delete', $user);
         
         $user->update(Input::only('name', 'email'));
 
@@ -97,12 +92,8 @@ class UserController extends Controller
         if (!$user) {
             return response()->json('User not found.', 404);
         }
-        if ($user->id === Auth::user()->id || Auth::user()->permission === User::ADMIN) {
-            $user->delete();
-            return response()->json('', 204);
-        } else {
-            return response()->json('Not allowed', 403);
-        }
+        $this->authorize('delete');
+        $user->delete();
 
     }
 

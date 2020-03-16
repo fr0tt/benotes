@@ -45,6 +45,7 @@ class PostController extends Controller
         if ($post === null) {
             return response()->json('Post does not exist', 404);
         }
+        $this->authorize('view', $post);
         return response()->json(['data' => $post], 200);
     }
 
@@ -64,6 +65,8 @@ class PostController extends Controller
                 }
             }
         }
+
+        $this->authorize('create', $request->collection_id);
 
         $info = $this->computePostData($request->content);
 
@@ -94,6 +97,7 @@ class PostController extends Controller
         if (!$post) {
             return response()->json('Post not found.', 404);
         }
+        $this->authorize('update', $post);
 
         if (isset($request->collection_id)) {
             if ($request->colllection_id > Collection::UNCATEGORIZED) {
@@ -141,9 +145,11 @@ class PostController extends Controller
     {
 
         $post = Post::find($id);
+        
         if (!$post) {
             return response()->json('Post not found.', 404);
         }
+        $this->authorize('delete', $post);
 
         Post::where('collection_id', $post->collection_id)
             ->where('order', '>', $post->order)->decrement('order');

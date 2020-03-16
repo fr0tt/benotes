@@ -52,6 +52,8 @@ class Handler extends ExceptionHandler
             return response()->json('Token is invalid', 401);
         } else if ($exception instanceof \Intervention\Image\Exception\NotWritableException) {
             return response()->json('Storage path not writable.', 403);
+        } else if ($exception instanceof AuthorizationException) {
+            return response()->json('This action is unauthorized.', 403);
         }
 
         return parent::render($request, $exception);

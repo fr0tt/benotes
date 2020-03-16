@@ -24,6 +24,7 @@ class CollectionController extends Controller
         if (!$collection) {
             return response()->json('Collection not found', 404);
         }
+        $this->authorize('view', $collection);
         return response()->json(['data' => $collection]);
     }
 
@@ -48,6 +49,7 @@ class CollectionController extends Controller
         ]);
 
         $collection = Collection::find($id);
+        $this->authorize('update', $collection);
         $collection->name = $request->name;
         $collection->save();
 
@@ -60,6 +62,7 @@ class CollectionController extends Controller
         if (!$collection) {
             return response()->json('Collection not found.', 400);
         }
+        $this->authorize('delete', $collection);
         $collection->delete();
 
         return response()->json('', 204);
