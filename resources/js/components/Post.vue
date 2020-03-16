@@ -53,7 +53,7 @@ export default {
                     new Code(),
                     new History(),
                     new Placeholder({
-                        emptyNodeClass: 'is-empty',
+                        emptyEditorClass: 'is-editor-empty',
                         showOnlyWhenEditable: true,
                         showOnlyCurrent: true
                     })
@@ -132,7 +132,7 @@ export default {
     .editor {
         .editorContent {
             font-family: Inter, 'Noto Sans', 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
-            p.is-empty::before {
+            p.is-editor-empty:first-child::before {
                 content: 'Write...';
                 color: #aaa;
                 float: left;
