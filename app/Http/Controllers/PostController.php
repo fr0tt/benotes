@@ -63,10 +63,11 @@ class PostController extends Controller
                 if (!$collection) {
                     return response()->json('Collection not found.', 404);
                 }
+                if (Auth::user()->id !== $collection->user_id) {
+                    return response()->json('Not authorized', 403);
+                }
             }
         }
-
-        $this->authorize('create', $request->collection_id);
 
         $info = $this->computePostData($request->content);
 

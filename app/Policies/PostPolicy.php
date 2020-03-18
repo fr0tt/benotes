@@ -24,18 +24,6 @@ class PostPolicy
     }
 
     /**
-     * Determine whether the user can create posts.
-     *
-     * @param  \App\User  $user
-     * @param  \App\Collection  $collection
-     * @return mixed
-     */
-    public function create(User $user, Collection $collection)
-    {
-        return $user->id === $collection->user_id;
-    }
-
-    /**
      * Determine whether the user can update the post.
      *
      * @param  \App\User  $user
