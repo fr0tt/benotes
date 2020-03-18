@@ -1,5 +1,6 @@
-
 # Benotes
+
+This project is currently in **Beta**.
 
 
 ## Installation
