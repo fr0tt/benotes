@@ -13,7 +13,7 @@
 
             </div>
             <div class="w-40">
-                <button @click="save()" class="button" title="Strg + Shift + S">
+                <button @click="save()" class="button" title="Strg + Alt + S">
                     <svg-vue class="button-icon" icon="zondicons/checkmark-outline"/>
                     Save
                 </button>

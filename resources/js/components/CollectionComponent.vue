@@ -26,7 +26,8 @@
                     <svg-vue class="button-icon" icon="zondicons/paste"/>
                     Paste
                 </button>
-                <router-link :to="`/c/${this.id}/p/create`" class="button ml-4" tag="button">
+                <router-link :to="`/c/${this.id}/p/create`" class="button ml-4"
+                    tag="button" title="Strg + Alt + N">
                     <svg-vue class="button-icon" icon="zondicons/add-outline"/>
                     Create
                 </router-link>
