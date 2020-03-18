@@ -35,7 +35,7 @@ class UserController extends Controller
             'password' => 'required|string',
         ]);
 
-        $this->authorize('create');
+        $this->authorize('create', User::class);
 
         $alreadyExistingUser = User::where('email', $request->email)->first();
 
@@ -92,7 +92,7 @@ class UserController extends Controller
         if (!$user) {
             return response()->json('User not found.', 404);
         }
-        $this->authorize('delete');
+        $this->authorize('delete', User::class);
         $user->delete();
 
     }
