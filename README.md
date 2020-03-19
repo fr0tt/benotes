@@ -1,6 +1,6 @@
 # Benotes
 
-This project is currently in **Beta**.
+This project is currently in **Beta**. You may encounter bugs and errors.
 
 
 ## Installation
@@ -22,7 +22,11 @@ Installation:
 - ln -sfn ../storage/app/public/ public/storage (_create symlink for storage_)
 - chmod -R 774 storage (_make storage directory writable for webserver_)
 
+## Upgrade
 
+- git pull (*upgrade files*)
+- composer install (*upgrade dependencies*)
+- php artisan migrate (*upgrade database schemas*)
 
 ## Rest API
 
