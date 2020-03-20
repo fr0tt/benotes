@@ -8,9 +8,16 @@ use App\Collection;
 
 class PostTest extends TestCase
 {
+
+    use DatabaseMigrations;
+
     public function testPost()
     {
         $user = factory(User::class)->create();
+
+
+        // different content
+
         $collection = factory(Collection::class)->create();
 
         $contents = [
@@ -33,6 +40,28 @@ class PostTest extends TestCase
             }
             $this->assertNotEquals(null, $data->collection_id);
         }
+
+        // different collections
+
+        $collections = [0, null];
+
+        foreach ($collections as &$collection) {
+            $this->actingAs($user)->json('POST', 'api/posts', [
+                'content' => '<p>Test</p>',
+                'collection_id' => $collection
+            ]);
+            $this->assertEquals(201, $this->response->status());
+            $data = $this->response->getData()->data;
+        }
+
+        // no collection
+
+        $this->actingAs($user)->json('POST', 'api/posts', [
+            'content' => '<p>Test</p>'
+        ]);
+        $this->assertEquals(201, $this->response->status());
+        $data = $this->response->getData()->data;
+
 
     }
 }

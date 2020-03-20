@@ -1,6 +1,13 @@
-# Benotes
+<h1 align="center">Benotes</h1>
 
-This project is currently in **Beta**. You may encounter bugs and errors.
+<p align="center">
+        <img width="160" src="https://raw.githubusercontent.com/fr0tt/benotes/master/resources/img/logo_160x160.png" alt="Benotes Logo"/>
+</p>
+---
+
+An open source self hosted notes and bookmarks taking web app.
+
+This project is currently in **Beta**. You may encounter bugs or errors.
 
 
 ## Installation

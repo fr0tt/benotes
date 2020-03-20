@@ -11,7 +11,7 @@ class CollectionController extends Controller
 
     public function index()
     {
-        $collections = Collection::where('user_id', Auth::user()->id)->get();
+        $collections = Collection::where('user_id', Auth::user()->id)->orderBy('name')->get();
         return response()->json(['data' => $collections]);
     }
 
