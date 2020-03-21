@@ -52,7 +52,7 @@
 import axios from 'axios'
 import { mapState } from 'vuex'
 import Post from './PostItem.vue'
-import CollectionMenu from './CollectionMenuComponent.vue'
+import CollectionMenu from './CollectionMenu.vue'
 import Draggable from 'vuedraggable'
 
 export default {

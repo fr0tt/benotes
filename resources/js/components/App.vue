@@ -12,7 +12,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import Sidebar from './SidebarComponent.vue'
+import Sidebar from './Sidebar.vue'
 
 export default {
     components: {

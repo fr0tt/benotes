@@ -1,10 +1,10 @@
-import App from './components/AppComponent'
+import App from './components/App'
 import Post from './components/Post'
-import Collection from './components/CollectionComponent'
+import Collection from './components/Collection'
 import EditCollection from './components/EditCollection'
 import Users from './components/Users'
 import User from './components/User'
-import Login from './components/LoginComponent'
+import Login from './components/Login'
 
 export default [
     {
