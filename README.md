@@ -1,9 +1,8 @@
-<h1 align="center">Benotes</h1>
-
 <p align="center">
-        <img width="160" src="https://raw.githubusercontent.com/fr0tt/benotes/master/resources/img/logo_160x160.png" alt="Benotes Logo"/>
+        <img width="110" src="https://raw.githubusercontent.com/fr0tt/benotes/master/resources/img/logo_160x160.png" alt="Benotes Logo"/>
 </p>
----
+
+<h1 align="center">Benotes</h1>
 
 An open source self hosted notes and bookmarks taking web app.
 
