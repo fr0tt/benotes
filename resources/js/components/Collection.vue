@@ -128,6 +128,9 @@ export default {
             if (typeof navigator.clipboard === 'undefined') {
                 return false
             }
+            if (typeof navigator.clipboard.readText === 'undefined') {
+                return false
+            }
             if (navigator.clipboard.readText() !== null) {
                 return true
             }
