@@ -22,7 +22,7 @@
                 </div>
             </div>
             <div class="">
-                <button class="button" @click="pasteNewPost()">
+                <button v-if="isSupported" class="button" @click="pasteNewPost()">
                     <svg-vue class="button-icon" icon="zondicons/paste"/>
                     Paste
                 </button>
@@ -123,6 +123,15 @@ export default {
             set (value) {
                 this.$store.commit('post/setPosts', value)
             }
+        },
+        isSupported () {
+            if (typeof navigator.clipboard === 'undefined') {
+                return false
+            }
+            if (navigator.clipboard.readText() !== null) {
+                return true
+            }
+            return false
         },
         ...mapState('post', [
             'maxOrder'
