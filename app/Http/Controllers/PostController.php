@@ -170,11 +170,10 @@ class PostController extends Controller
             $info = $this->getInfo($matches[0]);
         }
 
+        $stripped_content = strip_tags($content);
         if (empty($matches)) {
             $info['type'] = Post::POST_TYPE_TEXT;
-        } else if (substr_count($content, '<a href="') === 1 && substr_count($content, '>') === 2) {
-            $info['type'] = Post::POST_TYPE_LINK;
-        } else if (strlen($content) > strlen($matches[0])) { // seems to contain more than just a link
+        } else if (strlen($stripped_content) > strlen($matches[0])) { // seems to contain more than just a link
             $info['type'] = Post::POST_TYPE_TEXT;
         } else {
             $info['type'] = Post::POST_TYPE_LINK;
@@ -200,7 +199,11 @@ class PostController extends Controller
         $document = new \DOMDocument();
         @$document->loadHTML($html);
         $titles = $document->getElementsByTagName('title');
-        $title = trim($titles->item(0)->nodeValue);
+        if (count($titles) > 0) {
+            $title = trim($titles->item(0)->nodeValue);
+        } else {
+            $title = $base_url;
+        }
         $metas = $document->getElementsByTagName('meta');
         
         for ($i = 0; $i < $metas->length; $i++) {
@@ -210,7 +213,11 @@ class PostController extends Controller
             } else if ($meta->getAttribute('name') === 'theme-color') {
                 $color = $meta->getAttribute('content');
             } else if ($meta->getAttribute('property') === 'og:image') {
-                $image = $meta->getAttribute('content');
+                $image_path = $meta->getAttribute('content');
+                $base_image_url = parse_url($image_path);
+                if ($base_image_url['path'] === $image_path) {
+                    $image_path = $base_url.$image_path;
+                }
             }
         }
 
@@ -224,7 +231,7 @@ class PostController extends Controller
             'title' => $title,
             'description' => (empty($description)) ? null : $description,
             'color' => (empty($color)) ? null : $color,
-            'image_path' => (empty($image)) ? null : $image,
+            'image_path' => (empty($image_path)) ? null : $image_path,
         ];
     }
 
@@ -243,7 +250,7 @@ class PostController extends Controller
             if ($image) {
                 $image->fit(400, 210);
                 $filename = 'thumbnail_' . $post->id . '.jpg';
-                $image->save('../storage/app/public/thumbnails/' . $filename, 100);
+                $image->save(storage_path().'/app/public/thumbnails/' . $filename, 100);
                 $post->image_path = $filename;
                 $post->save();
             }

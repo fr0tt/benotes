@@ -11,7 +11,7 @@ class PostTest extends TestCase
 
     use DatabaseMigrations;
 
-    public function testPost()
+    public function testCreatePost()
     {
         $user = factory(User::class)->create();
 
@@ -20,20 +20,26 @@ class PostTest extends TestCase
 
         $collection = factory(Collection::class)->create();
 
-        $contents = [
-            'https://laravel.com',
-            'Lorem ipsum https://fonts.adobe.com/fonts/realist',
-            'https://gamesindustry.biz',
-            'https://www.php.net/manual/de/function.parse-url.php'
+        $posts = [
+            'https://test.com' => 'link',
+            '<a href="https://www.wolframalpha.com" rel="noopener noreferrer nofollow">https://www.wolframalpha.com</a>' => 'link',
+            '<p class="">dfgd adijfds https://google.com</p>' => 'text',
+            'Hdfgd fijsdoij <a href="https://slack.com" rel="noopener noreferrer nofollow">https://slack.com</a>' => 'text',
+            'https://laravel.com' => 'link',
+            'Lorem ipsum https://fonts.adobe.com/fonts/realist' => 'text',
+            'https://gamesindustry.biz' => 'link',
+            'https://www.php.net/manual/de/function.parse-url.php' => 'link'
         ];
 
-        foreach ($contents as &$content) {
+        foreach ($posts as $content => $type) {
             $this->actingAs($user)->json('POST', 'api/posts', [
                 'content' => $content,
                 'collection_id' => $collection->id
             ]);
+            // echo $this->response->getData();
             $this->assertEquals(201, $this->response->status());
             $data = $this->response->getData()->data;
+            $this->assertEquals($type, $data->type);
             if ($data->type === 'link') {
                 $this->assertNotEquals(null, $data->color);
                 $this->assertNotEquals(null, $data->url);
@@ -47,7 +53,7 @@ class PostTest extends TestCase
 
         foreach ($collections as &$collection) {
             $this->actingAs($user)->json('POST', 'api/posts', [
-                'content' => '<p>Test</p>',
+                'content' => 'Test blab bla foo',
                 'collection_id' => $collection
             ]);
             $this->assertEquals(201, $this->response->status());
@@ -57,7 +63,7 @@ class PostTest extends TestCase
         // no collection
 
         $this->actingAs($user)->json('POST', 'api/posts', [
-            'content' => '<p>Test</p>'
+            'content' => 'Test blab bla foo'
         ]);
         $this->assertEquals(201, $this->response->status());
         $data = $this->response->getData()->data;
