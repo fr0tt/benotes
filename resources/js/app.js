@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import VueCookie from 'vue-cookie'
 import SvgVue from 'svg-vue'
+import axios from 'axios'
 
 import routes from './routes.js'
 import store from './store'
@@ -16,21 +17,29 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-    if (to.matched.some(record => record.meta.requiresAuth)) {
-        store.dispatch('auth/getAuthUser')
-            .then(authUser => {
-                if (!authUser) {
-                    next({
-                        path: '/login'
-                    })
+    if (to.matched.some(record => record.meta.staticAuth) && to.query.token) {
+        store.dispatch('auth/getStaticAuth', to.query.token)
+            .then(share => {
+                if (!share) {
+                    next({ path: '/login' })
                 } else {
                     next()
                 }
             })
             .catch(() => {
-                next({
-                    path: '/login'
-                })
+                next({ path: '/login' })
+            })
+    } else if (to.matched.some(record => record.meta.authUser)) {
+        store.dispatch('auth/getAuthUser')
+            .then(authUser => {
+                if (!authUser) {
+                    next({ path: '/login' })
+                } else {
+                    next()
+                }
+            })
+            .catch(() => {
+                next({ path: '/login' })
             })
     } else {
         next()

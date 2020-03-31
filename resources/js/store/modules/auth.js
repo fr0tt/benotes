@@ -5,7 +5,8 @@ export default {
     namespaced: true,
     state: {
         isAuthenticated: false,
-        authUser: null
+        authUser: null,
+        staticAuth: null
     },
     mutations: {
         isAuthenticated (state, isAuthenticated) {
@@ -13,6 +14,9 @@ export default {
         },
         setAuthUser (state, user) {
             state.authUser = user
+        },
+        setStaticAuth (state, staticAuth) {
+            state.staticAuth = staticAuth
         }
     },
     actions: {
@@ -29,8 +33,9 @@ export default {
         },
         getAuthUser (context) {
             return new Promise((resolve, reject) => {
-                if (context.authUser) {
-                    resolve(context.authUser)
+                if (context.state.authUser) {
+                    context.commit('setStaticAuth', null)
+                    resolve(context.state.authUser)
                 }
                 if (!Vue.cookie.get('token')) {
                     resolve(null)
@@ -40,6 +45,7 @@ export default {
                 axios.get('/api/auth/me')
                     .then(response => {
                         const user = response.data.data
+                        context.commit('setStaticAuth', null)
                         context.commit('setAuthUser', user)
                         resolve(user)
                     })
@@ -68,6 +74,26 @@ export default {
         },
         setAuthUser (context, user) {
             context.commit('setAuthUser', user)
+        },
+        getStaticAuth (context, token) {
+            return new Promise((resolve, reject) => {
+                if (context.state.staticAuth) {
+                    resolve(context.state.staticAuth)
+                }
+                if (!token) {
+                    resolve(null)
+                }
+                axios.defaults.headers.common = { 'Authorization': `Bearer ${token}` }
+                axios.get('/api/share/me')
+                    .then(response => {
+                        const share = response.data.data
+                        context.commit('setStaticAuth', share)
+                        resolve(share)
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            })
         }
     }
 }

@@ -6,22 +6,23 @@ import Users from './components/Users'
 import User from './components/User'
 import Login from './components/Login'
 
+import store from './store'
+import VueRouter from 'vue-router'
+
 export default [
     {
         path: '/',
         component: App,
-        meta: {
-            requiresAuth: true
-        },
         children: [
             {
                 path: '',
                 component: Collection,
                 props: {
-                    id: 0
+                    id: 0,
+                    permission: 7
                 },
                 meta: {
-                    requiresAuth: true
+                    authUser: true
                 }
             },
             {
@@ -31,7 +32,7 @@ export default [
                     isNew: true
                 },
                 meta: {
-                    requiresAuth: true
+                    authUser: true
                 }
             },
             {
@@ -42,16 +43,19 @@ export default [
                     isNew: false
                 }),
                 meta: {
-                    requiresAuth: true
+                    authUser: true
                 }
             },
             {
                 path: 'c/:id',
                 name: 'collection',
                 component: Collection,
-                props: true,
+                props: (route) => ({
+                    id: route.params.id,
+                    permission: 7
+                }),
                 meta: {
-                    requiresAuth: true
+                    authUser: true
                 }
             },
             {
@@ -59,7 +63,7 @@ export default [
                 component: Post,
                 props: true,
                 meta: {
-                    requiresAuth: true
+                    authUser: true
                 }
             },
             {
@@ -68,7 +72,8 @@ export default [
                 component: Post,
                 props: true,
                 meta: {
-                    requiresAuth: true
+                    authUser: true,
+                    staticAuth: true
                 }
             },
             {
@@ -76,7 +81,7 @@ export default [
                 name: 'users',
                 component: Users,
                 meta: {
-                    requiresAuth: true
+                    authUser: true
                 }
             },
             {
@@ -86,7 +91,7 @@ export default [
                     isNew: true
                 },
                 meta: {
-                    requiresAuth: true
+                    authUser: true
                 }
             },
             {
@@ -98,7 +103,28 @@ export default [
                     isNew: false
                 }),
                 meta: {
-                    requiresAuth: true
+                    authUser: true
+                }
+            },
+            {
+                path: '/s',
+                name: 'share',
+                component: Collection,
+                props: (route) => {
+                    if (store.state.auth.staticAuth) {
+                        return {
+                            id: store.state.auth.staticAuth.collection_id,
+                            permission: store.state.auth.staticAuth.permission
+                        }
+                    } else {
+                        return {
+                            id: null,
+                            permission: 0
+                        }
+                    }
+                },
+                meta: {
+                    staticAuth: true
                 }
             }
         ]
