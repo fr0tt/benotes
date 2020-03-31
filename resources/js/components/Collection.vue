@@ -21,7 +21,7 @@
                     </transition>
                 </div>
             </div>
-            <div class="">
+            <div v-if="permission >= 6" class="">
                 <button v-if="isSupported" class="button" @click="pasteNewPost()">
                     <svg-vue class="button-icon" icon="zondicons/paste"/>
                     Paste
@@ -56,7 +56,7 @@ import CollectionMenu from './CollectionMenu.vue'
 import Draggable from 'vuedraggable'
 
 export default {
-    props: ['id'],
+    props: ['id', 'permission'],
     components: {
         Post,
         CollectionMenu,

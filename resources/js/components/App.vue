@@ -1,7 +1,7 @@
 <template>
     <div class="flex w-full outline-none" @click="globalClickEvent($event)"
         @keyup.ctrl.alt.78="createNewPost()" tabindex="0" autofocus>
-        <Sidebar/>
+        <Sidebar v-if="!staticAuth"/>
         <div class="flex-1 h-screen overflow-y-scroll">
             <transition name="router-fade" mode="out-in">
             <router-view></router-view>
@@ -39,6 +39,9 @@ export default {
         ]),
         ...mapState('post', [
             'contextMenu'
+        ]),
+        ...mapState('auth', [
+            'staticAuth'
         ])
     },
     created () {

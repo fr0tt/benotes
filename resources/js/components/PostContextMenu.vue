@@ -28,7 +28,10 @@ export default {
             this.$store.dispatch('post/setCurrentPost', this.contextMenu.post)
             document.querySelector('#app').addEventListener('click', this.stopEditing, true)
             */
-            this.$router.push({ path: '/p/' + this.contextMenu.post.id })
+            this.$router.push({
+                path: '/p/' + this.contextMenu.post.id,
+                query: { token: this.$router.currentRoute.query.token }
+            })
             this.hide()
         },
         del () {
