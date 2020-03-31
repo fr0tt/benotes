@@ -22,13 +22,21 @@ class PostController extends Controller
             'limit' => 'integer'
         ]);
 
-        if (isset($request->collection_id)) {
+        if (Auth::guard('api')->check() && isset($request->collection_id)) {
             $posts = Post::where([
                 ['collection_id', '=', Collection::getCollectionId($request->collection_id)],
                 ['user_id', '=', Auth::user()->id]
             ]);
-        } else {
+        } else if (Auth::guard('api')->check()){
             $posts = Post::where('user_id', Auth::user()->id);
+        } else if (Auth::guard('share')->check()) {
+            $share = Auth::guard('share')->user();
+            $posts = Post::where([
+                'collection_id' => $share->collection_id,
+                'user_id' => $share->created_by
+            ]);
+        } else {
+            return response()->json('', 400);
         }
 
         if (isset($request->limit)) {

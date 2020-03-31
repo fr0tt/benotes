@@ -22,8 +22,6 @@ Route::group([
     Route::get('api/auth/me', 'AuthController@me');
     Route::post('api/auth/logout', 'AuthController@logout');
 
-    Route::get('api/posts', 'PostController@index');
-    Route::get('api/posts/{post}', 'PostController@show');
     Route::post('api/posts', 'PostController@store');
     Route::patch('api/posts/{id}', 'PostController@update');
     Route::delete('api/posts/{id}', 'PostController@destroy');
@@ -40,7 +38,21 @@ Route::group([
     Route::patch('api/users/{id}', 'UserController@update');
     Route::delete('api/users/{id}', 'UserController@destroy');
 
+    Route::get('api/share', 'ShareController@index');
+    Route::post('api/share', 'ShareController@store');
+    Route::patch('api/share/{id}', 'ShareController@update');
+    Route::delete('api/share/{id}', 'ShareController@destroy');
+
 }); 
+
+Route::group([
+    'middleware' => 'auth:share'
+], function () {
+    Route::get('api/posts', 'PostController@index');
+    Route::get('api/posts/{post}', 'PostController@show');
+    
+    Route::get('api/share/me', 'ShareController@me');
+});
 
 
 Route::get('/{any:.*}', function () {
