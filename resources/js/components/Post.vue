@@ -12,7 +12,7 @@
                 </div>
 
             </div>
-            <div class="w-40">
+            <div class="w-40 pt-4">
                 <button @click="save()" class="button" title="Strg + Alt + S">
                     <svg-vue class="button-icon" icon="zondicons/checkmark-outline"/>
                     Save
@@ -72,8 +72,6 @@ export default {
                 content = matches[1]
             }
 
-            this.$router.push({ path: '/c/' + this.collectionId })
-
             if (this.isNewPost) {
                 axios.post('/api/posts', {
                     title: this.title,
@@ -89,10 +87,12 @@ export default {
                         console.log(error.response.data)
                         console.log(error)
                     })
+                this.$router.push({ path: '/c/' + this.collectionId })
             } else {
                 this.post.title = this.title
                 this.post.content = content
                 this.$store.dispatch('post/updatePost', { post: this.post })
+                this.$router.push({ path: '/c/' + this.post.collection_id })
             }
         },
         keySave (event) {
