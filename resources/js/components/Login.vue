@@ -17,7 +17,7 @@
 
             <div class="mb-8">
                 <label class="label" for="password">Password</label>
-                <input type="password" class="input" v-model="password" placeholder="Password" required>
+                <input type="password" class="input tracking-tighter" v-model="password" placeholder="Password" required>
             </div>
 
             <div class="mb-12">
