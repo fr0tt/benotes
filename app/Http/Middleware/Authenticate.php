@@ -33,12 +33,17 @@ class Authenticate
      * @param  string|null  $guard
      * @return mixed
      */
-    public function handle($request, Closure $next, $guard = null)
+    public function handle($request, Closure $next, ...$guards)
     {
-        if ($this->auth->guard($guard)->guest()) {
+
+        if (in_array('share', $guards) && $this->auth->guard('share')->check()) {
+            config()->set('auth.defaults.guard', 'share');
+            return $next($request);
+        } else if ($this->auth->guard('api')->check()) {
+            return $next($request);
+        } else if ($this->auth->guard()->guest()) {
             return response()->json('Unauthorized.', 401);
         }
 
-        return $next($request);
     }
 }
