@@ -7,7 +7,6 @@ import User from './components/User'
 import Login from './components/Login'
 
 import store from './store'
-import VueRouter from 'vue-router'
 
 export default [
     {
