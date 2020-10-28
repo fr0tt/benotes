@@ -6,7 +6,7 @@
 
 An open source self hosted notes and bookmarks taking web app.
 
-This project is currently in **Beta**. You may encounter bugs or errors.
+This project is currently in **Alpha**. You may encounter bugs or errors.
 
 
 ## Installation
