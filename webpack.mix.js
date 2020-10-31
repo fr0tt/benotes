@@ -1,6 +1,5 @@
 const mix = require('laravel-mix')
 const tailwindcss = require('tailwindcss')
-require('laravel-mix-purgecss')
 require('laravel-mix-svg-vue')
 
 /*
@@ -34,7 +33,6 @@ mix.js('resources/js/app.js', 'public/js')
         processCssUrls: false,
         postCss: [tailwindcss('./tailwind.config.js')]
     })
-    .purgeCss()
     .svgVue({
         svgoSettings: [
             { removeTitle: false },
@@ -42,4 +40,3 @@ mix.js('resources/js/app.js', 'public/js')
             { removeDimensions: true }
         ]
     })
-

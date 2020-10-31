@@ -10,26 +10,25 @@
         "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
     },
     "devDependencies": {
-        "axios": "^0.19",
-        "cross-env": "^5.1",
-        "eslint": "^6.2.2",
+        "axios": "^0.19.2",
+        "cross-env": "^5.2.1",
+        "eslint": "^6.8.0",
         "eslint-plugin-vue-libs": "^4.0.0",
-        "laravel-mix": "^5.0.0",
+        "laravel-mix": "^5.0.7",
         "resolve-url-loader": "^2.3.1",
-        "sass": "^1.15.2",
-        "sass-loader": "^7.1.0",
-        "vue": "^2.5.17",
-        "vue-template-compiler": "^2.6.10"
+        "sass": "^1.28.0",
+        "sass-loader": "^7.3.1",
+        "vue": "^2.6.12",
+        "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
-        "laravel-mix-purgecss": "^4.1.0",
         "laravel-mix-svg-vue": "^0.2.6",
-        "tailwindcss": "^1.0.6",
-        "tiptap": "^1.26.5",
-        "tiptap-extensions": "^1.28.5",
+        "tailwindcss": "^1.9.6",
+        "tiptap": "^1.30.0",
+        "tiptap-extensions": "^1.33.2",
         "vue-cookie": "^1.1.4",
-        "vue-router": "^3.0.7",
-        "vuedraggable": "^2.23.2",
-        "vuex": "^3.1.1"
+        "vue-router": "^3.4.8",
+        "vuedraggable": "^2.24.3",
+        "vuex": "^3.5.1"
     }
 }
