@@ -7,17 +7,21 @@
 
             <div class="mb-4">
                 <svg-vue class="w-16 block m-auto" icon="logo_64x64"/>
-                <span class="block my-2 text-2xl text-orange-600 font-semibold text-center align-middle">Benotes</span>
+                <span class="block my-2 text-2xl text-orange-600 font-semibold text-center align-middle">
+                    Benotes
+                </span>
             </div>
 
             <div class="mb-8">
                 <label class="label" for="email">Email</label>
-                <input type="email" class="input" v-model="email" placeholder="Email Address" autofocus required>
+                <input class="input" v-model="email" type="email" name="email"
+                    placeholder="Email Address" autofocus required/>
             </div>
 
             <div class="mb-8">
                 <label class="label" for="password">Password</label>
-                <input type="password" class="input tracking-tighter" v-model="password" placeholder="Password" required>
+                <input class="input tracking-tighter" v-model="password" type="password" name="password"
+                    placeholder="Password" required/>
             </div>
 
             <div class="mb-12">
