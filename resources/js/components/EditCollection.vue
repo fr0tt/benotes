@@ -119,17 +119,17 @@ export default {
                 })
         },
         handleShare () {
-            if (this.token === '' && this.share !== null) {
-                axios.delete('/api/share/' + this.share.id)
-                    .catch(error => {
-                        console.log(error.response.data)
-                    })
-            } else if (this.token === '') {
+            if (this.share === null) {
                 axios.post('/api/share', {
                     token: this.token,
                     collection_id: this.id,
                     is_active: this.is_active
                 })
+                    .catch(error => {
+                        console.log(error.response.data)
+                    })
+            } else if (this.token === '') {
+                axios.delete('/api/share/' + this.share.id)
                     .catch(error => {
                         console.log(error.response.data)
                     })
@@ -154,7 +154,7 @@ export default {
             }
         },
         domain () {
-            return window.location.protocol + '//' + window.location.hostname + '/s/token?='
+            return window.location.protocol + '//' + window.location.hostname + '/s?token='
         },
         ...mapState('collection', [
             'collections'
@@ -177,7 +177,7 @@ export default {
             this.getShares()
         }
         navigator.permissions.query({ name: 'clipboard-write' }).then(result => {
-            this.isSupported = (result.state === 'granted' || result.state === 'prompt')
+            this.isSupported = result.state === 'granted' || result.state === 'prompt'
         }).catch(() => {
             this.isSupported = false
         })
