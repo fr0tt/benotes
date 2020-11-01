@@ -1,5 +1,5 @@
 <template>
-    <li class="inline-block m-4 relative post" :post-id="post.id">
+    <li class="inline-block m-4 relative text-left post" :post-id="post.id">
         <div v-if="post.type === 'link' && !isActive()" class="card">
             <a :href="post.url" target="_blank">
                 <div v-if="post.image_path" class="h-cover w-full bg-cover bg-center" :style="image"></div>

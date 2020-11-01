@@ -6,7 +6,7 @@
                     <svg-vue class="w-6 cursor-pointer" icon="remix/menu-line"/>
                 </button>
             </div>
-            <div class="flex-1 my-auto text-center">
+            <div class="flex-1 mb-0 my-auto text-center">
                 <span class="text-gray-800 font-medium text-xl">{{ currentCollection.name }}</span>
                 <div class="relative inline-block" v-if="currentCollection.id > 0">
                     <button @click="showContextMenu = !showContextMenu" class="align-text-bottom">
@@ -31,7 +31,7 @@
                     <svg-vue class="button-icon" icon="zondicons/paste"/>
                     Paste
                 </button>
-                <router-link :to="`/c/${currentCollection.id}/p/create`" class="button ml-4"
+                <router-link :to="`/c/${currentCollection.id}/p/create`" class="button ml-2 md:ml-4"
                     tag="button" title="Strg + Alt + N">
                     <svg-vue class="button-icon" icon="zondicons/add-outline"/>
                     Create
