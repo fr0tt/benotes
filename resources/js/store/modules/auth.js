@@ -17,6 +17,9 @@ export default {
         },
         setStaticAuth (state, staticAuth) {
             state.staticAuth = staticAuth
+        },
+        setPermission (state, permission) {
+            state.permission = permission
         }
     },
     actions: {
@@ -94,6 +97,9 @@ export default {
                         reject(error)
                     })
             })
+        },
+        setPermission (context, permission) {
+            context.commit('setPermission', permission)
         }
     }
 }

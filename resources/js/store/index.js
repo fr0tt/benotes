@@ -17,11 +17,15 @@ export default new Vuex.Store({
     },
     strict: process.env.NODE_ENV !== 'production',
     state: {
-        isMobile: false
+        isMobile: false,
+        showSidebar: (localStorage.getItem('sidebar') === 'false') ? false : true,
     },
     mutations: {
         isMobile (state, isMobile) {
             state.isMobile = isMobile
+        },
+        showSidebar (state, showSidebar) {
+            state.showSidebar = showSidebar
         }
     },
     actions: {
@@ -31,6 +35,11 @@ export default new Vuex.Store({
             } else {
                 context.commit('isMobile', false)
             }
+        },
+        toggleSidebar (context) {
+            const showSidebar = !this.state.showSidebar
+            context.commit('showSidebar', showSidebar)
+            localStorage.setItem('sidebar', showSidebar)
         }
     }
 })

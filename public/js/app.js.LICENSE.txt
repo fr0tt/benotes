@@ -1,0 +1,42 @@
+/*!
+    * tiptap v1.29.6
+    * (c) 2020 überdosis GbR (limited liability)
+    * @license MIT
+    */
+
+/*!
+    * tiptap-extensions v1.33.1
+    * (c) 2020 überdosis GbR (limited liability)
+    * @license MIT
+    */
+
+/*!
+    * tiptap-utils v1.10.4
+    * (c) 2020 überdosis GbR (limited liability)
+    * @license MIT
+    */
+
+/*!
+ * Vue.js v2.6.12
+ * (c) 2014-2020 Evan You
+ * Released under the MIT License.
+ */
+
+/*!
+ * tiny-cookie - A tiny cookie manipulation plugin
+ * https://github.com/Alex1990/tiny-cookie
+ * Under the MIT license | (c) Alex Chao
+ */
+
+/*!
+ * vuex v3.5.1
+ * (c) 2020 Evan You
+ * @license MIT
+ */
+
+/**!
+ * Sortable 1.10.2
+ * @author	RubaXa   <trash@rubaxa.org>
+ * @author	owenm    <owen23355@gmail.com>
+ * @license MIT
+ */
