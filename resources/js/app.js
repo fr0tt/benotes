@@ -23,7 +23,8 @@ router.beforeEach((to, from, next) => {
                 if (!share) {
                     next({ path: '/login' })
                 } else {
-                    store.dispatch('auth/setPermission', share.permission)
+                    // not needed for now
+                    // store.dispatch('auth/setPermission', share.permission)
                     next()
                 }
             })
@@ -36,7 +37,8 @@ router.beforeEach((to, from, next) => {
                 if (!authUser) {
                     next({ path: '/login' })
                 } else {
-                    store.dispatch('auth/setPermission', 7)
+                    // not needed for now
+                    // store.dispatch('auth/setPermission', 7)
                     next()
                 }
             })

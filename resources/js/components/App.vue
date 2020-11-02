@@ -1,7 +1,6 @@
 <template>
     <div class="w-full outline-none" @click="globalClickEvent($event)"
         @keyup.ctrl.alt.78="createNewPost()" tabindex="0" autofocus>
-        <Appbar class="fixed w-full bg-white z-50"/>
         <div class="flex">
             <Sidebar class="pt-16 z-40" v-if="!staticAuth"/>
             <div class="flex-1 h-screen bg-white overflow-y-scroll pt-16">
@@ -16,12 +15,10 @@
 <script>
 import { mapState } from 'vuex'
 import Sidebar from './Sidebar.vue'
-import Appbar from './Appbar.vue'
 
 export default {
     components: {
         Sidebar,
-        Appbar
     },
     methods: {
         globalClickEvent (event) {

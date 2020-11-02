@@ -1,5 +1,7 @@
 <template>
     <div>
+        <Appbar :title="currentCollection.name" :allowPaste="true" :permission="permission"
+            buttonLabel="Create" :buttonCallback="create" buttonIcon="zondicons/add-outline"/>
         <div class="sm:ml-4 -ml-2 px-2">
             <transition name="collection-fade">
                 <Draggable v-if="!isLoading" tag="ol" v-model="posts" :move="dragged"
@@ -18,6 +20,7 @@
 <script>
 import axios from 'axios'
 import { mapState } from 'vuex'
+import Appbar from './Appbar.vue'
 import Post from './PostItem.vue'
 import CollectionMenu from './CollectionMenu.vue'
 import Draggable from 'vuedraggable'
@@ -25,6 +28,7 @@ import Draggable from 'vuedraggable'
 export default {
     props: ['id', 'permission'],
     components: {
+        Appbar,
         Post,
         CollectionMenu,
         Draggable
@@ -46,6 +50,9 @@ export default {
                 .catch(error => {
                     console.log(error)
                 })
+        },
+        create () {
+            this.$router.push(`/c/${this.id}/p/create`)
         }
     },
     watch: {
@@ -83,6 +90,9 @@ export default {
         ]),
         ...mapState('collection', [
             'collectionMenu'
+        ]),
+        ...mapState('collection', [
+            'currentCollection'
         ])
     },
     created () {

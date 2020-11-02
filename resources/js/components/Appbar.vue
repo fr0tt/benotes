@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="absolute top-0 right-0 w-full bg-white z-50">
         <div class="flex sm:px-8 px-4 py-3">
             <div class="w-16 my-auto">
                 <button @click="toggleSidebar()" class="align-bottom">
@@ -7,7 +7,7 @@
                 </button>
             </div>
             <div class="flex-1 mb-0 my-auto text-center">
-                <span class="text-gray-800 font-medium text-xl">{{ currentCollection.name }}</span>
+                <span class="text-gray-800 font-medium text-xl">{{ title }}</span>
                 <div class="relative inline-block" v-if="currentCollection.id > 0">
                     <button @click="showContextMenu = !showContextMenu" class="align-text-bottom">
                         <svg-vue class="w-5 mb-1/5" icon="remix/more-2-fill"/>
@@ -27,15 +27,15 @@
                 </div>
             </div>
             <div v-if="permission >= 6" class="">
-                <button v-if="isSupported" class="button" @click="pasteNewPost()">
+                <button v-if="allowPaste && isSupported" class="button" @click="pasteNewPost()">
                     <svg-vue class="button-icon" icon="zondicons/paste"/>
                     Paste
                 </button>
-                <router-link :to="`/c/${currentCollection.id}/p/create`" class="button ml-2 md:ml-4"
+                <button @click="buttonCallback" class="button ml-2 md:ml-4"
                     tag="button" title="Strg + Alt + N">
-                    <svg-vue class="button-icon" icon="zondicons/add-outline"/>
-                    Create
-                </router-link>
+                    <svg-vue class="button-icon" :icon="buttonIcon"/>
+                    {{ buttonLabel }}
+                </button>
             </div>
         </div>
         <hr class="block border-t-2 border-orange-600">
@@ -47,6 +47,17 @@ import { mapState } from 'vuex'
 import Sidebar from './Sidebar.vue'
 export default {
     name: 'Appbar',
+    props: {
+        title: String,
+        buttonLabel: String, 
+        buttonIcon: String,
+        buttonCallback: Function,
+        allowPaste: {
+            type: Boolean,
+            default: false
+        },
+        permission: Number
+    },
     data () {
         return {
             isOpen: true,
@@ -104,9 +115,6 @@ export default {
         },
         ...mapState('collection', [
             'currentCollection'
-        ]),
-        ...mapState('auth', [
-            'permission'
         ])
     }
 }
