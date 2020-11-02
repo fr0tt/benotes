@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import { mapState } from 'vuex'
 import Sidebar from './Sidebar.vue'
 export default {
