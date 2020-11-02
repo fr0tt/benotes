@@ -1,37 +1,6 @@
 <template>
     <transition name="sidebar-slide" mode="out-in">
         <div v-if="showSidebar" class="sidebar w-full md:w-48 xl:w-1/6 pb-6 bg-white">
-            <!--
-            <div class="flex md:px-8 px-4 py-4">
-                <div class="relative flex-1">
-                    <div class="absolute menu min-w-48 bg-white" :class="{ 'rounded shadow': menuIsOpen }">
-                        <div @click="menuIsOpen = !menuIsOpen" class="p-4 cursor-pointer">
-                            <svg class="w-5 mr-2 align-text-bottom fill-current text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 20a10 10 0 1 1 0-20 10 10 0 0 1 0 20zM7 6v2a3 3 0 1 0 6 0V6a3 3 0 1 0-6 0zm-3.65 8.44a8 8 0 0 0 13.3 0 15.94 15.94 0 0 0-13.3 0z"/></svg>
-                            <span class="text-gray-700">{{ authUser.name }}</span>
-                            <svg-vue class="w-2 ml-2 text-gray-700 cursor-pointer fill-current inline-block" icon="arrow_down"/>
-                        </div>
-                        <transition name="fade">
-                            <div v-if="menuIsOpen" @click="menuIsOpen = false" class="pb-1">
-                                <hr class="m-0 mb-1 border-t border-gray-200">
-                                <router-link to="/users" class="menuItem">
-                                    Users
-                                </router-link>
-                                <router-link :to="'/users/' + authUser.id" class="menuItem">
-                                    My Account
-                                </router-link>
-                                <a href="/" @click="logout()" class="menuItem py-2">
-                                    Logout
-                                </a>
-                            </div>
-                        </transition>
-                    </div>
-                </div>
-                <svg @click="toggle()" class="menu-icon text-gray-600 cursor-pointer fill-current inline-block z-50"
-                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0V0z"></path><path d="M3 18h13v-2H3v2zm0-5h10v-2H3v2zm0-7v2h13V6H3zm18 9.59L17.42 12 21 8.41 19.59 7l-5 5 5 5L21 15.59z"></path>
-                </svg>
-            </div>
-            <hr class="block w-full m-0 border border-bottom border-orange-600" style="margin-left: -2px">
-            -->
             <div>
                 <br>
                 <div class="list">
@@ -72,15 +41,6 @@
                 <span class="flex-1 ml-1 text-orange-600 text-xl font-medium">Benotes</span>
             </div>
         </div>
-        <!--
-        <div v-else class="sidebar relative pb-6 w-12 text-center py-4">
-            <svg @click="toggle()" class="menu-icon text-gray-500 cursor-pointer fill-current inline-block"
-                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0V0z"></path><path d="M3 18h13v-2H3v2zm0-5h10v-2H3v2zm0-7v2h13V6H3zm18 9.59L17.42 12 21 8.41 19.59 7l-5 5 5 5L21 15.59z"></path>
-            </svg>
-            <button @click="logout()" class="absolute left-0 bottom-0 ml-3 mb-4 cursor-pointer">
-                <svg-vue class="w-6 text-gray-500 fill-current" icon="zondicons/stand-by"/>
-            </button>
-        </div>-->
     </transition>
 </template>
 
@@ -91,7 +51,6 @@ export default {
     name: 'Sidebar',
     data () {
         return {
-            //isOpen: (localStorage.getItem('sidebar') === 'false') ? false : true,
             menuIsOpen: false
         }
     },
@@ -99,10 +58,6 @@ export default {
         init () {
             this.$store.dispatch('collection/fetchCollections')
         },
-        /*toggle () {
-            localStorage.setItem('sidebar', !this.isOpen)
-            this.isOpen = !this.isOpen
-        },*/
         logout () {
             axios.post('/api/auth/logout')
                 .catch(error => {
