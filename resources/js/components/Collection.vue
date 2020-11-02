@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Appbar :title="currentCollection.name" :allowPaste="true" :permission="permission"
+        <Appbar :title="currentCollection.name" :allowPaste="true"
             buttonLabel="Create" :buttonCallback="create" buttonIcon="zondicons/add-outline"/>
         <div class="sm:ml-4 -ml-2 px-2">
             <transition name="collection-fade">

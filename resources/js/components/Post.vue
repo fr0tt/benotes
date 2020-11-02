@@ -1,24 +1,16 @@
 <template>
     <div class="w-full">
-        <div class="flex md:mx-6 mx-1 md:my-6 mt-2">
-
-            <div class="flex-1 mx-4 editor">
-
+        <Appbar title="Edit Post"
+            buttonLabel="Save" :buttonCallback="save" buttonIcon="zondicons/checkmark-outline"/>
+        <div class="md:mx-6 mx-1 md:my-6 mt-2">
+            <div class="mx-4 editor">
                 <div class="max-w-5xl" @keyup.ctrl.alt.83="keySave">
                     <EditorMenuBar :editor="editor" class="w-full my-4"/>
                     <input class="block w-full text-3xl font-medium placeholder-orange-500 text-orange-500
                         outline-none mb-4" v-model="title" placeholder="Title" tabindex="1" autofocus/>
                     <EditorContent :editor="editor" class="editorContent h-32 text-lg my-4"/>
                 </div>
-
             </div>
-            <div class="w-40 pt-4">
-                <button @click="save()" class="button" title="Strg + Alt + S">
-                    <svg-vue class="button-icon" icon="zondicons/checkmark-outline"/>
-                    Save
-                </button>
-            </div>
-
         </div>
     </div>
 </template>
@@ -28,12 +20,14 @@ import { mapState } from 'vuex'
 import { Editor, EditorContent } from 'tiptap'
 import { HardBreak, Blockquote, Heading, Bold, Italic,
     Underline, Link, Code, History, Placeholder } from 'tiptap-extensions'
+import Appbar from './Appbar.vue'
 import EditorMenuBar from './EditorMenuBar.vue'
 export default {
     props: ['collectionId', 'id'],
     components: {
+        Appbar,
         EditorContent,
-        EditorMenuBar
+        EditorMenuBar,
     },
     data () {
         return {

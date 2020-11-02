@@ -56,8 +56,7 @@ export default {
         allowPaste: {
             type: Boolean,
             default: false
-        },
-        permission: Number
+        }
     },
     data () {
         return {
@@ -116,6 +115,9 @@ export default {
         },
         ...mapState('collection', [
             'currentCollection'
+        ]),
+        ...mapState('auth', [
+            'permission'
         ])
     }
 }
