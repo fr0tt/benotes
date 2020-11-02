@@ -32,7 +32,7 @@
                     Paste
                 </button>
                 <button @click="buttonCallback" class="button ml-2 md:ml-4"
-                    tag="button" title="Strg + Alt + N">
+                    tag="button" :title="hint">
                     <svg-vue class="button-icon" :icon="buttonIcon"/>
                     {{ buttonLabel }}
                 </button>
@@ -56,7 +56,8 @@ export default {
         allowPaste: {
             type: Boolean,
             default: false
-        }
+        },
+        hint: String
     },
     data () {
         return {

@@ -1,6 +1,6 @@
 <template>
     <div class="w-full">
-        <Appbar title="Edit Post"
+        <Appbar title="Edit Post" hint="Strg + Alt + S"
             buttonLabel="Save" :buttonCallback="save" buttonIcon="zondicons/checkmark-outline"/>
         <div class="md:mx-6 mx-1 md:my-6 mt-2">
             <div class="mx-4 editor">
