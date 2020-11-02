@@ -6,7 +6,8 @@ export default {
     state: {
         isAuthenticated: false,
         authUser: null,
-        staticAuth: null
+        staticAuth: null,
+        permission: 7
     },
     mutations: {
         isAuthenticated (state, isAuthenticated) {
