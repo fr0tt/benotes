@@ -18,21 +18,21 @@
                     </a>
                     <br><br><br>
                     <router-link to="/" tag="li" class="collection md:px-8 px-4 mb-4">
-                        <svg-vue class="w-4 fill-current mr-2" icon="remix/folder-unknow-fill"/>
+                        <svg-vue class="w-4 fill-current align-text-bottom mr-2" icon="remix/folder-unknow-fill"/>
                         <span class="align-middle text-gray-700">Uncategorized</span>
                     </router-link>
                     <span class="mb-2 md:px-8 px-4 block text-xs text-gray-700 font-medium uppercase">Collections</span>
                     <ol>
                         <router-link v-for="(collection) in collections" :key="collection.id"
                             :to="'/c/' + collection.id" tag="li" class="collection md:px-8 px-4">
-                                <svg-vue class="w-4 fill-current mr-2" icon="remix/folder-fill"/>
-                                <span class="align-top text-gray-700">{{ collection.name }}</span>
+                                <svg-vue class="w-4 fill-current align-text-bottom mr-2" icon="remix/folder-fill"/>
+                                <span class="align-middle text-gray-700">{{ collection.name }}</span>
                         </router-link>
                     </ol>
                 </div>
                 <router-link to="/c/create" class="block md:ml-8 ml-4 mt-4 text-orange-600 font-medium">
-                    <svg-vue class="w-4 mr-2 fill-current" icon="remix/folder-add-fill"/>
-                    <span class="align-top">Create a new collection</span>
+                    <svg-vue class="w-4 mr-2 fill-current align-text-bottom" icon="remix/folder-add-fill"/>
+                    <span class="align-middle">Create a new collection</span>
                 </router-link>
             </div>
             <br><br><br><br><br>
