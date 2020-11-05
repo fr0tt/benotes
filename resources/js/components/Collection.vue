@@ -1,7 +1,5 @@
 <template>
     <div>
-        <Appbar :title="currentCollection.name" :allowPaste="true" hint="Strg + Alt + N"
-            buttonLabel="Create" :buttonCallback="create" buttonIcon="zondicons/add-outline"/>
         <div class="sm:ml-4 -ml-2 px-2">
             <transition name="collection-fade">
                 <Draggable v-if="!isLoading" tag="ol" v-model="posts" :move="dragged"
@@ -20,7 +18,6 @@
 <script>
 import axios from 'axios'
 import { mapState } from 'vuex'
-import Appbar from './Appbar.vue'
 import Post from './PostItem.vue'
 import CollectionMenu from './CollectionMenu.vue'
 import Draggable from 'vuedraggable'
@@ -28,7 +25,6 @@ import Draggable from 'vuedraggable'
 export default {
     props: ['id', 'permission'],
     components: {
-        Appbar,
         Post,
         CollectionMenu,
         Draggable
@@ -59,6 +55,9 @@ export default {
         id () {
             this.init()
             this.$store.dispatch('collection/getCurrentCollection')
+        },
+        currentCollection: function (newValue, oldValue) {
+            this.$store.commit('appbar/setTitle', newValue.name, { root: true })
         }
     },
     computed: {
@@ -82,6 +81,9 @@ export default {
             }
             return false
         },
+        ...mapState('collection', [
+            'currentCollection'
+        ]),
         ...mapState('post', [
             'maxOrder'
         ]),
@@ -91,13 +93,23 @@ export default {
         ...mapState('collection', [
             'collectionMenu'
         ]),
-        ...mapState('collection', [
-            'currentCollection'
-        ])
     },
     created () {
         this.init()
-    }
+        this.$store.dispatch('appbar/setAppbar', {
+            allowPaste: true,
+            hint: 'Ctrl + Alt + N',
+            button: {
+                label: 'Create',
+                callback: this.create,
+                icon: 'zondicons/add-outline'
+            }
+        })
+        if (this.currentCollection) {
+            console.log('current', this.currentCollection)
+            this.$store.commit('appbar/setTitle', this.currentCollection.name, { root: true })
+        }
+    },
 }
 </script>
 <style lang="scss">

@@ -33,8 +33,11 @@
                 </button>
                 <button @click="buttonCallback" class="button ml-2 md:ml-4"
                     tag="button" :title="hint">
-                    <svg-vue class="button-icon" :icon="buttonIcon"/>
-                    {{ buttonLabel }}
+                    <svg-vue class="button-icon" v-if="button.icon === 'zondicons/add-outline'" 
+                        icon="zondicons/add-outline"/>
+                        <svg-vue class="button-icon" v-else-if="button.icon === 'zondicons/checkmark-outline'" 
+                        icon="zondicons/checkmark-outline"/>
+                    {{ button.label }}
                 </button>
             </div>
         </div>
@@ -45,28 +48,14 @@
 <script>
 import axios from 'axios'
 import { mapState } from 'vuex'
-import Sidebar from './Sidebar.vue'
 export default {
     name: 'Appbar',
-    props: {
-        title: String,
-        buttonLabel: String, 
-        buttonIcon: String,
-        buttonCallback: Function,
-        allowPaste: {
-            type: Boolean,
-            default: false
-        },
-        hint: String
-    },
     data () {
         return {
             isOpen: true,
-            showContextMenu: false
+            showContextMenu: false,
+            buttonCallback: () => { return null }
         }
-    },
-    components: {
-        Sidebar
     },
     methods: {
         pasteNewPost () {
@@ -97,7 +86,6 @@ export default {
             this.$router.push({ path: '/' })
         },
         toggleSidebar () {
-            console.log('sdfsf')
             this.$store.dispatch('toggleSidebar')
         }
     },
@@ -114,12 +102,21 @@ export default {
             }
             return false
         },
+        ...mapState('appbar', [
+            'title',
+            'allowPaste',
+            'hint',
+            'button'
+        ]),
         ...mapState('collection', [
             'currentCollection'
         ]),
         ...mapState('auth', [
             'permission'
         ])
+    },
+    mounted () {
+        this.buttonCallback = this.button.callback
     }
 }
 </script>

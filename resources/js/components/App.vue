@@ -4,6 +4,7 @@
         <div class="flex">
             <Sidebar class="pt-16 z-40" v-if="!staticAuth"/>
             <div class="flex-1 h-screen bg-white overflow-y-scroll pt-16">
+                <Appbar/>
                 <transition name="router-fade" mode="out-in">
                     <router-view></router-view>
                 </transition>
@@ -15,10 +16,12 @@
 <script>
 import { mapState } from 'vuex'
 import Sidebar from './Sidebar.vue'
+import Appbar from './Appbar.vue'
 
 export default {
     components: {
         Sidebar,
+        Appbar
     },
     methods: {
         globalClickEvent (event) {

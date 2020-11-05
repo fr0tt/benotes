@@ -1,7 +1,5 @@
 <template>
     <div class="w-full">
-        <Appbar title="Edit Post" hint="Strg + Alt + S"
-            buttonLabel="Save" :buttonCallback="save" buttonIcon="zondicons/checkmark-outline"/>
         <div class="md:mx-6 mx-1 md:my-6 mt-2">
             <div class="mx-4 editor">
                 <div class="max-w-5xl" @keyup.ctrl.alt.83="keySave">
@@ -20,12 +18,10 @@ import { mapState } from 'vuex'
 import { Editor, EditorContent } from 'tiptap'
 import { HardBreak, Blockquote, Heading, Bold, Italic,
     Underline, Link, Code, History, Placeholder } from 'tiptap-extensions'
-import Appbar from './Appbar.vue'
 import EditorMenuBar from './EditorMenuBar.vue'
 export default {
     props: ['collectionId', 'id'],
     components: {
-        Appbar,
         EditorContent,
         EditorMenuBar,
     },
@@ -103,6 +99,16 @@ export default {
         ])
     },
     created () {
+        this.$store.dispatch('appbar/setAppbar', {
+            title: 'Edit Post',
+            allowPaste: true,
+            hint: 'Ctrl + Alt + S',
+            button: {
+                label: 'Save',
+                callback: this.save,
+                icon: 'zondicons/checkmark-outline'
+            } 
+        })
         this.editor.view.props.attributes = { tabindex: '2' }
         if (this.isNewPost) {
             return
