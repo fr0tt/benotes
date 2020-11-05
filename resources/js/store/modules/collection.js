@@ -35,11 +35,10 @@ export default {
     },
     actions: {
         fetchCollections (context) {
-            axios.get('/api/collections')
+            return axios.get('/api/collections')
                 .then(response => {
                     const collections = response.data.data
                     context.commit('setCollections', collections)
-                    context.dispatch('getCurrentCollection')
                 })
                 .catch(error => {
                     console.log(error)

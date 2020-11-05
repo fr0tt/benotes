@@ -1,6 +1,6 @@
 <template>
     <transition name="sidebar-slide" mode="out-in">
-        <div v-if="showSidebar" class="sidebar w-full md:w-48 xl:w-1/6 pb-6 bg-white">
+        <div v-if="showSidebar" class="sidebar w-full relative md:w-48 xl:w-1/6 pb-6 bg-white">
             <div>
                 <br>
                 <div class="list">
@@ -56,7 +56,9 @@ export default {
     },
     methods: {
         init () {
-            this.$store.dispatch('collection/fetchCollections')
+            this.$store.dispatch('collection/fetchCollections').then(() => {
+                this.$store.dispatch('collection/getCurrentCollection')
+            })
         },
         logout () {
             axios.post('/api/auth/logout')
