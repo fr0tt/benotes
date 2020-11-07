@@ -74,11 +74,12 @@ export default {
                     console.log(error)
                 })
         },
-        getCurrentCollection (context) {
-            if (context.rootState.route.currentRoute === null) {
+        getCurrentCollection (context, id) {
+            if (id === null) {
                 return
             }
-            if (Object.keys(context.rootState.route.currentRoute.params).length === 0) {
+            id = parseInt(id)
+            if (id === 0) {
                 const collection = {
                     'id': 0,
                     'name': 'Uncategorized'
@@ -86,7 +87,6 @@ export default {
                 context.commit('setCurrentCollection', collection)
                 return
             }
-            const id = parseInt(context.rootState.route.currentRoute.params.id)
             context.state.collections.map((collection) => {
                 if (collection.id === id) {
                     context.commit('setCurrentCollection', collection)

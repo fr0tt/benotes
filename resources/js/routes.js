@@ -14,15 +14,16 @@ export default [
         component: App,
         children: [
             {
-                path: '',
+                path: '/',
                 component: Collection,
                 props: {
-                    id: 0,
+                    collectionId: 0,
                     permission: 7
                 },
                 meta: {
+                    isHome: true,
                     authUser: true
-                }
+                },
             },
             {
                 path: 'c/create',
@@ -46,11 +47,11 @@ export default [
                 }
             },
             {
-                path: 'c/:id',
+                path: 'c/:collectionId',
                 name: 'collection',
                 component: Collection,
                 props: (route) => ({
-                    id: route.params.id,
+                    collectionId: parseInt(route.params.collectionId),
                     permission: 7
                 }),
                 meta: {
@@ -112,12 +113,12 @@ export default [
                 props: (route) => {
                     if (store.state.auth.staticAuth) {
                         return {
-                            id: store.state.auth.staticAuth.collection_id,
+                            collectionId: store.state.auth.staticAuth.collection_id,
                             permission: store.state.auth.staticAuth.permission
                         }
                     } else {
                         return {
-                            id: null,
+                            collectionId: null,
                             permission: 0
                         }
                     }

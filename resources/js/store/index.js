@@ -4,7 +4,6 @@ import Vuex from 'vuex'
 import auth from './modules/auth'
 import post from './modules/post'
 import collection from './modules/collection'
-import route from './modules/route'
 import appbar from './modules/appbar'
 
 Vue.use(Vuex)
@@ -14,7 +13,6 @@ export default new Vuex.Store({
         auth,
         post,
         collection,
-        route,
         appbar
     },
     strict: process.env.NODE_ENV !== 'production',

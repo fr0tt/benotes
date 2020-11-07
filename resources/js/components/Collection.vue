@@ -23,7 +23,10 @@ import CollectionMenu from './CollectionMenu.vue'
 import Draggable from 'vuedraggable'
 
 export default {
-    props: ['id', 'permission'],
+    props: {
+        collectionId: Number, 
+        permission: Number
+    },
     components: {
         Post,
         CollectionMenu,
@@ -36,8 +39,7 @@ export default {
     },
     methods: {
         init () {
-            this.$store.dispatch('route/setCurrentRoute', this.$route)
-            this.$store.dispatch('post/fetchPosts', this.id)
+            this.$store.dispatch('post/fetchPosts', this.collectionId)
         },
         dragged (event) {
             axios.patch('/api/posts/' + event.draggedContext.element.id, {
@@ -48,13 +50,13 @@ export default {
                 })
         },
         create () {
-            this.$router.push(`/c/${this.id}/p/create`)
+            this.$router.push(`/c/${this.collectionId}/p/create`)
         }
     },
     watch: {
-        id () {
+        collectionId () {
             this.init()
-            this.$store.dispatch('collection/getCurrentCollection')
+            this.$store.dispatch('collection/getCurrentCollection', this.collectionId)
         },
         currentCollection: function (newValue, oldValue) {
             this.$store.commit('appbar/setTitle', newValue.name, { root: true })
@@ -105,8 +107,7 @@ export default {
                 icon: 'zondicons/add-outline'
             }
         })
-        if (this.currentCollection) {
-            console.log('current', this.currentCollection)
+        if (this.currentCollection.name != '') {
             this.$store.commit('appbar/setTitle', this.currentCollection.name, { root: true })
         }
     },

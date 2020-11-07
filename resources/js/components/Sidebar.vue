@@ -57,7 +57,12 @@ export default {
     methods: {
         init () {
             this.$store.dispatch('collection/fetchCollections').then(() => {
-                this.$store.dispatch('collection/getCurrentCollection')
+                if (this.$route.meta.isHome) {
+                    this.$store.dispatch('collection/getCurrentCollection', 0)
+                } else if (this.$route.params.collectionId !== null) {
+                    this.$store.dispatch('collection/getCurrentCollection', 
+                        this.$route.params.collectionId)
+                }
             })
         },
         logout () {

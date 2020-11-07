@@ -30,7 +30,7 @@ export default {
             */
             this.$router.push({
                 path: '/p/' + this.contextMenu.post.id,
-                query: { token: this.$router.currentRoute.query.token }
+                query: { token: this.$route.query.token }
             })
             this.hide()
         },
