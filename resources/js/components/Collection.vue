@@ -98,6 +98,7 @@ export default {
     },
     created () {
         this.init()
+
         this.$store.dispatch('appbar/setAppbar', {
             allowPaste: true,
             hint: 'Ctrl + Alt + N',
@@ -107,7 +108,12 @@ export default {
                 icon: 'zondicons/add-outline'
             }
         })
-        if (this.currentCollection.name != '') {
+
+        if (this.currentCollection.name == '') {
+            this.$store.dispatch('collection/getCurrentCollection', this.collectionId).then(() => {
+                this.$store.commit('appbar/setTitle', this.currentCollection.name, { root: true })
+            })
+        } else {
             this.$store.commit('appbar/setTitle', this.currentCollection.name, { root: true })
         }
     },
@@ -117,7 +123,7 @@ export default {
     .collection-fade-enter-active, .collection-fade-leave-active {
         transition: opacity .6s;
     }
-    .collection-fade-enter, .collection-fade-leave-to{
+    .collection-fade-enter, .collection-fade-leave-to {
         opacity: 0;
     }
     .item-transition {
