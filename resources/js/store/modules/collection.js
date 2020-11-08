@@ -75,23 +75,25 @@ export default {
                 })
         },
         getCurrentCollection (context, id) {
-            if (id === null) {
-                return
-            }
-            id = parseInt(id)
-            if (id === 0) {
-                const collection = {
-                    'id': 0,
-                    'name': 'Uncategorized'
+            return new Promise((resolve, reject) => {
+                if (id === null) {
+                    resolve()
                 }
-                context.commit('setCurrentCollection', collection)
-                return
-            }
-            context.state.collections.map((collection) => {
-                if (collection.id === id) {
+                id = parseInt(id)
+                if (id === 0) {
+                    const collection = {
+                        'id': 0,
+                        'name': 'Uncategorized'
+                    }
                     context.commit('setCurrentCollection', collection)
-                    return
+                    resolve()
                 }
+                context.state.collections.map((collection) => {
+                    if (collection.id === id) {
+                        context.commit('setCurrentCollection', collection)
+                        resolve()
+                    }
+                })
             })
         },
         setCollectionMenu (context, collectionMenu) {
