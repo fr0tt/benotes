@@ -31,7 +31,7 @@
                     <svg-vue class="button-icon" icon="zondicons/paste"/>
                     Paste
                 </button>
-                <button @click="buttonCallback" class="button ml-2 md:ml-4"
+                <button v-if="button.callback" @click="button.callback" class="button ml-2 md:ml-4"
                     tag="button" :title="hint">
                     <svg-vue class="button-icon" v-if="button.icon === 'zondicons/add-outline'" 
                         icon="zondicons/add-outline"/>
@@ -53,8 +53,7 @@ export default {
     data () {
         return {
             isOpen: true,
-            showContextMenu: false,
-            buttonCallback: () => { return null }
+            showContextMenu: false
         }
     },
     methods: {
@@ -113,14 +112,7 @@ export default {
         ]),
         ...mapState('auth', [
             'permission'
-        ])
-    },
-    mounted () {
-        this.buttonCallback = this.button.callback
+        ]),
     }
 }
 </script>
-
-<style lang="scss">
-    
-</style>
