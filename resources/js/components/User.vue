@@ -145,7 +145,16 @@ export default {
         }
     },
     created () {
-        if (!this.isNew) {
+        if (this.isNew) {
+            this.$store.dispatch('appbar/setAppbar', {
+                title: 'Create User',
+                button: {
+                    label: 'Create',
+                    callback: this.create,
+                    icon: 'zondicons/add-outline'
+                } 
+            })
+        } else {
             axios.get('/api/users/' + this.id)
                 .then(response => {
                     const user = response.data.data
@@ -154,6 +163,14 @@ export default {
                 }).catch(error => {
                     this.error = error
                 })
+            this.$store.dispatch('appbar/setAppbar', {
+                title: 'Edit User',
+                button: {
+                    label: 'Save',
+                    callback: this.update,
+                    icon: 'zondicons/checkmark-outline'
+                } 
+            })
         }
     }
 }

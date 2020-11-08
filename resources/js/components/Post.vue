@@ -99,29 +99,36 @@ export default {
         ])
     },
     created () {
-        this.$store.dispatch('appbar/setAppbar', {
-            title: 'Edit Post',
-            allowPaste: true,
-            hint: 'Ctrl + Alt + S',
-            button: {
-                label: 'Save',
-                callback: this.save,
-                icon: 'zondicons/checkmark-outline'
-            } 
-        })
         this.editor.view.props.attributes = { tabindex: '2' }
+        
         if (this.isNewPost) {
-            return
+            this.$store.dispatch('appbar/setAppbar', {
+                title: 'Create Post',
+                button: {
+                    label: 'Create',
+                    callback: this.save,
+                    icon: 'zondicons/add-outline'
+                } 
+            })
+        } else {
+            this.$store.dispatch('post/getPost', this.id)
+                .then(post => {
+                    this.post = post
+                    this.title = post.title
+                    this.editor.setContent(this.post.content)
+                })
+                .catch(error => {
+                    console.log(error)
+            })
+            this.$store.dispatch('appbar/setAppbar', {
+                title: 'Edit Post',
+                button: {
+                    label: 'Save',
+                    callback: this.save,
+                    icon: 'zondicons/checkmark-outline'
+                } 
+            })
         }
-        this.$store.dispatch('post/getPost', this.id)
-            .then(post => {
-                this.post = post
-                this.title = post.title
-                this.editor.setContent(this.post.content)
-            })
-            .catch(error => {
-                console.log(error)
-            })
     },
     beforeDestroy () {
         this.editor.destroy()

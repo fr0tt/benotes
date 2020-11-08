@@ -4,12 +4,6 @@
             <div class="flex-1">
                 <h1 class="text-3xl font-medium text-gray-800">Users</h1>
             </div>
-            <div>
-                <router-link to="/users/create" tag="button" class="button">
-                    <svg-vue class="button-icon" icon="zondicons/add-outline"/>
-                    Create
-                </router-link>
-            </div>
         </div>
         <table class="users table w-full">
             <tr class="table-row">
@@ -29,10 +23,14 @@
 import axios from 'axios'
 
 export default {
-    name: 'Profile',
     data () {
         return {
             users: null
+        }
+    },
+    methods: {
+        create () {
+            this.$router.push('/users/create')
         }
     },
     created () {
@@ -42,6 +40,14 @@ export default {
             }).catch(error => {
                 this.error = error
             })
+        this.$store.dispatch('appbar/setAppbar', {
+            title: 'Users',
+            button: {
+                label: 'Create',
+                callback: this.create,
+                icon: 'zondicons/add-outline'
+            } 
+        })
     }
 }
 </script>
