@@ -33,10 +33,8 @@
                 </button>
                 <button v-if="button.callback" @click="button.callback" class="button ml-2 md:ml-4"
                     tag="button" :title="hint">
-                    <svg-vue class="button-icon" v-if="button.icon === 'zondicons/add-outline'" 
-                        icon="zondicons/add-outline"/>
-                        <svg-vue class="button-icon" v-else-if="button.icon === 'zondicons/checkmark-outline'" 
-                        icon="zondicons/checkmark-outline"/>
+                    <!--<svg-vue :icon="button.icon" class="button-icon"/>-->
+                    <svg v-html="icon" class="button-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"></svg>
                     {{ button.label }}
                 </button>
             </div>
@@ -113,6 +111,12 @@ export default {
         ...mapState('auth', [
             'permission'
         ]),
+        icon () {
+            if (this.button.icon === 'zondicons/add-outline')
+                return '<path d="M11 9h4v2h-4v4H9v-4H5V9h4V5h2v4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/>'
+            else if (this.button.icon === 'zondicons/checkmark-outline')
+                return '<path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM6.7 9.29L9 11.6l4.3-4.3 1.4 1.42L9 14.4l-3.7-3.7 1.4-1.42z"/>'
+        }
     }
 }
 </script>
