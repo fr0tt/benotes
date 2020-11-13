@@ -19,16 +19,24 @@ class PostController extends Controller
 
         $this->validate($request, [
             'collection_id' => 'integer|nullable',
-            'limit' => 'integer'
+          //'is_uncategorized'
+            'limit' => 'integer|nullable'
         ]);
+        
+        $request->is_uncategorized = filter_var($request->is_uncategorized, FILTER_VALIDATE_BOOLEAN);
 
-        if (Auth::guard('api')->check() && isset($request->collection_id)) {
-            $posts = Post::where([
-                ['collection_id', '=', Collection::getCollectionId($request->collection_id)],
-                ['user_id', '=', Auth::user()->id]
-            ]);
-        } else if (Auth::guard('api')->check()){
-            $posts = Post::where('user_id', Auth::user()->id);
+        if (Auth::guard('api')->check()) {
+            if (isset($request->collection_id)
+                || (isset($request->is_uncategorized) && $request->is_uncategorized === true)) {
+                $collection_id = Collection::getCollectionId($request->collection_id, 
+                    $request->is_uncategorized);
+                $posts = Post::where([
+                    ['collection_id', '=', $collection_id],
+                    ['user_id', '=', Auth::user()->id]
+                ]);
+            } else {
+                $posts = Post::where('user_id', Auth::user()->id);
+            }
         } else if (Auth::guard('share')->check()) {
             $share = Auth::guard('share')->user();
             $posts = Post::where([
@@ -62,18 +70,13 @@ class PostController extends Controller
         $validatedData = $this->validate($request, [
             'title' => 'string|nullable',
             'content' => 'required|string',
-            'collection_id' => 'integer|nullable' 
+            'collection_id' => 'integer|nullable'
         ]);
 
         if (isset($request->collection_id)) {
-            if ($request->collection_id > Collection::UNCATEGORIZED) {
-                $collection = Collection::find($request->collection_id);
-                if (!$collection) {
-                    return response()->json('Collection not found.', 404);
-                }
-                if (Auth::user()->id !== $collection->user_id) {
-                    return response()->json('Not authorized', 403);
-                }
+            $collection = $this->findCollection($request->collection_id);
+            if (Auth::user()->id !== $collection->user_id) {
+                return response()->json('Not authorized', 403);
             }
         }
 
@@ -108,14 +111,7 @@ class PostController extends Controller
         }
         $this->authorize('update', $post);
 
-        if (isset($request->collection_id)) {
-            if ($request->colllection_id > Collection::UNCATEGORIZED) {
-                $collection = Collection::find($request->collection_id);
-                if (!$collection) {
-                    return response()->json('Collection not found.', 404);
-                }
-            }
-        }
+        $this->findCollection($request->collection_id);
 
         if (isset($request->content)) {
             $info = $this->computePostData($request->content);
@@ -262,6 +258,19 @@ class PostController extends Controller
                 $post->image_path = $filename;
                 $post->save();
             }
+        }
+    }
+
+    private function findCollection($collection_id)
+    {
+        if (!isset($collection_id)) {
+            return;
+        }
+        $collection = Collection::find($collection_id);
+        if (!$collection) {
+            return response()->json('Collection not found.', 404);
+        } else {
+            return $collection;
         }
     }
 

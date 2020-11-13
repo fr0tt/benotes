@@ -10,8 +10,6 @@ class Collection extends Model
     public $timestamps = false;
     use SoftDeletes;
 
-    const UNCATEGORIZED = 0;
-
     /**
      * The attributes that are mass assignable.
      *
@@ -30,9 +28,9 @@ class Collection extends Model
         'user_id', 'deleted_at'
     ];
 
-    public static function getCollectionId($value)
+    public static function getCollectionId($id, $is_uncategorized = false)
     {
-        return ($value == 0) ? null : $value;
+        return $is_uncategorized ? null : $id;
     }
 
 }

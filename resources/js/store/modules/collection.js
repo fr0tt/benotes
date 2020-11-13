@@ -79,6 +79,9 @@ export default {
                 if (id === null) {
                     resolve()
                 }
+                if (context.state.collections === null) {
+                    resolve()
+                }
                 id = parseInt(id)
                 if (id === 0) {
                     const collection = {

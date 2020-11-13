@@ -50,7 +50,8 @@ export default {
             context.commit('isLoading', true)
             axios.get('/api/posts', {
                 params: {
-                    collection_id: collectionId
+                    collection_id: (collectionId > 0) ? collectionId : null,
+                    is_uncategorized: collectionId === 0
                 }
             })
                 .then(response => {
