@@ -105,6 +105,13 @@ class PostController extends Controller
             'order' => 'integer|nullable'
         ]);
 
+        $request->is_uncategorized = filter_var($request->is_uncategorized, FILTER_VALIDATE_BOOLEAN);
+
+        $validatedData['collection_id'] = Collection::getCollectionId(
+            $request->collection_id,
+            $request->is_uncategorized
+        );
+
         $post = Post::find($id);
         if (!$post) {
             return response()->json('Post not found.', 404);
