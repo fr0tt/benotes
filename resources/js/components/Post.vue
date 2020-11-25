@@ -66,7 +66,7 @@ export default {
                 axios.post('/api/posts', {
                     title: this.title,
                     content: content,
-                    collection_id: parseInt(this.collectionId)
+                    collection_id: this.collectionId > 0 ? parseInt(this.collectionId) : null
                 })
                     .then(response => {
                         if (this.posts !== null) {
@@ -105,9 +105,9 @@ export default {
             this.$store.dispatch('appbar/setAppbar', {
                 title: 'Create Post',
                 button: {
-                    label: 'Create',
+                    label: 'Save',
                     callback: this.save,
-                    icon: 'zondicons/add-outline'
+                    icon: 'zondicons/checkmark-outline'
                 } 
             })
         } else {
