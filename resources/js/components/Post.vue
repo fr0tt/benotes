@@ -2,10 +2,10 @@
     <div class="w-full">
         <div class="md:mx-6 mx-1 md:my-6 mt-2">
             <div class="mx-4 editor">
-                <div class="max-w-5xl" @keyup.ctrl.alt.83="keySave">
-                    <EditorMenuBar :editor="editor" class="w-full my-4"/>
+                <div class="max-w-5xl mt-4" @keyup.ctrl.alt.83="keySave">
                     <input class="block w-full text-3xl font-medium placeholder-orange-500 text-orange-500
-                        outline-none mb-4" v-model="title" placeholder="Title" tabindex="1" autofocus/>
+                        outline-none" v-model="title" placeholder="Title" tabindex="1" autofocus/>
+                    <EditorMenuBar :editor="editor" class="w-full my-4"/>
                     <EditorContent :editor="editor" class="editorContent h-32 text-lg my-4"/>
                 </div>
             </div>
@@ -82,7 +82,8 @@ export default {
                 this.post.title = this.title
                 this.post.content = content
                 this.$store.dispatch('post/updatePost', { post: this.post })
-                this.$router.push({ path: '/c/' + this.post.collection_id })
+                const route = this.post.collection_id == null ? '/' : '/c/' + this.post.collection_id
+                this.$router.push({ path: '/c/' + route })
             }
         },
         keySave (event) {
