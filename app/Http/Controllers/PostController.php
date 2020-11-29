@@ -118,10 +118,10 @@ class PostController extends Controller
         }
         $this->authorize('update', $post);
 
-        $this->findCollection($request->collection_id);
+        $this->findCollection($validatedData['collection_id']);
 
-        if (isset($request->content)) {
-            $info = $this->computePostData($request->content);
+        if (isset($validatedData['content'])) {
+            $info = $this->computePostData($validatedData['content']);
         } else {
             $info = array();
             $info['type'] = Post::getTypeFromString($post->type);
@@ -130,8 +130,8 @@ class PostController extends Controller
         $newValues = array_merge($validatedData, $info);
         $newValues['user_id'] = Auth::user()->id;
 
-        if (isset($request->order)) {
-            $newOrder = $request->order;
+        if (isset($validatedData['order'])) {
+            $newOrder = $validatedData['order'];
             $oldOrder = $post->order;
             if ($newOrder !== $oldOrder) {
                 if ($newOrder > $oldOrder) {
@@ -142,11 +142,19 @@ class PostController extends Controller
                         ->whereBetween('order', [$newOrder, $oldOrder - 1])->increment('order');
                 }
             }
+        } else if ($post->collection_id !== $validatedData['collection_id']) {
+            // compute order in new collection
+            $newValues['order'] = Post::where('collection_id', 
+                Collection::getCollectionId($validatedData['collection_id']))
+                ->max('order') + 1;
+            // reorder old collection
+            Post::where('collection_id', $post->collection_id)
+                ->where('order', '>', $post->order)->decrement('order');
         }
 
         $post->update($newValues); 
 
-        if ($info['type'] === Post::POST_TYPE_LINK && isset($request->content)) {
+        if ($info['type'] === Post::POST_TYPE_LINK && isset($validatedData['content'])) {
             $this->saveImage($info['image_path'], $post);
         }
 
