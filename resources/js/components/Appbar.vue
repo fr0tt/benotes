@@ -63,7 +63,8 @@ export default {
                 }
                 axios.post('/api/posts', {
                     content: content,
-                    collection_id: this.currentCollection.id
+                    collection_id: this.currentCollection.id > 0 ? this.currentCollection.id : null,
+                    is_uncategorized: collectionId === 0
                 })
                     .then(response => {
                         this.$store.dispatch('post/addPost', response.data.data)
