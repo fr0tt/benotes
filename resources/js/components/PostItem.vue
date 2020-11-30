@@ -34,9 +34,7 @@
                         <p v-if="post.title" class="text-orange-600 text-xl bg-transparent font-semibold">
                             {{ post.title }}
                         </p>
-                        <div class="editorContent">
-                            {{ post.content }}
-                        </div>
+                        <div class="editorContent" v-html="post.content"></div>
                     </div>
                 </div>
             </a>
