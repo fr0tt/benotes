@@ -1,5 +1,5 @@
 <template>
-    <li class="md:inline-block m-4 relative text-left post" :post-id="post.id">
+    <li class="md:inline-block mx-6 md:mx-4 my-4 relative text-left post" :post-id="post.id">
         <div v-if="post.type === 'link' && !isActive()" class="card">
             <a :href="post.url" target="_blank" class="w-3/7 md:w-full">
                 <div v-if="post.image_path" class="h-cover w-full bg-cover bg-center" :style="image"></div>
@@ -28,7 +28,7 @@
             </div>
         </div>
         <div v-else class="card bg-gray-100" :class="{ 'active' : isActive() }">
-            <a v-if="isMobile" :href="'/p/' + post.id" class="block w-full">
+            <router-link v-if="isMobile" :to="'/p/' + post.id" class="block w-full">
                 <div class="p-6 h-full">
                     <div class="text-gray-900 text-xl outline-none h-full w-full">
                         <p v-if="post.title" class="text-orange-600 text-xl bg-transparent font-semibold">
@@ -37,7 +37,7 @@
                         <div class="editorContent" v-html="post.content"></div>
                     </div>
                 </div>
-            </a>
+            </router-link>
             <div v-else class="p-6 h-full">
                 <div @click="edit($event)" class="text-gray-900 text-xl outline-none h-full w-full"
                     :class="{ 'overflow-hidden cursor-pointer' : !isActive() }">

@@ -22,6 +22,7 @@ class PostTest extends TestCase
 
         $posts = [
             'https://test.com' => 'link',
+            'https://test.de' => 'link',
             '<a href="https://www.wolframalpha.com" rel="noopener noreferrer nofollow">https://www.wolframalpha.com</a>' => 'link',
             '<p class="">dfgd adijfds https://google.com</p>' => 'text',
             'Hdfgd fijsdoij <a href="https://slack.com" rel="noopener noreferrer nofollow">https://slack.com</a>' => 'text',
