@@ -30,10 +30,10 @@ export default new Vuex.Store({
     },
     actions: {
         checkDevice (context) {
-            if (screen.width <= 600) {
-                context.commit('isMobile', true)
-            } else {
+            if (screen.width > 768) {
                 context.commit('isMobile', false)
+            } else {
+                context.commit('isMobile', true)
             }
         },
         toggleSidebar (context) {

@@ -1,32 +1,46 @@
 <template>
-    <li class="inline-block m-4 relative text-left post" :post-id="post.id">
+    <li class="md:inline-block m-4 relative text-left post" :post-id="post.id">
         <div v-if="post.type === 'link' && !isActive()" class="card">
-            <a :href="post.url" target="_blank">
+            <a :href="post.url" target="_blank" class="w-3/7 md:w-auto">
                 <div v-if="post.image_path" class="h-cover w-full bg-cover bg-center" :style="image"></div>
                 <div v-else class="h-cover w-full flex items-center justify-center" :style="color">
                     <span class="text-white text-2xl font-medium">{{ domain }}</span>
                 </div>
             </a>
-            <div class="px-6 pt-4 cursor-pointer">
-                <div class="font-bold text-xl mb-2 truncate" :title="post.title">
-                    {{ post.title }}
+            <div class="w-4/7 md:w-auto">
+                <div class="px-6 pt-4 cursor-pointer">
+                    <div class="font-bold text-xl mb-2 truncate" :title="post.title">
+                        {{ post.title }}
+                    </div>
+                    <p v-if="post.description !== null" class="text-gray-700 text-base overflow-hidden description">
+                        {{ post.description }}
+                    </p>
+                    <p v-else class="text-gray-700 text-base italic overflow-hidden description">
+                        No description
+                    </p>
                 </div>
-                <p v-if="post.description !== null" class="text-gray-700 text-base overflow-hidden description">
-                    {{ post.description }}
-                </p>
-                <p v-else class="text-gray-700 text-base italic overflow-hidden description">
-                    No description
-                </p>
+                <div class="px-6 py-4 mr-2 truncate">
+                    <img :src="'https://external-content.duckduckgo.com/ip3/' + domain + '.ico'"
+                        class="w-4 inline img-vertical-align">
+                    <a :href="post.url" :title="post.url" target="_blank" class="text-blue-600">{{ post.url }}</a>
+                </div>
+                <svg @click="showContextMenu($event)" class="more-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
             </div>
-            <div class="px-6 py-4 mr-2 truncate">
-                <img :src="'https://external-content.duckduckgo.com/ip3/' + domain + '.ico'"
-                    class="w-4 inline img-vertical-align">
-                <a :href="post.url" :title="post.url" target="_blank" class="text-blue-600">{{ post.url }}</a>
-            </div>
-            <svg @click="showContextMenu($event)" class="more-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
         </div>
         <div v-else class="card bg-gray-100" :class="{ 'active' : isActive() }">
-            <div class="p-6 h-full">
+            <a v-if="isMobile" :href="'/p/' + post.id" class="block w-full">
+                <div class="p-6 h-full">
+                    <div class="text-gray-900 text-xl outline-none h-full w-full">
+                        <p v-if="post.title" class="text-orange-600 text-xl bg-transparent font-semibold">
+                            {{ post.title }}
+                        </p>
+                        <div class="editorContent">
+                            {{ post.content }}
+                        </div>
+                    </div>
+                </div>
+            </a>
+            <div v-else class="p-6 h-full">
                 <div @click="edit($event)" class="text-gray-900 text-xl outline-none h-full w-full"
                     :class="{ 'overflow-hidden cursor-pointer' : !isActive() }">
                     <input v-if="post.title" :value="post.title" @input="updateTitle"
@@ -77,9 +91,12 @@ export default {
                     return
                 }
             }
-            this.$store.dispatch('post/setCurrentPost', this.post)
-            document.querySelector('#app').addEventListener('click', this.stopEditing, true)
-            /* this.$router.push({ path: '/p/' + this.post.id }) */
+            if (this.isMobile) { // @todo
+                this.$router.push({ path: '/p/' + this.post.id })
+            } else {
+                this.$store.dispatch('post/setCurrentPost', this.post)
+                document.querySelector('#app').addEventListener('click', this.stopEditing, true)
+            }
         },
         isActive () {
             if (this.currentPost === null) {
@@ -124,6 +141,9 @@ export default {
         ]),
         ...mapState('post', [
             'contextMenu'
+        ]),
+        ...mapState([
+            'isMobile'
         ])
     },
     watch: {
@@ -144,9 +164,8 @@ export default {
 </script>
 <style lang="scss">
     .card {
-        @apply relative overflow-hidden shadow-lg;
-        width: 20.5rem;
-        height: 20.5rem;
+        @apply flex relative overflow-hidden shadow-lg;
+        @apply w-full;
         font-family: Inter, Noto Sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         transition: background-color 0.3s;
         -webkit-transition: background-color 0.3s;
@@ -171,6 +190,12 @@ export default {
             // line-height: 1.45;
         }
     }
+    @screen md {
+        @apply block;
+        width: 20.5rem;
+        height: 20.5rem;
+    }
+    md:flex
     .card::-webkit-scrollbar {
         width: 2px;
         background-color: #F5F5F5;
@@ -199,5 +224,11 @@ export default {
         h3 {
             @apply text-xl font-medium
         }
+    }
+    .w-3\/7 {
+        width: 42.8571%;
+    }
+    .w-4\/7 {
+        width: 57.1428%;
     }
 </style>
