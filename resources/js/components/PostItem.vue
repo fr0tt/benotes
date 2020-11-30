@@ -220,10 +220,4 @@ export default {
             @apply text-xl font-medium
         }
     }
-    .w-3\/7 {
-        width: 42.8571%;
-    }
-    .w-4\/7 {
-        width: 57.1428%;
-    }
 </style>
