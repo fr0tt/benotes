@@ -89,12 +89,8 @@ export default {
                     return
                 }
             }
-            if (this.isMobile) { // @todo
-                this.$router.push({ path: '/p/' + this.post.id })
-            } else {
-                this.$store.dispatch('post/setCurrentPost', this.post)
-                document.querySelector('#app').addEventListener('click', this.stopEditing, true)
-            }
+            this.$store.dispatch('post/setCurrentPost', this.post)
+            document.querySelector('#app').addEventListener('click', this.stopEditing, true)
         },
         isActive () {
             if (this.currentPost === null) {

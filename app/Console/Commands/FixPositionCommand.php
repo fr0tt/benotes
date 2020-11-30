@@ -35,7 +35,9 @@ class FixPositionCommand extends Command
         $users = User::select('id', 'name')->get();
         foreach ($users as $user) {
             $user_id = $user->id;
-            $collections = Collection::select('id', 'name')->where('user_id', $user_id)->get();
+            $collections = Collection::select('id', 'name')
+                ->where('user_id', $user_id)
+                ->get();
             $uncategorized = new stdClass;
             $uncategorized->id = null;
             $uncategorized->name = 'Uncategorized';
@@ -44,7 +46,9 @@ class FixPositionCommand extends Command
                 echo $collection->name . ' by ' . $user->name . ':' . PHP_EOL;
                 $collection_id = $collection->id;
                 $posts = Post::where('user_id', $user_id)
-                    ->where('collection_id', $collection_id)->orderBy('order')->get();
+                    ->where('collection_id', $collection_id)
+                    ->orderBy('order')
+                    ->get();
                 for ($i = 0; $i < $posts->count(); $i++) {
                     $post = $posts[$i];
                     $post->order = $i + 1;
