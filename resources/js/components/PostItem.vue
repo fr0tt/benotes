@@ -1,13 +1,13 @@
 <template>
     <li class="md:inline-block m-4 relative text-left post" :post-id="post.id">
         <div v-if="post.type === 'link' && !isActive()" class="card">
-            <a :href="post.url" target="_blank" class="w-3/7 md:w-auto">
+            <a :href="post.url" target="_blank" class="w-3/7 md:w-full">
                 <div v-if="post.image_path" class="h-cover w-full bg-cover bg-center" :style="image"></div>
                 <div v-else class="h-cover w-full flex items-center justify-center" :style="color">
                     <span class="text-white text-2xl font-medium">{{ domain }}</span>
                 </div>
             </a>
-            <div class="w-4/7 md:w-auto">
+            <div class="w-4/7 md:w-full">
                 <div class="px-6 pt-4 cursor-pointer">
                     <div class="font-bold text-xl mb-2 truncate" :title="post.title">
                         {{ post.title }}
@@ -164,11 +164,11 @@ export default {
     .card {
         @apply flex relative overflow-hidden shadow-lg;
         @apply w-full;
+        height: 10.5rem;
         font-family: Inter, Noto Sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         transition: background-color 0.3s;
         -webkit-transition: background-color 0.3s;
         -moz-transition: background-color 0.3s;
-
         .h-cover {
             height: 10.5rem;
         }
@@ -189,11 +189,12 @@ export default {
         }
     }
     @screen md {
-        @apply block;
-        width: 20.5rem;
-        height: 20.5rem;
+        .card {
+            @apply block;
+            width: 20.5rem;
+            height: 20.5rem;
+        }
     }
-    md:flex
     .card::-webkit-scrollbar {
         width: 2px;
         background-color: #F5F5F5;
