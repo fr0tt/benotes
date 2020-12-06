@@ -61,7 +61,9 @@ export default [
             {
                 path: 'c/:collectionId/p/create',
                 component: Post,
-                props: true,
+                props: (route) => ({
+                    collectionId: parseInt(route.params.collectionId)
+                }),
                 meta: {
                     authUser: true
                 }
@@ -70,7 +72,9 @@ export default [
                 path: 'p/:id',
                 name: 'post',
                 component: Post,
-                props: true,
+                props: (route) => ({
+                    id: parseInt(route.params.id)
+                }),
                 meta: {
                     authUser: true,
                     staticAuth: true

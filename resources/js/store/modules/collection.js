@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+let collectionsPromise
+
 export default {
     namespaced: true,
     state: {
@@ -34,15 +36,23 @@ export default {
         }
     },
     actions: {
-        fetchCollections (context) {
-            return axios.get('/api/collections')
+        fetchCollections (context, force = false) {
+            if (collectionsPromise) {
+                return collectionsPromise
+            }
+            if (context.state.collections !== null && force == false) {
+                return
+            }
+            collectionsPromise = axios.get('/api/collections')
                 .then(response => {
                     const collections = response.data.data
                     context.commit('setCollections', collections)
+                    collectionsPromise = null
                 })
                 .catch(error => {
                     console.log(error)
                 })
+            return collectionsPromise // test
         },
         addCollection (context, collection) {
             context.commit('addCollection', collection)

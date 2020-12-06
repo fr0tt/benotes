@@ -69,7 +69,8 @@ Installation:
 
 | Attribute     | Value                                                        |
 | ------------- | ------------------------------------------------------------ |
-| collection_id | Optional. Specify a collection of which you want to request posts. To request posts from the uncategorized collection simply use 0 as value for the collection_id. If collection_id is not specified you will get all posts from all collections from your user |
+| collection_id | Optional. Specify a collection of which you want to request posts. If collection_id is not specified you will get all posts from all collections from your user |
+| is_uncategorized | Optional. Specify if you wish to get all posts without a collection. |
 | limit         | Optional. Limit the amount of requested posts by number      |
 
 **GET /api/posts/{id}**
@@ -82,7 +83,7 @@ Installation:
 
 | Attribute     | Value                                                        |
 | ------------- | ------------------------------------------------------------ |
-| collection_id | Optional. Specify a collection you wish to save your new post to, if not, your post will not have a collection and be part of the uncategorized collection instead |
+| collection_id | Optional. Specify a collection you wish to save your new post to, if not, your post will not be part of a collection. |
 | title         | Optional. Specify a title, gets automatically filled if your content is a link |
 | content       | Required. Specify a link, post, message, ..                  |
 
