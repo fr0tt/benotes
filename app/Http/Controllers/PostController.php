@@ -80,6 +80,9 @@ class PostController extends Controller
             }
         }
 
+        $validatedData['content'] = str_ireplace('<script>', '&lt;script&gt;', $validatedData['content']);
+        $validatedData['content'] = str_ireplace('</script>', '&lt;/script&gt;', $validatedData['content']);
+
         $info = $this->computePostData($request->content);
 
         $attributes = array_merge($validatedData, $info);
@@ -121,6 +124,8 @@ class PostController extends Controller
         $this->findCollection($validatedData['collection_id']);
 
         if (isset($validatedData['content'])) {
+            $validatedData['content'] = str_ireplace('<script>', '&lt;script&gt;', $validatedData['content']);
+            $validatedData['content'] = str_ireplace('</script>', '&lt;/script&gt;', $validatedData['content']);
             $info = $this->computePostData($validatedData['content']);
         } else {
             $info = array();
