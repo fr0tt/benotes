@@ -80,8 +80,7 @@ class PostController extends Controller
             }
         }
 
-        $validatedData['content'] = str_ireplace('<script>', '&lt;script&gt;', $validatedData['content']);
-        $validatedData['content'] = str_ireplace('</script>', '&lt;/script&gt;', $validatedData['content']);
+        $validatedData['content'] = $this->sanitize($validatedData['content']);
 
         $info = $this->computePostData($request->content);
 
@@ -124,8 +123,7 @@ class PostController extends Controller
         $this->findCollection($validatedData['collection_id']);
 
         if (isset($validatedData['content'])) {
-            $validatedData['content'] = str_ireplace('<script>', '&lt;script&gt;', $validatedData['content']);
-            $validatedData['content'] = str_ireplace('</script>', '&lt;/script&gt;', $validatedData['content']);
+            $validatedData['content'] = $this->sanitize($validatedData['content']);
             $info = $this->computePostData($validatedData['content']);
         } else {
             $info = array();
@@ -204,6 +202,11 @@ class PostController extends Controller
         }
 
         return $info;
+    }
+
+    private function sanitize($str)
+    {
+        return strip_tags($str, '<a><h1><h2><h3><h4><h5><p><pre><br><hr><blockquote><li><ol><code>');
     }
 
     private function getInfo($url)
