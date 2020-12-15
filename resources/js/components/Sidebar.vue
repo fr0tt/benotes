@@ -17,17 +17,19 @@
                         <span class="align-middle text-gray-700">Logout</span>
                     </a>
                     <br><br><br>
-                    <router-link to="/" tag="li" class="collection md:px-8 px-4 mb-4">
+                    <li @click="navigate('/')" class="collection md:px-8 px-4 mb-4"
+                        :class="{ 'router-link-exact-active': isActiveLink('/') }">
                         <svg-vue class="w-4 fill-current align-text-bottom mr-2" icon="remix/folder-unknow-fill"/>
                         <span class="align-middle text-gray-700">Uncategorized</span>
-                    </router-link>
+                    </li>
                     <span class="mb-2 md:px-8 px-4 block text-xs text-gray-700 font-medium uppercase">Collections</span>
                     <ol>
-                        <router-link v-for="(collection) in collections" :key="collection.id"
-                            :to="'/c/' + collection.id" tag="li" class="collection md:px-8 px-4">
-                                <svg-vue class="w-4 fill-current align-text-bottom mr-2" icon="remix/folder-fill"/>
-                                <span class="align-middle text-gray-700">{{ collection.name }}</span>
-                        </router-link>
+                        <li v-for="(collection) in collections" :key="collection.id"
+                            :class="{ 'router-link-exact-active': isActiveLink('/c/' + collection.id) }"
+                            @click="navigate('/c/' + collection.id)" class="collection md:px-8 px-4">
+                            <svg-vue class="w-4 fill-current align-text-bottom mr-2" icon="remix/folder-fill"/>
+                            <span class="align-middle text-gray-700">{{ collection.name }}</span>
+                        </li>
                     </ol>
                 </div>
                 <router-link to="/c/create" class="block md:ml-8 ml-4 mt-4 text-orange-600 font-medium">
@@ -71,6 +73,14 @@ export default {
                     console.log(error.response)
                 })
             this.$router.push({ path: '/login' })
+        },
+        navigate (route) {
+            this.$router.push(route)
+            if (this.isMobile)
+            this.$store.dispatch('toggleSidebar')
+        },
+        isActiveLink (route) {
+            return route === this.$route.path
         }
     },
     computed: {
@@ -82,6 +92,9 @@ export default {
         ]),
         ...mapState('collection', [
             'collections'
+        ]),
+        ...mapState([
+            'isMobile'
         ])
     },
     mounted () {
