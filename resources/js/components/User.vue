@@ -151,7 +151,7 @@ export default {
                 button: {
                     label: 'Create',
                     callback: this.create,
-                    icon: 'zondicons/add-outline'
+                    icon: 'add'
                 } 
             })
         } else {
@@ -168,7 +168,7 @@ export default {
                 button: {
                     label: 'Save',
                     callback: this.update,
-                    icon: 'zondicons/checkmark-outline'
+                    icon: 'checkmark'
                 } 
             })
         }

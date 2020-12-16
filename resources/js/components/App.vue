@@ -10,6 +10,7 @@
                 </transition>
             </div>
         </div>
+        <BottomSheet/>
     </div>
 </template>
 
@@ -17,11 +18,13 @@
 import { mapState } from 'vuex'
 import Sidebar from './Sidebar.vue'
 import Appbar from './Appbar.vue'
+import BottomSheet from './BottomSheet.vue'
 
 export default {
     components: {
         Sidebar,
-        Appbar
+        Appbar,
+        BottomSheet
     },
     methods: {
         globalClickEvent (event) {

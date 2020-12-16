@@ -152,7 +152,7 @@ export default {
                 button: {
                     label: 'Save',
                     callback: this.save,
-                    icon: 'zondicons/checkmark-outline'
+                    icon: 'checkmark'
                 } 
             })
         } else {
@@ -179,7 +179,7 @@ export default {
                 button: {
                     label: 'Save',
                     callback: this.save,
-                    icon: 'zondicons/checkmark-outline'
+                    icon: 'checkmark'
                 } 
             })
         }

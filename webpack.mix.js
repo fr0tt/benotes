@@ -13,7 +13,7 @@ require('laravel-mix-svg-vue')
  |
  */
 
-mix.disableSuccessNotifications()
+mix.disableNotifications()
 
 /*
 

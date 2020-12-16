@@ -51,12 +51,59 @@ export default {
         },
         create () {
             this.$router.push(`/c/${this.collectionId}/p/create`)
+        },
+        pasteNewPost () {
+            // may only work with a secure connection
+            navigator.clipboard.readText().then(content => {
+                if (content === '' || content === null) {
+                    return
+                }
+                axios.post('/api/posts', {
+                    content: content,
+                    collection_id: this.collectionId > 0 ? this.collectionId : null,
+                    is_uncategorized: this.collectionId === 0
+                })
+                    .then(response => {
+                        this.$store.dispatch('post/addPost', response.data.data)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            })
+        },
+        editCollection () {
+            this.$router.push({ path: '/c/' + this.currentCollection.id + '/edit' })
+        },
+        deleteCollection () {
+            this.$store.dispatch('collection/deleteCollection', this.currentCollection.id)
+            this.$router.push({ path: '/' })
         }
     },
     watch: {
         collectionId () {
             this.init()
             this.$store.dispatch('collection/getCurrentCollection', this.collectionId)
+            this.$store.dispatch('appbar/setOptions', [
+                {
+                    label: 'Paste',
+                    longLabel: 'Paste (a link)',
+                    callback: this.pasteNewPost,
+                    icon: 'paste',
+                    condition: this.isSupported
+                },{
+                    label: 'Edit',
+                    longLabel: 'Edit Collection',
+                    callback: this.editCollection,
+                    icon: 'edit',
+                    condition: this.isRealCollection
+                },{
+                    label: 'Delete',
+                    longLabel: 'Delete Collection',
+                    callback: this.pasteNewPost,
+                    icon: 'delete',
+                    condition: this.isRealCollection
+                }
+            ])
         },
         currentCollection: function (newValue, oldValue) {
             this.$store.commit('appbar/setTitle', newValue.name, { root: true })
@@ -83,6 +130,9 @@ export default {
             }
             return false
         },
+        isRealCollection () {
+            return this.$route.params.collectionId > 0
+        },
         ...mapState('collection', [
             'currentCollection'
         ]),
@@ -100,13 +150,35 @@ export default {
         this.init()
 
         this.$store.dispatch('appbar/setAppbar', {
-            allowPaste: true,
             hint: 'Ctrl + Alt + N',
             button: {
                 label: 'Create',
                 callback: this.create,
-                icon: 'zondicons/add-outline'
-            }
+                icon: 'add'
+            },
+            options: [
+                {
+                    label: 'Paste',
+                    longLabel: 'Paste (a link)',
+                    callback: this.pasteNewPost,
+                    icon: 'paste',
+                    condition: this.isSupported,
+                },{
+                    label: 'Edit',
+                    longLabel: 'Edit Collection',
+                    callback: this.editCollection,
+                    icon: 'edit',
+                    color: 'gray',
+                    condition: this.isRealCollection,
+                },{
+                    label: 'Delete',
+                    longLabel: 'Delete Collection',
+                    callback: this.pasteNewPost,
+                    icon: 'delete',
+                    color: 'red',
+                    condition: this.isRealCollection,
+                }
+            ]
         })
 
         if (this.currentCollection.name == '') {

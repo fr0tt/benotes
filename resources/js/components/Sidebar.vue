@@ -75,9 +75,12 @@ export default {
             this.$router.push({ path: '/login' })
         },
         navigate (route) {
+            if (this.$route.path === route)
+                return
+                
             this.$router.push(route)
             if (this.isMobile)
-            this.$store.dispatch('toggleSidebar')
+                this.$store.dispatch('toggleSidebar')
         },
         isActiveLink (route) {
             return route === this.$route.path

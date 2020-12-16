@@ -45,7 +45,7 @@ export default {
             button: {
                 label: 'Create',
                 callback: this.create,
-                icon: 'zondicons/add-outline'
+                icon: 'add'
             } 
         })
     }

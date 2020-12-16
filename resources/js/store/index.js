@@ -19,6 +19,8 @@ export default new Vuex.Store({
     state: {
         isMobile: false,
         showSidebar: (localStorage.getItem('sidebar') === 'false') ? false : true,
+        showBottomSheet: false,
+        bottomSheet: []
     },
     mutations: {
         isMobile (state, isMobile) {
@@ -26,11 +28,17 @@ export default new Vuex.Store({
         },
         showSidebar (state, showSidebar) {
             state.showSidebar = showSidebar
+        },
+        showBottomSheet(state, showBottomSheet) {
+            state.showBottomSheet = showBottomSheet
+        },
+        setBottomSheet(state, bottomSheet) {
+            state.bottomSheet = bottomSheet
         }
     },
     actions: {
         checkDevice (context) {
-            if (screen.width > 768) {
+            if (window.outerWidth > 768) {
                 context.commit('isMobile', false)
             } else {
                 context.commit('isMobile', true)
@@ -40,6 +48,10 @@ export default new Vuex.Store({
             const showSidebar = !this.state.showSidebar
             context.commit('showSidebar', showSidebar)
             localStorage.setItem('sidebar', showSidebar)
+        },
+        toggleBottomSheet(context) {
+            const showBottomSheet = !this.state.showBottomSheet
+            context.commit('showBottomSheet', showBottomSheet)
         }
     }
 })

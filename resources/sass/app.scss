@@ -50,12 +50,24 @@ button:focus {
     @apply border-red-500 text-red-500;
 }
 
+.button.gray {
+    @apply border-gray-600 text-gray-600;
+}
+
+.button-icon.remix {
+    width: 1.25rem;
+}
+
 .button:hover {
     @apply bg-orange-600 text-white;
 }
 
 .button.red:hover {
     @apply bg-red-500;
+}
+
+.button.gray:hover {
+    @apply bg-gray-600;
 }
 
 .router-fade-enter-active, .router-fade-leave-active {
