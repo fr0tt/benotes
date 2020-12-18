@@ -40,12 +40,6 @@ import axios from 'axios'
 import { mapState } from 'vuex'
 export default {
     name: 'Appbar',
-    data () {
-        return {
-            isOpen: true,
-            showContextMenu: false
-        }
-    },
     methods: {
         toggleSidebar () {
             this.$store.dispatch('toggleSidebar')
@@ -73,9 +67,6 @@ export default {
             'hint',
             'button',
             'options'
-        ]),
-        ...mapState('collection', [
-            'currentCollection'
         ]),
         ...mapState('auth', [
             'permission'
