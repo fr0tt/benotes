@@ -1,6 +1,5 @@
 <template>
-    <div class="w-full outline-none" @click="globalClickEvent($event)"
-        @keyup.ctrl.alt.78="createNewPost()" tabindex="0" autofocus>
+    <div class="w-full outline-none" @keyup.ctrl.alt.78="createNewPost()" tabindex="0" autofocus>
         <div class="flex">
             <Sidebar class="pt-16 z-40" v-if="!staticAuth"/>
             <div class="flex-1 h-screen bg-white overflow-y-scroll pt-16">
@@ -27,13 +26,6 @@ export default {
         BottomSheet
     },
     methods: {
-        globalClickEvent (event) {
-            if (this.contextMenu.post !== null) {
-                if (this.contextMenu.target !== event.target) {
-                    this.$store.dispatch('post/hideContextMenu')
-                }
-            }
-        },
         createNewPost () {
             this.$router.push({ path: `/c/${this.currentCollection.id}/p/create` })
         }
@@ -41,12 +33,6 @@ export default {
     computed: {
         ...mapState('collection', [
             'currentCollection'
-        ]),
-        ...mapState('post', [
-            'currentPost'
-        ]),
-        ...mapState('post', [
-            'contextMenu'
         ]),
         ...mapState('auth', [
             'staticAuth'

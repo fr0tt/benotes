@@ -3,12 +3,12 @@
         <div class="absolute top-0 left-0 w-full h-full bg-half-transparent z-999">
             <div class="w-5/6 max-w-xl m-auto mt-10 border-gray-400 rounded-lg bg-gray-100">
                 <div class="py-8 mx-6">
-                    <h2 class="mb-4 mx-1 text-3xl text-blue-500 font-bold">Collections</h2>
+                    <h2 class="mb-4 mx-1 text-3xl text-orange-600 font-bold">Collections</h2>
                     <p class="mb-8 mx-1 gray-600 italic leading-tight">
                         Select a collection you wish to transfer your post to.
                     </p>
                     <div v-for="collection in collections" :key="collection.id">
-                        <div class="py-3 my-2 px-4 shadow cursor-pointer hover:text-blue-500 transition-color-0.2"
+                        <div class="py-3 my-2 px-4 shadow cursor-pointer hover:text-orange-500 transition-color-0.2"
                             @click="transfer(collection.id)">
                             <span class="block font-medium gray-700 open-sans">{{ collection.name }}</span>
                         </div>

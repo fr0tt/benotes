@@ -118,6 +118,15 @@ export default {
                 target: event.target,
                 positionX: event.pageX
             })
+            document.addEventListener('click', this.globalClickEvent)
+        },
+        globalClickEvent (event) {
+            if (this.contextMenu.post !== null) {
+                if (this.contextMenu.target !== event.target) {
+                    this.$store.dispatch('post/hideContextMenu')
+                    document.removeEventListener('click', this.globalClickEvent)
+                }
+            }
         }
     },
     computed: {
