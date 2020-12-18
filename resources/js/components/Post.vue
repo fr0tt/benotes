@@ -6,9 +6,6 @@
                     <input class="block w-full text-3xl font-medium placeholder-orange-600 text-orange-600
                         outline-none" v-model="title" placeholder="Title" tabindex="1" autofocus/>
                     <div class="mt-4 mb-6">
-                        <!--
-                            <svg-vue class="w-5 inline-block align-text-bottom mb-0.25 mr-2 text-gray-600 fill-current" icon="remix/folder-3-line"/>
-                        -->
                         <Select class="inline-block w-80" v-model="collection" label="name" :options="optionsCollections"
                             :tabindex="2"/>
                     </div>
@@ -114,6 +111,9 @@ export default {
         keySave (event) {
             event.preventDefault()
             this.save()
+        },
+        delete () {
+            this.$store.dispatch('post/deletePost', this.id)
         }
     },
     computed: {
@@ -153,7 +153,7 @@ export default {
                     label: 'Save',
                     callback: this.save,
                     icon: 'checkmark'
-                } 
+                }
             })
         } else {
             this.$store.dispatch('post/getPost', this.id)
@@ -180,7 +180,15 @@ export default {
                     label: 'Save',
                     callback: this.save,
                     icon: 'checkmark'
-                } 
+                },
+                options: [{
+                    label: 'Delete',
+                    longLabel: 'Delete Post',
+                    callback: this.delete,
+                    icon: 'delete',
+                    color: 'red',
+                    condition: true
+                }] 
             })
         }
     },

@@ -12,7 +12,7 @@
             </button>
             <span class="block text-center font-medium">{{ title }}</span>
         </div>
-        <div class="px-8 py-4">
+        <div class="px-8 py-2">
             <ol v-for="option in bottomSheet" :key="option.label" class="">
                 <li v-if="option.condition" @click="option.callback" 
                     class="block my-6 font-medium text-gray-700">

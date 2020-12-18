@@ -1,5 +1,5 @@
 <template>
-    <form v-if="isNew" @submit.prevent="create()" class="mt-16 lg:mx-20 mx-10">
+    <form v-if="isNew" @submit.prevent="create()" class="mt-16 lg:mx-20 mx-10 pb-8">
         <div class="max-w-lg">
 
             <div class="mb-8">
@@ -19,19 +19,12 @@
                 <input v-model="password" placeholder="Password" type="password" class="input"/>
             </div>
 
-            <div class="mt-8 float-right">
-                <button class="button">
-                    <svg-vue class="button-icon" icon="zondicons/add-outline"/>
-                    Create
-                </button>
-            </div>
-
             <p v-if="error" class="text-red-500 mt-4">{{ error }}</p>
 
         </div>
     </form>
 
-    <div v-else class="mt-20 lg:mx-20 mx-10">
+    <div v-else class="mt-20 lg:mx-20 mx-10 pb-8">
         <div class="max-w-lg">
 
             <div class="mb-8">
@@ -54,19 +47,6 @@
             <div class="mb-8">
                 <label class="label">New Password</label>
                 <input v-model="password_new" placeholder="New Password" type="password" class="input"/>
-            </div>
-
-            <div class="mt-8 flex">
-                <div class="flex-1">
-                    <button class="button red" @click="del()">
-                        <svg-vue class="button-icon" icon="zondicons/trash"/>
-                        Delete
-                    </button>
-                </div>
-                <button class="button" @click="update()">
-                    <svg-vue class="button-icon" icon="zondicons/checkmark-outline"/>
-                    Save
-                </button>
             </div>
 
             <p v-if="error" class="text-red-500 mt-4">{{ error }}</p>
@@ -169,7 +149,15 @@ export default {
                     label: 'Save',
                     callback: this.update,
                     icon: 'checkmark'
-                } 
+                },
+                options: [{
+                    label: 'Delete',
+                    longLabel: 'Delete User',
+                    color: 'red',
+                    icon: 'delete',
+                    callback: this.del,
+                    condition: true
+                }] 
             })
         }
     }
