@@ -95,12 +95,14 @@ export default {
                     longLabel: 'Edit Collection',
                     callback: this.editCollection,
                     icon: 'edit',
+                    color: 'gray',
                     condition: this.isRealCollection
                 },{
                     label: 'Delete',
                     longLabel: 'Delete Collection',
                     callback: this.pasteNewPost,
                     icon: 'delete',
+                    color: 'red',
                     condition: this.isRealCollection
                 }
             ])
