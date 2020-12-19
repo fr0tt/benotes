@@ -159,7 +159,8 @@ export default {
                 @apply font-medium text-gray-500 cursor-pointer;
             }
             .router-link-exact-active {
-                @apply bg-orange-200 text-gray-700 font-semibold;
+                border-left: 3px solid;
+                @apply bg-orange-200 text-gray-700 border-orange-600 font-semibold;
             }
         }
     }
