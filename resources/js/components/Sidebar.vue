@@ -17,19 +17,20 @@
                         <span class="align-middle text-gray-700">Logout</span>
                     </a>
                     <br><br><br>
-                    <li @click="navigate('/')" class="collection md:px-8 px-4 mb-4"
+                    <a @click="navigate($event, '/')" href="/" class="collection md:px-8 px-4 mb-4"
                         :class="{ 'router-link-exact-active': isActiveLink('/') }">
                         <svg-vue class="w-4 fill-current align-text-bottom mr-2" icon="remix/folder-unknow-fill"/>
                         <span class="align-middle text-gray-700">Uncategorized</span>
-                    </li>
+                    </a>
                     <span class="mb-2 md:px-8 px-4 block text-xs text-gray-700 font-medium uppercase">Collections</span>
                     <ol>
-                        <li v-for="(collection) in collections" :key="collection.id"
+                        <a v-for="(collection) in collections" :key="collection.id"
                             :class="{ 'router-link-exact-active': isActiveLink('/c/' + collection.id) }"
-                            @click="navigate('/c/' + collection.id)" class="collection md:px-8 px-4">
+                            class="collection md:px-8 px-4"
+                            @click="navigate($event, '/c/' + collection.id)" :href="'/c/' + collection.id" >
                             <svg-vue class="w-4 fill-current align-text-bottom mr-2" icon="remix/folder-fill"/>
                             <span class="align-middle text-gray-700">{{ collection.name }}</span>
-                        </li>
+                        </a>
                     </ol>
                 </div>
                 <router-link to="/c/create" class="block md:ml-8 ml-4 mt-4 text-orange-600 font-medium">
@@ -74,11 +75,14 @@ export default {
                 })
             this.$router.push({ path: '/login' })
         },
-        navigate (route) {
+        navigate (event, route) {
+            event.preventDefault()
+
             if (this.$route.path === route)
                 return
                 
             this.$router.push(route)
+
             if (this.isMobile)
                 this.$store.dispatch('toggleSidebar')
         },

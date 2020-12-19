@@ -1,5 +1,5 @@
 <template>
-    <div class="mt-16 ml-20 mr-8 max-w-4xl">
+    <div class="px-4 md:px-16 py-4 md:pt-16 max-w-4xl">
         <div class="flex mb-10">
             <div class="flex-1">
                 <h1 class="text-3xl font-medium text-gray-800">Users</h1>

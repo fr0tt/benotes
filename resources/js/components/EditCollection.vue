@@ -1,26 +1,24 @@
 <template>
-    <div class="my-8 lg:mx-20 mx-10">
-
-        <div class="ml-32 mr-12 mt-32 max-w-3xl">
-
-            <div class="w-full collection">
-                <h1 class="text-3xl font-bold mb-4">{{ headline }}</h1>
-                <p class="text-xl mb-16">{{ description }}</p>
-                <div class="mb-10">
-                    <label class="inline-block uppercase text-gray-600 font-medium">Name of Collection</label>
-                    <input v-model="name" placeholder="Name" autofocus
-                        class="input"/>
-                </div>
-                <div v-if="!isNew" class="mb-16">
-                    <label class="inline-block uppercase text-gray-600 font-medium">Collection Url</label>
-                    <button @click="is_active = !is_active" class="switch"
-                        :class="[is_active ? 'bg-orange-600 border-orange-600 text-white' : 'border-gray-600 text-gray-600']">
-                        {{ switchValue }}
-                    </button>
-                    <div class="w-full flex">
-                        <div class="text-xl text-white bg-gray-600 outline-none py-1 px-2">
-                            {{ domain }}
-                        </div>
+    <div class="py-12 px-12 md:px-40 md:pt-32 max-w-5xl">
+        <div class="w-full collection">
+            <h1 class="text-3xl font-bold mb-4">{{ headline }}</h1>
+            <p class="text-xl mb-16">{{ description }}</p>
+            <div class="mb-10">
+                <label class="inline-block uppercase text-gray-600 font-medium">Name of Collection</label>
+                <input v-model="name" placeholder="Name" autofocus
+                    class="input"/>
+            </div>
+            <div v-if="!isNew" class="mb-16">
+                <label class="inline-block uppercase text-gray-600 font-medium">Collection Url</label>
+                <button @click="is_active = !is_active" class="switch"
+                    :class="[is_active ? 'bg-orange-600 border-orange-600 text-white' : 'border-gray-600 text-gray-600']">
+                    {{ switchValue }}
+                </button>
+                <div class="w-full mt-4 md:mt-0 md:flex">
+                    <div class="md:text-xl text-white bg-gray-600 outline-none py-1 px-2">
+                        {{ domain }}
+                    </div>
+                    <div class="flex flex-1 mt-1 md:mt-0">
                         <input v-model="token" class="input flex-1" placeholder="Collection Url"/>
                         <div v-if="isSupported" @click="copy" class="bg-gray-300 pr-2 cursor-pointer">
                             <svg-vue class="w-6 mt-2" icon="material/link"/>
@@ -31,21 +29,7 @@
                     </div>
                 </div>
             </div>
-            <div class="w-full">
-                <div class="text-right mt-6">
-                    <button v-if="isNew" @click="create()" class="button">
-                        <svg-vue class="button-icon" icon="zondicons/add-outline"/>
-                        Create
-                    </button>
-                    <button v-else @click="update()" class="button">
-                        <svg-vue class="button-icon" icon="zondicons/checkmark-outline"/>
-                        Save
-                    </button>
-                </div>
-            </div>
-
         </div>
-
     </div>
 </template>
 
@@ -175,6 +159,24 @@ export default {
                     console.log(error.response.data)
                 })
             this.getShares()
+
+            this.$store.dispatch('appbar/setAppbar', {
+                title: 'Edit Collection',
+                button: {
+                    label: 'Save',
+                    callback: this.update,
+                    icon: 'checkmark'
+                }
+            })
+        } else {
+            this.$store.dispatch('appbar/setAppbar', {
+                title: 'Create Collection',
+                button: {
+                    label: 'Create',
+                    callback: this.create,
+                    icon: 'add'
+                } 
+            })
         }
         navigator.permissions.query({ name: 'clipboard-write' }).then(result => {
             this.isSupported = result.state === 'granted' || result.state === 'prompt'
@@ -186,7 +188,7 @@ export default {
 </script>
 <style lang="scss">
     button.switch {
-        @apply float-right border uppercase font-medium tracking-wide text-sm px-2 mb-1;
+        @apply float-right border-2 uppercase font-medium tracking-wide text-sm px-2 mb-1;
         padding-top: 0.125rem;
         padding-bottom: 0.125rem;
         transition: color, background-color 0.2s;

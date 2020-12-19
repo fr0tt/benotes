@@ -41,7 +41,6 @@ export default {
     },
     methods: {
         hide () {
-            console.log('hih')
             this.$store.commit('showBottomSheet', false)
         },
         icon (icon) {
