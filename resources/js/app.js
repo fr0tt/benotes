@@ -52,3 +52,17 @@ router.beforeEach((to, from, next) => {
     router,
     store
 })
+
+let refreshTimer = setInterval(() => {
+    if (Vue.cookie.get('token')) {
+        store.dispatch('auth/getAuthUser')
+            .then(authUser => {
+                if (!authUser)
+                    window.location = '/login'
+            })
+            .catch(error => {
+                console.log(error)
+                clearInterval(refreshTimer)
+            })
+    }
+}, 11 * 60 * 1000)
