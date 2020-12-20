@@ -34,6 +34,6 @@ class CreateSharesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('share');
+        Schema::dropIfExists('shares');
     }
 }
