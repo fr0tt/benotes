@@ -24,7 +24,10 @@
                         class="w-4 inline img-vertical-align">
                     <a :href="post.url" :title="post.url" target="_blank" class="text-blue-600">{{ post.url }}</a>
                 </div>
-                <svg @click="showContextMenu($event)" class="more-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
+                <svg @click="showContextMenu($event)" v-if="permission > 4" class="more-svg" 
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/>
+                </svg>
             </div>
         </div>
         <div v-else class="card bg-gray-100" :class="{ 'active' : isActive() }">
@@ -46,7 +49,10 @@
                     <EditorContent :editor="editor" class="editorContent" />
                 </div>
             </div>
-            <svg @click="showContextMenu($event)" class="more-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
+            <svg @click="showContextMenu($event)" v-if="permission > 4" class="more-svg" 
+                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/>
+            </svg>
         </div>
         <ContextMenu :postId="post.id"/>
     </li>
@@ -58,7 +64,7 @@ import { HardBreak, Heading, Bold, Code, Italic, Link } from 'tiptap-extensions'
 import ContextMenu from './PostContextMenu.vue'
 export default {
     name: 'PostItem',
-    props: ['post'],
+    props: ['post', 'permission'],
     components: {
         ContextMenu,
         EditorContent

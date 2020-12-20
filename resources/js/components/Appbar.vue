@@ -2,7 +2,7 @@
     <div class="absolute top-0 right-0 w-full bg-white z-50">
         <div class="flex sm:px-8 px-4 py-3">
             <div class="w-16 my-auto">
-                <button @click="toggleSidebar()" class="align-bottom">
+                <button @click="toggleSidebar()" v-if="authUser" class="align-bottom">
                     <svg-vue class="w-6 cursor-pointer" icon="remix/menu-line"/>
                 </button>
             </div>
@@ -67,6 +67,9 @@ export default {
             'hint',
             'button',
             'options'
+        ]),
+        ...mapState('auth', [
+            'authUser'
         ]),
         ...mapState('auth', [
             'permission'
