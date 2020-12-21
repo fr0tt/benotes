@@ -49,7 +49,7 @@ Route::group([
     'middleware' => 'auth:share'
 ], function () {
     Route::get('api/posts', 'PostController@index');
-    Route::get('api/posts/{post}', 'PostController@show');
+    Route::get('api/posts/{id}', 'PostController@show');
     
     Route::get('api/share/me', 'ShareController@me');
 });
