@@ -6,7 +6,7 @@
 
 An open source self hosted notes and bookmarks taking web app.
 
-This project is currently in **Alpha**. You may encounter bugs or errors.
+This project is currently in **Beta**. You may encounter bugs or errors.
 
 
 ## Installation
@@ -14,7 +14,7 @@ This project is currently in **Alpha**. You may encounter bugs or errors.
 Prerequisite:
 - git  (_https://git-scm.com_)
 - composer  (_https://getcomposer.org_)
-- PHP ≥ 7.1.3
+- PHP ≥ 7.2
 - MySQL, Postgres, SQLite or SQL Server (currently only MySQL is tested)
 
 Installation:
@@ -26,7 +26,7 @@ Installation:
 - edit DB_DATABASE, DB_USERNAME and DB_PASSWORD in .env file accordingly (_in order to be able to connect to your database_)
 - php artisan install  (_amongst other: creates database tables and fills them_)
 - ln -sfn ../storage/app/public/ public/storage (_create symlink for storage_)
-- chmod -R 774 storage (_make storage directory writable for webserver_)
+- chown -R :www-data storage && chmod -R 774 storage (_make storage directory writable for webserver if your webserver runs as user www-data_)
 
 ## Upgrade
 
