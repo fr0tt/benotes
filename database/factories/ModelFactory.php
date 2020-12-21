@@ -4,6 +4,7 @@ use Faker\Generator as Faker;
 use Illuminate\Support\Facades\Hash;
 
 use App\User;
+use App\Post;
 use App\Collection;
 
 /*
@@ -22,13 +23,25 @@ $factory->define(User::class, function (Faker $faker) {
         'name' => $faker->name,
         'email' => $faker->email,
         'password' => Hash::make('test'),
-        'permission' => 7
+        'permission' => 0
     ];
 });
 
 $factory->define(Collection::class, function (Faker $faker) {
     return [
         'name' => $faker->company,
-        'user_id' => User::first()
+        'user_id' => User::first()->id
+    ];
+});
+
+$factory->define(Post::class, function (Faker $faker) {
+    return [
+        'id' => $faker->randomNumber,
+        'title' => $faker->title,
+        'content' => $faker->sentence,
+        'collection_id' => null,
+        'type' => 1,
+        'user_id' => User::first()->id,
+        'order' => Post::count()
     ];
 });

@@ -4,7 +4,10 @@ use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\DatabaseTransactions;
 
 use App\User;
+use App\Post;
 use App\Collection;
+
+use function PHPUnit\Framework\assertIsNotBool;
 
 class PostTest extends TestCase
 {
@@ -80,6 +83,91 @@ class PostTest extends TestCase
             $data = $this->response->getData()->data;
             $this->assertNotEquals($data, null);
         }
+    }
+
+    public function testCreatePostWithoutAuth()
+    {
+        $post = [
+            'content' => 'foo bar'
+        ];
+        $this->json('POST', 'api/posts', $post);
+        $this->assertEquals(401, $this->response->status());
+    }
+
+    public function testCreatePostWithDifferentUsers()
+    {
+        $post = [
+            'content' => 'foo bar'
+        ];
+        $user = factory(User::class)->create();
+        $user2 = factory(User::class)->create();
+
+        $this->actingAs($user)->json('POST', 'api/posts', $post);
+        $this->assertEquals(201, $this->response->status());
+
+        $this->actingAs($user2)->json('POST', 'api/posts', $post);
+        $this->assertEquals(201, $this->response->status());
+
+        $this->actingAs($user2)->json('POST', 'api/posts', [
+            'content' => 'foo bar',
+            'user_id' => $user->id
+        ]);
+        $this->assertEquals(201, $this->response->status()); 
+        $this->assertLessThan(Post::where('user_id', $user2->id)->count(), 
+            Post::where('user_id', $user->id)->count());
+    }
+
+    public function testCreatePostWithNotOwnedCollection()
+    {
+        $user = factory(User::class)->create();
+        $user2 = factory(User::class)->create();
+        $collection = factory(Collection::class)->create([
+            'user_id' => $user->id
+        ]);
+
+        $this->actingAs($user2)->json('POST', 'api/posts', [
+            'content' => 'foo bar',
+            'collection_id' => $collection->id
+        ]);
+        $this->assertEquals(403, $this->response->status());
+        echo var_dump($this->response->getData());
+    }
+
+    public function testGetPostWithoutAuth()
+    {
+        $user = factory(User::class)->create();
+        $post = factory(Post::class)->create();
+
+        $this->json('GET', 'api/posts');
+        $this->assertEquals(401, $this->response->status());
+        $this->json('GET', 'api/posts/' . $post->id);
+        $this->assertEquals(401, $this->response->status());
+    }
+
+    public function testGetPostFromOwnerOnly()
+    {
+        $user = factory(User::class)->create();
+        $user2 = factory(User::class)->create();
+        $post = factory(Post::class)->create([
+            'user_id' => $user->id
+        ]);
+        factory(Post::class)->create([
+            'user_id' => $user->id
+        ]);
+        factory(Post::class)->create([
+            'user_id' => $user2->id
+        ]);
+
+        $this->actingAs($user)->json('GET', 'api/posts');
+        $amountOfPosts = count($this->response->getData()->data);
+        $this->assertEquals(200, $this->response->status());
+        $this->actingAs($user2)->json('GET', 'api/posts');
+        $amountOfPosts2 = count($this->response->getData()->data);
+        $this->assertEquals(200, $this->response->status());
+        $this->assertLessThan($amountOfPosts, $amountOfPosts2);
+
+        $this->actingAs($user2)->json('GET', 'api/posts/' . $post->id);
+        $this->assertEquals(403, $this->response->status());
     }
 
 }
