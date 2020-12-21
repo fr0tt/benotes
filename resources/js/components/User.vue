@@ -163,12 +163,3 @@ export default {
     }
 }
 </script>
-
-<style lang="scss" scoped>
-    .label {
-        @apply block uppercase text-gray-600 font-medium text-sm tracking-wide;
-    }
-    .input {
-        @apply w-full text-lg text-gray-800 font-medium bg-gray-300 outline-none py-2 px-4 my-1;
-    }
-</style>

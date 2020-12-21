@@ -75,17 +75,7 @@ export default {
 
 }
 </script>
-<style lang="scss" scoped>
-    .input {
-        @apply appearance-none w-full py-3 px-3 text-gray-700 bg-gray-input leading-tight;
-    }
-    .input:focus {
-        @apply outline-none;
-        box-shadow: 0 0 0 2px rgba(225, 125, 66, 0.5);
-    }
-    label.label {
-        @apply block text-gray-600 font-semibold text-sm uppercase mb-2;
-    }
+<style>
     .bg-gray-input {
         background-color: #ececec;
     }

@@ -70,6 +70,19 @@ button:focus {
     @apply bg-gray-600;
 }
 
+input.input {
+    @apply p-3 border-2 border-gray-400 rounded appearance-none outline-none w-full text-gray-700;
+    line-height: 1.15;
+}
+
+input.input:focus {
+    @apply border-orange-600;
+}
+
+label.label {
+    @apply block text-gray-600 font-semibold text-sm uppercase mb-2;
+}
+
 .router-fade-enter-active, .router-fade-leave-active {
     transition: opacity .2s ease;
 }
