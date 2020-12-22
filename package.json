@@ -14,9 +14,9 @@
         "cross-env": "^5.2.1",
         "eslint": "^6.8.0",
         "eslint-plugin-vue-libs": "^4.0.0",
-        "laravel-mix": "^5.0.7",
+        "laravel-mix": "^5.0.9",
         "resolve-url-loader": "^2.3.1",
-        "sass": "^1.28.0",
+        "sass": "^1.30.0",
         "sass-loader": "^7.3.1",
         "vue": "^2.6.12",
         "vue-template-compiler": "^2.6.12"
@@ -27,9 +27,9 @@
         "tiptap": "^1.30.0",
         "tiptap-extensions": "^1.33.2",
         "vue-cookie": "^1.1.4",
-        "vue-router": "^3.4.8",
-        "vue-select": "^3.10.8",
+        "vue-router": "^3.4.9",
+        "vue-select": "^3.11.2",
         "vuedraggable": "^2.24.3",
-        "vuex": "^3.5.1"
+        "vuex": "^3.6.0"
     }
 }

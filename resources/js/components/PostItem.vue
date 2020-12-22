@@ -1,7 +1,7 @@
 <template>
     <li class="md:inline-block mx-6 md:mx-4 my-4 relative text-left post" :post-id="post.id">
         <div v-if="post.type === 'link' && !isActive()" class="card">
-            <a :href="post.url" target="_blank" class="w-3/7 md:w-full">
+            <a :href="post.url" target="_blank" rel="noopener" class="w-3/7 md:w-full">
                 <div v-if="post.image_path" class="h-cover w-full bg-cover bg-center" :style="image"></div>
                 <div v-else class="h-cover w-full flex items-center justify-center" :style="color">
                     <span class="text-white text-2xl font-medium">{{ domain }}</span>
@@ -22,7 +22,7 @@
                 <div class="px-6 py-4 mr-2 truncate">
                     <img :src="'https://external-content.duckduckgo.com/ip3/' + domain + '.ico'"
                         class="w-4 inline img-vertical-align">
-                    <a :href="post.url" :title="post.url" target="_blank" class="text-blue-600">{{ post.url }}</a>
+                    <a :href="post.url" :title="post.url" target="_blank" rel="noopener" class="text-blue-600">{{ post.url }}</a>
                 </div>
                 <svg @click="showContextMenu($event)" v-if="permission > 4" class="more-svg" 
                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
