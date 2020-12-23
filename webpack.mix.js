@@ -44,8 +44,7 @@ mix.js('resources/js/app.js', 'public/js')
     .webpackConfig({
         plugins: [
             new InjectManifest({
-                swSrc: './resources/js/service-worker.js',
-                swDest: './js/service-worker.js',
+                swSrc: './resources/js/service-worker.js'
             })
         ],
         output: {

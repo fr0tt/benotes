@@ -1,3 +1,4 @@
+import { skipWaiting, clientsClaim } from 'workbox-core'
 import { precacheAndRoute } from 'workbox-precaching'
 import { registerRoute } from 'workbox-routing'
 import { CacheFirst, StaleWhileRevalidate, NetworkFirst } from 'workbox-strategies'
@@ -5,30 +6,9 @@ import { CacheableResponsePlugin } from 'workbox-cacheable-response'
 import { ExpirationPlugin } from 'workbox-expiration'
 
 precacheAndRoute(self.__WB_MANIFEST)
+clientsClaim()
+self.skipWaiting()
 
-
-registerRoute(
-    ({ url }) => url.origin === 'https://fonts.googleapis.com',
-    new StaleWhileRevalidate({
-        cacheName: 'google-fonts-stylesheets',
-    })
-)
-
-registerRoute(
-    ({ url }) => url.origin === 'https://fonts.gstatic.com',
-    new CacheFirst({
-        cacheName: 'google-fonts-webfonts',
-        plugins: [
-            new CacheableResponsePlugin({
-                statuses: [0, 200],
-            }),
-            new ExpirationPlugin({
-                maxAgeSeconds: 365 * 24 * 3600,
-                maxEntries: 30,
-            }),
-        ],
-    })
-)
 
 registerRoute(
     ({ request }) => request.destination === 'image',
@@ -48,5 +28,21 @@ registerRoute(
         request.destination === 'style',
     new StaleWhileRevalidate({
         cacheName: 'static-resources',
+    })
+)
+
+registerRoute(
+    new RegExp('/'),
+    new NetworkFirst({
+        cacheName: 'html-content',
+        plugins: [
+            new CacheableResponsePlugin({
+                statuses: [0, 200]
+            }),
+            new ExpirationPlugin({
+                maxEntries: 50,
+                maxAgeSeconds: 30 * 3600
+            })
+        ]
     })
 )

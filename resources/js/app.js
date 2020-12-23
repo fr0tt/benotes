@@ -71,7 +71,7 @@ let refreshTimer = setInterval(() => {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/js/service-worker.js')
+        navigator.serviceWorker.register('/service-worker.js')
     })
 }
 
