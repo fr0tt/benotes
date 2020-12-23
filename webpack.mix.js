@@ -1,6 +1,7 @@
 const mix = require('laravel-mix')
 const tailwindcss = require('tailwindcss')
 require('laravel-mix-svg-vue')
+const { InjectManifest } = require('workbox-webpack-plugin')
 
 /*
  |--------------------------------------------------------------------------
@@ -39,4 +40,15 @@ mix.js('resources/js/app.js', 'public/js')
             { removeViewBox: false },
             { removeDimensions: true }
         ]
+    })
+    .webpackConfig({
+        plugins: [
+            new InjectManifest({
+                swSrc: './resources/js/service-worker.js',
+                swDest: './js/service-worker.js',
+            })
+        ],
+        output: {
+            publicPath: ''
+        }
     })

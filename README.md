@@ -1,5 +1,5 @@
 <p align="center">
-        <img width="110" src="https://raw.githubusercontent.com/fr0tt/benotes/master/resources/img/logo_160x160.png" alt="Benotes Logo"/>
+        <img width="110" src="https://raw.githubusercontent.com/fr0tt/benotes/master/public/logo_144x144.png" alt="Benotes Logo"/>
 </p>
 
 <h1 align="center">Benotes</h1>

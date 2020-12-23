@@ -53,6 +53,7 @@ router.beforeEach((to, from, next) => {
     store
 })
 
+
 let refreshTimer = setInterval(() => {
     if (Vue.cookie.get('token')) {
         store.dispatch('auth/getAuthUser')
@@ -66,3 +67,11 @@ let refreshTimer = setInterval(() => {
             })
     }
 }, 11 * 60 * 1000)
+
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/js/service-worker.js')
+    })
+}
+

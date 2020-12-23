@@ -30,6 +30,12 @@
         "vue-router": "^3.4.9",
         "vue-select": "^3.11.2",
         "vuedraggable": "^2.24.3",
-        "vuex": "^3.6.0"
+        "vuex": "^3.6.0",
+        "workbox-cacheable-response": "^6.0.2",
+        "workbox-expiration": "^6.0.2",
+        "workbox-precaching": "^6.0.2",
+        "workbox-routing": "^6.0.2",
+        "workbox-strategies": "^6.0.2",
+        "workbox-webpack-plugin": "^6.0.2"
     }
 }
