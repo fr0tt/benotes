@@ -87,7 +87,8 @@ export default {
                 axios.post('/api/posts', {
                     title: this.title,
                     content: content,
-                    collection_id: this.collection.id
+                    collection_id: this.collection.id,
+                    is_uncategorized: this.collection.id > 0 ? false : true
                 })
                     .then(response => {
                         if (this.posts !== null) {
@@ -95,16 +96,16 @@ export default {
                         }
                     })
                     .catch(error => {
-                        console.log(error.response.data)
                         console.log(error)
                     })
                 this.$router.push({ path: '/c/' + this.collectionId })
             } else {
+                const originCollectionId = this.post.collection_id
                 this.post.title = this.title
                 this.post.content = content
                 this.post.collection_id = this.collection.id
-                this.$store.dispatch('post/updatePost', { post: this.post })
-                const route = this.post.collection_id == null ? '/' : '/c/' + this.post.collection_id
+                this.$store.dispatch('post/updatePost', this.post)
+                const route = originCollectionId === null ? '/' : '/c/' + originCollectionId
                 this.$router.push({ path: route })
             }
         },

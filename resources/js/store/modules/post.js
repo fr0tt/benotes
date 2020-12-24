@@ -82,11 +82,12 @@ export default {
         addPost (context, post) {
             context.commit('addPost', post)
         },
-        updatePost (context, { post, newCollectionId }) {
+        updatePost (context, post) { 
             const params = {}
             params.title = post.title
             params.content = post.content
-            params.collection_id = newCollectionId
+            params.collection_id = post.collection_id
+            params.is_uncategorized = post.collection_id > 0 ? false : true
             axios.patch('/api/posts/' + post.id, params)
                 .then(response => {
                     const newPost = response.data.data

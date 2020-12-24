@@ -23,10 +23,8 @@ import { mapState } from 'vuex'
 export default {
     methods: {
         transfer (collectionId) {
-            this.$store.dispatch('post/updatePost', { 
-                post: this.collectionMenu.post,
-                newCollectionId: collectionId
-            })
+            this.collectionMenu.post.collection_id = collectionId // @todo test
+            this.$store.dispatch('post/updatePost', this.collectionMenu.post)
             this.$store.dispatch('collection/setCollectionMenu', {
                 isVisible: false,
                 post: null

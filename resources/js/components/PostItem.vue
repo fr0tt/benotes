@@ -111,7 +111,7 @@ export default {
                     editable: false
                 })
                 document.querySelector('#app').removeEventListener('click', this.stopEditing, true)
-                this.$store.dispatch('post/updatePost', { post: this.currentPost })
+                this.$store.dispatch('post/updatePost', this.currentPost)
                 this.$store.dispatch('post/setCurrentPost', null)
             }
         },
