@@ -4,27 +4,27 @@
             <h1 class="text-3xl font-bold mb-4">{{ headline }}</h1>
             <p class="text-xl mb-16">{{ description }}</p>
             <div class="mb-10">
-                <label class="inline-block uppercase text-gray-600 font-medium">Name of Collection</label>
-                <input v-model="name" placeholder="Name" autofocus
-                    class="input"/>
+                <label class="label">Name of Collection</label>
+                <input v-model="name" placeholder="Name" autofocus class="input"/>
             </div>
             <div v-if="!isNew" class="mb-16">
-                <label class="inline-block uppercase text-gray-600 font-medium">Collection Url</label>
+                <label class="label inline-block">Collection Url</label>
                 <button @click="is_active = !is_active" class="switch"
-                    :class="[is_active ? 'bg-orange-600 border-orange-600 text-white' : 'border-gray-600 text-gray-600']">
+                    :class="[is_active ? 'bg-orange-600 border-orange-600 text-white' 
+                    : 'border-gray-600 text-gray-600']">
                     {{ switchValue }}
                 </button>
                 <div class="w-full mt-4 md:mt-0 md:flex">
-                    <div class="md:text-xl text-white bg-gray-600 outline-none py-1 px-2">
-                        {{ domain }}
-                    </div>
+                    <input class="input readonly" :value="domain" readonly/>
                     <div class="flex flex-1 mt-1 md:mt-0">
-                        <input v-model="token" class="input flex-1" placeholder="Collection Url"/>
-                        <div v-if="isSupported" @click="copy" class="bg-gray-300 pr-2 cursor-pointer">
-                            <svg-vue class="w-6 mt-2" icon="material/link"/>
+                        <input v-model="token" class="input flex-1 mr-1" placeholder="Collection Url"/>
+                        <div v-if="isSupported" @click="copy" 
+                            class="bg-gray-300 px-2 mr-1 rounded cursor-pointer">
+                            <svg-vue class="w-6 mt-3" icon="material/link"/>
                         </div>
-                        <div @click="generate()" class="ml-1 px-1.5 bg-gray-300 cursor-pointer">
-                            <svg-vue class="w-6 mt-2" icon="material/autorenew"/>
+                        <div @click="generate()" 
+                            class="px-2 bg-gray-300 rounded cursor-pointer">
+                            <svg-vue class="w-6 mt-3" icon="material/autorenew"/>
                         </div>
                     </div>
                 </div>
@@ -197,8 +197,11 @@ export default {
         @apply bg-white text-orange-600;
     }
     .collection {
-        input.input {
-            @apply w-full text-xl text-gray-800 font-medium bg-gray-300 outline-none py-1 px-2;
+        input.readonly {
+            @apply text-white bg-gray-600 border-none w-auto;
+        }
+        .label.inline-block {
+            @apply inline-block;
         }
     }
     .px-1\.5 {
