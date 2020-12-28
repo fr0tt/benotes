@@ -47,6 +47,13 @@ export default {
         openBottomSheet () {
             this.$store.dispatch('toggleBottomSheet')
             this.$store.commit('setBottomSheet', this.options)
+            document.querySelector('#app').addEventListener('click', this.closeBottomSheet, true)
+        },
+        closeBottomSheet () {
+            if (!document.querySelector('#bottomSheet').contains(event.target)) {
+                this.$store.commit('showBottomSheet', false)
+                document.querySelector('#app').removeEventListener('click', this.closeBottomSheet, true)
+            }
         },
         icon (icon) {
             if (icon === 'add')

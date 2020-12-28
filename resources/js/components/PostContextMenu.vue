@@ -24,10 +24,6 @@ export default {
     props: ['postId'],
     methods: {
         edit () {
-            /*
-            this.$store.dispatch('post/setCurrentPost', this.contextMenu.post)
-            document.querySelector('#app').addEventListener('click', this.stopEditing, true)
-            */
             this.$router.push({
                 path: '/p/' + this.contextMenu.post.id,
                 query: { token: this.$route.query.token }
@@ -47,14 +43,6 @@ export default {
         },
         hide () {
             this.$store.dispatch('post/hideContextMenu')
-        },
-        stopEditing (event) {
-            const currentPostTarget = document.querySelector(`[post-id="${this.currentPost.id}"] .ProseMirror`)
-            if (currentPostTarget !== event.target.parentElement) {
-                document.querySelector('#app').removeEventListener('click', this.stopEditing, true)
-                this.$store.dispatch('post/updatePost', this.currentPost)
-                this.$store.dispatch('post/setCurrentPost', null)
-            }
         }
     },
     computed: {

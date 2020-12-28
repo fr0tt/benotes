@@ -115,6 +115,8 @@ export default {
         },
         delete () {
             this.$store.dispatch('post/deletePost', this.id)
+            const route = this.post.collection_id > 0 ? '/c/' + this.post.collection_id : '/'
+            this.$router.push(route)
         }
     },
     computed: {

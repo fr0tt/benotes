@@ -106,7 +106,7 @@ export default {
         },
         stopEditing (event) {
             const currentPostTarget = document.querySelector(`[post-id="${this.currentPost.id}"] .ProseMirror`)
-            if (currentPostTarget !== event.target.parentElement) {
+            if (!currentPostTarget.contains(event.target)) {
                 this.editor.setOptions({
                     editable: false
                 })

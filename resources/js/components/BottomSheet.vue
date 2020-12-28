@@ -5,16 +5,16 @@
 		enter-to-class="transform translate-y-0"
         leave-active-class="transition ease-in duration-300 opacity-0 translate-y-64 transform"
     >
-    <div v-if="showBottomSheet" class="absolute bottom-0 w-full bg-white shadow-md rounded-t-lg">
+    <div v-if="showBottomSheet" id="bottomSheet" class="absolute bottom-0 w-full bg-white shadow-md rounded-t-lg">
         <div class="relative px-8 py-4 border-b-2 border-gray-400">
             <button @click="hide" class="absolute">
                 <svg-vue class="icon text-gray-600" icon="remix/arrow-down-s-line"/>
             </button>
             <span class="block text-center font-medium">{{ title }}</span>
         </div>
-        <div class="px-8 py-2">
+        <div class="px-8">
             <ol v-for="option in bottomSheet" :key="option.label" class="">
-                <li v-if="option.condition" @click="option.callback" 
+                <li v-if="option.condition" @click="executeCallback(option.callback($event))" 
                     class="block my-6 font-medium text-gray-700">
                     <svg v-html="icon(option.icon)" class="icon -mt-1 mr-6 text-gray-600"
                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"></svg>
@@ -54,6 +54,10 @@ export default {
                 return '<path fill="none" d="M0 0h24v24H0z"/><path d="M15.728 9.686l-1.414-1.414L5 17.586V19h1.414l9.314-9.314zm1.414-1.414l1.414-1.414-1.414-1.414-1.414 1.414 1.414 1.414zM7.242 21H3v-4.243L16.435 3.322a1 1 0 0 1 1.414 0l2.829 2.829a1 1 0 0 1 0 1.414L7.243 21z"/>'
             else if (icon === 'delete')
                 return '<path d="M6 2l2-2h4l2 2h4v2H2V2h4zM3 6h14l-1 14H4L3 6zm5 2v10h1V8H8zm3 0v10h1V8h-1z"/>'
+        },
+        executeCallback (callback) {
+            this.callback
+            this.hide
         }
     }
 }
