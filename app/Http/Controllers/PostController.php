@@ -193,7 +193,7 @@ class PostController extends Controller
         }
 
         if (!empty($title)) {
-            $info['title'] = $title;
+            unset($info['title']);
         }
 
         $stripped_content = strip_tags($content);
