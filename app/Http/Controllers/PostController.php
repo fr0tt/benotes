@@ -82,7 +82,7 @@ class PostController extends Controller
 
         $validatedData['content'] = $this->sanitize($validatedData['content']);
 
-        $info = $this->computePostData($request->content);
+        $info = $this->computePostData($request->title, $request->content);
 
         $attributes = array_merge($validatedData, $info);
         $attributes['user_id'] = Auth::user()->id;
@@ -124,7 +124,7 @@ class PostController extends Controller
 
         if (isset($validatedData['content'])) {
             $validatedData['content'] = $this->sanitize($validatedData['content']);
-            $info = $this->computePostData($validatedData['content']);
+            $info = $this->computePostData($validatedData['title'], $validatedData['content']);
         } else {
             $info = array();
             $info['type'] = Post::getTypeFromString($post->type);
@@ -164,7 +164,7 @@ class PostController extends Controller
         return response()->json(['data' => $post], 200);
     }
 
-    public function destroy($id)
+    public function destroy(int $id)
     {
 
         $post = Post::find($id);
@@ -183,7 +183,7 @@ class PostController extends Controller
 
     }
 
-    private function computePostData($content)
+    private function computePostData(string $title = null, string $content)
     {
         preg_match_all('/(https|http)(:\/\/)(\w+\.)+(\w+)(\S+)(?<!")/', $content, $matches);
         $matches = $matches[0];
@@ -192,10 +192,14 @@ class PostController extends Controller
             $info = $this->getInfo($matches[0]);
         }
 
+        if (!empty($title)) {
+            $info['title'] = $title;
+        }
+
         $stripped_content = strip_tags($content);
         if (empty($matches)) {
             $info['type'] = Post::POST_TYPE_TEXT;
-        } else if (strlen($stripped_content) > strlen($matches[0])) { // seems to contain more than just a link
+        } else if (strlen($stripped_content) > strlen($matches[0])) { // contains more than just a link
             $info['type'] = Post::POST_TYPE_TEXT;
         } else {
             $info['type'] = Post::POST_TYPE_LINK;
