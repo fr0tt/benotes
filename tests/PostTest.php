@@ -130,7 +130,6 @@ class PostTest extends TestCase
             'collection_id' => $collection->id
         ]);
         $this->assertEquals(403, $this->response->status());
-        echo var_dump($this->response->getData());
     }
 
     public function testGetPostWithoutAuth()
