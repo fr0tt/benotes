@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Hash;
 
@@ -30,13 +29,13 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name'     => 'required|alpha_dash',
+            'name'     => 'required|string',
             'email'    => 'required|email',
             'password' => 'required|string',
         ]);
 
         $this->authorize('create', User::class);
-
+        
         $alreadyExistingUser = User::where('email', $request->email)->first();
 
         if (!empty($alreadyExistingUser)) {
@@ -47,7 +46,7 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->email = $request->email; 
         $user->password = Hash::make($request->password);
-        $user->permission = 0;
+        $user->permission = 7;
         $user->save();
 
         return response()->json(['data' => $user], 201);
@@ -56,7 +55,7 @@ class UserController extends Controller
     public function update(Request $request, int $id)
     { 
         $this->validate($request, [
-            'name' => 'alpha_dash',
+            'name' => 'string',
             'email' => 'email',
             'password_old' => 'string',
             'password_new' => 'string|required_with:password_old'
@@ -73,9 +72,9 @@ class UserController extends Controller
         if (!$user) {
             return response()->json('User not found.', 404);
         }
-        $this->authorize('delete', $user);
+        $this->authorize('update', $user);
         
-        $user->update(Input::only('name', 'email'));
+        $user->update($request->only('name', 'email'));
 
         if (Hash::check($request->password_old, $user->password)) {
             $user->update([
