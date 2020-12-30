@@ -29,7 +29,6 @@
 
             <div class="mb-8">
                 <h2 class="text-3xl font-medium text-gray-800">{{ name }}</h2>
-                <p class="text-right italic">{{ name }} is registered since {{ created_at }}</p>
             </div>
 
             <div class="mb-8">
@@ -119,19 +118,16 @@ export default {
     computed: {
         ...mapState('auth', [
             'authUser'
-        ]),
-        created_at () {
-            return this.authUser.created_at.substring(0, 10).replace(/-/g, '/')
-        }
+        ])
     },
     created () {
         if (this.isNew) {
             this.$store.dispatch('appbar/setAppbar', {
                 title: 'Create User',
                 button: {
-                    label: 'Create',
+                    label: 'Save',
                     callback: this.create,
-                    icon: 'add'
+                    icon: 'checkmark'
                 } 
             })
         } else {
