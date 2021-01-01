@@ -5,6 +5,8 @@ import EditCollection from './components/EditCollection'
 import Users from './components/Users'
 import User from './components/User'
 import Login from './components/Login'
+import Forgot from './components/pages/Forgot'
+import Reset from './components/pages/Reset'
 
 import store from './store'
 
@@ -137,5 +139,19 @@ export default [
         path: '/login',
         name: 'Login',
         component: Login
+    },
+    {
+        path: '/forgot',
+        name: 'Forgot',
+        component: Forgot
+    },
+    {
+        path: '/reset',
+        name: 'Reset',
+        component: Reset,
+        props: route => ({
+            email: route.query.email,
+            token: route.query.token
+        })
     }
 ]

@@ -30,11 +30,10 @@
 
             <div class="flex items-center justify-between">
                 <button class="button" type="submit">Login</button>
-                <!--
-                <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="#">
+                <router-link to="/forgot" class="inline-block align-baseline 
+                    font-bold text-sm text-orange-600 hover:text-orange-700">
                     Forgot Password?
-                </a>
-                -->
+                </router-link>
             </div>
         </form>
 
