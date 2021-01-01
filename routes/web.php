@@ -14,6 +14,8 @@
 
 Route::post('api/auth/login', 'AuthController@login');
 Route::post('api/auth/refresh', 'AuthController@refresh');
+Route::post('api/auth/forgot', 'AuthController@sendReset');
+Route::post('api/auth/reset', 'AuthController@reset');
 
 Route::group([
     'middleware' => 'auth'
