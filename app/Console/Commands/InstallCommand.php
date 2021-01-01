@@ -53,13 +53,14 @@ class InstallCommand extends Command
             'username' => $username,
             'email' => $email
         ], [
-            'username' => 'alpha_dash',
+            'username' => 'string',
             'email' => 'email',
         ]);
 
         if ($validator->fails()) {
-            $this->error('Please use a valid email adress and be careful to not use any special '.
-                'characters for your username except for dashes and underscores.');
+            foreach ($validator->errors()->all() as $error) {
+                $this->error($error);
+            }
             return;
         }
 
