@@ -31,7 +31,7 @@
             <div class="flex items-center justify-between">
                 <button class="button" type="submit">Login</button>
                 <router-link to="/forgot" class="inline-block align-baseline 
-                    font-bold text-sm text-orange-600 hover:text-orange-700">
+                    font-semibold text-sm text-orange-600 hover:text-orange-700">
                     Forgot Password?
                 </router-link>
             </div>

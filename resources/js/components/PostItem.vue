@@ -24,7 +24,7 @@
                         class="w-4 inline img-vertical-align">
                     <a :href="post.url" :title="post.url" target="_blank" rel="noopener" class="text-blue-600">{{ post.url }}</a>
                 </div>
-                <svg @click="showContextMenu($event)" v-if="permission > 4 && !isMobile" class="more-svg" 
+                <svg @click="showContextMenu($event)" v-if="permission > 4" class="more-svg" 
                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                     <path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/>
                 </svg>
@@ -49,7 +49,7 @@
                     <EditorContent :editor="editor" class="editorContent" />
                 </div>
             </div>
-            <svg @click="showContextMenu($event)" v-if="permission > 4 && !isMobile" class="more-svg" 
+            <svg @click="showContextMenu($event)" v-if="permission > 4" class="more-svg" 
                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                 <path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/>
             </svg>

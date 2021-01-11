@@ -58,7 +58,7 @@ export default {
         position () {
             if ((this.contextMenu.positionX + 150) > screen.availWidth) {
                 return {
-                    right: 0.75 + 'rem'
+                    right: 0.5 + 'rem'
                 }
             }
             return null
@@ -82,8 +82,8 @@ export default {
         }
     }
     .post-contextmenu {
-        top: 20rem;
-        right: -5.25rem;
+        margin-top: -0.5rem;
+        right: -5.5rem;
         z-index: 100;
     }
     .fade-enter-active, .fade-leave-active {
