@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a8068a1478b4293b67df03277a7c96a4",
+    "content-hash": "1b38f2ddf8cb99b178c7cd89d863c93e",
     "packages": [
         {
             "name": "brick/math",
@@ -1071,7 +1071,7 @@
         },
         {
             "name": "illuminate/container",
-            "version": "v6.20.9",
+            "version": "v6.20.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/container.git",
@@ -1119,7 +1119,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v6.20.9",
+            "version": "v6.20.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -1167,16 +1167,16 @@
         },
         {
             "name": "illuminate/database",
-            "version": "v6.20.9",
+            "version": "v6.20.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/database.git",
-                "reference": "21a9293bba2e8afaf474b4c86e9ebe8dd643901f"
+                "reference": "49563a8b1676c13207b3c3bd516f1b7a8c343887"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/database/zipball/21a9293bba2e8afaf474b4c86e9ebe8dd643901f",
-                "reference": "21a9293bba2e8afaf474b4c86e9ebe8dd643901f",
+                "url": "https://api.github.com/repos/illuminate/database/zipball/49563a8b1676c13207b3c3bd516f1b7a8c343887",
+                "reference": "49563a8b1676c13207b3c3bd516f1b7a8c343887",
                 "shasum": ""
             },
             "require": {
@@ -1228,7 +1228,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2020-12-29T15:07:22+00:00"
+            "time": "2021-01-13T13:35:45+00:00"
         },
         {
             "name": "illuminate/encryption",
@@ -1873,7 +1873,7 @@
         },
         {
             "name": "illuminate/support",
-            "version": "v6.20.9",
+            "version": "v6.20.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/support.git",
