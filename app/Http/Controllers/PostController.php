@@ -210,7 +210,8 @@ class PostController extends Controller
 
     private function sanitize($str)
     {
-        return strip_tags($str, '<a><h1><h2><h3><h4><h5><p><pre><br><hr><blockquote><li><ol><code>');
+        return strip_tags($str, '<a><strong><b><em><i><del><p><h1><h2><h3><h4><h5>' . 
+            '<pre><br><hr><blockquote><ul><li><ol><code>');
     }
 
     private function getInfo($url)
