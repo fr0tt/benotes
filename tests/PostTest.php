@@ -2,12 +2,9 @@
 
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\DatabaseTransactions;
-
 use App\User;
 use App\Post;
 use App\Collection;
-
-use function PHPUnit\Framework\assertIsNotBool;
 
 class PostTest extends TestCase
 {
@@ -51,6 +48,28 @@ class PostTest extends TestCase
             $this->assertNotEquals(null, $data->collection_id);
         }
 
+    }
+
+    public function testCreatePostWithStyle()
+    {
+
+        $user = factory(User::class)->create();
+        $collection = factory(Collection::class)->create();
+
+        $content = '<h2>Hi there,</h2><p>this is a very <em>basic</em> example of tiptap.</p>' .
+            '<pre><code>body { display: none; }</code></pre>' . 
+            '<ul><li><p>A regular list</p></li><li><p>With regular items</p></li></ul><blockquote>' .
+            '<p>It\'s amazing 👏 <br>– mom</p></blockquote>';
+
+        $this->actingAs($user)->json('POST', 'api/posts', [
+            'content' => $content,
+            'collection_id' => $collection->id
+        ]);
+
+        $this->assertEquals(201, $this->response->status());
+        $data = $this->response->getData()->data;
+        $this->assertEquals('text', $data->type);
+        $this->assertContains($content, $data->content);
     }
 
     public function testCreatePostWithDifferentCollections()
