@@ -224,15 +224,4 @@ export default {
     .ProseMirror {
         outline: none;
     }
-    .post .ProseMirror {
-        h1 {
-            @apply text-3xl font-bold
-        }
-        h2 {
-            @apply text-2xl font-medium
-        }
-        h3 {
-            @apply text-xl font-medium
-        }
-    }
 </style>
