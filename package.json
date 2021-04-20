@@ -22,7 +22,7 @@
         "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
-        "laravel-mix-svg-vue": "^0.2.6",
+        "laravel-mix-svg-vue": "^0.2.7",
         "tailwindcss": "^1.9.6",
         "tiptap": "^1.30.0",
         "tiptap-extensions": "^1.33.2",
