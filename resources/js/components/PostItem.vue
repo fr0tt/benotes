@@ -60,7 +60,8 @@
 <script>
 import { mapState } from 'vuex'
 import { Editor, EditorContent } from 'tiptap'
-import { HardBreak, Heading, Bold, Code, Italic, Link } from 'tiptap-extensions'
+import { HardBreak, Blockquote, Heading, Bold, Italic,
+    Underline, Link, Code, History } from 'tiptap-extensions'
 import ContextMenu from './PostContextMenu.vue'
 export default {
     name: 'PostItem',
@@ -76,10 +77,13 @@ export default {
                 extensions: [
                     new HardBreak(),
                     new Heading({ levels: [1, 2, 3] }),
-                    new Link(),
                     new Bold(),
+                    new Underline(),
+                    new Italic(),
+                    new Blockquote(),
+                    new Link(),
                     new Code(),
-                    new Italic()
+                    new History()
                 ],
                 content: this.post.content,
                 onUpdate: ({ getHTML }) => {
