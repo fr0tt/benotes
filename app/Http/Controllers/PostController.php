@@ -210,7 +210,7 @@ class PostController extends Controller
 
     private function sanitize($str)
     {
-        return strip_tags($str, '<a><strong><b><em><i><del><p><h1><h2><h3><h4><h5>' . 
+        return strip_tags($str, '<a><strong><b><em><i><s><p><h1><h2><h3><h4><h5>' . 
             '<pre><br><hr><blockquote><ul><li><ol><code>');
     }
 
