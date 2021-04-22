@@ -73,6 +73,7 @@ class PostController extends Controller
             'collection_id' => 'integer|nullable'
         ]);
 
+ 
         if (isset($request->collection_id)) {
             $collection = Collection::findOrFail($request->collection_id);
             if (Auth::user()->id !== $collection->user_id) {
@@ -126,7 +127,9 @@ class PostController extends Controller
             );
         }
 
-        $collection = Collection::findOrFail($validatedData['collection_id']);
+        if (!empty($validatedData['collection_id'])) {
+            Collection::findOrFail($validatedData['collection_id']);
+        }
 
         if (isset($validatedData['content'])) {
             $validatedData['content'] = $this->sanitize($validatedData['content']);
@@ -183,7 +186,9 @@ class PostController extends Controller
         $this->authorize('delete', $post);
 
         Post::where('collection_id', $post->collection_id)
-            ->where('order', '>', $post->order)->decrement('order');
+            ->where('order', '>', $post->order)
+            ->where('deleted_at', null)
+            ->decrement('order');
 
         $post->delete();
 
