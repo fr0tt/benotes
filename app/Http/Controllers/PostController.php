@@ -74,7 +74,7 @@ class PostController extends Controller
         ]);
 
         if (isset($request->collection_id)) {
-            $collection = $this->findCollection($request->collection_id);
+            $collection = Collection::findOrFail($request->collection_id);
             if (Auth::user()->id !== $collection->user_id) {
                 return response()->json('Not authorized', 403);
             }
@@ -107,20 +107,26 @@ class PostController extends Controller
             'order' => 'integer|nullable'
         ]);
 
-        $request->is_uncategorized = filter_var($request->is_uncategorized, FILTER_VALIDATE_BOOLEAN);
-
-        $validatedData['collection_id'] = Collection::getCollectionId(
-            $request->collection_id,
-            $request->is_uncategorized
-        );
-
         $post = Post::find($id);
         if (!$post) {
             return response()->json('Post not found.', 404);
         }
+
         $this->authorize('update', $post);
 
-        $this->findCollection($validatedData['collection_id']);
+        $request->is_uncategorized = filter_var($request->is_uncategorized, FILTER_VALIDATE_BOOLEAN);
+
+        if ($request->collection_id == null && $request->is_uncategorized === false) {
+            // request contains no knowledge about a collection
+            $validatedData['collection_id'] = $post->collection_id;
+        } else {
+            $validatedData['collection_id'] = Collection::getCollectionId(
+                $request->collection_id,
+                $request->is_uncategorized
+            );
+        }
+
+        $collection = Collection::findOrFail($validatedData['collection_id']);
 
         if (isset($validatedData['content'])) {
             $validatedData['content'] = $this->sanitize($validatedData['content']);
@@ -133,7 +139,17 @@ class PostController extends Controller
         $newValues = array_merge($validatedData, $info);
         $newValues['user_id'] = Auth::user()->id;
 
-        if (isset($validatedData['order'])) {
+        if ($post->collection_id !== $validatedData['collection_id']) {
+            // post wants to have a different collection than before
+            // compute order in new collection
+            $newValues['order'] = Post::where('collection_id', $validatedData['collection_id'])
+                ->max('order') + 1;
+            // reorder old collection
+            Post::where('collection_id', $post->collection_id)
+                ->where('order', '>', $post->order)->decrement('order');
+        } else if (isset($validatedData['order'])) {
+            // post wants to only be positioned somewhere else 
+            // staying in the same collection as before
             $newOrder = $validatedData['order'];
             $oldOrder = $post->order;
             if ($newOrder !== $oldOrder) {
@@ -145,14 +161,6 @@ class PostController extends Controller
                         ->whereBetween('order', [$newOrder, $oldOrder - 1])->increment('order');
                 }
             }
-        } else if ($post->collection_id !== $validatedData['collection_id']) {
-            // compute order in new collection
-            $newValues['order'] = Post::where('collection_id', 
-                Collection::getCollectionId($validatedData['collection_id']))
-                ->max('order') + 1;
-            // reorder old collection
-            Post::where('collection_id', $post->collection_id)
-                ->where('order', '>', $post->order)->decrement('order');
         }
 
         $post->update($newValues); 
@@ -181,6 +189,15 @@ class PostController extends Controller
 
         return response()->json('', 204);
 
+    }
+
+    public function getUrlInfo(Request $request)
+    {
+        $this->validate($request, [
+            'url' => 'url'
+        ]);
+
+        return response()->json($this->getInfo($request->url));
     }
 
     private function computePostData(string $title = null, string $content)
@@ -286,19 +303,6 @@ class PostController extends Controller
                 $post->image_path = $filename;
                 $post->save();
             }
-        }
-    }
-
-    private function findCollection($collection_id)
-    {
-        if (!isset($collection_id)) {
-            return;
-        }
-        $collection = Collection::find($collection_id);
-        if (!$collection) {
-            return response()->json('Collection not found.', 404);
-        } else {
-            return $collection;
         }
     }
 

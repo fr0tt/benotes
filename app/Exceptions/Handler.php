@@ -19,7 +19,7 @@ class Handler extends ExceptionHandler
     protected $dontReport = [
         AuthorizationException::class,
         HttpException::class,
-        ModelNotFoundException::class,
+        //ModelNotFoundException::class,
         ValidationException::class,
     ];
 
@@ -54,6 +54,10 @@ class Handler extends ExceptionHandler
             return response()->json('Storage path not writable.', 403);
         } else if ($exception instanceof AuthorizationException) {
             return response()->json('This action is unauthorized.', 403);
+        } else if ($exception instanceof ModelNotFoundException) {
+            return response()->json(
+                str_replace('App\\', '', $exception->getModel()) . ' not found.'
+            , 404);
         }
 
         return parent::render($request, $exception);
