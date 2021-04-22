@@ -3,6 +3,9 @@ const tailwindcss = require('tailwindcss')
 require('laravel-mix-svg-vue')
 const { InjectManifest } = require('workbox-webpack-plugin')
 
+const dotenv = require('dotenv')
+dotenv.config()
+
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management
@@ -29,6 +32,7 @@ mix.extract()
 */
 
 mix.js('resources/js/app.js', 'public/js')
+    .vue({ version: 2 })
     .sass('resources/sass/app.scss', 'public/css')
     .options({
         processCssUrls: false,
@@ -51,3 +55,4 @@ mix.js('resources/js/app.js', 'public/js')
             publicPath: ''
         }
     })
+    .browserSync(process.env.APP_URL)
