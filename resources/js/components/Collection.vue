@@ -8,7 +8,7 @@
                     v-bind="{ animation: 200 }" class="mt-4 mb-40">
                     <transition-group name="grid-fade">
                         <Post v-for="post in posts" :class="drag ? null : 'item-transition'"
-                            :key="post.order" :post="post" :permission="permission" />
+                            :key="post.id" :post="post" :permission="permission" />
                     </transition-group>
                 </Draggable>
             </transition>
@@ -46,9 +46,9 @@ export default {
             axios.patch('/api/posts/' + event.draggedContext.element.id, {
                 order: this.maxOrder - event.draggedContext.futureIndex
             })
-                .catch(error => {
-                    console.log(error)
-                })
+            .catch(error => {
+                console.log(error)
+            })
         },
         create () {
             this.$router.push(`/c/${this.collectionId}/p/create`)
