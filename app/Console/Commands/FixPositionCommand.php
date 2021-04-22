@@ -47,6 +47,7 @@ class FixPositionCommand extends Command
                 $collection_id = $collection->id;
                 $posts = Post::where('user_id', $user_id)
                     ->where('collection_id', $collection_id)
+                    ->where('deleted_at', null)
                     ->orderBy('order')
                     ->get();
                 for ($i = 0; $i < $posts->count(); $i++) {

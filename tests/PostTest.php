@@ -105,6 +105,29 @@ class PostTest extends TestCase
         $this->assertEquals(1, Post::find($post2->id)->order);
     }
 
+    public function testUpdatePostOrderFromHigherToLower()
+    {
+        $user = factory(User::class)->create();
+        $collection = factory(Collection::class)->create();
+
+        $post = factory(Post::class)->create([
+            'collection_id' => $collection->id,
+            'order' => 1
+        ]);
+        $post2 = factory(Post::class)->create([
+            'collection_id' => $collection->id,
+            'order' => 2
+        ]);
+
+        // instead of 2 1 --> 1 2
+        $this->actingAs($user)->json('PATCH', 'api/posts/' . $post->id, [
+            'order' => 2
+        ]);
+
+        $this->assertEquals(2, Post::find($post->id)->order);
+        $this->assertEquals(1, Post::find($post2->id)->order);
+    }
+
     public function testChangeCollection()
     {
         $user = factory(User::class)->create();
