@@ -133,7 +133,7 @@ class PostController extends Controller
 
         if (isset($validatedData['content'])) {
             $validatedData['content'] = $this->sanitize($validatedData['content']);
-            $info = $this->computePostData($validatedData['title'], $validatedData['content']);
+            $info = $this->computePostData($request->title, $validatedData['content']);
         } else {
             $info = array();
             $info['type'] = Post::getTypeFromString($post->type);

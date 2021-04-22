@@ -39,7 +39,7 @@ $factory->define(Post::class, function (Faker $faker) {
         'id' => $faker->randomNumber,
         'title' => $faker->title,
         'content' => $faker->sentence,
-        'collection_id' => null,
+        'collection_id' => Collection::first()->id || null,
         'type' => Post::POST_TYPE_TEXT,
         'user_id' => User::first()->id,
         'order' => Post::where('collection_id', null)->count()

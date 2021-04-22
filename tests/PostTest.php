@@ -72,6 +72,35 @@ class PostTest extends TestCase
         $this->assertContains($content, $data->content);
     }
 
+    public function testUpdatePost()
+    {
+        $user = factory(User::class)->create();
+        $collection = factory(Collection::class)->create();
+
+        $content = '<h2>Hi there,</h2><p>this is a very <em>basic</em> example of tiptap.</p>' .
+        '<pre><code>body { display: none; }</code></pre>' .
+        '<ul><li><p>A regular list</p></li><li><p>With regular items</p></li></ul><blockquote>' .
+        '<p>It\'s amazing 👏 <br>– mom</p></blockquote>';
+
+        $this->actingAs($user)->json('POST', 'api/posts', [
+            'content' => $content,
+            'collection_id' => $collection->id
+        ]);
+
+        $this->assertEquals(201, $this->response->status());
+        $post = $this->response->getData()->data;
+
+        $new_content = $content . '<p>++</p>';
+
+        $this->actingAs($user)->json('PATCH', 'api/posts/' . $post->id, [
+            'content' => $new_content
+        ]);
+        
+        $this->assertEquals(200, $this->response->status());
+        $data = $this->response->getData()->data;
+        $this->assertEquals($new_content, $data->content);
+    }
+
     public function testUpdatePostOrder()
     {
         $user = factory(User::class)->create();
