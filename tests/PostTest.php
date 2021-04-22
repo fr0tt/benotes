@@ -72,6 +72,76 @@ class PostTest extends TestCase
         $this->assertContains($content, $data->content);
     }
 
+    public function testUpdatePostOrder()
+    {
+        $user = factory(User::class)->create();
+        $collection = factory(Collection::class)->create();
+
+        $post = factory(Post::class)->create([
+            'collection_id' => $collection->id,
+            'order' => 1
+        ]);
+        $post2 = factory(Post::class)->create([
+            'collection_id' => $collection->id,
+            'order' => 2
+        ]);
+        $post3 = factory(Post::class)->create([
+            'collection_id' => $collection->id,
+            'order' => 3
+        ]);
+        $post4 = factory(Post::class)->create([
+            'collection_id' => $collection->id,
+            'order' => 4
+        ]);
+
+        // instead of 4 3 2 1 --> 4 1 3 2
+        $this->actingAs($user)->json('PATCH', 'api/posts/' . $post->id, [
+            'order' => 3
+        ]);
+
+        $this->assertEquals(Post::find($post4->id)->order, $post4->order);
+        $this->assertEquals(3, Post::find($post->id)->order);
+        $this->assertEquals(2, Post::find($post3->id)->order);
+        $this->assertEquals(1, Post::find($post2->id)->order);
+    }
+
+    public function testChangeCollection()
+    {
+        $user = factory(User::class)->create();
+        $collection  = factory(Collection::class)->create();
+        $collection2 = factory(Collection::class)->create();
+
+        $post = factory(Post::class)->create([
+            'collection_id' => $collection->id,
+            'order' => 1
+        ]);
+        $post2 = factory(Post::class)->create([
+            'collection_id' => $collection->id,
+            'order' => 2
+        ]);
+        $post3 = factory(Post::class)->create([
+            'collection_id' => $collection->id,
+            'order' => 3
+        ]);
+        $post4 = factory(Post::class)->create([
+            'collection_id' => $collection2->id,
+            'order' => 1
+        ]);
+
+        $this->actingAs($user)->json('PATCH', 'api/posts/' . $post->id, [
+            'collection_id' => $collection2->id
+        ]);
+
+        // 3 2 1 and 4 --> 3 2 and 1 4
+        $this->assertEquals($collection2->id, Post::find($post->id)->collection_id);
+        $this->assertEquals(2, Post::where('collection_id', $collection2->id)->count());
+
+        $this->assertEquals(1, Post::find($post2->id)->order);
+        $this->assertEquals(2, Post::find($post3->id)->order);
+        $this->assertEquals(2, Post::find($post->id)->order);
+        $this->assertEquals(Post::find($post4->id)->order, $post4->order);
+    }
+
     public function testCreatePostWithDifferentCollections()
     {
 

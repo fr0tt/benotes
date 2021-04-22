@@ -40,8 +40,8 @@ $factory->define(Post::class, function (Faker $faker) {
         'title' => $faker->title,
         'content' => $faker->sentence,
         'collection_id' => null,
-        'type' => 1,
+        'type' => Post::POST_TYPE_TEXT,
         'user_id' => User::first()->id,
-        'order' => Post::count()
+        'order' => Post::where('collection_id', null)->count()
     ];
 });
