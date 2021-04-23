@@ -12,7 +12,8 @@ An open source self hosted notes and bookmarks taking web app.
 
 This project is currently in **Beta**. You may encounter bugs or errors.
 
-**Features**
+### Features
+
 - URLs are automatically saved with an image, title and description
 - can be installed as a PWA on your mobile devices (and desktop)
 - collections can be shared via a public available URL
