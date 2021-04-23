@@ -8,6 +8,7 @@
     "require": {
         "php": ">=7.2",
         "doctrine/dbal": "^2.12",
+        "guzzlehttp/guzzle": "^7.3",
         "illuminate/mail": "^6.0",
         "illuminate/notifications": "^6.0",
         "intervention/image": "^2.5",
