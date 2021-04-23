@@ -31,7 +31,7 @@ Prerequisite:
 
 Installation:
 - git clone https://github.com/fr0tt/benotes  (_downloads files version-controlled_)
-- composer install  (_installs dependencies accordingly to your php version_)
+- composer install  (_installs dependencies accordingly to your php version. Please note that **php8-cli will fail**, use instead something similar to the likes of: /usr/bin/php7.4 /usr/local/bin/composer install_)
 - cp .env.example .env  (_copies configuration file_)
 - generate a random string for APP_KEY e.g. openssl rand -base64 32 (_for security reasons_)
 - create a database
@@ -43,7 +43,7 @@ Installation:
 ## Upgrade
 
 - git pull (*upgrade files*)
-- composer install (*upgrade dependencies*)
+- composer install (*upgrade dependencies. See composer part of Installation for information about php8 above*)
 - php artisan migrate (*upgrade database schemas*)
 
 ## Rest API
