@@ -6,20 +6,20 @@
     "version": "2.0.0-beta-10",
     "type": "project",
     "require": {
-        "php": ">=7.2",
+        "php": "^7.2.5",
         "doctrine/dbal": "^2.12",
         "guzzlehttp/guzzle": "^7.3",
-        "illuminate/mail": "^6.0",
-        "illuminate/notifications": "^6.0",
+        "illuminate/mail": "^7.0",
+        "illuminate/notifications": "^7.0",
         "intervention/image": "^2.5",
         "ksubileau/color-thief-php": "^1.4",
-        "laravel/lumen-framework": "^6.0",
+        "laravel/lumen-framework": "^7.0",
         "league/flysystem": "^1.0",
         "ramsey/uuid": "^4.1",
         "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {
-        "fzaninotto/faker": "^1.4",
+        "fzaninotto/faker": "^1.9",
         "phpunit/phpunit": "^9.5",
         "mockery/mockery": "^1.0"
     },
