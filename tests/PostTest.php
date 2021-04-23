@@ -157,6 +157,52 @@ class PostTest extends TestCase
         $this->assertEquals(1, Post::find($post2->id)->order);
     }
 
+    public function testUpdateOrderAndDeletePost()
+    {
+        $user = factory(User::class)->create();
+        $collection = factory(Collection::class)->create();
+
+        $post = factory(Post::class)->create([
+            'collection_id' => $collection->id,
+            'order' => 1
+        ]);
+        $post2 = factory(Post::class)->create([
+            'collection_id' => $collection->id,
+            'order' => 2
+        ]);
+        $post3 = factory(Post::class)->create([
+            'collection_id' => $collection->id,
+            'order' => 3
+        ]);
+        $post4 = factory(Post::class)->create([
+            'collection_id' => $collection->id,
+            'order' => 4
+        ]);
+
+        // 4 3 2 1 --> 4 -3- 2 1 --> 4 1 2 --> 1 4 2
+        $this->actingAs($user)->json('DELETE', 'api/posts/' . $post3->id);
+
+        $this->assertEquals(3, Post::find($post4->id)->order);
+        $this->assertEquals(2, Post::find($post2->id)->order);
+        $this->assertEquals(1, Post::find($post->id)->order);
+
+        $this->actingAs($user)->json('PATCH', 'api/posts/' . $post->id, [
+            'order' => 2
+        ]);
+
+        $this->assertEquals(3, Post::find($post4->id)->order);
+        $this->assertEquals(2, Post::find($post->id)->order);
+        $this->assertEquals(1, Post::find($post2->id)->order);
+
+        $this->actingAs($user)->json('PATCH', 'api/posts/' . $post->id, [
+            'order' => 3
+        ]);
+
+        $this->assertEquals(3, Post::find($post->id)->order);
+        $this->assertEquals(2, Post::find($post4->id)->order);
+        $this->assertEquals(1, Post::find($post2->id)->order);
+    }
+
     public function testChangeCollection()
     {
         $user = factory(User::class)->create();
