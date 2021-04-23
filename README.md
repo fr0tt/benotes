@@ -1,20 +1,31 @@
 <p align="center">
-        <img width="110" src="https://raw.githubusercontent.com/fr0tt/benotes/master/public/logo_144x144.png" alt="Benotes Logo"/>
+    <img width="110" alt="Benotes Logo"
+        src="https://raw.githubusercontent.com/fr0tt/benotes/master/public/logo_144x144.png"/>
 </p>
 
 <h1 align="center">Benotes</h1>
+
+<img src="https://user-images.githubusercontent.com/33751346/115884212-ee754800-a44e-11eb-940d-b9e96eeeab36.png"
+    alt="Benotes Thumbnail">
 
 An open source self hosted notes and bookmarks taking web app.
 
 This project is currently in **Beta**. You may encounter bugs or errors.
 
+**Features**
+- URLs are automatically saved with an image, title and description
+- can be installed as a PWA on your mobile devices (and desktop)
+- collections can be shared via a public available URL
+- supports both markdown and a rich text editor experience
+- links can be pasted (by pressing only one button)
+- can be hosted almost anywhere thanks to its use of the lightweight Lumen framework and well supported PHP language
 
 ## Installation
 
 Prerequisite:
 - git  (_https://git-scm.com_)
 - composer  (_https://getcomposer.org_)
-- PHP ≥ 7.2
+- PHP ≥ 7.2.5
 - MySQL, Postgres, SQLite or SQL Server (currently only MySQL is tested)
 
 Installation:

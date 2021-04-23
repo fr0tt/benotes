@@ -1,9 +1,9 @@
 {
-    "name": "laravel/lumen",
-    "description": "The Laravel Lumen Framework.",
-    "keywords": ["framework", "laravel", "lumen"],
+    "name": "fr0tt/benotes",
+    "description": "App for bookmarks and notes.",
+    "keywords": ["laravel", "lumen", "bookmark", "notes"],
     "license": "MIT",
-    "version": "2.0.0-beta-10",
+    "version": "2.0.0-beta-11",
     "type": "project",
     "require": {
         "php": "^7.2.5",
@@ -14,7 +14,6 @@
         "intervention/image": "^2.5",
         "ksubileau/color-thief-php": "^1.4",
         "laravel/lumen-framework": "^7.0",
-        "laravel/tinker": "^2.6",
         "league/flysystem": "^1.0",
         "ramsey/uuid": "^4.1",
         "tymon/jwt-auth": "^1.0"
@@ -22,7 +21,8 @@
     "require-dev": {
         "fzaninotto/faker": "^1.9",
         "phpunit/phpunit": "^9.5",
-        "mockery/mockery": "^1.0"
+        "mockery/mockery": "^1.0",
+        "laravel/tinker": "^2.6"
     },
     "autoload": {
         "classmap": [
