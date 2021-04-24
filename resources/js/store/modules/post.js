@@ -48,10 +48,11 @@ export default {
     actions: {
         fetchPosts (context, collectionId) {
             context.commit('isLoading', true)
+            console.log('bo', collectionId === 0, collectionId, typeof (collectionId === 0))
             axios.get('/api/posts', {
                 params: {
                     collection_id: (collectionId > 0) ? collectionId : null,
-                    is_uncategorized: collectionId === 0
+                    is_uncategorized: (collectionId === 0) | 0
                 }
             })
                 .then(response => {
@@ -87,7 +88,7 @@ export default {
             params.title = post.title
             params.content = post.content
             params.collection_id = post.collection_id
-            params.is_uncategorized = post.collection_id > 0 ? false : true
+            params.is_uncategorized = (post.collection_id <= 0) | 0
             axios.patch('/api/posts/' + post.id, params)
                 .then(response => {
                     const newPost = response.data.data

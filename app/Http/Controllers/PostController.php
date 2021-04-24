@@ -19,7 +19,7 @@ class PostController extends Controller
 
         $this->validate($request, [
             'collection_id' => 'integer|nullable',
-          //'is_uncategorized'
+            'is_uncategorized' => 'boolean|nullable',
             'limit' => 'integer|nullable'
         ]);
         
@@ -73,7 +73,6 @@ class PostController extends Controller
             'collection_id' => 'integer|nullable'
         ]);
 
- 
         if (isset($request->collection_id)) {
             $collection = Collection::findOrFail($request->collection_id);
             if (Auth::user()->id !== $collection->user_id) {
@@ -105,6 +104,7 @@ class PostController extends Controller
             'title' => 'string|nullable',
             'content' => 'string|nullable',
             'collection_id' => 'integer|nullable',
+            'is_uncategorized' => 'boolean|nullable',
             'order' => 'integer|nullable'
         ]);
 
@@ -117,7 +117,7 @@ class PostController extends Controller
 
         $request->is_uncategorized = filter_var($request->is_uncategorized, FILTER_VALIDATE_BOOLEAN);
 
-        if ($request->collection_id == null && $request->is_uncategorized === false) {
+        if (empty($request->collection_id) && $request->is_uncategorized === false) {
             // request contains no knowledge about a collection
             $validatedData['collection_id'] = $post->collection_id;
         } else {
