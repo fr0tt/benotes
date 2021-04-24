@@ -282,7 +282,7 @@ class PostController extends Controller
         return [
             'url' => $url,
             'base_url' => $base_url,
-            'title' => $title,
+            'title' => substr($title, 0, 200),
             'description' => (empty($description)) ? null : $description,
             'color' => (empty($color)) ? null : $color,
             'image_path' => (empty($image_path)) ? null : $image_path,
