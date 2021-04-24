@@ -22,7 +22,7 @@ $factory->define(User::class, function (Faker $faker) {
     return [
         'name' => $faker->name,
         'email' => $faker->email,
-        'password' => Hash::make('test'),
+        'password' => Hash::make($faker->password),
         'permission' => 7
     ];
 });

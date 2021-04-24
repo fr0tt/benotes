@@ -17,10 +17,12 @@ class ShareController extends Controller
             'collection_id' => 'integer|nullable'
         ]);
 
-        if (isset($request->collection_id)) {
-            $shares = Share::where('created_by', Auth::user()->id)->where('collection_id', $request->collection_id)->get();
-        } else {
+        if (empty($request->collection_id)) {
             $shares = Share::where('created_by', Auth::user()->id)->get();
+        } else {
+            $shares = Share::where('created_by', Auth::user()->id)
+                           ->where('collection_id', $request->collection_id)
+                           ->get();
         }
 
         return response()->json(['data' => $shares], 200);
@@ -50,9 +52,9 @@ class ShareController extends Controller
     public function update(Request $request, int $id)
     {
         $validatedData = $this->validate($request, [
-            'token' => 'string',
-            'collection_id' => 'integer',
-            'is_active' => 'boolean'
+            'token' => 'string|required',
+            'collection_id' => 'integer|required',
+            'is_active' => 'boolean|required'
         ]);
 
         $share = Share::find($id);
