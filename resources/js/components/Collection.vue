@@ -4,7 +4,7 @@
             <transition name="collection-fade">
                 <Draggable v-if="!isLoading" tag="ol" v-model="posts" :move="dragged"
                     @start="drag = true" @end="drag = false" 
-                    :delay="70" :delayOnTouchOnly="true"
+                    :delay="90" :delayOnTouchOnly="true"
                     v-bind="{ animation: 200 }" class="mt-4 mb-40">
                     <transition-group name="grid-fade">
                         <Post v-for="post in posts" :class="drag ? null : 'item-transition'"
