@@ -84,7 +84,7 @@ export default {
             this.token = value
         },
         getShares () {
-            axios.get('/api/share/', {
+            axios.get('/api/shares/', {
                 params: {
                     collection_id: this.id
                 }
@@ -104,7 +104,7 @@ export default {
         },
         handleShare () {
             if (this.share === null) {
-                axios.post('/api/share', {
+                axios.post('/api/shares', {
                     token: this.token,
                     collection_id: this.id,
                     is_active: this.is_active
@@ -113,12 +113,12 @@ export default {
                         console.log(error.response.data)
                     })
             } else if (this.token === '') {
-                axios.delete('/api/share/' + this.share.id)
+                axios.delete('/api/shares/' + this.share.id)
                     .catch(error => {
                         console.log(error.response.data)
                     })
             } else if (this.token !== '') {
-                axios.patch('/api/share/' + this.share.id, {
+                axios.patch('/api/shares/' + this.share.id, {
                     token: this.token,
                     collection_id: this.id,
                     is_active: this.is_active

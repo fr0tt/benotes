@@ -29,7 +29,7 @@ import 'vue-select/dist/vue-select.css'
 
 import { Editor, EditorContent } from 'tiptap'
 import { HardBreak, Blockquote, Heading, Bold, Italic,
-    Underline, Link, Code, History, Placeholder } from 'tiptap-extensions'
+    Underline, Link, Code, History, Placeholder, TrailingNode } from 'tiptap-extensions'
 import EditorMenuBar from './EditorMenuBar.vue'
 
 export default {
@@ -67,6 +67,10 @@ export default {
                         emptyEditorClass: 'is-editor-empty',
                         showOnlyWhenEditable: true,
                         showOnlyCurrent: true
+                    }),
+                    new TrailingNode({
+                        node: 'paragraph',
+                        //notAfter: ['paragraph'],
                     })
                 ]
             })
@@ -219,15 +223,6 @@ export default {
     }
     .ProseMirror {
         @apply h-full;
-        h1 {
-            @apply text-3xl font-bold
-        }
-        h2 {
-            @apply text-2xl font-medium
-        }
-        h3 {
-            @apply text-xl font-medium
-        }
     }
     .mb-0\.25 {
         margin-bottom: 0.0675rem;

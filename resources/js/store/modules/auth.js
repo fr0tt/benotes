@@ -88,7 +88,7 @@ export default {
                     resolve(null)
                 }
                 axios.defaults.headers.common = { 'Authorization': `Bearer ${token}` }
-                axios.get('/api/share/me')
+                axios.get('/api/shares/me')
                     .then(response => {
                         const share = response.data.data
                         context.commit('setStaticAuth', share)

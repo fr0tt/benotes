@@ -42,10 +42,10 @@ Route::group([
     Route::patch('api/users/{id}', 'UserController@update');
     Route::delete('api/users/{id}', 'UserController@destroy');
 
-    Route::get('api/share', 'ShareController@index');
-    Route::post('api/share', 'ShareController@store');
-    Route::patch('api/share/{id}', 'ShareController@update');
-    Route::delete('api/share/{id}', 'ShareController@destroy');
+    Route::get('api/shares', 'ShareController@index');
+    Route::post('api/shares', 'ShareController@store');
+    Route::patch('api/shares/{id}', 'ShareController@update');
+    Route::delete('api/shares/{id}', 'ShareController@destroy');
 
 }); 
 
@@ -55,7 +55,7 @@ Route::group([
     Route::get('api/posts', 'PostController@index');
     Route::get('api/posts/{id}', 'PostController@show');
     
-    Route::get('api/share/me', 'ShareController@me');
+    Route::get('api/shares/me', 'ShareController@me');
 });
 
 

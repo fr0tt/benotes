@@ -17,7 +17,7 @@ class ShareTest extends TestCase
         $collection = factory(Collection::class)->create();
         $token = \Faker\Factory::create()->slug;
 
-        $this->actingAs($user)->json('POST', 'api/share', [
+        $this->actingAs($user)->json('POST', 'api/shares', [
             'token' => $token,
             'collection_id' => $collection->id,
             'is_active' => true
