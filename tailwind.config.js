@@ -17,6 +17,9 @@ module.exports = {
                     '600': '#FF7700',
                     '200': '#ffe4cc'
                 }
+            },
+            fontFamily: {
+                'mono': ['JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', 'Courier New', 'monospace']
             }
         }
     },

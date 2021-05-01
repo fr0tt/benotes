@@ -106,7 +106,10 @@ label.label {
         @apply text-xl font-medium
     }
     blockquote {
-        @apply italic border-gray-500 my-1 pl-2 text-gray-700;
+        @apply italic border-gray-500 my-1 pl-2 text-gray-600;
         border-left-width: 3px;
+    }
+    code {
+        @apply font-mono text-gray-700 text-sm py-1 px-2 rounded-md bg-gray-300;
     }
 }
