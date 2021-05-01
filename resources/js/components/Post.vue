@@ -108,7 +108,7 @@ export default {
                 this.post.title = this.title
                 this.post.content = content
                 this.post.collection_id = this.collection.id
-                this.$store.dispatch('post/updatePost', this.post)
+                this.$store.dispatch('post/updatePost', { post: this.post })
                 const route = originCollectionId === null ? '/' : '/c/' + originCollectionId
                 this.$router.push({ path: route })
             }

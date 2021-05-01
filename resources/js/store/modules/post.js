@@ -48,7 +48,6 @@ export default {
     actions: {
         fetchPosts (context, collectionId) {
             context.commit('isLoading', true)
-            console.log('bo', collectionId === 0, collectionId, typeof (collectionId === 0))
             axios.get('/api/posts', {
                 params: {
                     collection_id: (collectionId > 0) ? collectionId : null,
@@ -83,7 +82,7 @@ export default {
         addPost (context, post) {
             context.commit('addPost', post)
         },
-        updatePost (context, post) { 
+        updatePost (context, { post, transfer = false }) { 
             const params = {}
             params.title = post.title
             params.content = post.content
@@ -95,15 +94,18 @@ export default {
                     if (context.state.posts === null) {
                         return
                     }
-                    context.state.posts.find((post, i) => {
-                        if (post.id === newPost.id) {
-                            context.commit('setPost', {
-                                post: newPost,
-                                index: i
-                            })
-                            return
-                        }
+                    const index = context.state.posts.findIndex(item => {
+                        return post.id === item.id
                     })
+
+                    if (transfer) {
+                        context.commit('deletePost', index)
+                    } else {
+                        context.commit('setPost', {
+                            post: newPost,
+                            index: index
+                        })
+                    }
                 })
                 .catch(error => {
                     console.log(error)
