@@ -52,7 +52,6 @@ export default {
                 email: this.email
             })
                 .then(response => {
-                    console.log(response)
                     if (response.status === 200) {
                         this.message = response.data
                     }

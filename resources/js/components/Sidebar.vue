@@ -165,6 +165,9 @@ export default {
             .router-link-exact-active {
                 border-left: 3px solid;
                 @apply bg-orange-200 text-gray-700 border-orange-600 font-semibold;
+                svg {
+                    margin-left: -3px;
+                }
             }
         }
     }
