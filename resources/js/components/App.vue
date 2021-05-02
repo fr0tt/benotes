@@ -2,7 +2,7 @@
     <div class="w-full outline-none" @keyup.ctrl.alt.78="createNewPost()" tabindex="0" autofocus>
         <div class="flex">
             <Sidebar class="pt-16 z-40" v-if="!staticAuth"/>
-            <div class="flex-1 h-screen bg-white overflow-y-scroll pt-16">
+            <div class="flex-1 h-screen bg-gray-100 overflow-y-scroll pt-16">
                 <Appbar/>
                 <transition name="router-fade" mode="out-in">
                     <router-view></router-view>

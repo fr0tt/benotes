@@ -40,11 +40,16 @@ Installation:
 - ln -sfn ../storage/app/public/ public/storage (_create symlink for storage_)
 - chown -R :www-data storage && chmod -R 774 storage (_make storage directory writable for webserver if your webserver runs as user www-data_)
 
+
 ## Upgrade
 
 - git pull (*upgrade files*)
 - composer install (*upgrade dependencies. See composer part of Installation for information about php8 above*)
 - php artisan migrate (*upgrade database schemas*)
+
+---
+
+Feel free to [contact me](https://twitter.com/_fr0tt) if you need any help or write an issue. 
 
 ## Rest API
 
