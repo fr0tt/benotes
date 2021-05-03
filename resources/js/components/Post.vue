@@ -3,11 +3,12 @@
         <div class="md:mx-6 mx-1 md:my-6 mt-2">
             <div class="mx-4 editor">
                 <div class="max-w-5xl mt-4" @keyup.ctrl.alt.83="keySave">
-                    <input class="block w-full text-3xl font-medium placeholder-orange-600 text-orange-600
-                        outline-none" v-model="title" placeholder="Title" tabindex="1" autofocus/>
+                    <input class="block w-full text-3xl font-medium placeholder-orange-600 
+                        text-orange-600 bg-transparent outline-none" 
+                        v-model="title" placeholder="Title" tabindex="1" autofocus/>
                     <div class="mt-4 mb-6">
-                        <Select class="inline-block w-80" v-model="collection" label="name" :options="optionsCollections"
-                            :tabindex="2"/>
+                        <Select class="inline-block w-80" v-model="collection"
+                            label="name" :options="optionsCollections" :tabindex="2"/>
                     </div>
                     <EditorMenuBar :editor="editor" class="w-full my-4"/>
                     <EditorContent :editor="editor" class="editorContent h-32 text-lg my-4"/>
