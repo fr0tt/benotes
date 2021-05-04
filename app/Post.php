@@ -59,4 +59,41 @@ class Post extends Model
         return $value;
     }
 
+    public function seedIntroData($user_id, $collection_id = null)
+    {
+        
+        Post::create([
+            'title'         => 'First Post',
+            'content'       => '<p>This post demonstrates different features of Benotes. <br>You can write <strong>bold</strong>, <em>italic</em> or <strong>combine <em>them</em></strong><em>.</em></p><blockquote><p>Blockquotes are also a thing</p></blockquote><p></p>',
+            'type'          => self::POST_TYPE_TEXT,
+            'description'   => null,
+            'collection_id' => $collection_id,
+            'user_id'       => $user_id,
+            'order'         => 3
+        ]);
+
+        Post::create([
+            'title'         => 'Also...',
+            'content'       => '<p>you can save/paste bookmarks !</p>',
+            'type'          => self::POST_TYPE_TEXT,
+            'description'   => null,
+            'collection_id' => $collection_id,
+            'user_id'       => $user_id,
+            'order'         => 2
+        ]);
+
+        Post::create([
+            'title'         => 'GitHub - fr0tt/benotes: An open source self hosted web app for your notes and bookmarks.',
+            'content'       => 'https://github.com/fr0tt/benotes',
+            'type'          => self::POST_TYPE_LINK,
+            'url'           => 'https://github.com/fr0tt/benotes',
+            'color'         => '#1e2327',
+            'image_path'    => 'https://opengraph.githubassets.com/9c1b74a8cc5eeee5c5c9f62701c42e1356595422d840d2e209bceb836deb5ffb/fr0tt/benotes',
+            'base_url'      => 'https://github.com',
+            'collection_id' => $collection_id,
+            'user_id'       => $user_id,
+            'order'         => 1
+        ]);
+    }
+
 }

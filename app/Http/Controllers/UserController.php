@@ -49,6 +49,8 @@ class UserController extends Controller
         $user->permission = 7;
         $user->save();
 
+        (new \App\Post())->seedIntroData($user->id);
+
         return response()->json(['data' => $user], 201);
     }
 

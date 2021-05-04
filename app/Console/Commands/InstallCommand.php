@@ -71,6 +71,8 @@ class InstallCommand extends Command
         $user->permission = User::ADMIN;
         $user->save();
 
+        (new \App\Post())->seedIntroData($user->id);
+
         $bar->finish();
         $this->line(PHP_EOL);
         $this->info('Installation complete.');

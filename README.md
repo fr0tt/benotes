@@ -8,7 +8,7 @@
 <img src="https://user-images.githubusercontent.com/33751346/115884212-ee754800-a44e-11eb-940d-b9e96eeeab36.png"
     alt="Benotes Thumbnail">
 
-An open source self hosted notes and bookmarks taking web app.
+An open source self hosted web app for your notes and bookmarks side by side.
 
 This project is currently in **Beta**. You may encounter bugs or errors.
 
