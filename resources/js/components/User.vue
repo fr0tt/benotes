@@ -89,7 +89,12 @@ export default {
                     const user = response.data.data
                     this.$store.dispatch('auth/setAuthUser', user)
                 }).catch(error => {
-                    this.error = error
+                    if (typeof error.response.data === 'object') {
+                        const firstError = error.response.data[Object.keys(error.response.data)[0]]
+                        this.error = firstError.toString()
+                    } else {
+                        this.error = error.response.data
+                    }
                 })
         },
         create () {
@@ -101,8 +106,12 @@ export default {
                 .then(response => {
                     this.$router.push({ path: '/users' })
                 }).catch(error => {
-                    console.log(error)
-                    this.error = error
+                    if (typeof error.response.data === 'object') {
+                        const firstError = error.response.data[Object.keys(error.response.data)[0]]
+                        this.error = firstError.toString()
+                    } else {
+                        this.error = error.response.data
+                    }
                 })
         },
         del () {
@@ -110,8 +119,7 @@ export default {
                 .then(response => {
                     this.$router.push({ path: '/users' })
                 }).catch(error => {
-                    console.log(error)
-                    this.error = error
+                    this.error = error.response.data
                 })
         }
     },
