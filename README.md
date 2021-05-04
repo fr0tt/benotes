@@ -37,10 +37,10 @@ Installation:
 - generate a random string for APP_KEY e.g. openssl rand -base64 32 (_for security reasons_)
 - create a database
 - edit DB_DATABASE, DB_USERNAME and DB_PASSWORD in .env file accordingly (_in order to be able to connect to your database_)
-- php artisan install  (_amongst other: creates database tables and fills them. <br> Please note that it will ask you if you really want to continue since you are in production mode. Either simply say yes or change in your .env file APP_ENV to local_)
+- php artisan install  (_amongst other: creates database tables and fills them_)
 - ln -sfn ../storage/app/public/ public/storage (_create symlink for storage_)
 - chown -R :www-data storage && chmod -R 774 storage (_make storage directory writable for webserver if your webserver runs as user www-data_)
-
+- if you wish to use it on a production server change in your .env file APP_ENV from local to production
 
 ## Upgrade
 
