@@ -32,16 +32,16 @@ Prerequisite:
 - MySQL, Postgres, SQLite or SQL Server (currently only MySQL is tested)
 
 Installation:
-- git clone https://github.com/fr0tt/benotes  (_downloads files version-controlled_)
-- composer install  (_installs dependencies accordingly to your php version. 
+- git clone https://github.com/fr0tt/benotes  (_download files version-controlled_)
+- composer install  (_install dependencies accordingly to your php version. 
 <br> Please note that **php8-cli will fail**, use instead something similar to the likes of: /usr/bin/php7.4 /usr/local/bin/composer install or any other php-cli version between 7.2.5 and 7.4_)
-- cp .env.example .env  (_copies configuration file_)
-- generate a random string for APP_KEY e.g. openssl rand -base64 32 (_for security reasons_)
+- cp .env.example .env  (_copy configuration file_)
+- generate a random string for APP_KEY in your .env file e.g. openssl rand -base64 32 (_for security reasons_)
 - create a database
-- edit DB_DATABASE, DB_USERNAME and DB_PASSWORD in .env file accordingly (_in order to be able to connect to your database_)
-- php artisan install  (_amongst other: creates database tables and fills them_)
-- ln -sfn ../storage/app/public/ public/storage (_create symlink for storage_)
-- chown -R :www-data storage && chmod -R 774 storage (_make storage directory writable for webserver if your webserver runs as user www-data_)
+- also edit DB_DATABASE, DB_USERNAME and DB_PASSWORD in .env file accordingly (_in order to be able to connect to your database_)
+- php artisan install  (_amongst other: create database tables and fill them_)
+- ln -sfn ../storage/app/public/ public/storage  (_create symlink for storage_)
+- chown -R :www-data storage && chmod -R 774 storage  (_make storage directory writable for webserver if your webserver runs as user www-data_)
 - if you wish to use it on a production server change in your .env file APP_ENV from local to production
 
 ## Upgrade
