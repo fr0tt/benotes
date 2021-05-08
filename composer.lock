@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9a70f1502c69376d4524fab6ab17f70f",
+    "content-hash": "3dd76ff038bf9edfed7f55aa33b2c21d",
     "packages": [
         {
             "name": "brick/math",
@@ -711,6 +711,64 @@
                 }
             ],
             "time": "2020-12-29T14:50:06+00:00"
+        },
+        {
+            "name": "fideloper/proxy",
+            "version": "4.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fideloper/TrustedProxy.git",
+                "reference": "c073b2bd04d1c90e04dc1b787662b558dd65ade0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fideloper/TrustedProxy/zipball/c073b2bd04d1c90e04dc1b787662b558dd65ade0",
+                "reference": "c073b2bd04d1c90e04dc1b787662b558dd65ade0",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^5.0|^6.0|^7.0|^8.0|^9.0",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "illuminate/http": "^5.0|^6.0|^7.0|^8.0|^9.0",
+                "mockery/mockery": "^1.0",
+                "phpunit/phpunit": "^6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Fideloper\\Proxy\\TrustedProxyServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Fideloper\\Proxy\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Fidao",
+                    "email": "fideloper@gmail.com"
+                }
+            ],
+            "description": "Set trusted proxies for Laravel",
+            "keywords": [
+                "load balancing",
+                "proxy",
+                "trusted proxy"
+            ],
+            "support": {
+                "issues": "https://github.com/fideloper/TrustedProxy/issues",
+                "source": "https://github.com/fideloper/TrustedProxy/tree/4.4.1"
+            },
+            "time": "2020-10-22T13:48:01+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
