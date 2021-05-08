@@ -299,16 +299,26 @@ class PostController extends Controller
 
     private function saveImage($image_path, $post)
     {
-        if (!empty($image_path)) {
-            $image = Image::make($image_path);
-            if ($image) {
-                $image->fit(400, 210);
-                $filename = 'thumbnail_' . $post->id . '.jpg';
-                $image->save(storage_path().'/app/public/thumbnails/' . $filename, 100);
-                $post->image_path = $filename;
-                $post->save();
-            }
+        if (empty($image_path)) {
+            return;
         }
+        
+        if (config('benotes.use_filesystem') === false) {
+            $post->image_path = $image_path;
+            $post->save();
+            return;
+        }
+        
+        $image = Image::make($image_path);
+        if (!$image) {
+            return;
+        }
+
+        $image->fit(400, 210);
+        $filename = 'thumbnail_' . md5($image_path) . '_' . $post->id . '.jpg';
+        $image->save(storage_path() . '/app/public/thumbnails/' . $filename, 100);
+        $post->image_path = $filename;
+        $post->save();
     }
 
 }
