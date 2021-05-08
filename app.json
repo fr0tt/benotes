@@ -1,0 +1,30 @@
+{
+    "name": "Benotes",
+    "description": "An open source web app for your notes & bookmarks.",
+    "repository": "https://github.com/fr0tt/benotes",
+    "logo": "https://raw.githubusercontent.com/fr0tt/benotes/master/public/logo_144x144.png",
+    "keywords": [
+        "laravel",
+        "lumen",
+        "vue"
+    ],
+    "addons": [
+        "heroku-postgresql"
+    ],
+    "scripts": {
+        "postdeploy": []
+    },
+    "env": {
+        "APP_NAME": "Benotes",
+        "APP_ENV": "production",
+        "APP_DEBUG": "false",
+        "APP_KEY": {
+            "generator": "secret"
+        },
+        "JWT_SECRET": {
+            "generator": "secret"
+        },
+        "USE_FILESYSTEM": "false",
+        "LOG_CHANNEL": "errorlog"
+    }
+}
