@@ -25,6 +25,7 @@
             "generator": "secret"
         },
         "USE_FILESYSTEM": "false",
+        "TRUSTED_PROXIES": "*",
         "LOG_CHANNEL": "errorlog"
     }
 }
