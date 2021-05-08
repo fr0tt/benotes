@@ -14,7 +14,7 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'install';
+    protected $signature = 'install {--only-user}';
 
     /**
      * The console command description.
@@ -30,18 +30,26 @@ class InstallCommand extends Command
      */
     public function handle()
     {
-        $this->line('Initiate installation...');
-        $bar = $this->output->createProgressBar(3);
-        $bar->start();
-        
-        // jwt secret
-        $this->call('jwt:secret');
-        $bar->advance();
 
-        // database migration
-        $this->call('migrate');
-        $bar->advance();
-        $this->line(PHP_EOL);
+        $createOnlyUser = $this->option('only-user');
+
+        $this->line('Initiate installation...');
+
+        if (!$createOnlyUser) {
+
+            $bar = $this->output->createProgressBar(3);
+            $bar->start();
+            
+            // jwt secret
+            $this->call('jwt:secret');
+            $bar->advance();
+
+            // database migration
+            $this->call('migrate');
+            $bar->advance();
+            $this->line(PHP_EOL);
+
+        }
 
         // database seeding 
         $this->info('Create your Admin account:');
@@ -73,7 +81,12 @@ class InstallCommand extends Command
 
         (new \App\Post())->seedIntroData($user->id);
 
-        $bar->finish();
+        if (!$createOnlyUser) {
+
+            $bar->finish();
+
+        }
+        
         $this->line(PHP_EOL);
         $this->info('Installation complete.');
     }
