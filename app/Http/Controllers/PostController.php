@@ -303,7 +303,7 @@ class PostController extends Controller
             return;
         }
         
-        if (config('benotes.use_filesystem') === false) {
+        if (config('benotes.use_filesystem') == false) {
             $post->image_path = $image_path;
             $post->save();
             return;
