@@ -32,6 +32,7 @@ Prerequisite:
 - MySQL, Postgres, SQLite or SQL Server (currently only MySQL is tested)
 
 Installation:
+
 - ```git clone https://github.com/fr0tt/benotes```  (_download files version-controlled_)
 - ```composer install```  (_install dependencies accordingly to your php version. 
 <br> Please note that **php8-cli will fail**, use instead something similar to the likes of: /usr/bin/php7.4 /usr/local/bin/composer install or any other php-cli version between 7.2.5 and 7.4_)
@@ -45,11 +46,22 @@ Installation:
 - if you wish to use it on a production server change in your .env file APP_ENV from local to production
 - configure your webserver or use for testing purposes ```php -S localhost:8000 -t public```
 
+Installation on Heroku:
+
+- [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+- run command: ```php artisan install --only-user```
+
+Please note that this button **only** allows you to easily install the application. For updating it see section *Upgrade on Heroku* in **Upgrade** down below.
+
 ## Upgrade
 
 - ```git pull```  (*upgrade files*)
 - ```composer install```  (*upgrade dependencies. See composer part of Installation for information about php8 above*)
 - ```php artisan migrate```  (*upgrade database schemas*)
+
+Upgrade on Heroku:
+
+- Follow the steps described at https://f-a.nz/dev/update-deploy-to-heroku-app/ (*replace https://github.com/user/my-project with https://github.com/fr0tt/benotes*)
 
 ---
 
