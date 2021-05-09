@@ -15,10 +15,10 @@
         "intervention/image": "^2.5",
         "ksubileau/color-thief-php": "^1.4",
         "laravel/lumen-framework": "^7.0",
+        "laravel/tinker": "^2.6",
         "league/flysystem": "^1.0",
         "ramsey/uuid": "^4.1",
-        "tymon/jwt-auth": "^1.0",
-        "laravel/tinker": "^2.6"
+        "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.9",

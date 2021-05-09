@@ -26,6 +26,7 @@
         },
         "USE_FILESYSTEM": "false",
         "TRUSTED_PROXIES": "*",
-        "LOG_CHANNEL": "errorlog"
+        "LOG_CHANNEL": "errorlog",
+        "DB_CONNECTION": "pgsql"
     }
 }
