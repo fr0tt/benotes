@@ -144,7 +144,10 @@ export default {
             return 'background-image: url(\'' + this.post.image_path + '\')'
         },
         color () {
-            return 'background-color: ' + this.post.color
+            if (this.post.color) {
+                return 'background-color: ' + this.post.color
+            }
+            return 'background-color: ' + '#ffb27f'
         },
         domain () {
             return this.post.base_url.replace(/(https|http):\/\//, '')

@@ -291,6 +291,10 @@ class PostController extends Controller
 
     private function getDominantColor($base_url)
     {
+        if (!extension_loaded('gd') &! extension_loaded('imagick') &! extension_loaded('gmagick')) {
+            return null;
+        }
+
         $host = parse_url($base_url)['host'];
         $rgb = ColorThief::getColor('https://www.google.com/s2/favicons?domain=' . $host);
         $hex = sprintf("#%02x%02x%02x", $rgb[0], $rgb[1], $rgb[2]);
