@@ -357,4 +357,37 @@ class PostTest extends TestCase
         $this->assertEquals(403, $this->response->status());
     }
 
+    public function testCreatePostWithoutStorage()
+    {
+        config(['benotes.use_filesystem' => false]);
+
+        $user = factory(User::class)->create();
+        $collection = factory(Collection::class)->create();
+
+        $this->actingAs($user)->json('POST', 'api/posts', [
+            'content' => 'https://nyt.com',
+            'collection_id' => $collection->id
+        ]);
+
+        $this->assertEquals(201, $this->response->status());
+        $data = $this->response->getData()->data;
+        $this->assertEquals('link', $data->type);
+        $this->assertStringStartsNotWith('/storage/thumbnails/thumbnail_', $data->image_path);
+        $this->assertStringStartsWith('https://', $data->image_path);
+
+
+        config(['benotes.use_filesystem' => true]);
+
+        $this->actingAs($user)->json('POST', 'api/posts', [
+            'content' => 'https://nyt.com',
+            'collection_id' => $collection->id
+        ]);
+
+        $this->assertEquals(201, $this->response->status());
+        $data = $this->response->getData()->data;
+        $this->assertEquals('link', $data->type);
+        $this->assertStringStartsWith('/storage/thumbnails/thumbnail_', $data->image_path);
+        $this->assertStringStartsNotWith('https://', $data->image_path);
+    }
+
 }
