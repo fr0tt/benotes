@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import VueCookie from 'vue-cookie'
 import SvgVue from 'svg-vue'
+import VueLazyload from 'vue-lazyload'
 
 import routes from './routes.js'
 import store from './store'
@@ -9,6 +10,7 @@ import store from './store'
 Vue.use(VueCookie)
 Vue.use(VueRouter)
 Vue.use(SvgVue)
+Vue.use(VueLazyload)
 
 const router = new VueRouter({
     mode: 'history',
