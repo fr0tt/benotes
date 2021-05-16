@@ -1,19 +1,22 @@
 <template>
     <div class="min-h-full">
         <div class="sm:ml-4 -ml-2 px-2">
-            <transition name="collection-fade">
+            <transition v-if="!isLoading" name="collection-fade">
                 <Draggable tag="ol" v-model="posts" :move="dragged"
                     @start="drag = true" @end="drag = false" 
                     :delay="90" :delayOnTouchOnly="true"
                     v-bind="{ animation: 200 }" 
                     class="pt-4 pb-24">
                     <transition-group name="grid-fade">
-                        <Post v-for="(post, i) in posts" 
-                            :class="drag || isLoading ? null : 'item-transition'"
-                            :key="'post-' + i" :post="post" :permission="permission" />
+                        <Post v-for="post in posts" 
+                            :class="drag ? null : 'item-transition'"
+                            :key="post.order" :post="post" :permission="permission" />
                     </transition-group>
                 </Draggable>
             </transition>
+            <div v-else>
+                <Post v-for="post in posts" :key="post.id" :post="post" />
+            </div>
         </div>
         <CollectionMenu v-if="collectionMenu.isVisible"/>
     </div>
