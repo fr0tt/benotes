@@ -2,13 +2,15 @@
     <div class="min-h-full">
         <div class="sm:ml-4 -ml-2 px-2">
             <transition name="collection-fade">
-                <Draggable v-if="!isLoading" tag="ol" v-model="posts" :move="dragged"
+                <Draggable tag="ol" v-model="posts" :move="dragged"
                     @start="drag = true" @end="drag = false" 
                     :delay="90" :delayOnTouchOnly="true"
-                    v-bind="{ animation: 200 }" class="pt-4 pb-24">
+                    v-bind="{ animation: 200 }" 
+                    class="pt-4 pb-24">
                     <transition-group name="grid-fade">
-                        <Post v-for="post in posts" :class="drag ? null : 'item-transition'"
-                            :key="post.id" :post="post" :permission="permission" />
+                        <Post v-for="(post, i) in posts" 
+                            :class="drag || isLoading ? null : 'item-transition'"
+                            :key="'post-' + i" :post="post" :permission="permission" />
                     </transition-group>
                 </Draggable>
             </transition>
@@ -18,7 +20,7 @@
 </template>
 <script>
 import axios from 'axios'
-import { mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import Post from './PostItem.vue'
 import CollectionMenu from './CollectionMenu.vue'
 import Draggable from 'vuedraggable'
@@ -59,13 +61,21 @@ export default {
                 if (content === '' || content === null) {
                     return
                 }
+                const id = 'placeholder-' + this.maxOrder + 1
+                this.$store.dispatch('post/addPost', {
+                    id: id,
+                    type: 'placeholder',
+                    order: this.maxOrder + 1
+                })
                 axios.post('/api/posts', {
                     content: content,
                     collection_id: this.collectionId > 0 ? this.collectionId : null,
                     is_uncategorized: this.collectionId === 0
                 })
                     .then(response => {
-                        this.$store.dispatch('post/addPost', response.data.data)
+                        this.$store.dispatch('post/setPostById', { 
+                            id: id, post: response.data.data 
+                        })
                     })
                     .catch(error => {
                         console.log(error)
@@ -139,7 +149,7 @@ export default {
         ...mapState('collection', [
             'currentCollection'
         ]),
-        ...mapState('post', [
+        ...mapGetters('post', [
             'maxOrder'
         ]),
         ...mapState('post', [
@@ -207,9 +217,9 @@ export default {
     .grid-fade-enter-active {
         transition: all 0.2s;
     }
-    .grid-fade-leave-active {
+    /*.grid-fade-leave-active {
         position: absolute;
-    }
+    }*/
     .grid-fade-leave-to {
         opacity: 0;
         transform: translateX(30px);

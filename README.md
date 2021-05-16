@@ -25,13 +25,13 @@ This project is currently in **Beta**. You may encounter bugs or errors.
 
 ## Installation
 
-Prerequisite:
+**Prerequisite**:
 - git  (_https://git-scm.com_)
 - composer  (_https://getcomposer.org_)
 - PHP ≥ 7.2.5
 - MySQL, Postgres, SQLite or SQL Server (currently only MySQL is tested)
 
-Installation:
+**Installation**:
 
 - ```git clone https://github.com/fr0tt/benotes```  (_download files version-controlled_)
 - ```composer install```  (_install dependencies accordingly to your php version. 
@@ -46,7 +46,7 @@ Installation:
 - if you wish to use it on a production server change in your .env file APP_ENV from local to production
 - configure your webserver or use for testing purposes ```php -S localhost:8000 -t public```
 
-Installation on Heroku:
+**Installation on Heroku**:
 
 - [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 - run command: ```php artisan install --only-user``` (_by clicking the 'more' button and 'run console'_)
@@ -59,7 +59,7 @@ Please note that this button **only** allows you to easily install the applicati
 - ```composer install```  (*upgrade dependencies. See composer part of Installation for information about php8 above*)
 - ```php artisan migrate```  (*upgrade database schemas*)
 
-Upgrade on Heroku:
+**Upgrade on Heroku**:
 
 - Follow the steps described at https://f-a.nz/dev/update-deploy-to-heroku-app/ (*replace https://github.com/user/my-project with https://github.com/fr0tt/benotes*)
 

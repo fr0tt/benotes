@@ -4,13 +4,17 @@ export default {
     namespaced: true,
     state: {
         posts: null,
-        maxOrder: 0,
         currentPost: null,
         isLoading: false,
         contextMenu: {
             post: null,
             target: null,
             positionX: 0
+        }
+    },
+    getters: {
+        maxOrder: state => {
+            return state.posts == null ? 0 : state.posts[0].order
         }
     },
     mutations: {
@@ -41,13 +45,23 @@ export default {
         isLoading (state, isLoading) {
             state.isLoading = isLoading
         },
-        setMaxOrder (state, order) {
-            state.maxOrder = order
+        setPlaceholderPosts (state) {
+            let posts = [];
+            const max = 8
+            for (let i = 1; i <= max; i++) {
+                posts.push({
+                    id: 'placeholder-' + i,
+                    type: 'placeholder',
+                    order: max - i + 1
+                })
+            }
+            state.posts = posts
         }
     },
     actions: {
         fetchPosts (context, collectionId) {
             context.commit('isLoading', true)
+            context.commit('setPlaceholderPosts')
             axios.get('/api/posts', {
                 params: {
                     collection_id: (collectionId > 0) ? collectionId : null,
@@ -56,9 +70,8 @@ export default {
             })
                 .then(response => {
                     const posts = response.data.data
-                    context.commit('setPosts', posts)
-                    context.commit('setMaxOrder', posts[0].order)
                     context.commit('isLoading', false)
+                    context.commit('setPosts', posts)
                 })
                 .catch(error => {
                     console.log(error)
@@ -113,6 +126,15 @@ export default {
                         console.log(error.response.data)
                     }
                 })
+        },
+        setPostById (context, { id, post }) {
+            const index = context.state.posts.findIndex(item => {
+                return id === item.id
+            })
+            context.commit('setPost', {
+                post: post,
+                index: index
+            })
         },
         deletePost (context, id) {
             axios.delete('/api/posts/' + id)
