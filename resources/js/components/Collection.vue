@@ -215,7 +215,7 @@ export default {
         opacity: 0;
     }
     .item-transition {
-        transition: all 0.6s;
+        transition: all 0.4s;
     }
     .grid-fade-enter-active {
         transition: all 0.2s;
@@ -225,7 +225,7 @@ export default {
     }*/
     .grid-fade-leave-to {
         opacity: 0;
-        transform: translateX(30px);
+        transform: translateY(30px);
     }
     .grid-fade-enter {
         opacity: 0;

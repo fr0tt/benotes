@@ -80,6 +80,10 @@ export default {
                     editable: false
                 })
                 document.querySelector('#app').removeEventListener('click', this.stopEditing, true)
+                const matches = this.currentPost.content.match(/^<p>(?<content>.(?:(?!<p>)(?!<\/p>).)*)<\/p>$/)
+                if (matches !== null) {
+                    this.$store.commit('post/setCurrentPostContent', matches[1])
+                }
                 this.$store.dispatch('post/updatePost', { post: this.currentPost })
                 this.$store.dispatch('post/setCurrentPost', null)
             }
