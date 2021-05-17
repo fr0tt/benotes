@@ -236,16 +236,19 @@ class PostController extends Controller
             '<pre><br><hr><blockquote><ul><li><ol><code>');
     }
 
-    private function getInfo($url)
+    private function getInfo($url, $act_as_bot = false)
     {
         $base_url = parse_url($url);
         $base_url = $base_url['scheme'] . '://' . $base_url['host'];
+
+        $useragent = $act_as_bot ? 'Googlebot/2.1 (+http://www.google.com/bot.html)' :
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36';
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($ch, CURLOPT_AUTOREFERER, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36');
+        curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
         curl_setopt($ch, CURLOPT_URL, $url);
         $html = curl_exec($ch);
         curl_close($ch);
@@ -277,6 +280,11 @@ class PostController extends Controller
 
         if (empty($color)) {
             $color = $this->getDominantColor($base_url);
+        }
+
+        if (empty($description) && empty($image_path) &! $act_as_bot) {
+            // try again with bot as useragent
+            return $this->getInfo($url, true);
         }
 
         return [
