@@ -14,9 +14,9 @@
                     </transition-group>
                 </Draggable>
             </transition>
-            <div v-else>
+            <ul v-else>
                 <Post v-for="post in posts" :key="post.id" :post="post" />
-            </div>
+            </ul>
         </div>
         <CollectionMenu v-if="collectionMenu.isVisible"/>
     </div>
