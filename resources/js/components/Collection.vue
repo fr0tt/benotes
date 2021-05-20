@@ -114,7 +114,7 @@ export default {
                 },{
                     label: 'Delete',
                     longLabel: 'Delete Collection',
-                    callback: this.pasteNewPost,
+                    callback: this.deleteCollection,
                     icon: 'delete',
                     color: 'red',
                     condition: this.isRealCollection
