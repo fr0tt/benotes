@@ -24,14 +24,14 @@ import axios from 'axios'
 import { mapState } from 'vuex'
 
 import Select from 'vue-select'
-import OpenIndicator from './OpenIndicator.vue'
-import Deselect from './Deselect.vue'
+import OpenIndicator from '../OpenIndicator.vue'
+import Deselect from '../Deselect.vue'
 import 'vue-select/dist/vue-select.css'
 
 import { Editor, EditorContent } from 'tiptap'
 import { HardBreak, Blockquote, Heading, Bold, Italic,
     Underline, Link, Code, History, Placeholder, TrailingNode } from 'tiptap-extensions'
-import EditorMenuBar from './EditorMenuBar.vue'
+import EditorMenuBar from '../EditorMenuBar.vue'
 
 export default {
     props: {

@@ -1,8 +1,8 @@
 <template>
     <div class="min-h-full">
         <div class="sm:ml-4 -ml-2 px-2">
-            <transition v-if="!isLoading" name="collection-fade">
-                <Draggable tag="ol" v-model="posts" :move="dragged"
+            <transition name="collection-fade">
+                <Draggable v-if="!isLoading"  tag="ol" v-model="posts" :move="dragged"
                     @start="drag = true" @end="drag = false" 
                     :delay="90" :delayOnTouchOnly="true"
                     v-bind="{ animation: 200 }" 
@@ -13,10 +13,10 @@
                             :key="post.order" :post="post" :permission="permission" />
                     </transition-group>
                 </Draggable>
+                <ul v-else>
+                    <Post v-for="post in posts" :key="post.id" :post="post" />
+                </ul>
             </transition>
-            <ul v-else>
-                <Post v-for="post in posts" :key="post.id" :post="post" />
-            </ul>
         </div>
         <CollectionMenu v-if="collectionMenu.isVisible"/>
     </div>
@@ -24,8 +24,8 @@
 <script>
 import axios from 'axios'
 import { mapGetters, mapState } from 'vuex'
-import Post from './PostItem.vue'
-import CollectionMenu from './CollectionMenu.vue'
+import Post from '../PostItem.vue'
+import CollectionMenu from '../CollectionMenu.vue'
 import Draggable from 'vuedraggable'
 
 export default {
@@ -208,7 +208,7 @@ export default {
 }
 </script>
 <style lang="scss">
-    .collection-fade-enter-active, .collection-fade-leave-active {
+    .collection-fade-enter-active, .collection-fade-leave {
         transition: opacity .6s;
     }
     .collection-fade-enter, .collection-fade-leave-to {
