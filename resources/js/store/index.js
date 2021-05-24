@@ -48,10 +48,6 @@ export default new Vuex.Store({
             const showSidebar = !this.state.showSidebar
             context.commit('showSidebar', showSidebar)
             localStorage.setItem('sidebar', showSidebar)
-        },
-        toggleBottomSheet(context) {
-            const showBottomSheet = !this.state.showBottomSheet
-            context.commit('showBottomSheet', showBottomSheet)
         }
     }
 })

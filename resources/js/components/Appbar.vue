@@ -12,13 +12,12 @@
             <div v-if="permission >= 6">
                 <button v-if="button.callback" @click="button.callback" 
                     class="button -mr-1" :title="hint">
-                    <!--<svg-vue :icon="button.icon" class="button-icon"/>-->
                     <svg v-html="icon(button.icon)" class="button-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"></svg>
                     {{ button.label }}
                 </button>
                 <div v-if="options" class="inline-block">
-                    <button v-if="isMobile" class="button gray ml-2"
-                        @click="openBottomSheet" title="Options">
+                    <button v-if="isMobile" class="button gray ml-2" id="appbar-options-button"
+                        @click="toggleBottomSheet" title="Options">
                         <svg-vue icon="remix/settings-3-line" class="button-icon remix"/>
                         Options
                     </button>
@@ -36,7 +35,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import { mapState } from 'vuex'
 export default {
     name: 'Appbar',
@@ -44,16 +42,23 @@ export default {
         toggleSidebar () {
             this.$store.dispatch('toggleSidebar')
         },
-        openBottomSheet () {
-            this.$store.dispatch('toggleBottomSheet')
-            this.$store.commit('setBottomSheet', this.options)
-            document.querySelector('#app').addEventListener('click', this.closeBottomSheet, true)
-        },
-        closeBottomSheet () {
-            if (!document.querySelector('#bottomSheet').contains(event.target)) {
+        toggleBottomSheet () {
+            if (this.showBottomSheet) {
                 this.$store.commit('showBottomSheet', false)
                 document.querySelector('#app').removeEventListener('click', this.closeBottomSheet, true)
+            } else {
+                this.$store.commit('showBottomSheet', true)
+                this.$store.commit('setBottomSheet', this.options)
+                document.querySelector('#app').addEventListener('click', this.closeBottomSheet, true)
             }
+        },
+        closeBottomSheet (event) {
+            if (document.querySelector('#bottomSheet').contains(event.target) ||
+                document.querySelector('#appbar-options-button').contains(event.target)) {
+                return
+            }
+            this.$store.commit('showBottomSheet', false)
+            document.querySelector('#app').removeEventListener('click', this.closeBottomSheet, true)
         },
         icon (icon) {
             if (icon === 'add')
@@ -83,6 +88,9 @@ export default {
         ]),
         ...mapState([
             'isMobile'
+        ]),
+        ...mapState([
+            'showBottomSheet'
         ]),
         filteredOptions () {
             return this.options.filter(option => {
