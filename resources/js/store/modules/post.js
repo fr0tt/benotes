@@ -14,7 +14,7 @@ export default {
     },
     getters: {
         maxOrder: state => {
-            return state.posts == null ? 0 : state.posts[0].order
+            return state.posts.length > 0 ? state.posts[0].order : 0
         }
     },
     mutations: {

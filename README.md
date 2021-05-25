@@ -17,9 +17,9 @@ This project is currently in **Beta**. You may encounter bugs or errors.
 ### Features
 
 - URLs are automatically saved with an image, title and description
+- supports both markdown and a rich text editor
 - can be installed as a PWA on your mobile devices (and desktop)
 - collections can be shared via a public available URL
-- supports both markdown and a rich text editor experience
 - links can be pasted (by pressing only one button)
 - can be hosted almost anywhere thanks to its use of the lightweight Lumen framework and well supported PHP language
 

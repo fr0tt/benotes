@@ -58,7 +58,7 @@ export default {
             })
                 .then(response => {
                     this.$store.dispatch('collection/addCollection', response.data.data)
-                    this.$router.push({ path: '/' })
+                    this.$router.push({ path: '/c/' + response.data.data.id })
                 })
                 .catch(error => {
                     console.log(error.response.data)
@@ -172,9 +172,9 @@ export default {
             this.$store.dispatch('appbar/setAppbar', {
                 title: 'Create Collection',
                 button: {
-                    label: 'Create',
+                    label: 'Save',
                     callback: this.create,
-                    icon: 'add'
+                    icon: 'checkmark'
                 } 
             })
         }
