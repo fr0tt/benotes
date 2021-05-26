@@ -48,6 +48,12 @@ export default new Vuex.Store({
             const showSidebar = !this.state.showSidebar
             context.commit('showSidebar', showSidebar)
             localStorage.setItem('sidebar', showSidebar)
+        },
+        hideSidebarOnMobile (context) {
+            if (this.state.isMobile && this.state.showSidebar) {
+                context.commit('showSidebar', false)
+                localStorage.setItem('sidebar', false)
+            }
         }
     }
 })

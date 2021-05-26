@@ -5,24 +5,25 @@
 		enter-to-class="transform translate-y-0"
         leave-active-class="transition ease-in duration-300 opacity-0 translate-y-64 transform"
     >
-    <div v-if="showBottomSheet" id="bottomSheet" class="absolute bottom-0 w-full bg-white shadow-md rounded-t-lg">
-        <div class="relative px-8 py-4 border-b-2 border-gray-400">
-            <button @click="hide" class="absolute">
-                <svg-vue class="icon text-gray-600" icon="remix/arrow-down-s-line"/>
-            </button>
-            <span class="block text-center font-medium">{{ title }}</span>
+        <div v-if="showBottomSheet" id="bottomSheet" 
+            class="absolute bottom-0 w-full bg-white -shadow-md rounded-t-lg">
+            <div class="relative px-8 py-4 border-b-2 border-gray-400">
+                <button @click="hide" class="absolute">
+                    <svg-vue class="icon text-gray-600" icon="remix/arrow-down-s-line"/>
+                </button>
+                <span class="block text-center font-medium">{{ title }}</span>
+            </div>
+            <div class="px-8">
+                <ol v-for="option in bottomSheet" :key="option.label" class="">
+                    <li v-if="option.condition" @click="executeCallback(option.callback($event))" 
+                        class="block my-6 font-medium text-gray-700">
+                        <svg v-html="icon(option.icon)" class="icon -mt-1 mr-6 text-gray-600"
+                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"></svg>
+                        {{ option.longLabel }}
+                    </li>
+                </ol>
+            </div>
         </div>
-        <div class="px-8">
-            <ol v-for="option in bottomSheet" :key="option.label" class="">
-                <li v-if="option.condition" @click="executeCallback(option.callback($event))" 
-                    class="block my-6 font-medium text-gray-700">
-                    <svg v-html="icon(option.icon)" class="icon -mt-1 mr-6 text-gray-600"
-                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"></svg>
-                    {{ option.longLabel }}
-                </li>
-            </ol>
-        </div>
-    </div>
     </transition>
 </template>
 <script>
@@ -65,5 +66,8 @@ export default {
 <style>
     .icon {
         @apply w-5 align-middle inline-block fill-current;
+    }
+    .-shadow-md {
+        box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 -2px 4px -1px rgba(0, 0, 0, 0.06);
     }
 </style>

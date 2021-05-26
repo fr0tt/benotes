@@ -38,6 +38,7 @@ router.beforeEach((to, from, next) => {
                     next({ path: '/login' })
                 } else {
                     store.dispatch('auth/setPermission', 7)
+                    store.dispatch('hideSidebarOnMobile')
                     next()
                 }
             })

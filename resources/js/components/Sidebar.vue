@@ -17,20 +17,20 @@
                         <span class="align-middle text-gray-700">Logout</span>
                     </a>
                     <br><br><br>
-                    <a @click="navigate($event, '/')" href="/" class="collection md:px-8 px-4 mb-4"
+                    <router-link to="/" class="collection md:px-8 px-4 mb-4"
                         :class="{ 'router-link-exact-active': isActiveLink('/') }">
                         <svg-vue class="w-4 fill-current align-text-bottom mr-2" icon="remix/folder-unknow-fill"/>
                         <span class="align-middle text-gray-700">Uncategorized</span>
-                    </a>
+                    </router-link>
                     <span class="mb-2 md:px-8 px-4 block text-xs text-gray-700 font-medium uppercase">Collections</span>
                     <ol>
-                        <a v-for="(collection) in collections" :key="collection.id"
+                        <router-link v-for="(collection) in collections" :key="collection.id"
                             :class="{ 'router-link-exact-active': isActiveLink('/c/' + collection.id) }"
                             class="collection md:px-8 px-4"
-                            @click="navigate($event, '/c/' + collection.id)" :href="'/c/' + collection.id" >
+                            :to="'/c/' + collection.id">
                             <svg-vue class="w-4 fill-current align-text-bottom mr-2" icon="remix/folder-fill"/>
                             <span class="align-middle text-gray-700">{{ collection.name }}</span>
-                        </a>
+                        </router-link>
                     </ol>
                 </div>
                 <router-link to="/c/create" class="block md:ml-8 ml-4 mt-4 text-orange-600 font-medium">
@@ -74,17 +74,6 @@ export default {
                     console.log(error.response)
                 })
             this.$router.push({ path: '/login' })
-        },
-        navigate (event, route) {
-            event.preventDefault()
-
-            if (this.$route.path === route)
-                return
-                
-            this.$router.push(route)
-
-            if (this.isMobile)
-                this.$store.dispatch('toggleSidebar')
         },
         isActiveLink (route) {
             return route === this.$route.path
