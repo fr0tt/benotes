@@ -258,6 +258,7 @@ class PostController extends Controller
         $titles = $document->getElementsByTagName('title');
         if (count($titles) > 0) {
             $title = trim($titles->item(0)->nodeValue);
+            $title = utf8_decode($title);
         } else {
             $title = $base_url;
         }
