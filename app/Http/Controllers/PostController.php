@@ -254,11 +254,11 @@ class PostController extends Controller
         curl_close($ch);
 
         $document = new \DOMDocument();
+        $html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
         @$document->loadHTML($html);
         $titles = $document->getElementsByTagName('title');
         if (count($titles) > 0) {
             $title = trim($titles->item(0)->nodeValue);
-            $title = utf8_decode($title);
         } else {
             $title = $base_url;
         }
@@ -315,8 +315,8 @@ class PostController extends Controller
         if (empty($image_path)) {
             return;
         }
-        
-        if (config('benotes.use_filesystem') == false) {
+
+        if (config('benotes.use_filesystem', true) == false) {
             $post->image_path = $image_path;
             $post->save();
             return;
