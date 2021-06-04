@@ -43,7 +43,7 @@ This project is currently in **Beta**. You may encounter bugs or errors.
 - generate a random string for ```APP_KEY``` in your ```.env``` file e.g. ```openssl rand -base64 32``` 
 (_for security reasons_)
 - create a database
-- also edit ```DB_DATABASE```, ```DB_USERNAME``` and ```DB_PASSWORD``` in ```.env``` file accordingly. If you use something else than MySQL use most likely need to adjust ```DB_CONNECTION``` and ```DB_PORT``` as well 
+- also edit ```DB_DATABASE```, ```DB_USERNAME``` and ```DB_PASSWORD``` in ```.env``` file accordingly. If you use something else than MySQL use most likely need to adjust ```DB_CONNECTION``` and ```DB_PORT``` as well  
 (_in order to be able to connect to your database_)
 - ```php artisan install```  
 (_amongst other: create database tables and fill them. Type yes if asked_)
