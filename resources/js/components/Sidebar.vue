@@ -12,7 +12,7 @@
                         <svg-vue class="w-4 fill-current mr-2" icon="remix/user-settings-fill"/>
                         <span class="align-middle text-gray-700">My Account</span>
                     </router-link>
-                    <a href="/" @click="logout()" class="collection md:px-8 px-4">
+                    <a @click="logout()" class="collection md:px-8 px-4">
                         <svg-vue class="w-4 fill-current mr-2" icon="remix/logout-circle-line"/>
                         <span class="align-middle text-gray-700">Logout</span>
                     </a>
