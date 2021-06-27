@@ -47,18 +47,35 @@ class UserTest extends TestCase
         $user = factory(User::class)->create([
             'permission' => 255
         ]);
-        
-        factory(Collection::class)->create([
+
+        $collection = factory(Collection::class)->create([
             'user_id' => $user->id
         ]);
-        
+
         factory(Post::class)->create([
-            'user_id' => $user->id
+            'user_id' => $user->id,
+            'collection_id' => $collection->id
+        ]);
+
+
+        $user2 = factory(User::class)->create();
+
+        $collection2 = factory(Collection::class)->create([
+            'user_id' => $user2->id
+        ]);
+
+        factory(Post::class)->create([
+            'user_id' => $user2->id,
+            'collection_id' => $collection2->id
         ]);
 
         $this->actingAs($user)->json('DELETE', 'api/users/' . $user->id);
 
         $this->assertEquals(200, $this->response->status());
+
+        // only data of the deleted user should be deleted, not everything from everyone
+        $this->assertGreaterThan(0, Post::where('user_id', $user2->id)->count());
+
     }
 
 }
