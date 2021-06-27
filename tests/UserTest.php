@@ -2,6 +2,8 @@
 
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use App\User;
+use App\Collection;
+use App\Post;
 
 class UserTest extends TestCase
 {
@@ -36,6 +38,25 @@ class UserTest extends TestCase
             'password_old' => 'Foo1234bar',
             'password_new' => 'foo1234baR'
         ]);
+
+        $this->assertEquals(200, $this->response->status());
+    }
+
+    public function testDeleteUser()
+    {
+        $user = factory(User::class)->create([
+            'permission' => 255
+        ]);
+        
+        factory(Collection::class)->create([
+            'user_id' => $user->id
+        ]);
+        
+        factory(Post::class)->create([
+            'user_id' => $user->id
+        ]);
+
+        $this->actingAs($user)->json('DELETE', 'api/users/' . $user->id);
 
         $this->assertEquals(200, $this->response->status());
     }

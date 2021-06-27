@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 
 class UserPolicy
 {
@@ -29,7 +30,9 @@ class UserPolicy
      */
     public function update(User $authUser, User $user)
     {
-        return $authUser->id === $user->id;
+        return $authUser->id === $user->id
+            ? Response::allow()
+            : Response::deny('Only the user himself can change these information.');
     }
 
     /**

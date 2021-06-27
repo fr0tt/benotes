@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Gate;
 
 use App\User;
+use App\Collection;
+use App\Post;
 
 class UserController extends Controller
 {
@@ -74,8 +76,12 @@ class UserController extends Controller
         if (!$user) {
             return response()->json('User not found.', 404);
         }
-        $this->authorize('update', $user);
-        
+
+        $response = Gate::inspect('update', $user);
+        if (!$response->allowed()) {
+            return response()->json($response->message(), 403);
+        }
+
         $user->update($request->only('name', 'email'));
 
         if (Hash::check($request->password_old, $user->password)) {
@@ -94,7 +100,12 @@ class UserController extends Controller
             return response()->json('User not found.', 404);
         }
         $this->authorize('delete', User::class);
-        $user->delete();
+
+        Post::where('user_id', $user->id)->forceDelete();
+        Collection::where('user_id', $user->id)->forceDelete();
+        $user->forceDelete();
+
+        return response()->json('User was deleted.', 200);
 
     }
 

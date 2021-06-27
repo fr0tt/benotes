@@ -89,6 +89,7 @@ export default {
                     const user = response.data.data
                     this.$store.dispatch('auth/setAuthUser', user)
                 }).catch(error => {
+                    console.log(error)
                     if (typeof error.response.data === 'object') {
                         const firstError = error.response.data[Object.keys(error.response.data)[0]]
                         this.error = firstError.toString()
@@ -116,10 +117,14 @@ export default {
         },
         del () {
             axios.delete('/api/users/' + this.id)
-                .then(response => {
+                .then(() => {
                     this.$router.push({ path: '/users' })
                 }).catch(error => {
-                    this.error = error.response.data
+                    if (error.response.headers['content-type'].includes('json')) {
+                        this.error = error.response.data
+                    } else {
+                        this.error = 'Failed. Error ' + error.response.status
+                    }
                 })
         }
     },
