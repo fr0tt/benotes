@@ -56,7 +56,7 @@ This project is currently in **Beta**. You may encounter bugs or errors.
 
 **Installation on Heroku**:
 
-- [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+- [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/fr0tt/benotes)
 - run command: ```php artisan install --only-user``` (_by clicking the 'more' button and 'run console'_)
 
 Please note that this button **only** allows you to easily install the application. For updating it see section *Upgrade on Heroku* in **Upgrade** down below.
