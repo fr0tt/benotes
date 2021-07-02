@@ -29,7 +29,7 @@ This project is currently in **Beta**. You may encounter bugs or errors.
 - git  (_https://git-scm.com_)
 - composer  (_https://getcomposer.org_)
 - PHP ≥ 7.2.5
-- MySQL, Postgres, SQLite or SQL Server (currently only MySQL is tested)
+- MySQL, Postgres, SQLite or SQL Server (currently only MySQL and PostgreSQL were tested)
 
 **Installation**:
 
@@ -57,6 +57,7 @@ This project is currently in **Beta**. You may encounter bugs or errors.
 **Installation on Heroku**:
 
 - [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+(_if the referrer link won't work properly on your device, try to use for deploying the original application: https://heroku.com/deploy?template=https://github.com/fr0tt/benotes_)
 - run command: ```php artisan install --only-user``` (_by clicking the 'more' button and 'run console'_)
 
 Please note that this button **only** allows you to easily install the application. For updating it see section *Upgrade on Heroku* in **Upgrade** down below.
