@@ -8,8 +8,6 @@
 <img src="https://user-images.githubusercontent.com/33751346/115884212-ee754800-a44e-11eb-940d-b9e96eeeab36.png"
     alt="Benotes Thumbnail">
 
-<a href="https://www.producthunt.com/posts/benotes?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-benotes" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=294704&theme=light" alt="Benotes - Open source web app for your notes and bookmarks | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
-
 An open source self hosted web app for your notes and bookmarks side by side.
 
 This project is currently in **Beta**. You may encounter bugs or errors.
@@ -43,7 +41,7 @@ This project is currently in **Beta**. You may encounter bugs or errors.
 - generate a random string for ```APP_KEY``` in your ```.env``` file e.g. ```openssl rand -base64 32``` 
 (_for security reasons_)
 - create a database
-- also edit ```DB_DATABASE```, ```DB_USERNAME``` and ```DB_PASSWORD``` in ```.env``` file accordingly. If you use something else than MySQL use most likely need to adjust ```DB_CONNECTION``` and ```DB_PORT``` as well  
+- also edit ```DB_DATABASE```, ```DB_USERNAME``` and ```DB_PASSWORD``` in ```.env``` file accordingly. If you use something else than MySQL you most likely need to adjust ```DB_CONNECTION``` and ```DB_PORT``` as well  
 (_in order to be able to connect to your database_)
 - ```php artisan install```  
 (_amongst other: create database tables and fill them. Type yes if asked_)

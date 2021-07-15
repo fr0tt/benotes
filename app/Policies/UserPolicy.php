@@ -32,7 +32,7 @@ class UserPolicy
     {
         return $authUser->id === $user->id
             ? Response::allow()
-            : Response::deny('Only the user himself can change these information.');
+            : Response::deny('Only the user itself can change these information.');
     }
 
     /**
