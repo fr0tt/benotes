@@ -271,10 +271,12 @@ class PostController extends Controller
             } else if ($meta->getAttribute('name') === 'theme-color') {
                 $color = $meta->getAttribute('content');
             } else if ($meta->getAttribute('property') === 'og:image') {
-                $image_path = $meta->getAttribute('content');
-                $base_image_url = parse_url($image_path);
-                if ($base_image_url['path'] === $image_path) {
-                    $image_path = $base_url.$image_path;
+                if ($meta->getAttribute('content') != '') {
+                    $image_path = $meta->getAttribute('content');
+                    $base_image_url = parse_url($image_path);
+                    if ($base_image_url['path'] === $image_path) {
+                        $image_path = $base_url.$image_path;
+                    }
                 }
             }
         }
