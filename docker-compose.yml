@@ -1,0 +1,45 @@
+version: "3.6"
+services:
+    app:
+        container_name: app
+        build:
+            args:
+                - USE_COMPOSER=${USE_COMPOSER}
+                - RUN_MIGRATIONS=${RUN_MIGRATIONS}
+                - INSTALL_NODE=${INSTALL_NODE}
+            context: ./
+        restart: unless-stopped
+        ports:
+            - ${DOCKER_PORT}:80
+        volumes:
+            - ./:/var/www
+            #- benotes_storage:/var/www/storage
+            - ./docker/data/nginx/logs/:/var/lib/nginx/logs/ 
+        networks:
+            - benotes
+
+    db:
+        container_name: db
+        image: mysql:5.7
+        restart: unless-stopped
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+        ports:
+            - 3306
+        volumes:
+            - benotes_mysql:/var/lib/mysql
+        networks:
+            - benotes
+
+networks:
+    benotes:
+        driver: bridge
+
+volumes:
+    benotes_mysql:
+        driver: "local"
+    #benotes_storage:
+        #driver: "local"
