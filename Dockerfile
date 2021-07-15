@@ -13,7 +13,11 @@ RUN apk --no-cache update && apk --no-cache add \
     git \
     curl \
     curl-dev \
+    zlib-dev \
+    php7-zlib \
     libpng-dev \
+    libjpeg-turbo \
+    libjpeg-turbo-dev \
     libxml2-dev \
     libmcrypt-dev \
     libpq \
@@ -23,6 +27,10 @@ RUN apk --no-cache update && apk --no-cache add \
     libzip-dev \
     libmcrypt-dev \
     openssl
+
+RUN docker-php-ext-configure gd \
+    --enable-gd \
+    --with-jpeg
 
 RUN docker-php-ext-install \ 
     pdo \
@@ -79,8 +87,3 @@ RUN if [ "$INSTALL_NODE" = "true" ] ; \
 RUN ln -snf ../storage/app/public/ public/storage
 
 USER $user
-
-
-
-
-

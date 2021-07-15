@@ -55,8 +55,9 @@
 - ```cp .env.docker.example .env```
 - edit ```.env``` and set a random secret for ```APP_KEY``` (generated with e.g. ```openssl rand -base64 32```)
 and set ```APP_PORT``` if necessary
-- ```docker-compose up -d --build```  
+- ```docker-compose build```   
 (_build and start docker container_)
+- ```docker-compose up -d```   
 - ```docker-compose exec app sh```  
 (_access the app service_)
 - ```sh docker/install.sh```  

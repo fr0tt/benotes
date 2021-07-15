@@ -4,5 +4,4 @@
 
 ln -snf ../storage/app/public/ public/storage && \
 composer install --prefer-dist --no-interaction && \
-php artisan migrate && \
-php artisan install --only-user
+php artisan install
