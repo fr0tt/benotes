@@ -24,9 +24,9 @@ This project is currently in **Beta**. You may encounter bugs or errors.
 ## Installation & Upgrade
 
 Currently their are three options for you two choose from:
-- [Normal classical way](installation#classic)
-- [Docker](installation#docker)
-- [Heroku](installation#heroku)
+- [Normal classical way](installation.md#classic)
+- [Docker](installation.md#docker)
+- [Heroku](installation.md#heroku)
 
 ---
 
