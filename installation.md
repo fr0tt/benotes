@@ -62,7 +62,8 @@ and set ```APP_PORT``` if necessary
 (_access the app service_)
 - ```sh docker/install.sh```  
 (_do some necessary work like database migration and admin account creation_)
-- (based on your setup you might want to configure a reverse proxy)
+- if you wish to use it on a production server change in your ```.env``` file ```APP_ENV``` from ```local``` to ```production```
+- (based on your setup you might want to configure a reverse proxy as well)
 
 
 ### Upgrade (Docker)
