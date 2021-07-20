@@ -17,6 +17,7 @@
         "laravel/lumen-framework": "^7.0",
         "laravel/tinker": "^2.6",
         "league/flysystem": "^1.0",
+        "league/flysystem-aws-s3-v3": "^1.0",
         "ramsey/uuid": "^4.1",
         "tymon/jwt-auth": "^1.0"
     },

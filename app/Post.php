@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Post extends Model
@@ -53,9 +54,11 @@ class Post extends Model
 
     public function getImagePathAttribute($value)
     {
+        
         if (Str::startsWith($value, 'thumbnail_')) {
-            return '/storage/thumbnails/'.$value;
+            return Storage::url('thumbnails/' . $value);
         }
+        
         return $value;
     }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 
 use App\Post;
 use App\Collection;
@@ -329,9 +330,10 @@ class PostController extends Controller
             return;
         }
 
-        $image->fit(400, 210);
         $filename = 'thumbnail_' . md5($image_path) . '_' . $post->id . '.jpg';
-        $image->save(storage_path() . '/app/public/thumbnails/' . $filename, 100);
+        $image = $image->fit(400, 210)->limitColors(255);
+        Storage::put('thumbnails/' . $filename, $image->stream());
+
         $post->image_path = $filename;
         $post->save();
     }
