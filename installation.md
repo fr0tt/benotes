@@ -3,6 +3,7 @@
 - [Classic](#classic)
 - [Docker](#docker)
 - [Heroku](#heroku)
+- [Optional: S3 as Filesystem](#optional:-s3-as-filesystem)
 
 ## Classic
 
@@ -89,3 +90,31 @@ Please note that this button **only** allows you to easily install the applicati
 ### Upgrade (Heroku)
 
 - Follow the steps described at https://f-a.nz/dev/update-deploy-to-heroku-app/ (*replace https://github.com/user/my-project with https://github.com/fr0tt/benotes*)
+
+
+<br>
+<br>
+
+---
+---
+
+## Optional: S3 as Filesystem
+
+
+If you use an ephermal, non-persistent filesystem which is the case e.g. with Heroku or every Docker hosting that does not implement volumes you can use the S3 driver in order to store your data permanently.  
+
+What benefit would you gain from doing so ?
+
+Currently the only difference would be that every thumbnail from every link would use the original location of every thumbnail, meaning that your browser would need to communicate with each of them - instead of accessing them all shrinked and from on single source, your local filesystem or a S3 bucket.
+
+Every Object Storage that is S3 compliant can be used such as e.g. AWS S3, Digital Ocean Spaces or Minio.  
+- Create a bucket and make it public   
+- Add to your ```.env``` file the following with correct corresponding values:
+```
+FILESYSTEM_DRIVER     = s3
+AWS_ACCESS_KEY_ID     = yourKeyId
+AWS_SECRET_ACCESS_KEY = yourAccessKey
+AWS_DEFAULT_REGION    = us-east-1
+AWS_BUCKET            = yourCreativeBucketName
+AWS_ENDPOINT          = endpointUrl
+```
