@@ -3,7 +3,7 @@
 - [Classic](#classic)
 - [Docker](#docker)
 - [Heroku](#heroku)
-- [Optional: S3 as Filesystem](#optional:-s3-as-filesystem)
+- [Optional: S3 as Filesystem](#optional-s3-as-filesystem)
 
 ## Classic
 
@@ -57,7 +57,7 @@ For PostgreSQL have a look at https://github.com/fr0tt/benotes/issues/14
 - ```git clone https://github.com/fr0tt/benotes```  
 - ```cp .env.docker.example .env```
 - edit ```.env``` and set a random secret for ```APP_KEY``` (generated with e.g. ```openssl rand -base64 32```)
-and set ```APP_PORT``` if necessary
+and change ```APP_PORT``` if necessary
 - ```docker-compose build```   
 (_build and start docker container_)
 - ```docker-compose up -d```   
@@ -67,6 +67,7 @@ and set ```APP_PORT``` if necessary
 (_do some necessary work like database migration and admin account creation_)
 - if you wish to use it on a production server change in your ```.env``` file ```APP_ENV``` from ```local``` to ```production```
 - (based on your setup you might want to configure a reverse proxy as well)
+- for persiting data see [below](optional-s3-as-filesystem)
 
 
 ### Upgrade (Docker)
@@ -84,6 +85,7 @@ and set ```APP_PORT``` if necessary
 - [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)  
 (_if the referrer link won't work properly on your device, try to use for deploying the original application: https://heroku.com/deploy?template=https://github.com/fr0tt/benotes_)
 - run command: ```php artisan install --only-user``` (_by clicking the 'more' button and 'run console'_)
+- for persiting data see [below](optional-s3-as-filesystem)
 
 Please note that this button **only** allows you to easily install the application. For updating it see section *Upgrade on Heroku* in **Upgrade** down below.
 
@@ -100,6 +102,7 @@ Please note that this button **only** allows you to easily install the applicati
 
 ## Optional: S3 as Filesystem
 
+<br>
 
 If you use an ephermal, non-persistent filesystem which is the case e.g. with Heroku or every Docker hosting that does not implement volumes you can use the S3 driver in order to store your data permanently.  
 
