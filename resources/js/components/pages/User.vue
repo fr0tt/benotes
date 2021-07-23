@@ -39,11 +39,11 @@
                 <label class="label">Email</label>
                 <input v-model="email" placeholder="Email" type="email" class="input" required/>
             </div>
-            <div class="mb-8">
+            <div v-if="isOwner" class="mb-8">
                 <label class="label">Old Password</label>
                 <input v-model="password_old" placeholder="Old Password" type="password" class="input"/>
             </div>
-            <div class="mb-8">
+            <div v-if="isOwner" class="mb-8">
                 <label class="label">New Password</label>
                 <input v-model="password_new" placeholder="New Password" type="password" class="input"/>
             </div>
@@ -73,7 +73,7 @@ export default {
     methods: {
         update () {
             if (this.name === this.authUser.name && this.email === this.authUser.email &&
-                this.password_old === null && this.password_new === null) {
+               (this.password_old === null || this.password_new === null)) {
                 return
             }
 
@@ -131,7 +131,10 @@ export default {
     computed: {
         ...mapState('auth', [
             'authUser'
-        ])
+        ]),
+        isOwner () {
+            return this.authUser.id == this.id
+        }
     },
     created () {
         if (this.isNew) {
