@@ -14,7 +14,7 @@ class ChangeColorFromPosts extends Migration
     public function up()
     {
         Schema::table('posts', function (Blueprint $table) {
-            $table->string('color')->change();
+            $table->string('color', 40)->change();
         });
     }
 
