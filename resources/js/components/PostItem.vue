@@ -115,7 +115,18 @@ export default {
         }
         .editorContent {
             font-size: 1.1rem;
-            // line-height: 1.45;
+            line-height: 1.45;
+            .unfurling-link {
+                span {
+                    @apply text-base;
+                }
+                img {
+                    @apply w-8 h-8;
+                }
+                .ul-link {
+                    @apply hidden;
+                }
+            }
         }
     }
     @screen md {
