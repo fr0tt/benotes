@@ -11,7 +11,7 @@
                             label="name" :options="optionsCollections" :tabindex="2"/>
                     </div>
                     <EditorMenuBar :editor="editor" class="w-full my-4"/>
-                    <EditorContent :editor="editor" class="editorContent h-32 text-lg my-4"/>
+                    <EditorContent :editor="editor" class="editorContent text-lg my-4"/>
                 </div>
             </div>
         </div>
@@ -28,9 +28,19 @@ import OpenIndicator from '../OpenIndicator.vue'
 import Deselect from '../Deselect.vue'
 import 'vue-select/dist/vue-select.css'
 
-import { Editor, EditorContent } from 'tiptap'
-import { HardBreak, Blockquote, Heading, Bold, Italic,
-    Underline, Link, Code, History, Placeholder, TrailingNode } from 'tiptap-extensions'
+import { Editor, EditorContent } from '@tiptap/vue-2'
+import StarterKit from '@tiptap/starter-kit'
+import Document from '@tiptap/extension-document'
+import Text from '@tiptap/extension-text'
+import Typography from '@tiptap/extension-typography'
+import Underline from '@tiptap/extension-underline'
+import BulletList from '@tiptap/extension-bullet-list'
+import OrderedList from '@tiptap/extension-ordered-list'
+import ListItem from '@tiptap/extension-list-item'
+import Gapcursor from '@tiptap/extension-gapcursor'
+import Placeholder from '@tiptap/extension-placeholder'
+import UnfurlingLink from '../../UnfurlingLink'
+
 import EditorMenuBar from '../EditorMenuBar.vue'
 
 export default {
@@ -52,28 +62,23 @@ export default {
             title: null,
             collection: null,
             optionsCollections: [],
+            autofocus: true,
+            injectCSS: false,
             editor: new Editor({
                 editable: true,
                 extensions: [
-                    new HardBreak(),
-                    new Heading({ levels: [1, 2, 3] }),
-                    new Bold(),
-                    new Underline(),
-                    new Italic(),
-                    new Blockquote(),
-                    new Link(),
-                    new Code(),
-                    new History(),
-                    new Placeholder({
-                        emptyEditorClass: 'is-editor-empty',
-                        showOnlyWhenEditable: true,
-                        showOnlyCurrent: true
-                    }),
-                    new TrailingNode({
-                        node: 'paragraph',
-                        //notAfter: ['paragraph'],
-                    })
-                ]
+                    StarterKit,
+                    Document,
+                    Typography, // e.g. ->
+                    Text,
+                    Underline,
+                    BulletList,
+                    OrderedList,
+                    ListItem,
+                    Gapcursor,
+                    Placeholder,
+                    UnfurlingLink
+                ],
             })
         }
     },
@@ -101,6 +106,13 @@ export default {
                         }
                     })
                     .catch(error => {
+                        // @todo for   https://www.gamestar.de/xenforo/blogs/software-pirats-test-zu-spiele-unter-dem-gamestar-radar-diesmal-zu-cold-waters.18367/
+                        console.log('sff', {
+                            title: this.title,
+                            content: content,
+                            collection_id: this.collection.id,
+                            is_uncategorized: this.collection.id > 0 ? false : true
+                        })
                         console.log(error)
                     })
                 this.$router.push({ path: '/c/' + this.collectionId })
@@ -137,6 +149,7 @@ export default {
     },
     created () {
         Select.props.components.default = () => ({ OpenIndicator, Deselect })
+        // @todo does this actually work ?
         this.editor.view.props.attributes = { tabindex: '3' }
 
         const uncategorized = { name: 'Uncategorized', id: null }
@@ -177,7 +190,7 @@ export default {
                             )
                         }
                     })
-                    this.editor.setContent(this.post.content)
+                    this.editor.commands.setContent(this.post.content)
                 })
                 .catch(error => {
                     console.log(error)
@@ -210,12 +223,11 @@ export default {
         .editorContent {
             font-family: Inter, 'Noto Sans', 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
             p.is-editor-empty:first-child::before {
-                content: 'Write...';
-                color: #aaa;
-                float: left;
+                content: attr(data-placeholder);
                 pointer-events: none;
                 height: 0;
-                font-style: italic;
+                float: left;
+                @apply not-italic text-gray-600; //text-orange-600
             }
         }
     }
