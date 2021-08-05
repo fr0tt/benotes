@@ -43,7 +43,6 @@ export default {
 
         if (this.node.attrs['data-title'] === null || 
             this.node.attrs['data-title'] === '') {
-            console.log('create if')
             axios.get('/api/meta', {
                 params: {
                     url: encodeURI(this.node.attrs.href)

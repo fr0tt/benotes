@@ -67,7 +67,6 @@ export default Node.create({
         return [
             nodeInputRule(inputRegex, this.type, match => {
                 const link = match[0].replace(/<|>/g, '')
-                console.log('m', match, match[0], link)
                 return {
                     href: link
                 }
