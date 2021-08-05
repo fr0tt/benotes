@@ -1,24 +1,12 @@
 /*!
-    * tiptap v1.32.1
-    * (c) 2021 überdosis GbR (limited liability)
-    * @license MIT
-    */
-
-/*!
-    * tiptap-extensions v1.35.1
-    * (c) 2021 überdosis GbR (limited liability)
-    * @license MIT
-    */
-
-/*!
  * Vue-Lazyload.js v1.3.3
  * (c) 2019 Awe <hilongjw@gmail.com>
  * Released under the MIT License.
  */
 
 /*!
- * Vue.js v2.6.12
- * (c) 2014-2020 Evan You
+ * Vue.js v2.6.14
+ * (c) 2014-2021 Evan You
  * Released under the MIT License.
  */
 

@@ -84,7 +84,7 @@ class PostController extends Controller
         $validatedData['content'] = $this->sanitize($validatedData['content']);
 
         $info = $this->computePostData($request->title, $request->content);
-
+        
         $attributes = array_merge($validatedData, $info);
         $attributes['user_id'] = Auth::user()->id;
         $attributes['order'] = Post::where('collection_id', Collection::getCollectionId($request->collection_id))
@@ -94,7 +94,7 @@ class PostController extends Controller
         if ($info['type'] === Post::POST_TYPE_LINK) {
             $this->saveImage($info['image_path'], $post);
         }
-
+        
         return response()->json(['data' => $post], 201);
     }
 
@@ -137,7 +137,7 @@ class PostController extends Controller
             $info = $this->computePostData($request->title, $validatedData['content']);
         } else {
             $info = array();
-            $info['type'] = Post::getTypeFromString($post->type);
+            $info['type'] = $post->getOriginal('type');
         }
 
         $newValues = array_merge($validatedData, $info);
@@ -224,6 +224,8 @@ class PostController extends Controller
             $info['type'] = Post::POST_TYPE_TEXT;
         } else if (strlen($stripped_content) > strlen($matches[0])) { // contains more than just a link
             $info['type'] = Post::POST_TYPE_TEXT;
+        } else if ($stripped_content != $matches[0]) {
+            $info['type'] = Post::POST_TYPE_TEXT;
         } else {
             $info['type'] = Post::POST_TYPE_LINK;
         }
@@ -233,8 +235,8 @@ class PostController extends Controller
 
     private function sanitize($str)
     {
-        return strip_tags($str, '<a><strong><b><em><i><s><p><h1><h2><h3><h4><h5>' . 
-            '<pre><br><hr><blockquote><ul><li><ol><code>');
+        return strip_tags($str, '<a><strong><b><em><i><s><p><h1><h2><h3><h4><h5>' .
+            '<pre><br><hr><blockquote><ul><li><ol><code><unfurling-link>');
     }
 
     private function getInfo($url, $act_as_bot = false)
