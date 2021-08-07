@@ -106,13 +106,6 @@ export default {
                         }
                     })
                     .catch(error => {
-                        // @todo for   https://www.gamestar.de/xenforo/blogs/software-pirats-test-zu-spiele-unter-dem-gamestar-radar-diesmal-zu-cold-waters.18367/
-                        console.log('sff', {
-                            title: this.title,
-                            content: content,
-                            collection_id: this.collection.id,
-                            is_uncategorized: this.collection.id > 0 ? false : true
-                        })
                         console.log(error)
                     })
                 this.$router.push({ path: '/c/' + this.collectionId })

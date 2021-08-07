@@ -63,8 +63,8 @@ export default {
                     UnfurlingLink
                 ],
                 content: this.post.content,
-                onUpdate: ({ getHTML }) => {
-                    this.$store.dispatch('post/setCurrentPostContent', getHTML())
+                onUpdate: ({ editor }) => {
+                    this.$store.dispatch('post/setCurrentPostContent', editor.getHTML())
                 }
             })
         }
