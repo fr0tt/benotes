@@ -1,5 +1,5 @@
 <template>
-    <div class="card bg-gray-100" :class="{ 'active' : isActive() }">
+    <div class="card bg-gray-100" :class="{ 'active' : isActive }">
         <router-link v-if="isMobile" :to="'/p/' + post.id" class="block w-full">
             <div class="p-6 h-full">
                 <div class="text-gray-900 text-xl outline-none h-full w-full">
@@ -12,7 +12,7 @@
         </router-link>
         <div v-else class="p-6 h-full">
             <div @click="edit()" class="text-gray-900 text-xl outline-none h-full w-full"
-                :class="{ 'overflow-hidden cursor-pointer' : !isActive() }">
+                :class="{ 'overflow-hidden cursor-pointer' : !isActive }">
                 <input v-if="post.title" :value="post.title" @input="updateTitle"
                     class="text-orange-600 text-xl bg-transparent font-semibold"/>
                 <EditorContent :editor="editor" class="editorContent" />
@@ -47,6 +47,7 @@ export default {
     },
     data () {
         return {
+            isActive: false,
             editor: new Editor({
                 editable: false,
                 extensions: [
@@ -71,25 +72,21 @@ export default {
     },
     methods: {
         edit () {
-            if (this.currentPost !== null) {
-                if (this.currentPost.id === this.post.id) {
-                    return
-                }
+            if (this.isActive) {
+                return
             }
-            this.editor.setEditable(true)
+            this.setActive(true)
             this.$store.dispatch('post/setCurrentPost', this.post)
             document.querySelector('#app').addEventListener('click', this.stopEditing, true)
         },
-        isActive () {
-            if (this.currentPost === null) {
-                return false
-            }
-            return this.currentPost.id === this.post.id
+        setActive (value) {
+            this.editor.setEditable(value)
+            this.isActive = value
         },
         stopEditing (event) {
             const currentPostTarget = document.querySelector(`[post-id="${this.currentPost.id}"] .ProseMirror`)
             if (!currentPostTarget.contains(event.target)) {
-                this.editor.setEditable(false)
+                this.setActive(false)
                 document.querySelector('#app').removeEventListener('click', this.stopEditing, true)
                 const matches = this.currentPost.content.match(/^<p>(?<content>.(?:(?!<p>)(?!<\/p>).)*)<\/p>$/)
                 if (matches !== null) {

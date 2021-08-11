@@ -49,9 +49,6 @@ export default {
         ...mapState('post', [
             'contextMenu'
         ]),
-        ...mapState('post', [
-            'currentPost'
-        ]),
         show () {
             return this.contextMenu.post !== null && this.contextMenu.post.id === this.postId
         },
