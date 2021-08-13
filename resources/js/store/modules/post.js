@@ -4,7 +4,6 @@ export default {
     namespaced: true,
     state: {
         posts: null,
-        currentPost: null,
         isLoading: false,
         contextMenu: {
             post: null,
@@ -29,15 +28,6 @@ export default {
         },
         deletePost (state, index) {
             state.posts.splice(index, 1)
-        },
-        setCurrentPost (state, post) {
-            state.currentPost = post
-        },
-        setCurrentPostContent (state, content) {
-            state.currentPost.content = content
-        },
-        setCurrentPostTitle (state, title) {
-            state.currentPost.title = title
         },
         setContextMenu (state, contextMenu) {
             state.contextMenu = contextMenu
@@ -83,7 +73,6 @@ export default {
                 axios.get('/api/posts/' + id)
                     .then(response => {
                         const post = response.data.data
-                        // context.commit('setCurrentPost', post)
                         resolve(post)
                     })
                     .catch(error => {
@@ -147,15 +136,6 @@ export default {
                 .catch(error => {
                     console.log(error)
                 })
-        },
-        setCurrentPost (context, post) {
-            context.commit('setCurrentPost', post)
-        },
-        setCurrentPostContent (context, content) {
-            context.commit('setCurrentPostContent', content)
-        },
-        setCurrentPostTitle (context, title) {
-            context.commit('setCurrentPostTitle', title)
         },
         setContextMenu (context, contextMenu) {
             context.commit('setContextMenu', contextMenu)

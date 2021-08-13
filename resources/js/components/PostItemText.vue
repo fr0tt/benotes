@@ -13,7 +13,7 @@
         <div v-else class="p-6 h-full">
             <div @click="edit()" class="text-gray-900 text-xl outline-none h-full w-full"
                 :class="{ 'overflow-hidden cursor-pointer' : !isActive }">
-                <input v-if="post.title" :value="post.title" @input="updateTitle"
+                <input v-if="post.title" v-model="localPost.title"
                     class="text-orange-600 text-xl bg-transparent font-semibold"/>
                 <EditorContent :editor="editor" class="editorContent" />
             </div>
@@ -48,6 +48,7 @@ export default {
     data () {
         return {
             isActive: false,
+            localPost: null,
             editor: new Editor({
                 editable: false,
                 extensions: [
@@ -63,10 +64,7 @@ export default {
                     Placeholder,
                     UnfurlingLink
                 ],
-                content: this.post.content,
-                onUpdate: ({ editor }) => {
-                    this.$store.dispatch('post/setCurrentPostContent', editor.getHTML())
-                }
+                content: this.post.content
             })
         }
     },
@@ -76,7 +74,6 @@ export default {
                 return
             }
             this.setActive(true)
-            this.$store.dispatch('post/setCurrentPost', this.post)
             document.querySelector('#app').addEventListener('click', this.stopEditing, true)
         },
         setActive (value) {
@@ -84,29 +81,28 @@ export default {
             this.isActive = value
         },
         stopEditing (event) {
-            const currentPostTarget = document.querySelector(`[post-id="${this.currentPost.id}"] .ProseMirror`)
+            const currentPostTarget = document.querySelector(`[post-id="${this.localPost.id}"] .ProseMirror`)
             if (!currentPostTarget.contains(event.target)) {
                 this.setActive(false)
                 document.querySelector('#app').removeEventListener('click', this.stopEditing, true)
-                const matches = this.currentPost.content.match(/^<p>(?<content>.(?:(?!<p>)(?!<\/p>).)*)<\/p>$/)
-                if (matches !== null) {
-                    this.$store.commit('post/setCurrentPostContent', matches[1])
+                const content = this.editor.getHTML()
+                const matches = content.match(/^<p>(?<content>.(?:(?!<p>)(?!<\/p>).)*)<\/p>$/)
+                if (matches == null) {
+                    this.localPost.content = content
+                } else {
+                    this.localPost.content = matches[1]
                 }
-                this.$store.dispatch('post/updatePost', { post: this.currentPost })
-                this.$store.dispatch('post/setCurrentPost', null)
+                this.$store.dispatch('post/updatePost', { post: this.localPost })
             }
-        },
-        updateTitle (event) {
-            this.$store.dispatch('post/setCurrentPostTitle', event.target.value)
-        },
+        }
     },
     computed: {
-        ...mapState('post', [
-            'currentPost'
-        ]),
         ...mapState([
             'isMobile'
         ])
+    },
+    created () {
+        this.localPost = Object.assign({}, this.post)
     },
     beforeDestroy () {
         this.editor.destroy()
