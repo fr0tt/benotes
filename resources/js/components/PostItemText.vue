@@ -1,16 +1,17 @@
 <template>
     <div class="card bg-gray-100" :class="{ 'active' : isActive }">
         <router-link v-if="isMobile" :to="'/p/' + post.id" class="block w-full">
-            <div class="p-6 h-full">
+            <div class="p-6 h-full overflow-hidden">
                 <div class="text-gray-900 text-xl outline-none h-full w-full">
                     <p v-if="post.title" class="text-orange-600 text-xl bg-transparent font-semibold">
                         {{ post.title }}
                     </p>
-                    <div class="editorContent" v-html="post.content"></div>
+                    <!--<div class="editorContent" v-html="post.content"></div>-->
+                    <EditorContent :editor="editor" class="editorContent" />
                 </div>
             </div>
         </router-link>
-        <div v-else class="p-6 h-full">
+        <div v-else class="p-6 h-full overflow-hidden">
             <div @click="edit()" class="text-gray-900 text-xl outline-none h-full w-full"
                 :class="{ 'overflow-hidden cursor-pointer' : !isActive }">
                 <input v-if="post.title" v-model="localPost.title"
