@@ -137,7 +137,7 @@ class PostController extends Controller
             $info = $this->computePostData($request->title, $validatedData['content']);
         } else {
             $info = array();
-            $info['type'] = $post->getOriginal('type');
+            $info['type'] = $post->getRawOriginal('type');
         }
 
         $newValues = array_merge($validatedData, $info);
