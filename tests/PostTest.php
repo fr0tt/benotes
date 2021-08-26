@@ -71,7 +71,7 @@ class PostTest extends TestCase
         $this->assertEquals(201, $this->response->status());
         $data = $this->response->getData()->data;
         $this->assertEquals('text', $data->type);
-        $this->assertContains($content, $data->content);
+        $this->assertEquals($content, $data->content);
     }
 
     public function testUpdatePost()
