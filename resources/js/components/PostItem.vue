@@ -36,10 +36,14 @@
             </div>
         </div>
         <PostItemText v-else-if="post.type === 'text'" 
-            :post="post" 
+            :post="post"
             :showContextMenu="showContextMenu"
             :permission="permission"/> 
         <PostItemPlaceholder v-else/>
+        <div v-if="debug" class="absolute bottom-0 w-full">
+            <span class="px-1 bg-orange-200">id:{{ post.id }}</span>
+            <span class="px-1 bg-orange-200 float-right">o:{{ post.order }}</span>
+        </div>
         <ContextMenu :postId="post.id"/>
     </li>
 </template>
@@ -55,6 +59,11 @@ export default {
         ContextMenu,
         PostItemText,
         PostItemPlaceholder
+    },
+    data () {
+        return {
+            debug: false
+        }
     },
     methods: {
         showContextMenu (event) {
