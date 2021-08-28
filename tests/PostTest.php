@@ -25,6 +25,7 @@ class PostTest extends TestCase
             'https://www.amazon.com/Design-Everyday-Things-Revised-Expanded/dp/0465050654/ref=sr_1_1?dchild=1&keywords=don+norman&link_code=qs&qid=1608495907&sr=8-1&tag=operabrowser-21' => 'link',
             '<a href="https://www.wolframalpha.com" rel="noopener noreferrer nofollow">https://www.wolframalpha.com</a>' => 'link',
             '<p class="">dfgd adijfds https://google.com</p>' => 'text',
+            '<p>https://www.wolframalpha.com</p><p>https://laravel.com</p>' => 'text',
             'Hdfgd fijsdoij <a href="https://slack.com" rel="noopener noreferrer nofollow">https://slack.com</a>' => 'text',
             'https://laravel.com' => 'link',
             'Lorem ipsum https://fonts.adobe.com/fonts/realist' => 'text',
