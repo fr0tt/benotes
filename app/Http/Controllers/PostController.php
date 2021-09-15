@@ -209,7 +209,7 @@ class PostController extends Controller
     private function computePostData(string $title = null, string $content)
     {
         // more explicit: https?(:\/\/)((\w|-)+\.)+(\w+)(\/\w+)*(\?)?(\w=\w+)?(&\w=\w+)*
-        preg_match_all('/(https?:\/\/)(\w+\.\S+?)(?=\s|<|"|$)/', $content, $matches);
+        preg_match_all('/(https?:\/\/)(\S+\.\S+?)(?=\s|<|"|$)/', $content, $matches);
         $matches = $matches[0];
         $info = null;
         if (count($matches) > 0) {

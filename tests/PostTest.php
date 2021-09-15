@@ -20,6 +20,7 @@ class PostTest extends TestCase
         $posts = [
             'https://test.com' => 'link',
             'https://test.de' => 'link',
+            'https://go-rel.github.io/' => 'link',
             'https://www.youtube.com/watch?v=ZyURjdnYQaU' => 'link',
             'https://github.com/verlok/vanilla-lazyload' => 'link',
             'https://www.amazon.com/Design-Everyday-Things-Revised-Expanded/dp/0465050654/ref=sr_1_1?dchild=1&keywords=don+norman&link_code=qs&qid=1608495907&sr=8-1&tag=operabrowser-21' => 'link',
