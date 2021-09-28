@@ -85,5 +85,3 @@ RUN if [ "$INSTALL_NODE" = "true" ] ; \
 
 # will be overriden by the bind mount - if used
 RUN ln -snf ../storage/app/public/ public/storage
-
-USER $user

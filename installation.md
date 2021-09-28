@@ -39,7 +39,7 @@ For PostgreSQL have a look at https://github.com/fr0tt/benotes/issues/14
 - if you wish to use it on a production server change in your ```.env``` file ```APP_ENV``` from ```local``` to ```production```
 - configure your webserver or use for testing purposes ```php -S localhost:8000 -t public```
 
-### Upgrade
+### Upgrade (Classic)
 
 - ```git pull```  
 (*upgrade files*)
@@ -59,9 +59,10 @@ For PostgreSQL have a look at https://github.com/fr0tt/benotes/issues/14
 - edit ```.env``` and set a random secret for ```APP_KEY``` (generated with e.g. ```openssl rand -base64 32```)
 and change ```APP_PORT``` if necessary
 - ```docker-compose build```   
-(_build and start docker container_)
-- ```docker-compose up -d```   
-- ```docker-compose exec app sh```  
+(_build docker container_)
+- ```docker-compose up -d```
+(_start docker container_)  
+- ```docker-compose exec --user application app sh```  
 (_access the app service_)
 - ```sh docker/install.sh```  
 (_do some necessary work like database migration and admin account creation_)
@@ -75,6 +76,7 @@ and change ```APP_PORT``` if necessary
 - ```git pull```
 - ```docker-compose exec app sh```
 - ```sh docker/update.sh```
+(_Type yes if asked_)
 
 ---
 
