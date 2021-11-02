@@ -62,6 +62,11 @@ class Post extends Model
         return $value;
     }
 
+    public function setImagePathAttribute($value)
+    {
+        $this->attributes['image_path'] = (strlen($value) > 512) ? null : $value;
+    }
+
     public function seedIntroData($user_id, $collection_id = null)
     {
         

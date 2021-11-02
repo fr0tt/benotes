@@ -293,11 +293,7 @@ class PostController extends Controller
             // try again with bot as useragent
             return $this->getInfo($url, true);
         }
-
-        if (!empty($image_path)) {
-            $image_path = (strlen($image_path) > 512) ? null : $image_path;
-        }
-
+        
         return [
             'url'         => substr($url, 0, 512),
             'base_url'    => substr($base_url, 0, 255),
