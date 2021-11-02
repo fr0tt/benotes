@@ -294,13 +294,17 @@ class PostController extends Controller
             return $this->getInfo($url, true);
         }
 
+        if (!empty($image_path)) {
+            $image_path = (strlen($image_path) > 512) ? null : $image_path;
+        }
+
         return [
-            'url' => $url,
-            'base_url' => $base_url,
-            'title' => substr($title, 0, 200),
+            'url'         => substr($url, 0, 512),
+            'base_url'    => substr($base_url, 0, 255),
+            'title'       => substr($title, 0, 255),
             'description' => (empty($description)) ? null : $description,
-            'color' => (empty($color)) ? null : $color,
-            'image_path' => (empty($image_path)) ? null : $image_path,
+            'color'       => (empty($color)) ? null : $color,
+            'image_path'  => (empty($image_path)) ? null : $image_path,
         ];
     }
 
