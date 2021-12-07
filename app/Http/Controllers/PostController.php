@@ -21,7 +21,7 @@ class PostController extends Controller
         $this->validate($request, [
             'collection_id' => 'integer|nullable',
             'is_uncategorized' => 'boolean|nullable',
-            'limit' => 'integer|nullable'
+            'limit' => 'integer|nullable',
         ]);
         
         $request->is_uncategorized = filter_var($request->is_uncategorized, FILTER_VALIDATE_BOOLEAN);
@@ -311,7 +311,11 @@ class PostController extends Controller
         }
 
         $host = parse_url($base_url)['host'];
-        $rgb = ColorThief::getColor('https://www.google.com/s2/favicons?domain=' . $host);
+        try {
+            $rgb = ColorThief::getColor('https://www.google.com/s2/favicons?domain=' . $host);
+        } catch (\RuntimeException $e) {
+            return '#FFF';
+        }
         $hex = sprintf("#%02x%02x%02x", $rgb[0], $rgb[1], $rgb[2]);
         return $hex;
     }
