@@ -23,6 +23,11 @@
             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
             <path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/>
         </svg>
+        
+        <div v-if="post.isUpdating" class="absolute bottom-0 left-0 mb-5 ml-5">
+            <svg-vue icon="remix/refresh-line" 
+                class="button-icon remix animate-spin fill-current text-gray-900"/>
+        </div>
     </div>
 </template>
 
@@ -93,6 +98,7 @@ export default {
                 } else {
                     this.localPost.content = matches[1]
                 }
+                this.post.isUpdating = true
                 this.$store.dispatch('post/updatePost', { post: this.localPost })
             }
         }

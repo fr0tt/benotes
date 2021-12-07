@@ -5,6 +5,7 @@ export default {
     state: {
         posts: null,
         isLoading: false,
+        isUpdating: false,
         contextMenu: {
             post: null,
             target: null,
@@ -102,14 +103,18 @@ export default {
 
                     if (transfer) {
                         context.commit('deletePost', index)
-                    } else {
-                        context.commit('setPost', {
-                            post: newPost,
-                            index: index
-                        })
+                        return
                     }
+
+                    context.commit('setPost', {
+                        post: newPost,
+                        index: index
+                    })
+                    
+            
                 })
                 .catch(error => {
+                    post.isUpdating = false
                     console.log(error)
                     if (typeof error.response !== 'undefined') {
                         console.log(error.response.data)
