@@ -37,13 +37,6 @@ export default new Vuex.Store({
         }
     },
     actions: {
-        checkDevice (context) {
-            if (window.outerWidth > 768) {
-                context.commit('isMobile', false)
-            } else {
-                context.commit('isMobile', true)
-            }
-        },
         toggleSidebar (context) {
             const showSidebar = !this.state.showSidebar
             context.commit('showSidebar', showSidebar)

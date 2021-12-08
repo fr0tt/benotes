@@ -28,6 +28,11 @@ export default {
     methods: {
         createNewPost () {
             this.$router.push({ path: `/c/${this.currentCollection.id}/p/create` })
+        },
+        isMobile () {
+            let media = window.matchMedia('(max-width: 768px)')
+            this.$store.commit('isMobile', media.matches)
+            media.addEventListener("change", this.isMobile, { once: true })
         }
     },
     computed: {
@@ -39,7 +44,7 @@ export default {
         ])
     },
     created () {
-        this.$store.dispatch('checkDevice')
+        this.isMobile()
     }
 }
 </script>
