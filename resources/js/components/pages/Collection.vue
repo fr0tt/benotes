@@ -52,7 +52,11 @@ export default {
                 order: this.maxOrder - event.draggedContext.futureIndex
             })
             .catch(error => {
-                console.log(error)
+                this.$store.dispatch('notification/setNotification', {
+                    type: 'error',
+                    title: 'Error',
+                    description: 'Post could not be moved.'
+                })
             })
         },
         create () {
@@ -81,7 +85,15 @@ export default {
                         })
                     })
                     .catch(error => {
-                        console.log(error)
+                        this.$store.commit('post/deletePost', id)
+                        let message = 'Post was unable to be created.'
+                        if (!['undefined', 'object'].includes(typeof error))
+                            message = toString(error).substring(0, 60)
+                        this.$store.dispatch('notification/setNotification', {
+                            type: 'error',
+                            title: 'Error',
+                            description: message
+                        })
                     })
             })
         },
