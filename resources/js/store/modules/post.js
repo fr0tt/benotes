@@ -115,10 +115,11 @@ export default {
                 })
                 .catch(error => {
                     post.isUpdating = false
-                    console.log(error)
-                    if (typeof error.response !== 'undefined') {
-                        console.log(error.response.data)
-                    }
+                    this.$store.dispatch('notification/setNotification', {
+                        type: 'error',
+                        title: 'Error',
+                        description: 'Post could not be updated.'
+                    })
                 })
         },
         setPostById (context, { id, post }) {

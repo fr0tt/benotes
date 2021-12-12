@@ -105,8 +105,12 @@ export default {
                             this.$store.dispatch('post/addPost', response.data.data)
                         }
                     })
-                    .catch(error => {
-                        console.log(error)
+                    .catch(() => {
+                        this.$store.dispatch('notification/setNotification', {
+                            type: 'error',
+                            title: 'Error',
+                            description: 'Post could not be created.'
+                        })
                     })
                 this.$router.push({ path: '/c/' + this.collectionId })
             } else {
