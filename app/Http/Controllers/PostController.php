@@ -255,7 +255,19 @@ class PostController extends Controller
         curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
         curl_setopt($ch, CURLOPT_URL, $url);
         $html = curl_exec($ch);
+        $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
         curl_close($ch);
+
+        if (!str_contains($content_type, 'text/html')) {
+            return [
+                'url'         => substr($url, 0, 512),
+                'base_url'    => substr($base_url, 0, 255),
+                'title'       => substr($url, 0, 255),
+                'description' => null,
+                'color'       => null,
+                'image_path'  => null,
+            ];
+        }
 
         $document = new \DOMDocument();
         $html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
