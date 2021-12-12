@@ -6,17 +6,17 @@
         leave-active-class="transition ease-in duration-300 opacity-0 translate-y-64 transform"
     >
         <div v-if="showBottomSheet" id="bottomSheet" 
-            class="absolute bottom-0 w-full bg-white -shadow-md rounded-t-lg">
+            class="w-full bg-white -shadow-md rounded-t-lg">
             <div class="relative px-8 py-4 border-b-2 border-gray-400">
                 <button @click="hide" class="absolute">
                     <svg-vue class="icon text-gray-600" icon="remix/arrow-down-s-line"/>
                 </button>
                 <span class="block text-center font-medium">{{ title }}</span>
             </div>
-            <div class="px-8">
+            <div class="px-8 py-3">
                 <ol v-for="option in bottomSheet" :key="option.label" class="">
                     <li v-if="option.condition" @click="executeCallback(option.callback($event))" 
-                        class="block my-6 font-medium text-gray-700">
+                        class="block py-3 font-medium text-gray-700">
                         <svg v-html="icon(option.icon)" class="icon -mt-1 mr-6 text-gray-600"
                             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"></svg>
                         {{ option.longLabel }}

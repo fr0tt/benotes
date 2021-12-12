@@ -9,7 +9,10 @@
                 </transition>
             </div>
         </div>
-        <BottomSheet/>
+        <div class="absolute bottom-0 w-full overflow-hidden">
+            <Notification/>
+            <BottomSheet/>
+        </div>
     </div>
 </template>
 
@@ -18,12 +21,14 @@ import { mapState } from 'vuex'
 import Sidebar from './Sidebar.vue'
 import Appbar from './Appbar.vue'
 import BottomSheet from './BottomSheet.vue'
+import Notification from './Notification.vue'
 
 export default {
     components: {
         Sidebar,
         Appbar,
-        BottomSheet
+        BottomSheet,
+        Notification
     },
     methods: {
         createNewPost () {
