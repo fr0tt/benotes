@@ -19,7 +19,7 @@
         "resolve-url-loader": "^3.1.2",
         "sass": "^1.32.11",
         "sass-loader": "^11.0.1",
-        "svg-vue3": "^0.1.4",
+        "svg-vue3": "^0.2.1",
         "vue": "^2.6.12",
         "vue-loader": "^15.9.6",
         "vue-template-compiler": "^2.6.12",
