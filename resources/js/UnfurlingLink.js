@@ -41,7 +41,7 @@ export default Node.create({
     },
 
     renderHTML({ HTMLAttributes }) {
-        return ['unfurling-link', mergeAttributes(HTMLAttributes, this.options.HTMLAttributes)/*, 0*/]
+        return ['unfurling-link', mergeAttributes(HTMLAttributes/*, this.options.HTMLAttributes*/)/*, 0*/]
     },
 
     addNodeView() {
@@ -65,12 +65,14 @@ export default Node.create({
 
     addInputRules() {
         return [
-            nodeInputRule(inputRegex, this.type, match => {
-                const link = match[0].replace(/<|>/g, '')
-                return {
-                    href: link
-                }
-            })
+            nodeInputRule({
+                find: inputRegex,
+                type: this.type,
+                getAttributes: match => {
+                    const link = match[0].replace(/<|>/g, '')
+                    return { href: link }
+                },
+            }),
         ]
     },
 

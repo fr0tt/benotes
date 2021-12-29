@@ -30,14 +30,8 @@ import 'vue-select/dist/vue-select.css'
 
 import { Editor, EditorContent } from '@tiptap/vue-2'
 import StarterKit from '@tiptap/starter-kit'
-import Document from '@tiptap/extension-document'
-import Text from '@tiptap/extension-text'
 import Typography from '@tiptap/extension-typography'
 import Underline from '@tiptap/extension-underline'
-import BulletList from '@tiptap/extension-bullet-list'
-import OrderedList from '@tiptap/extension-ordered-list'
-import ListItem from '@tiptap/extension-list-item'
-import Gapcursor from '@tiptap/extension-gapcursor'
 import Placeholder from '@tiptap/extension-placeholder'
 import UnfurlingLink from '../../UnfurlingLink'
 
@@ -68,14 +62,16 @@ export default {
                 editable: true,
                 extensions: [
                     StarterKit,
-                    Document,
                     Typography, // e.g. ->
+                    /* included in StarterKit
+                    Document,
                     Text,
-                    Underline,
                     BulletList,
                     OrderedList,
                     ListItem,
                     Gapcursor,
+                    */
+                    Underline,
                     Placeholder,
                     UnfurlingLink
                 ],

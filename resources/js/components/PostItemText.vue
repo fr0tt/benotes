@@ -35,14 +35,8 @@
 import { mapState } from 'vuex'
 import { Editor, EditorContent } from '@tiptap/vue-2'
 import StarterKit from '@tiptap/starter-kit'
-import Document from '@tiptap/extension-document'
-import Text from '@tiptap/extension-text'
 import Typography from '@tiptap/extension-typography'
 import Underline from '@tiptap/extension-underline'
-import BulletList from '@tiptap/extension-bullet-list'
-import OrderedList from '@tiptap/extension-ordered-list'
-import ListItem from '@tiptap/extension-list-item'
-import Gapcursor from '@tiptap/extension-gapcursor'
 import Placeholder from '@tiptap/extension-placeholder'
 import UnfurlingLink from '../UnfurlingLink'
 
@@ -59,14 +53,16 @@ export default {
                 editable: false,
                 extensions: [
                     StarterKit,
-                    Document,
                     Typography,
-                    Text,
                     Underline,
+                    /* included in StarterKit
+                    Document,
+                    Text,
                     BulletList,
                     OrderedList,
                     ListItem,
                     Gapcursor,
+                    */
                     Placeholder,
                     UnfurlingLink
                 ],
