@@ -95,9 +95,8 @@ export default {
                 this.selectOptionWithKey()
                 return
             }
-
             let searchString = this.searchValue
-
+            
             // first word is either collection or the actual first search word
             if (searchString.startsWith('/')) {
                 const firstWordIndex = searchString.indexOf(' ') - 1
@@ -114,9 +113,6 @@ export default {
                     }
                 }
             }
-            /*
-            this.$router.push({ path: 'search', query: { query: searchString } })
-            */
             this.$store.dispatch('post/fetchPosts', { 
                 collectionId: this.searchCollection ? this.searchCollection.id : null, 
                 filter: searchString

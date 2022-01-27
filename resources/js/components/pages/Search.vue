@@ -27,10 +27,6 @@ import Post from '../PostItem.vue'
 import Searchbar from '../Searchbar.vue'
 
 export default {
-    props: {
-        collectionId: Number, 
-        query: String,
-    },
     components: {
         Post,
         Searchbar
@@ -52,14 +48,6 @@ export default {
         this.$store.commit('post/setPosts', [])
         this.$store.dispatch('appbar/setAppbar', {
             title: 'Search',
-            /*
-            hint: null,
-            button: {
-                label: '',
-                icon: '',
-                callback: null
-            },
-            */
             hint: 'Ctrl + Alt + N',
             button: {
                 label: 'Create',

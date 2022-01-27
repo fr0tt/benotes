@@ -4,6 +4,10 @@
             <div>
                 <br>
                 <div class="list">
+                    <router-link to="/search" tag="li" class="collection md:px-8 px-4">
+                        <svg-vue class="w-4 fill-current mr-2" icon="remix/search-line"/>
+                        <span class="align-middle text-gray-700">Search</span>
+                    </router-link>
                     <router-link to="/users" tag="li" class="collection md:px-8 px-4">
                         <svg-vue class="w-4 fill-current mr-2" icon="remix/group-fill"/>
                         <span class="align-middle text-gray-700">Users</span>

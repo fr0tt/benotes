@@ -75,11 +75,6 @@ export default [
                 path: 'search',
                 name: 'search',
                 component: Search,
-                props: (route) => ({
-                    collectionId: parseInt(route.query.collectionId),
-                    isUncategorized: route.query.isUncategorized,
-                    query: route.query.query
-                }),
                 meta: {
                     authUser: true
                 }

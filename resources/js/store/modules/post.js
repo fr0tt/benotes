@@ -54,16 +54,7 @@ export default {
         fetchPosts (context, { collectionId, filter = null }) {
             context.commit('isLoading', true)
             context.commit('setPlaceholderPosts')
-
-            /*
-            axios.get('/api/posts', {
-                params: {
-                    collection_id: (collectionId > 0) ? collectionId : null,
-                    is_uncategorized: (collectionId === 0) | 0,
-                    filter: filter,
-                }
-            })
-            */
+            
             getPosts(collectionId, filter)
                 .then(response => {
                     const posts = response.data.data
