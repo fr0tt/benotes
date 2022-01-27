@@ -19,7 +19,8 @@ module.exports = {
                 },
                 gray: {
                     ...colors.gray,
-                    '100': '#fbfbfb'
+                    '100': '#fbfbfb',
+                    '200': '#f3f3f3',
                 }
             },
             fontFamily: {

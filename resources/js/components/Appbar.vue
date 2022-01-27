@@ -7,6 +7,7 @@
                 </button>
             </div>
             <div class="flex-1 mb-0 my-auto text-center">
+                <!--<Searchbar v-if="$route.name === 'collection'" class="text-left"/>-->
                 <span class="text-gray-800 font-medium text-xl">{{ title }}</span>
             </div>
             <div v-if="permission >= 6">
@@ -35,9 +36,15 @@
 </template>
 
 <script>
+
 import { mapState } from 'vuex'
+import Searchbar from './Searchbar.vue'
+
 export default {
     name: 'Appbar',
+    components: {
+        Searchbar
+    },
     methods: {
         toggleSidebar () {
             this.$store.dispatch('toggleSidebar')

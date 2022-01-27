@@ -2,6 +2,7 @@ import App from './components/App'
 import Post from './components/pages/Post'
 import Collection from './components/pages/Collection'
 import EditCollection from './components/pages/EditCollection'
+import Search from './components/pages/Search'
 import Users from './components/pages/Users'
 import User from './components/pages/User'
 import Login from './components/pages/Login'
@@ -65,6 +66,19 @@ export default [
                 component: Post,
                 props: (route) => ({
                     collectionId: parseInt(route.params.collectionId)
+                }),
+                meta: {
+                    authUser: true
+                }
+            },
+            {
+                path: 'search',
+                name: 'search',
+                component: Search,
+                props: (route) => ({
+                    collectionId: parseInt(route.query.collectionId),
+                    isUncategorized: route.query.isUncategorized,
+                    query: route.query.query
                 }),
                 meta: {
                     authUser: true

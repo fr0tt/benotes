@@ -1,9 +1,10 @@
 import axios from 'axios'
+import { getPosts } from './../../api/post.js'
 
 export default {
     namespaced: true,
     state: {
-        posts: null,
+        posts: [],
         isLoading: false,
         isUpdating: false,
         contextMenu: {
@@ -50,15 +51,20 @@ export default {
         }
     },
     actions: {
-        fetchPosts (context, collectionId) {
+        fetchPosts (context, { collectionId, filter = null }) {
             context.commit('isLoading', true)
             context.commit('setPlaceholderPosts')
+
+            /*
             axios.get('/api/posts', {
                 params: {
                     collection_id: (collectionId > 0) ? collectionId : null,
-                    is_uncategorized: (collectionId === 0) | 0
+                    is_uncategorized: (collectionId === 0) | 0,
+                    filter: filter,
                 }
             })
+            */
+            getPosts(collectionId, filter)
                 .then(response => {
                     const posts = response.data.data
                     context.commit('isLoading', false)

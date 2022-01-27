@@ -1,0 +1,100 @@
+<template>
+    <div class="min-h-full">
+        <div class="sm:ml-8 px-2"> 
+            <Searchbar class="my-8"/>
+            <transition name="collection-fade">
+                <ul v-if="isLoading" class="-ml-4">
+                    <Post v-for="post in posts" :key="post.id" :post="post" />
+                </ul>
+                <div v-else-if="posts.length < 1">
+                    No search results.
+                </div>
+                <ul v-else class="-ml-4">
+                    <transition-group name="grid-fade">
+                        <Post v-for="post in posts" 
+                            :key="post.id" :post="post" />
+                    </transition-group>
+                </ul>
+            </transition>
+        </div>
+    </div>
+</template>
+
+<script>
+
+import { mapState } from 'vuex'
+import Post from '../PostItem.vue'
+import Searchbar from '../Searchbar.vue'
+
+export default {
+    props: {
+        collectionId: Number, 
+        query: String,
+    },
+    components: {
+        Post,
+        Searchbar
+    },
+    computed: {
+        ...mapState('post', [
+            'posts'
+        ]),
+        ...mapState('post', [
+            'isLoading'
+        ]),
+    },
+    methods: {
+        goToCreatePost() {
+            this.$router.push(`/c/0/p/create`)
+        }
+    },
+    created () {
+        this.$store.commit('post/setPosts', [])
+        this.$store.dispatch('appbar/setAppbar', {
+            title: 'Search',
+            /*
+            hint: null,
+            button: {
+                label: '',
+                icon: '',
+                callback: null
+            },
+            */
+            hint: 'Ctrl + Alt + N',
+            button: {
+                label: 'Create',
+                callback: this.goToCreatePost,
+                icon: 'add'
+            },
+            options: null,
+        })
+    },
+}
+</script>
+<style lang="scss">
+    .collection-fade-enter-active, .collection-fade-leave {
+        transition: opacity .6s;
+    }
+    .collection-fade-enter, .collection-fade-leave-to {
+        opacity: 0;
+    }
+    .item-transition {
+        transition: all 0.4s;
+    }
+    .grid-fade-enter-active {
+        transition: all 0.2s;
+    }
+    /*.grid-fade-leave-active {
+        position: absolute;
+    }*/
+    .grid-fade-leave-to {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    .grid-fade-enter {
+        opacity: 0;
+    }
+    .mb-1\/5 {
+        margin-bottom: 0.05rem;
+    }
+</style>

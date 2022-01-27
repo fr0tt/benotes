@@ -2,7 +2,7 @@
     <div class="min-h-full">
         <div class="sm:ml-4 -ml-2 px-2">
             <transition name="collection-fade">
-                <Draggable v-if="!isLoading"  tag="ol" v-model="posts" :move="dragged"
+                <Draggable v-if="!isLoading" tag="ol" v-model="posts" :move="dragged"
                     @start="drag = true" @end="drag = false" 
                     :delay="90" :delayOnTouchOnly="true"
                     v-bind="{ animation: 200 }" 
@@ -45,7 +45,7 @@ export default {
     },
     methods: {
         init () {
-            this.$store.dispatch('post/fetchPosts', this.collectionId)
+            this.$store.dispatch('post/fetchPosts', { collectionId: this.collectionId})
         },
         dragged (event) {
             axios.patch('/api/posts/' + event.draggedContext.element.id, {

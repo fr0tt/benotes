@@ -22,6 +22,7 @@ class PostController extends Controller
             'collection_id' => 'integer|nullable',
             'is_uncategorized' => 'boolean|nullable',
             'limit' => 'integer|nullable',
+            'filter' => 'string|nullable'
         ]);
         
         $request->is_uncategorized = filter_var($request->is_uncategorized, FILTER_VALIDATE_BOOLEAN);
@@ -37,6 +38,12 @@ class PostController extends Controller
                 ]);
             } else {
                 $posts = Post::where('user_id', Auth::user()->id);
+            }
+            if (isset($request->filter)) {
+                $posts = $posts->where(function ($query) use ($request) {
+                    $query->where('title', 'LIKE', "%{$request->filter}%")
+                        ->orWhere('content', 'LIKE', "%{$request->filter}%");
+                });
             }
         } else if (Auth::guard('share')->check()) {
             $share = Auth::guard('share')->user();
@@ -300,7 +307,7 @@ class PostController extends Controller
         if (empty($color)) {
             $color = $this->getDominantColor($base_url);
         }
-
+        
         if (empty($description) && empty($image_path) &! $act_as_bot) {
             // try again with bot as useragent
             return $this->getInfo($url, true);
