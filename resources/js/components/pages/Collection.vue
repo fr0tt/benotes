@@ -66,6 +66,11 @@ export default {
             // may only work with a secure connection
             navigator.clipboard.readText().then(content => {
                 if (content === '' || content === null) {
+                    this.$store.dispatch('notification/setNotification', {
+                        type: 'error',
+                        title: 'Nothing to paste',
+                        description: 'Clipboard is empty.'
+                    })
                     return
                 }
                 const id = 'placeholder-' + this.maxOrder + 1
@@ -122,13 +127,6 @@ export default {
                     callback: this.editCollection,
                     icon: 'edit',
                     color: 'gray',
-                    condition: this.isRealCollection
-                },{
-                    label: 'Delete',
-                    longLabel: 'Delete Collection',
-                    callback: this.deleteCollection,
-                    icon: 'delete',
-                    color: 'red',
                     condition: this.isRealCollection
                 }
             ])
@@ -197,13 +195,6 @@ export default {
                     callback: this.editCollection,
                     icon: 'edit',
                     color: 'gray',
-                    condition: this.isRealCollection,
-                },{
-                    label: 'Delete',
-                    longLabel: 'Delete Collection',
-                    callback: this.pasteNewPost,
-                    icon: 'delete',
-                    color: 'red',
                     condition: this.isRealCollection,
                 }
             ]

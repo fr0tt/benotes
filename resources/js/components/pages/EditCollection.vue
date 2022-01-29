@@ -3,10 +3,12 @@
         <div class="w-full collection">
             <h1 class="text-3xl font-bold mb-4">{{ headline }}</h1>
             <p class="text-xl mb-16">{{ description }}</p>
+
             <div class="mb-10">
                 <label class="label">Name of Collection</label>
                 <input v-model="name" placeholder="Name" autofocus class="input"/>
             </div>
+
             <div v-if="!isNew" class="mb-16">
                 <label class="label inline-block">Collection Url</label>
                 <button @click="is_active = !is_active" class="switch"
@@ -14,20 +16,29 @@
                     : 'border-gray-600 text-gray-600']">
                     {{ switchValue }}
                 </button>
+
                 <div class="w-full mt-4 md:mt-0 md:flex">
                     <input class="input readonly" :value="domain" readonly/>
                     <div class="flex flex-1 mt-1 md:mt-0">
-                        <input v-model="token" class="input flex-1 mr-1" placeholder="Collection Url"/>
+                        <input v-model="token" class="input flex-1 mx-1" placeholder="Collection Url"/>
                         <div v-if="isSupported" @click="copy" 
                             class="bg-gray-300 px-2 mr-1 rounded cursor-pointer">
-                            <svg-vue class="w-6 mt-3" icon="material/link"/>
+                            <svg-vue class="w-6 mt-2.5" icon="material/link"/>
                         </div>
                         <div @click="generate()" 
                             class="px-2 bg-gray-300 rounded cursor-pointer">
-                            <svg-vue class="w-6 mt-3" icon="material/autorenew"/>
+                            <svg-vue class="w-6 mt-2.5" icon="material/autorenew"/>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div v-if="!isNew" class="mb-14 py-6 px-6 bg-red-400 rounded">
+                <h3 class="text-xl font-semibold mb-1">Delete collection</h3>
+                <p class="mb-4">Delete this collection and all its content.</p>
+                <button title="Delete Collection" @click="deleteCollection" class="button red mb-2">
+                    Delete
+                </button>
             </div>
         </div>
     </div>
@@ -68,6 +79,15 @@ export default {
             this.$store.dispatch('collection/updateCollection', { id: this.id, name: this.name })
             this.handleShare()
             this.$router.push({ path: '/c/' + this.id })
+        },
+        deleteCollection () {
+            this.$store.dispatch('collection/deleteCollection', this.id)
+            this.$store.dispatch('notification/setNotification', {
+                type: 'deletion',
+                title: 'Collection deleted',
+                description: 'Collection was successfully deleted.'
+            })
+            this.$router.push({ path: '/' })
         },
         copy (event) {
             navigator.clipboard.writeText(this.domain + this.token).catch((error) => {
@@ -138,7 +158,7 @@ export default {
             }
         },
         domain () {
-            return window.location.protocol + '//' + window.location.hostname + '/s?token='
+            return origin + '/s?token='
         },
         ...mapState('collection', [
             'collections'
@@ -198,7 +218,7 @@ export default {
     }
     .collection {
         input.readonly {
-            @apply text-white bg-gray-600 border-none w-auto;
+            @apply text-white border-gray-700 bg-gray-600 w-auto;
         }
         .label.inline-block {
             @apply inline-block;
@@ -207,5 +227,8 @@ export default {
     .px-1\.5 {
         padding-right: 0.375rem;
         padding-left: 0.375rem;
+    }
+    .button.red:hover {
+        border-color: #fff;
     }
 </style>

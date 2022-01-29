@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 /**
- * @param {int} collection_id Should already be parsed by parseCollectionId()
+ * @param {int} collection_id  Should already be parsed by parseCollectionId()
  * @param {string} filter
  */
 function getPosts (collection_id, filter = null) {
