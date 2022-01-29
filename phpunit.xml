@@ -14,9 +14,9 @@
         </include>
     </coverage>
     <php>
-        <env name="APP_ENV" value="testing"/>
-        <env name="DB_DATABASE" value="benotes_test"/>
-        <env name="CACHE_DRIVER" value="array"/>
-        <env name="QUEUE_CONNECTION" value="sync"/>
+        <server name="APP_ENV" value="testing"/>
+        <server name="DB_DATABASE" value="benotes_test"/>
+        <server name="CACHE_DRIVER" value="array"/>
+        <server name="QUEUE_CONNECTION" value="sync"/>
     </php>
 </phpunit>
