@@ -69,6 +69,7 @@ class Post extends Model
 
     public function seedIntroData($user_id, $collection_id = null)
     {
+        $i = 1;
         
         Post::create([
             'title'         => 'GitHub - fr0tt/benotes: An open source self hosted web app for your notes and bookmarks.',
@@ -80,27 +81,34 @@ class Post extends Model
             'base_url'      => 'https://github.com',
             'collection_id' => $collection_id,
             'user_id'       => $user_id,
-            'order'         => 1
+            'order'         => $i++,
         ]);
 
         Post::create([
             'title'         => 'Also...',
-            'content'       => '<p>you can save/paste bookmarks !</p>',
+            'content'       => '<p>you can save (or paste, if your browser allows it) bookmarks ! ➡️</p>',
             'type'          => self::POST_TYPE_TEXT,
             'description'   => null,
             'collection_id' => $collection_id,
             'user_id'       => $user_id,
-            'order'         => 2
+            'order'         => $i++
         ]);
 
         Post::create([
-            'title'         => 'First Post',
-            'content'       => '<p>This post demonstrates different features of Benotes. <br>You can write <strong>bold</strong>, <em>italic</em> or <strong>combine <em>them</em></strong><em>.</em></p><blockquote><p>Blockquotes are also a thing</p></blockquote><p></p>',
+            'title'         => 'Text Post 📝',
+            'content'       => '<p>This post demonstrates different features of Benotes. <br>'.
+                               'You can write <strong>bold</strong>, '.
+                               '<em>italic</em> or <strong>combine <em>them</em></strong><em>.</em></p>'.
+                               '<blockquote><p>Blockquotes are also a thing</p></blockquote>'.
+                               '<hr> <p>You can also use Markdown in order to type faster. <br>'.
+                               'If you are not familiar with the syntax have a look at</p>'.
+                               '<unfurling-link href="https://www.markdownguide.org/cheat-sheet/" '.
+                               'data-title="Markdown Cheat Sheet | Markdown Guide"></unfurling-link>',
             'type'          => self::POST_TYPE_TEXT,
             'description'   => null,
             'collection_id' => $collection_id,
             'user_id'       => $user_id,
-            'order'         => 3
+            'order'         => $i++
         ]);
         
     }
