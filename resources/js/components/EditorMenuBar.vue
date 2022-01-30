@@ -118,6 +118,13 @@ export default {
         padding-top: 0.375rem;
         padding-bottom: 0.375rem;
     }
+    @media (max-width: 768px) {
+        .menubar {
+            overflow-x: scroll;
+            white-space: nowrap;
+            @apply py-1.5;
+        }
+    }
     .delimiter {
         @apply inline-block align-middle h-6 mx-2 border border-gray-400;
     }
