@@ -4,73 +4,58 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Intervention\Image\Facades\Image;
-use Illuminate\Support\Facades\Storage;
 
 use App\Post;
 use App\Collection;
-
-use ColorThief\ColorThief;
+use App\User;
+use App\Services\PostService;
+use Symfony\Component\HttpFoundation\Response;
 
 class PostController extends Controller
 {
 
-    public function index(Request $request)
+    private $service;
+
+    public function __construct()
     {
+        $this->service = new PostService();
+    }
+
+    public function index(Request $request)
+    { 
 
         $this->validate($request, [
-            'collection_id' => 'integer|nullable',
+            'collection_id'    => 'integer|nullable',
             'is_uncategorized' => 'boolean|nullable',
-            'limit' => 'integer|nullable',
-            'filter' => 'string|nullable'
+            'filter'           => 'string|nullable',
+            'limit'            => 'integer|nullable',
         ]);
         
-        $request->is_uncategorized = filter_var($request->is_uncategorized, FILTER_VALIDATE_BOOLEAN);
+        $auth_type = User::getAuthenticationType();
 
-        if (Auth::guard('api')->check()) {
-            if (isset($request->collection_id)
-                || (isset($request->is_uncategorized) && $request->is_uncategorized === true)) {
-                $collection_id = Collection::getCollectionId($request->collection_id, 
-                    $request->is_uncategorized);
-                $posts = Post::where([
-                    ['collection_id', '=', $collection_id],
-                    ['user_id', '=', Auth::user()->id]
-                ]);
-            } else {
-                $posts = Post::where('user_id', Auth::user()->id);
-            }
-            if (isset($request->filter)) {
-                $posts = $posts->where(function ($query) use ($request) {
-                    $query->where('title', 'LIKE', "%{$request->filter}%")
-                        ->orWhere('content', 'LIKE', "%{$request->filter}%");
-                });
-            }
-        } else if (Auth::guard('share')->check()) {
-            $share = Auth::guard('share')->user();
-            $posts = Post::where([
-                'collection_id' => $share->collection_id,
-                'user_id' => $share->created_by
-            ]);
-        } else {
-            return response()->json('', 400);
+        if ($auth_type === User::UNAUTHORIZED_USER) {
+            return response()->json('', Response::HTTP_UNAUTHORIZED);
         }
 
-        if (isset($request->limit)) {
-            $posts = $posts->limit($request->limit);
-        }
-        $posts = $posts->orderBy('order', 'desc')->get();
+        $posts = $this->service->all(
+            intval($request->collection_id), 
+            boolval($request->is_uncategorized), 
+            strval($request->filter), 
+            $auth_type,
+            intval($request->limit),
+        );
 
-        return response()->json(['data' => $posts], 200);
+        return response()->json(['data' => $posts], Response::HTTP_OK);
     }
 
     public function show(int $id) 
     {
         $post = Post::find($id);
         if ($post === null) {
-            return response()->json('Post does not exist', 404);
+            return response()->json('Post does not exist', Response::HTTP_NOT_FOUND);
         }
         $this->authorize('view', $post);
-        return response()->json(['data' => $post], 200);
+        return response()->json(['data' => $post], Response::HTTP_OK);
     }
 
     public function store(Request $request)
@@ -84,25 +69,25 @@ class PostController extends Controller
         if (isset($request->collection_id)) {
             $collection = Collection::findOrFail($request->collection_id);
             if (Auth::user()->id !== $collection->user_id) {
-                return response()->json('Not authorized', 403);
+                return response()->json('Not authorized', Response::HTTP_FORBIDDEN);
             }
         }
 
-        $validatedData['content'] = $this->sanitize($validatedData['content']);
+        $validatedData['content'] = $this->service->sanitize($validatedData['content']);
 
-        $info = $this->computePostData($request->title, $request->content);
-        
+        $info = $this->service->computePostData($request->title, $request->content);
+
         $attributes = array_merge($validatedData, $info);
         $attributes['user_id'] = Auth::user()->id;
         $attributes['order'] = Post::where('collection_id', Collection::getCollectionId($request->collection_id))
             ->max('order') + 1;
-        
+
         $post = Post::create($attributes);
         if ($info['type'] === Post::POST_TYPE_LINK) {
-            $this->saveImage($info['image_path'], $post);
+            $this->service->saveImage($info['image_path'], $post);
         }
         
-        return response()->json(['data' => $post], 201);
+        return response()->json(['data' => $post], Response::HTTP_CREATED);
     }
 
     public function update(Request $request, $id)
@@ -118,7 +103,7 @@ class PostController extends Controller
 
         $post = Post::find($id);
         if (!$post) {
-            return response()->json('Post not found.', 404);
+            return response()->json('Post not found.', Response::HTTP_NOT_FOUND);
         }
 
         $this->authorize('update', $post);
@@ -140,8 +125,8 @@ class PostController extends Controller
         }
 
         if (isset($validatedData['content'])) {
-            $validatedData['content'] = $this->sanitize($validatedData['content']);
-            $info = $this->computePostData($request->title, $validatedData['content']);
+            $validatedData['content'] = $this->service->sanitize($validatedData['content']);
+            $info = $this->service->computePostData($request->title, $validatedData['content']);
         } else {
             $info = array();
             $info['type'] = $post->getRawOriginal('type');
@@ -177,10 +162,10 @@ class PostController extends Controller
         $post->update($newValues); 
 
         if ($info['type'] === Post::POST_TYPE_LINK && isset($validatedData['content'])) {
-            $this->saveImage($info['image_path'], $post);
+            $this->service->saveImage($info['image_path'], $post);
         }
 
-        return response()->json(['data' => $post], 200);
+        return response()->json(['data' => $post], Response::HTTP_OK);
     }
 
     public function destroy(int $id)
@@ -189,7 +174,7 @@ class PostController extends Controller
         $post = Post::find($id);
         
         if (!$post) {
-            return response()->json('Post not found.', 404);
+            return response()->json('Post not found.', Response::HTTP_NOT_FOUND);
         }
         $this->authorize('delete', $post);
 
@@ -200,7 +185,7 @@ class PostController extends Controller
 
         $post->delete();
 
-        return response()->json('', 204);
+        return response()->json('', Response::HTTP_NO_CONTENT);
 
     }
 
@@ -210,158 +195,7 @@ class PostController extends Controller
             'url' => 'url'
         ]);
 
-        return response()->json($this->getInfo($request->url));
-    }
-
-    private function computePostData(string $title = null, string $content)
-    {
-        // more explicit: https?(:\/\/)((\w|-)+\.)+(\w+)(\/\w+)*(\?)?(\w=\w+)?(&\w=\w+)*
-        preg_match_all('/(https?:\/\/)(\S+\.\S+?)(?=\s|<|"|$)/', $content, $matches);
-        $matches = $matches[0];
-        $info = null;
-        if (count($matches) > 0) {
-            $info = $this->getInfo($matches[0]);
-        }
-
-        if (!empty($title)) {
-            unset($info['title']);
-        }
-
-        $stripped_content = strip_tags($content);
-        if (empty($matches)) {
-            $info['type'] = Post::POST_TYPE_TEXT;
-        } else if (strlen($stripped_content) > strlen($matches[0])) { // contains more than just a link
-            $info['type'] = Post::POST_TYPE_TEXT;
-        } else if ($stripped_content != $matches[0]) {
-            $info['type'] = Post::POST_TYPE_TEXT;
-        } else {
-            $info['type'] = Post::POST_TYPE_LINK;
-        }
-
-        return $info;
-    }
-
-    private function sanitize($str)
-    {
-        return strip_tags($str, '<a><strong><b><em><i><s><p><h1><h2><h3><h4><h5>' .
-            '<pre><br><hr><blockquote><ul><li><ol><code><unfurling-link>');
-    }
-
-    private function getInfo($url, $act_as_bot = false)
-    {
-        $base_url = parse_url($url);
-        $base_url = $base_url['scheme'] . '://' . $base_url['host'];
-
-        $useragent = $act_as_bot ? 'Googlebot/2.1 (+http://www.google.com/bot.html)' :
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36';
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($ch, CURLOPT_AUTOREFERER, 1);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
-        curl_setopt($ch, CURLOPT_URL, $url);
-        $html = curl_exec($ch);
-        $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-        curl_close($ch);
-
-        if (!str_contains($content_type, 'text/html')) {
-            return [
-                'url'         => substr($url, 0, 512),
-                'base_url'    => substr($base_url, 0, 255),
-                'title'       => substr($url, 0, 255),
-                'description' => null,
-                'color'       => null,
-                'image_path'  => null,
-            ];
-        }
-
-        $document = new \DOMDocument();
-        $html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
-        @$document->loadHTML($html);
-        $titles = $document->getElementsByTagName('title');
-        if (count($titles) > 0) {
-            $title = trim($titles->item(0)->nodeValue);
-        } else {
-            $title = $base_url;
-        }
-        $metas = $document->getElementsByTagName('meta');
-        
-        for ($i = 0; $i < $metas->length; $i++) {
-            $meta = $metas->item($i);
-            if ($meta->getAttribute('name') === 'description') {
-                $description = $meta->getAttribute('content');
-            } else if ($meta->getAttribute('name') === 'theme-color') {
-                $color = $meta->getAttribute('content');
-            } else if ($meta->getAttribute('property') === 'og:image') {
-                if ($meta->getAttribute('content') != '') {
-                    $image_path = $meta->getAttribute('content');
-                    $base_image_url = parse_url($image_path);
-                    if ($base_image_url['path'] === $image_path) {
-                        $image_path = $base_url.$image_path;
-                    }
-                }
-            }
-        }
-
-        if (empty($color)) {
-            $color = $this->getDominantColor($base_url);
-        }
-        
-        if (empty($description) && empty($image_path) &! $act_as_bot) {
-            // try again with bot as useragent
-            return $this->getInfo($url, true);
-        }
-        
-        return [
-            'url'         => substr($url, 0, 512),
-            'base_url'    => substr($base_url, 0, 255),
-            'title'       => substr($title, 0, 255),
-            'description' => (empty($description)) ? null : $description,
-            'color'       => (empty($color)) ? null : $color,
-            'image_path'  => (empty($image_path)) ? null : $image_path,
-        ];
-    }
-
-    private function getDominantColor($base_url)
-    {
-        if (!extension_loaded('gd') &! extension_loaded('imagick') &! extension_loaded('gmagick')) {
-            return null;
-        }
-
-        $host = parse_url($base_url)['host'];
-        try {
-            $rgb = ColorThief::getColor('https://www.google.com/s2/favicons?domain=' . $host);
-        } catch (\RuntimeException $e) {
-            return '#FFF';
-        }
-        $hex = sprintf("#%02x%02x%02x", $rgb[0], $rgb[1], $rgb[2]);
-        return $hex;
-    }
-
-    private function saveImage($image_path, $post)
-    {
-        if (empty($image_path)) {
-            return;
-        }
-
-        if (config('benotes.use_filesystem', true) == false) {
-            $post->image_path = $image_path;
-            $post->save();
-            return;
-        }
-        
-        $image = Image::make($image_path);
-        if (!$image) {
-            return;
-        }
-
-        $filename = 'thumbnail_' . md5($image_path) . '_' . $post->id . '.jpg';
-        $image = $image->fit(400, 210)->limitColors(255);
-        Storage::put('thumbnails/' . $filename, $image->stream());
-
-        $post->image_path = $filename;
-        $post->save();
+        return response()->json($this->service->getInfo($request->url));
     }
 
 }
