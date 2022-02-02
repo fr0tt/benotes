@@ -11,47 +11,55 @@ class PostTest extends TestCase
 
     use DatabaseMigrations;
 
-    public function testCreatePost()
+    /**
+     * @group failing
+     * @dataProvider createPostsProvider
+     */
+    public function testCreatePost($content, $type)
     {
         $user = factory(User::class)->create();
 
         $collection = factory(Collection::class)->create();
 
-        $posts = [
-            'https://test.com' => 'link',
-            'https://test.de' => 'link',
-            'https://go-rel.github.io/' => 'link',
-            'https://www.youtube.com/watch?v=ZyURjdnYQaU' => 'link',
-            'https://github.com/verlok/vanilla-lazyload' => 'link',
-            'https://www.amazon.com/Design-Everyday-Things-Revised-Expanded/dp/0465050654/ref=sr_1_1?dchild=1&keywords=don+norman&link_code=qs&qid=1608495907&sr=8-1&tag=operabrowser-21' => 'link',
-            '<a href="https://www.wolframalpha.com" rel="noopener noreferrer nofollow">https://www.wolframalpha.com</a>' => 'link',
-            '<p class="">dfgd adijfds https://google.com</p>' => 'text',
-            '<p>https://www.wolframalpha.com</p><p>https://laravel.com</p>' => 'text',
-            'Hdfgd fijsdoij <a href="https://slack.com" rel="noopener noreferrer nofollow">https://slack.com</a>' => 'text',
-            'https://laravel.com' => 'link',
-            'Lorem ipsum https://fonts.adobe.com/fonts/realist' => 'text',
-            'https://gamesindustry.biz' => 'link',
-            'https://www.php.net/manual/en/function.parse-url.php' => 'link'
-        ];
+        $this->actingAs($user)->json('POST', 'api/posts', [
+            'content' => $content,
+            'collection_id' => $collection->id
+        ]);
 
-        foreach ($posts as $content => $type) {
-            $this->actingAs($user)->json('POST', 'api/posts', [
-                'content' => $content,
-                'collection_id' => $collection->id
-            ]);
+        //echo var_dump($this->response->getData()->data);
 
-            //echo var_dump($this->response->getData()->data);
-
-            $this->assertEquals(201, $this->response->status());
-            $data = $this->response->getData()->data;
-            $this->assertEquals($type, $data->type);
-            if ($data->type === 'link') {
-                $this->assertNotEquals(null, $data->color);
-                $this->assertNotEquals(null, $data->url);
-            }
-            $this->assertNotEquals(null, $data->collection_id);
+        $this->assertEquals(201, $this->response->status());
+        $data = $this->response->getData()->data;
+        $this->assertEquals($type, $data->type);
+        if ($data->type === 'link') {
+            $this->assertNotEquals(null, $data->color);
+            $this->assertNotEquals(null, $data->url);
         }
+        $this->assertNotEquals(null, $data->collection_id);
 
+    }
+
+    /**
+     * dataProvider for testCreatePost()
+     */
+    public function createPostsProvider()
+    {
+        return [
+            0 => ['https://test.com', 'link'],
+            1 => ['https://test.de', 'link'],
+            2 => ['https://go-rel.github.io/', 'link'],
+            3 => ['https://www.youtube.com/watch?v=ZyURjdnYQaU', 'link'],
+            4 => ['https://github.com/verlok/vanilla-lazyload', 'link'],
+            5 => ['https://www.amazon.com/Design-Everyday-Things-Revised-Expanded/dp/0465050654/ref=sr_1_1?dchild=1&keywords=don+norman&link_code=qs&qid=1608495907&sr=8-1&tag=operabrowser-21', 'link'],
+            6 => ['<a href="https://www.wolframalpha.com" rel="noopener noreferrer nofollow">https://www.wolframalpha.com</a>', 'link'],
+            7 => ['<p class="">dfgd adijfds https://google.com</p>', 'text'],
+            8 => ['<p>https://www.wolframalpha.com</p><p>https://laravel.com</p>', 'text'],
+            9 => ['Hdfgd fijsdoij <a href="https://slack.com" rel="noopener noreferrer nofollow">https://slack.com</a>', 'text'],
+            10 => ['https://laravel.com', 'link'],
+            11 => ['Lorem ipsum https://fonts.adobe.com/fonts/realist', 'text'],
+            12 => ['https://gamesindustry.biz', 'link'],
+            13 => ['https://www.php.net/manual/en/function.parse-url.php', 'link'],
+        ];
     }
 
     public function testCreatePostWithStyle()
