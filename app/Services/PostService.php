@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
@@ -61,7 +60,7 @@ class PostService
     public function computePostData(string $title = null, string $content)
     {
         // more explicit: https?(:\/\/)((\w|-)+\.)+(\w+)(\/\w+)*(\?)?(\w=\w+)?(&\w=\w+)*
-        preg_match_all('/(https?:\/\/)(\S+\.\S+?)(?=\s|<|"|$)/', $content, $matches);
+        preg_match_all('/(https?:\/\/)(\S+?\.\S+?)(?=\s|<|"|$)/', $content, $matches);
         $matches = $matches[0];
         $info = null;
         if (count($matches) > 0) {
