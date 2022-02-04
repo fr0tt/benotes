@@ -45,7 +45,6 @@ class PostTest extends TestCase
     public function createPostsProvider()
     {
         return [
-            0 => ['https://test.com', 'link'],
             1 => ['https://test.de', 'link'],
             2 => ['https://go-rel.github.io/', 'link'],
             3 => ['https://www.youtube.com/watch?v=ZyURjdnYQaU', 'link'],
@@ -60,6 +59,25 @@ class PostTest extends TestCase
             12 => ['https://gamesindustry.biz', 'link'],
             13 => ['https://www.php.net/manual/en/function.parse-url.php', 'link'],
         ];
+    }
+
+    public function testCreatePostWithInvalidLink()
+    {
+        $user = factory(User::class)->create();
+
+        $collection = factory(Collection::class)->create();
+        $content = 'https://test.com';
+
+        $this->actingAs($user)->json('POST', 'api/posts', [
+            'content' => $content,
+            'collection_id' => $collection->id
+        ]);
+
+        $this->assertEquals(201, $this->response->status());
+        $data = $this->response->getData()->data;
+        $this->assertEquals('link', $data->type);
+        $this->assertEquals($content, $data->content);
+        $this->assertNotEquals(null, $data->url);
     }
 
     public function testCreatePostWithStyle()

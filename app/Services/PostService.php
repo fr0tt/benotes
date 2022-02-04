@@ -190,7 +190,7 @@ class PostService
             return;
         }
 
-        if (config('benotes.use_filesystem', true) == false) {
+        if (config('benotes.use_filesystem') == false) {
             $post->image_path = $image_path;
             $post->save();
             return;

@@ -42,6 +42,8 @@ $app->configure('tinker');
 
 $app->configure('filesystems');
 
+$app->configure('benotes');
+
 
 /*
 |--------------------------------------------------------------------------
