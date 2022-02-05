@@ -22,7 +22,7 @@ class PostController extends Controller
     }
 
     public function index(Request $request)
-    { 
+    {
 
         $this->validate($request, [
             'collection_id'    => 'integer|nullable',
@@ -30,7 +30,7 @@ class PostController extends Controller
             'filter'           => 'string|nullable',
             'limit'            => 'integer|nullable',
         ]);
-        
+
         $auth_type = User::getAuthenticationType();
 
         if ($auth_type === User::UNAUTHORIZED_USER) {
@@ -38,17 +38,17 @@ class PostController extends Controller
         }
 
         $posts = $this->service->all(
-            intval($request->collection_id), 
-            boolval($request->is_uncategorized), 
-            strval($request->filter), 
+            intval($request->collection_id),
+            boolval($request->is_uncategorized),
+            strval($request->filter),
             $auth_type,
-            intval($request->limit),
+            intval($request->limit)
         );
 
         return response()->json(['data' => $posts], Response::HTTP_OK);
     }
 
-    public function show(int $id) 
+    public function show(int $id)
     {
         $post = Post::find($id);
         if ($post === null) {
@@ -86,7 +86,7 @@ class PostController extends Controller
         if ($info['type'] === Post::POST_TYPE_LINK) {
             $this->service->saveImage($info['image_path'], $post);
         }
-        
+
         return response()->json(['data' => $post], Response::HTTP_CREATED);
     }
 
@@ -144,7 +144,7 @@ class PostController extends Controller
             Post::where('collection_id', $post->collection_id)
                 ->where('order', '>', $post->order)->decrement('order');
         } else if (isset($validatedData['order'])) {
-            // post wants to only be positioned somewhere else 
+            // post wants to only be positioned somewhere else
             // staying in the same collection as before
             $newOrder = $validatedData['order'];
             $oldOrder = $post->order;
@@ -159,7 +159,7 @@ class PostController extends Controller
             }
         }
 
-        $post->update($newValues); 
+        $post->update($newValues);
 
         if ($info['type'] === Post::POST_TYPE_LINK && isset($validatedData['content'])) {
             $this->service->saveImage($info['image_path'], $post);
@@ -172,7 +172,7 @@ class PostController extends Controller
     {
 
         $post = Post::find($id);
-        
+
         if (!$post) {
             return response()->json('Post not found.', Response::HTTP_NOT_FOUND);
         }
