@@ -18,85 +18,20 @@ This project is currently in **Beta**. You may encounter bugs or errors.
 - supports both markdown and a rich text editor
 - can be installed as a PWA on your mobile devices (and desktop)
 - collections can be shared via a public available URL
-- links can be pasted (by pressing only one button)
+- links can be instantly pasted as new posts
 - can be hosted almost anywhere thanks to its use of the lightweight Lumen framework and well supported PHP language
+- works with and without a persistent storage layer (both filesystem and S3 are supported)
+- can also be hosted via Docker or on Heroku
 
 ## Installation & Upgrade
 
-Currently their are three options for you two choose from:
+Currently their are three options for you to choose from:
 - [Normal classical way](installation.md#classic)
 - [Docker](installation.md#docker)
 - [Heroku](installation.md#heroku)
 
----
-
-Feel free to [contact me](https://twitter.com/_fr0tt) if you need any help or open an issue. 
+Feel free to [contact me](https://twitter.com/_fr0tt) if you need any help or open an [issue](https://github.com/fr0tt/benotes/issues) or a [discussion](https://github.com/fr0tt/benotes/discussions). 
 
 ## Rest API
 
-### Authentication
-
-**POST /api/auth/login**
-
-*Logs in a user*
-
-| Attribute | Value     |
-| --------- | --------- |
-| email     | Required. |
-| password  | Required. |
-
-**POST /api/auth/refresh**
-
-*Refreshes the JWT Token*
-
-**GET /api/auth/me** 
-
-*Returns the authenticated user*
-
-**POST /api/auth/logout**
-
-*Logs out the authenticated user*
-
----
-
-### Posts
-
-**GET /api/posts**
-
-*Get multiple posts*
-
-| Attribute     | Value                                                        |
-| ------------- | ------------------------------------------------------------ |
-| collection_id | Optional. Specify a collection of which you want to request posts. If collection_id is not specified you will get all posts from all collections from your user |
-| is_uncategorized | Optional. Specify if you wish to get all posts without a collection. |
-| limit         | Optional. Limit the amount of requested posts by number      |
-
-**GET /api/posts/{id}**
-
-*Get one post by its id*
-
-**POST /api/posts**
-
-*Create a new post*
-
-| Attribute     | Value                                                        |
-| ------------- | ------------------------------------------------------------ |
-| collection_id | Optional. Specify a collection you wish to save your new post to, if not, your post will not be part of a collection. |
-| title         | Optional. Specify a title, gets automatically filled if your content is a link |
-| content       | Required. Specify a link, post, message, ..                  |
-
-**PATCH /api/posts/{id}**
-
-*Update an existing post*
-
-| Attribute     | Value                                                        |
-| ------------- | ------------------------------------------------------------ |
-| collection_id | Optional. Specify a collection you want to save your post to instead. To patch a post from the uncategorized collection simply use 0 as value for the collection_id |
-| title         | Optional. Change your posts title                            |
-| content       | Optional. Change your posts content                          |
-| order         | Optional. Specify a new order you wish to move your post to  |
-
-**DELETE /api/posts/{id}**
-
-*Delete a post by its id*
-
+Further information can be found here: [Rest API Documentation](api.md)
