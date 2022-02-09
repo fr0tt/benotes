@@ -14,7 +14,7 @@
         "browser-sync": "^2.26.14",
         "browser-sync-webpack-plugin": "^2.3.0",
         "eslint": "^6.8.0",
-        "laravel-mix": "^6.0.27",
+        "laravel-mix": "^6.0.41",
         "postcss-loader": "^5.2.0",
         "resolve-url-loader": "^3.1.2",
         "sass": "^1.32.11",

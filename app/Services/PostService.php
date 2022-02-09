@@ -16,7 +16,7 @@ class PostService
 
     public function all(int $collection_id = -1,
                         bool $is_uncategorized = false,
-                        string $filter = '', 
+                        string $filter = '',
                         int $auth_type = User::UNAUTHORIZED_USER,
                         int $limit = -1) : \Illuminate\Database\Eloquent\Collection
     {
