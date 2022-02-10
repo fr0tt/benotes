@@ -3,7 +3,7 @@
         <div v-if="post.type === 'link'" class="card">
             <a :href="post.url" target="_blank" rel="noopener" class="w-3/7 md:w-full">
                 <div v-if="post.image_path" class="h-cover w-full bg-cover bg-center"
-                    v-lazy:background-image="this.post.image_path" 
+                    v-lazy:background-image="this.post.image_path"
                     :key="this.post.image_path">
                 </div>
                 <div v-else class="h-cover w-full flex items-center justify-center" :style="color">
@@ -29,16 +29,16 @@
                         {{ post.url }}
                     </a>
                 </div>
-                <svg @click="showContextMenu($event)" v-if="permission > 4" class="more-svg" 
+                <svg @click="showContextMenu($event)" v-if="permission > 4" class="more-svg"
                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                     <path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/>
                 </svg>
             </div>
         </div>
-        <PostItemText v-else-if="post.type === 'text'" 
+        <PostItemText v-else-if="post.type === 'text'"
             :post="post"
             :showContextMenu="showContextMenu"
-            :permission="permission"/> 
+            :permission="permission"/>
         <PostItemPlaceholder v-else/>
         <div v-if="debug" class="absolute bottom-0 w-full">
             <span class="px-1 bg-orange-200">id:{{ post.id }}</span>

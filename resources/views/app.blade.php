@@ -8,7 +8,7 @@
         <link href="https://rsms.me/inter/inter.css" rel="stylesheet">
         <link href="/css/app.css" type="text/css" rel="stylesheet">
         <link rel="shortcut icon" type="image/png" href="/logo_144x144.png"/>
-        <link rel="manifest" href="./manifest.json">
+        <link rel="manifest" href="/manifest.json">
     </head>
     <body class="h-full">
         <div id="app" class="h-full">
