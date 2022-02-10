@@ -6,7 +6,6 @@
                     <p v-if="post.title" class="text-orange-600 text-xl bg-transparent font-semibold">
                         {{ post.title }}
                     </p>
-                    <!--<div class="editorContent" v-html="post.content"></div>-->
                     <EditorContent :editor="editor" class="editorContent" />
                 </div>
             </div>
@@ -19,13 +18,13 @@
                 <EditorContent :editor="editor" class="editorContent" />
             </div>
         </div>
-        <svg @click="showContextMenu($event)" v-if="permission > 4" class="more-svg" 
+        <svg @click="showContextMenu($event)" v-if="permission > 4" class="more-svg"
             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
             <path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/>
         </svg>
-        
-        <div v-if="post.isUpdating" class="absolute bottom-0 left-0 mb-5 ml-5">
-            <svg-vue icon="remix/refresh-line" 
+
+        <div v-if="post.isUpdating" class="absolute bottom-0 left-0 mb-5 ml-5 bg-white">
+            <svg-vue icon="remix/refresh-line"
                 class="button-icon remix animate-spin fill-current text-gray-900"/>
         </div>
     </div>
@@ -55,14 +54,6 @@ export default {
                     StarterKit,
                     Typography,
                     Underline,
-                    /* included in StarterKit
-                    Document,
-                    Text,
-                    BulletList,
-                    OrderedList,
-                    ListItem,
-                    Gapcursor,
-                    */
                     Placeholder,
                     UnfurlingLink
                 ],
