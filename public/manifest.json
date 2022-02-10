@@ -13,5 +13,13 @@
             "sizes": "144x144",
             "type": "image/png"
         }
-    ]
+    ],
+    "share_target": {
+        "action": "/c/0/p/create",
+        "params": {
+            "title": "title",
+            "text": "text",
+            "url": "url"
+        }
+    }
 }

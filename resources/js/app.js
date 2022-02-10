@@ -71,6 +71,7 @@ let refreshTimer = setInterval(() => {
     }
 }, 11 * 60 * 1000)
 
+
 if (!Vue.config.devtools) { // if not dev env
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {

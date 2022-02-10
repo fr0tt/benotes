@@ -3,8 +3,8 @@
         <div class="md:mx-6 mx-1 md:my-6 mt-2">
             <div class="mx-4 editor">
                 <div class="max-w-5xl mt-4" @keyup.ctrl.alt.83="keySave">
-                    <input class="block w-full text-3xl font-medium placeholder-orange-600 
-                        text-orange-600 bg-transparent outline-none" 
+                    <input class="block w-full text-3xl font-medium placeholder-orange-600
+                        text-orange-600 bg-transparent outline-none"
                         v-model="title" placeholder="Title" tabindex="1" autofocus/>
                     <div class="mt-4 mb-6">
                         <Select class="inline-block w-80" v-model="collection"
@@ -40,11 +40,12 @@ import EditorMenuBar from '../EditorMenuBar.vue'
 export default {
     props: {
         collectionId: Number,
-        id: Number
+        id: Number,
+        shareTargetApi: Object
     },
     components: {
         Select,
-        OpenIndicator, 
+        OpenIndicator,
         Deselect,
         EditorContent,
         EditorMenuBar,
@@ -63,14 +64,6 @@ export default {
                 extensions: [
                     StarterKit,
                     Typography, // e.g. ->
-                    /* included in StarterKit
-                    Document,
-                    Text,
-                    BulletList,
-                    OrderedList,
-                    ListItem,
-                    Gapcursor,
-                    */
                     Underline,
                     Placeholder,
                     UnfurlingLink
@@ -150,13 +143,13 @@ export default {
         this.$store.dispatch('collection/fetchCollections').then(() => {
             this.optionsCollections = this.optionsCollections.concat(this.collections)
         })
-        
+
         if (this.isNewPost) {
             this.$store.dispatch('collection/fetchCollections').then(() => {
                 if (this.collectionId === 0 || typeof this.collectionId === 'undefined') {
                     this.collection = uncategorized
                 } else {
-                    this.collection = this.collections.find(collection => 
+                    this.collection = this.collections.find(collection =>
                         collection.id === this.collectionId
                     )
                 }
@@ -178,7 +171,7 @@ export default {
                         if (post.collection_id === null) {
                             this.collection = uncategorized
                         } else {
-                            this.collection = this.collections.find(collection => 
+                            this.collection = this.collections.find(collection =>
                                 collection.id === post.collection_id
                             )
                         }
@@ -202,8 +195,21 @@ export default {
                     icon: 'delete',
                     color: 'red',
                     condition: true
-                }] 
+                }]
             })
+        }
+    },
+    mounted () {
+        if (!this.shareTargetApi) {
+            return
+        }
+        if (this.shareTargetApi.headline) {
+            this.title = this.shareTargetApi.headline
+        }
+        if (this.shareTargetApi.url) {
+            this.editor.commands.setContent(this.shareTargetApi.url)
+        } else if (this.shareTargetApi.text) {
+            this.editor.commands.setContent(this.shareTargetApi.text)
         }
     },
     beforeDestroy () {

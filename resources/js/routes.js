@@ -65,7 +65,12 @@ export default [
                 path: 'c/:collectionId/p/create',
                 component: Post,
                 props: (route) => ({
-                    collectionId: parseInt(route.params.collectionId)
+                    collectionId: parseInt(route.params.collectionId),
+                    shareTargetApi: {
+                        headline: route.query.title,
+                        text: route.query.text,
+                        url: route.query.url
+                    }
                 }),
                 meta: {
                     authUser: true
