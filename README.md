@@ -17,6 +17,7 @@ This project is currently in **Beta**. You may encounter bugs or errors.
 - URLs are automatically saved with an image, title and description
 - supports both markdown and a rich text editor
 - can be installed as a PWA on your mobile devices (and desktop)
+- share content via this app (if installed as an PWA and supported by your browser)
 - collections can be shared via a public available URL
 - links can be instantly pasted as new posts
 - can be hosted almost anywhere thanks to its use of the lightweight Lumen framework and well supported PHP language
@@ -30,7 +31,7 @@ Currently their are three options for you to choose from:
 - [Docker](installation.md#docker)
 - [Heroku](installation.md#heroku)
 
-Feel free to [contact me](https://twitter.com/_fr0tt) if you need any help or open an [issue](https://github.com/fr0tt/benotes/issues) or a [discussion](https://github.com/fr0tt/benotes/discussions). 
+Feel free to [contact me](https://twitter.com/_fr0tt) if you need any help or open an [issue](https://github.com/fr0tt/benotes/issues) or a [discussion](https://github.com/fr0tt/benotes/discussions).
 
 ## Rest API
 

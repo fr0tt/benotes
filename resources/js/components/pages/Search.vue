@@ -1,7 +1,7 @@
 <template>
     <div class="min-h-full">
-        <div class="sm:ml-8 px-2 md:px-8"> 
-            <div class="md:pt-16 mb-6">
+        <div class="sm:ml-8 px-2 md:px-8">
+            <div class="py-4 md:pt-16 mb-6">
                 <h1 class="text-3xl font-medium text-gray-800">
                     Search
                 </h1>
@@ -16,7 +16,7 @@
                 </div>
                 <ul v-else class="-ml-4">
                     <transition-group name="grid-fade">
-                        <Post v-for="post in posts" 
+                        <Post v-for="post in posts"
                             :key="post.id" :post="post" />
                     </transition-group>
                 </ul>
