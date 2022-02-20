@@ -15,7 +15,7 @@ export default {
     },
     getters: {
         maxOrder: state => {
-            return state.posts.length > 0 ? state.posts[0].order : 0
+            return state.posts.length
         }
     },
     mutations: {
@@ -27,6 +27,11 @@ export default {
         },
         setPost (state, { post, index }) {
             state.posts.splice(index, 1, post)
+        },
+        updatePostOrders (state, { start, end }) {
+            for (let i = start; i <= end; i++) {
+                state.posts[i].order = this.getters['post/maxOrder'] - i
+            }
         },
         deletePost (state, index) {
             state.posts.splice(index, 1)
@@ -54,7 +59,7 @@ export default {
         fetchPosts (context, { collectionId, filter = null }) {
             context.commit('isLoading', true)
             context.commit('setPlaceholderPosts')
-            
+
             getPosts(collectionId, filter)
                 .then(response => {
                     const posts = response.data.data
@@ -82,7 +87,7 @@ export default {
         addPost (context, post) {
             context.commit('addPost', post)
         },
-        updatePost (context, { post, transfer = false }) { 
+        updatePost (context, { post, transfer = false }) {
             const params = {}
             params.title = post.title
             params.content = post.content
@@ -107,8 +112,8 @@ export default {
                         post: newPost,
                         index: index
                     })
-                    
-            
+
+
                 })
                 .catch(error => {
                     post.isUpdating = false
@@ -126,6 +131,12 @@ export default {
             context.commit('setPost', {
                 post: post,
                 index: index
+            })
+        },
+        updatePostOrder (context, { oldIndex, newIndex }) {
+            context.commit('updatePostOrders', {
+                start: (oldIndex < newIndex) ? oldIndex : newIndex,
+                end: (newIndex > oldIndex) ? newIndex : oldIndex
             })
         },
         deletePost (context, id) {

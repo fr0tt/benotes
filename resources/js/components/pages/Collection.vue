@@ -1,16 +1,16 @@
 <template>
-    <div class="min-h-full">
+    <div class="min-h-full collection">
         <div class="sm:ml-4 -ml-2 px-2">
             <transition name="collection-fade">
-                <Draggable v-if="!isLoading" tag="ol" v-model="posts" :move="dragged"
-                    @start="drag = true" @end="drag = false" 
+                <Draggable v-if="!isLoading" tag="ol" v-model="posts"
+                    @start="drag = true" @end="dragged"
                     :delay="90" :delayOnTouchOnly="true"
-                    v-bind="{ animation: 200 }" 
+                    v-bind="{ animation: 200 }"
                     class="pt-4 pb-24">
                     <transition-group name="grid-fade">
-                        <Post v-for="post in posts" 
-                            :class="drag ? null : 'item-transition'"
-                            :key="post.order" :post="post" :permission="permission" />
+                        <Post v-for="post in posts"
+                            :class="drag ? '' : 'item-transition'"
+                            :key="post.id" :post="post" :permission="permission" />
                     </transition-group>
                 </Draggable>
                 <ul v-else>
@@ -30,7 +30,7 @@ import Draggable from 'vuedraggable'
 
 export default {
     props: {
-        collectionId: Number, 
+        collectionId: Number,
         permission: Number
     },
     components: {
@@ -40,7 +40,7 @@ export default {
     },
     data () {
         return {
-            drag: false,
+            drag: false
         }
     },
     methods: {
@@ -48,8 +48,19 @@ export default {
             this.$store.dispatch('post/fetchPosts', { collectionId: this.collectionId})
         },
         dragged (event) {
-            axios.patch('/api/posts/' + event.draggedContext.element.id, {
-                order: this.maxOrder - event.draggedContext.futureIndex
+            this.drag = false
+            if (event.oldIndex === event.newIndex) {
+                return
+            }
+            let post = this.$store.state.post.posts[event.newIndex]
+
+            axios.patch('/api/posts/' + post.id, {
+                order: this.maxOrder - event.newIndex
+            })
+            .then(() => {
+                this.$store.dispatch('post/updatePostOrder', {
+                    oldIndex: event.oldIndex, newIndex: event.newIndex
+                })
             })
             .catch(error => {
                 this.$store.dispatch('notification/setNotification', {
@@ -73,7 +84,7 @@ export default {
                     })
                     return
                 }
-                const id = 'placeholder-' + this.maxOrder + 1
+                const id = 'placeholder-' + (this.maxOrder + 1)
                 this.$store.dispatch('post/addPost', {
                     id: id,
                     type: 'placeholder',
@@ -85,8 +96,8 @@ export default {
                     is_uncategorized: this.collectionId === 0
                 })
                     .then(response => {
-                        this.$store.dispatch('post/setPostById', { 
-                            id: id, post: response.data.data 
+                        this.$store.dispatch('post/setPostById', {
+                            id: id, post: response.data.data
                         })
                     })
                     .catch(error => {
@@ -211,6 +222,7 @@ export default {
 }
 </script>
 <style lang="scss">
+.collection {
     .collection-fade-enter-active, .collection-fade-leave {
         transition: opacity .6s;
     }
@@ -218,14 +230,14 @@ export default {
         opacity: 0;
     }
     .item-transition {
-        transition: all 0.4s;
+        transition: transform 0.4s;
     }
     .grid-fade-enter-active {
         transition: all 0.2s;
     }
-    /*.grid-fade-leave-active {
+    .grid-fade-leave-active {
         position: absolute;
-    }*/
+    }
     .grid-fade-leave-to {
         opacity: 0;
         transform: translateY(30px);
@@ -233,7 +245,9 @@ export default {
     .grid-fade-enter {
         opacity: 0;
     }
-    .mb-1\/5 {
-        margin-bottom: 0.05rem;
-    }
+
+}
+.mb-1\/5 {
+    margin-bottom: 0.05rem;
+}
 </style>

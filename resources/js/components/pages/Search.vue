@@ -1,5 +1,5 @@
 <template>
-    <div class="min-h-full">
+    <div class="min-h-full search">
         <div class="sm:ml-8 px-2 md:px-8">
             <div class="py-4 md:pt-16 mb-6">
                 <h1 class="text-3xl font-medium text-gray-800">
@@ -65,6 +65,7 @@ export default {
 }
 </script>
 <style lang="scss">
+.search {
     .collection-fade-enter-active, .collection-fade-leave {
         transition: opacity .6s;
     }
@@ -90,4 +91,5 @@ export default {
     .mb-1\/5 {
         margin-bottom: 0.05rem;
     }
+}
 </style>
