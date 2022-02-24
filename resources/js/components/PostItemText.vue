@@ -18,10 +18,13 @@
                 <EditorContent :editor="editor" class="editorContent" />
             </div>
         </div>
-        <svg @click="showContextMenu($event)" v-if="permission > 4" class="more-svg"
+        <svg v-if="permission > 4" @click="showContextMenu($event)" class="more-icon"
             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
             <path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/>
         </svg>
+        <button v-else-if="restore" @click="restoreFunc()" title="Restore">
+            <svg-vue class="restore-icon" icon="remix/inbox-unarchive-line"/>
+        </button>
 
         <div v-if="post.isUpdating" class="absolute bottom-0 left-0 mb-5 ml-5 bg-white">
             <svg-vue icon="remix/refresh-line"
@@ -40,7 +43,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 import UnfurlingLink from '../UnfurlingLink'
 
 export default {
-    props: ['post', 'showContextMenu', 'permission'],
+    props: ['post', 'showContextMenu', 'permission', 'restore', 'restoreFunc'],
     components: {
         EditorContent,
     },

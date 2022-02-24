@@ -29,16 +29,21 @@
                         {{ post.url }}
                     </a>
                 </div>
-                <svg @click="showContextMenu($event)" v-if="permission > 4" class="more-svg"
+                <svg v-if="permission > 4" @click="showContextMenu($event)" class="more-icon"
                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                     <path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/>
                 </svg>
+                <button v-else-if="restore" @click="restorePost()" title="Restore">
+                    <svg-vue class="restore-icon" icon="remix/inbox-unarchive-line"/>
+                </button>
             </div>
         </div>
         <PostItemText v-else-if="post.type === 'text'"
             :post="post"
             :showContextMenu="showContextMenu"
-            :permission="permission"/>
+            :permission="permission"
+            :restore="restore"
+            :restoreFunc="restorePost"/>
         <PostItemPlaceholder v-else/>
         <div v-if="debug" class="absolute bottom-0 w-full">
             <span class="px-1 bg-orange-200">id:{{ post.id }}</span>
@@ -54,7 +59,7 @@ import PostItemText from './PostItemText.vue'
 import PostItemPlaceholder from './PostItemPlaceholder.vue'
 export default {
     name: 'PostItem',
-    props: ['post', 'permission'],
+    props: ['post', 'permission', 'restore'],
     components: {
         ContextMenu,
         PostItemText,
@@ -62,7 +67,7 @@ export default {
     },
     data () {
         return {
-            debug: false
+            debug: true
         }
     },
     methods: {
@@ -81,6 +86,9 @@ export default {
                     document.removeEventListener('click', this.globalClickEvent)
                 }
             }
+        },
+        restorePost () {
+            this.$store.dispatch('post/updatePost', { post: this.post, transfer: true, restore: true })
         }
     },
     computed: {
@@ -117,10 +125,13 @@ export default {
         .img-vertical-align {
             margin-top: -4px;
         }
-        .more-svg {
+        .more-icon, .restore-icon {
             @apply w-5 h-5 absolute cursor-pointer;
             right: 0.75rem;
             bottom: 1.25rem;
+        }
+        .restore-icon {
+            right: 1.0rem;
         }
         .editorContent {
             font-size: 1.1rem;

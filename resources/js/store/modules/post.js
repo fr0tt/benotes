@@ -56,11 +56,11 @@ export default {
         }
     },
     actions: {
-        fetchPosts (context, { collectionId, filter = null }) {
+        fetchPosts (context, { collectionId, filter = null, isArchived = false }) {
             context.commit('isLoading', true)
             context.commit('setPlaceholderPosts')
 
-            getPosts(collectionId, filter)
+            getPosts(collectionId, filter, isArchived)
                 .then(response => {
                     const posts = response.data.data
                     context.commit('isLoading', false)
@@ -87,12 +87,15 @@ export default {
         addPost (context, post) {
             context.commit('addPost', post)
         },
-        updatePost (context, { post, transfer = false }) {
+        updatePost (context, { post, transfer = false, restore = false }) {
             const params = {}
             params.title = post.title
             params.content = post.content
             params.collection_id = post.collection_id
             params.is_uncategorized = (post.collection_id <= 0) | 0
+            if (restore) {
+                params.is_archived = false
+            }
             axios.patch('/api/posts/' + post.id, params)
                 .then(response => {
                     const newPost = response.data.data

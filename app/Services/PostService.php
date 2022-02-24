@@ -18,6 +18,7 @@ class PostService
                         bool $is_uncategorized = false,
                         string $filter = '',
                         int $auth_type = User::UNAUTHORIZED_USER,
+                        bool $is_archived = false,
                         int $limit = -1) : \Illuminate\Database\Eloquent\Collection
     {
 
@@ -53,14 +54,41 @@ class PostService
             $posts = $posts->limit($limit);
         }
 
+        if ($is_archived) {
+            return $posts->onlyTrashed()->orderBy('deleted_at', 'desc')->get();
+        }
+
         return $posts->orderBy('order', 'desc')->get();
 
+    }
+
+    public function delete(Post $post) : void
+    {
+        Post::where('collection_id', $post->collection_id)
+            ->where('order', '>', $post->order)
+            ->decrement('order');
+
+        $post->delete();
+    }
+
+    public function restore(Post $post) : Post
+    {
+        $maxOrder = Post::where('collection_id', $post->collection_id)->max('order');
+        if ($post->order <= $maxOrder) {
+            Post::where('collection_id', $post->collection_id)
+                ->where('order', '>=', $post->order)
+                ->increment('order');
+        } else {
+            $post->order = $maxOrder + 1;
+        }
+        $post->restore();
+        return $post;
     }
 
     public function computePostData(string $title = null, string $content)
     {
         // more explicit: https?(:\/\/)((\w|-)+\.)+(\w+)(\/\w+)*(\?)?(\w=\w+)?(&\w=\w+)*
-        preg_match_all('/(https?:\/\/)(\S+?\.\S+?)(?=\s|<|"|$)/', $content, $matches);
+        preg_match_all('/(https?:\/\/)((\S+?\.|localhost:)\S+?)(?=\s|<|"|$)/', $content, $matches);
         $matches = $matches[0];
         $info = null;
         if (count($matches) > 0) {
@@ -207,6 +235,11 @@ class PostService
 
         $post->image_path = $filename;
         $post->save();
+    }
+
+    public function boolValue($value = null) : bool
+    {
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN);
     }
 
 }

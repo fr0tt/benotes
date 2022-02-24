@@ -2,6 +2,7 @@
 
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\DatabaseTransactions;
+use Symfony\Component\HttpFoundation\Response;
 use App\User;
 use App\Post;
 use App\Collection;
@@ -87,7 +88,7 @@ class PostTest extends TestCase
         $collection = factory(Collection::class)->create();
 
         $content = '<h2>Hi there,</h2><p>this is a very <em>basic</em> example of tiptap.</p>' .
-            '<pre><code>body { display: none; }</code></pre>' . 
+            '<pre><code>body { display: none; }</code></pre>' .
             '<ul><li><p>A regular list</p></li><li><p>With regular items</p></li></ul><blockquote>' .
             '<p>It\'s amazing 👏 <br>– mom</p></blockquote>';
 
@@ -125,7 +126,7 @@ class PostTest extends TestCase
         $this->actingAs($user)->json('PATCH', 'api/posts/' . $post->id, [
             'content' => $new_content
         ]);
-        
+
         $this->assertEquals(200, $this->response->status());
         $data = $this->response->getData()->data;
         $this->assertEquals($new_content, $data->content);
@@ -233,6 +234,186 @@ class PostTest extends TestCase
         $this->assertEquals(1, Post::find($post2->id)->order);
     }
 
+    public function testDeletePost()
+    {
+        $user = factory(User::class)->create();
+        $collection = factory(Collection::class)->create([
+            'user_id' => $user->id
+        ]);
+
+        $post = factory(Post::class)->create([
+            'collection_id' => $collection->id,
+            'user_id' => $user->id
+        ]);
+        $this->actingAs($user)->json('DELETE', 'api/posts/' . $post->id);
+        $this->assertEquals(Response::HTTP_NO_CONTENT, $this->response->status());
+        $this->assertTrue(Post::onlyTrashed()->find($post->id)->trashed());
+
+        $post2 = factory(Post::class)->create([
+            'collection_id' => $collection->id,
+            'user_id' => $user->id
+        ]);
+        $this->actingAs($user)->json('PATCH', 'api/posts/' . $post2->id, [
+            'is_archived' => true
+        ]);
+        $this->assertEquals(Response::HTTP_NO_CONTENT, $this->response->status());
+        $this->assertTrue(Post::onlyTrashed()->find($post2->id)->trashed());
+
+    }
+
+    public function testDeleteAndRestorePost()
+    {
+
+        $user = factory(User::class)->create();
+        $collection = factory(Collection::class)->create([
+            'user_id' => $user->id
+        ]);
+
+        // 4 3 -2- 1      --> 3 2 1   --> 4 3 2 1
+
+        array_map(function ($order) use ($collection, $user) {
+            factory(Post::class)->create([
+                'collection_id' => $collection->id,
+                'user_id' => $user->id,
+                'order' => $order
+            ]);
+        }, [1, 2, 3, 4]);
+
+        // delete
+        $postId = Post::where('collection_id', $collection->id)
+            ->where('order', 2)->first()->id;
+
+        $this->actingAs($user)->json('DELETE', 'api/posts/' . $postId);
+
+        $posts = Post::where('collection_id', $collection->id)
+            ->orderBy('order', 'desc')->get();
+
+        $this->assertTrue(Post::onlyTrashed()->find($postId)->trashed());
+        $this->assertEquals(3, $posts->count());
+        $this->assertEquals([3, 2, 1],
+            [$posts[0]->order, $posts[1]->order, $posts[2]->order]);
+
+        // restore
+        $this->actingAs($user)->json('PATCH', 'api/posts/' . $postId, [
+            'is_archived' => false
+        ]);
+
+        $posts = Post::where('collection_id', $collection->id)
+            ->orderBy('order', 'desc')->get();
+
+        $this->assertNotNull(Post::find($postId));
+        $this->assertEquals([4, 3, 2, 1],
+            [$posts[0]->order, $posts[1]->order, $posts[2]->order , $posts[3]->order]);
+
+    }
+
+    public function testDeleteAndRestoreFirstPost()
+    {
+
+        $user = factory(User::class)->create();
+        $collection = factory(Collection::class)->create([
+            'user_id' => $user->id
+        ]);
+
+        // -3- 2 1        --> 2 1     --> 3 2 1
+
+        array_map(function ($order) use ($collection, $user) {
+            factory(Post::class)->create([
+                'collection_id' => $collection->id,
+                'user_id' => $user->id,
+                'order' => $order
+            ]);
+        }, [1, 2, 3]);
+
+        // delete
+        $postId = Post::where('collection_id', $collection->id)
+            ->where('order', 3)->first()->id;
+
+        $this->actingAs($user)->json('DELETE', 'api/posts/' . $postId);
+
+        $posts = Post::where('collection_id', $collection->id)
+            ->orderBy('order', 'desc')->get();
+
+        $this->assertTrue(Post::onlyTrashed()->find($postId)->trashed());
+        $this->assertEquals(2, $posts->count());
+        $this->assertEquals([2, 1],
+            [$posts[0]->order, $posts[1]->order]
+        );
+
+        // restore
+        $this->actingAs($user)->json('PATCH', 'api/posts/' . $postId, [
+            'is_archived' => false
+        ]);
+
+        $posts = Post::where('collection_id', $collection->id)
+            ->orderBy('order', 'desc')->get();
+
+        $this->assertNotNull(Post::find($postId));
+        $this->assertEquals(
+            [3, 2, 1],
+            [$posts[0]->order, $posts[1]->order, $posts[2]->order]
+        );
+
+
+    }
+
+    public function testDeleteMultipleAndRestoreOnePost()
+    {
+
+        $user = factory(User::class)->create();
+        $collection = factory(Collection::class)->create([
+            'user_id' => $user->id
+        ]);
+
+        // -5- -4- 3 2 1  --> 3 2 1   --> 4 3 2 1
+
+        array_map(function ($order) use ($collection, $user) {
+            factory(Post::class)->create([
+                'collection_id' => $collection->id,
+                'user_id' => $user->id,
+                'order' => $order
+            ]);
+        },
+            [1, 2, 3, 4, 5]
+        );
+
+        // delete
+        $postId = Post::where('collection_id', $collection->id)
+            ->where('order', 5)->first()->id;
+        $postId2 = Post::where('collection_id', $collection->id)
+            ->where('order', 4)->first()->id;
+
+        $this->actingAs($user)->json('DELETE', 'api/posts/' . $postId);
+        $this->actingAs($user)->json('DELETE', 'api/posts/' . $postId2);
+
+        $posts = Post::where('collection_id', $collection->id)
+            ->orderBy('order', 'desc')->get();
+
+        $this->assertTrue(Post::onlyTrashed()->find($postId)->trashed());
+        $this->assertTrue(Post::onlyTrashed()->find($postId2)->trashed());
+        $this->assertEquals(3, $posts->count());
+        $this->assertEquals(
+            [3, 2, 1],
+            [$posts[0]->order, $posts[1]->order, $posts[2]->order]
+        );
+
+        // restore
+        $this->actingAs($user)->json('PATCH', 'api/posts/' . $postId, [
+            'is_archived' => false
+        ]);
+
+        $posts = Post::where('collection_id', $collection->id)
+            ->orderBy('order', 'desc')->get();
+
+        $this->assertNotNull(Post::find($postId));
+        $this->assertNull(Post::find($postId2));
+        $this->assertEquals([4, 3, 2, 1], [
+            $posts[0]->order, $posts[1]->order, $posts[2]->order,
+            $posts[3]->order
+        ]);
+
+    }
+
     public function testChangeCollection()
     {
         $user = factory(User::class)->create();
@@ -329,8 +510,8 @@ class PostTest extends TestCase
             'content' => 'foo bar',
             'user_id' => $user->id
         ]);
-        $this->assertEquals(201, $this->response->status()); 
-        $this->assertLessThan(Post::where('user_id', $user2->id)->count(), 
+        $this->assertEquals(201, $this->response->status());
+        $this->assertLessThan(Post::where('user_id', $user2->id)->count(),
             Post::where('user_id', $user->id)->count());
     }
 

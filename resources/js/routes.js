@@ -3,6 +3,7 @@ import Post from './components/pages/Post'
 import Collection from './components/pages/Collection'
 import EditCollection from './components/pages/EditCollection'
 import Search from './components/pages/Search'
+import Restore from './components/pages/Restore'
 import Users from './components/pages/Users'
 import User from './components/pages/User'
 import Login from './components/pages/Login'
@@ -80,6 +81,14 @@ export default [
                 path: 'search',
                 name: 'search',
                 component: Search,
+                meta: {
+                    authUser: true
+                }
+            },
+            {
+                path: 'restore',
+                name: 'restore',
+                component: Restore,
                 meta: {
                     authUser: true
                 }

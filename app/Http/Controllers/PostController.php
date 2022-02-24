@@ -26,8 +26,11 @@ class PostController extends Controller
 
         $this->validate($request, [
             'collection_id'    => 'integer|nullable',
-            'is_uncategorized' => 'boolean|nullable',
+            'is_uncategorized' => 'nullable',
+            // should support: 0, 1, true, false, "true", "false" because
+            // it should/could be used in a query string
             'filter'           => 'string|nullable',
+            'is_archived'      => 'nullable', // same as is_uncategorized
             'limit'            => 'integer|nullable',
         ]);
 
@@ -39,9 +42,10 @@ class PostController extends Controller
 
         $posts = $this->service->all(
             intval($request->collection_id),
-            boolval($request->is_uncategorized),
+            $this->service->boolValue($request->is_uncategorized),
             strval($request->filter),
             $auth_type,
+            $this->service->boolValue($request->is_archived),
             intval($request->limit)
         );
 
@@ -98,17 +102,18 @@ class PostController extends Controller
             'content' => 'string|nullable',
             'collection_id' => 'integer|nullable',
             'is_uncategorized' => 'boolean|nullable',
-            'order' => 'integer|nullable'
+            'order' => 'integer|nullable',
+            'is_archived' => 'boolean|nullable'
         ]);
 
-        $post = Post::find($id);
+        $post = Post::withTrashed()->find($id);
         if (!$post) {
             return response()->json('Post not found.', Response::HTTP_NOT_FOUND);
         }
 
         $this->authorize('update', $post);
 
-        $request->is_uncategorized = filter_var($request->is_uncategorized, FILTER_VALIDATE_BOOLEAN);
+        $request->is_uncategorized = boolval($request->is_uncategorized);
 
         if (empty($request->collection_id) && $request->is_uncategorized === false) {
             // request contains no knowledge about a collection
@@ -161,6 +166,16 @@ class PostController extends Controller
 
         $post->update($newValues);
 
+        if (isset($request->is_archived)) {
+            $request->is_archived = filter_var($request->is_archived, FILTER_VALIDATE_BOOLEAN);
+            $is_currently_archived = $post->trashed();
+            if ($request->is_archived === true && $is_currently_archived === false) {
+                $post = $this->service->delete($post);
+            } else if ($request->is_archived === false && $is_currently_archived === true) {
+                $post = $this->service->restore($post);
+            }
+        }
+
         if ($info['type'] === Post::POST_TYPE_LINK && isset($validatedData['content'])) {
             $this->service->saveImage($info['image_path'], $post);
         }
@@ -178,12 +193,7 @@ class PostController extends Controller
         }
         $this->authorize('delete', $post);
 
-        Post::where('collection_id', $post->collection_id)
-            ->where('order', '>', $post->order)
-            ->where('deleted_at', null)
-            ->decrement('order');
-
-        $post->delete();
+        $this->service->delete($post);
 
         return response()->json('', Response::HTTP_NO_CONTENT);
 

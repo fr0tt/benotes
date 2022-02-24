@@ -4,35 +4,44 @@
             <div>
                 <br>
                 <div class="list">
-                    <router-link to="/search" tag="li" class="collection md:px-8 px-4">
+                    <router-link to="/search" tag="li" class="collection">
                         <svg-vue class="w-4 fill-current mr-2" icon="remix/search-line"/>
                         <span class="align-middle text-gray-700">Search</span>
                     </router-link>
-                    <router-link to="/users" tag="li" class="collection md:px-8 px-4">
+                    <router-link to="/restore" class="collection"
+                        :class="{ 'router-link-exact-active': isActiveLink('/restore') }">
+                        <svg-vue icon="zondicons/trash"
+                            class="w-4 fill-current align-text-bottom mr-2"/>
+                        <span class="align-middle text-gray-700">Recycle Bin</span>
+                    </router-link>
+                    <router-link to="/users" tag="li" class="collection">
                         <svg-vue class="w-4 fill-current mr-2" icon="remix/group-fill"/>
                         <span class="align-middle text-gray-700">Users</span>
                     </router-link>
-                    <router-link :to="'/users/' + authUser.id" tag="li" class="collection md:px-8 px-4">
+                    <router-link :to="'/users/' + authUser.id" tag="li" class="collection">
                         <svg-vue class="w-4 fill-current mr-2" icon="remix/user-settings-fill"/>
                         <span class="align-middle text-gray-700">My Account</span>
                     </router-link>
-                    <a @click="logout()" class="collection md:px-8 px-4">
+                    <a @click="logout()" class="collection">
                         <svg-vue class="w-4 fill-current mr-2" icon="remix/logout-circle-line"/>
                         <span class="align-middle text-gray-700">Logout</span>
                     </a>
                     <br><br><br>
-                    <router-link to="/" class="collection md:px-8 px-4 mb-4"
+                    <router-link to="/" class="collection mb-4"
                         :class="{ 'router-link-exact-active': isActiveLink('/') }">
-                        <svg-vue class="w-4 fill-current align-text-bottom mr-2" icon="remix/folder-unknow-fill"/>
+                        <svg-vue icon="remix/folder-unknow-fill"
+                            class="w-4 fill-current align-text-bottom mr-2" />
                         <span class="align-middle text-gray-700">Uncategorized</span>
                     </router-link>
-                    <span class="mb-2 md:px-8 px-4 block text-xs text-gray-700 font-medium uppercase">Collections</span>
+                    <span class="mb-2 md:px-8 px-4 block text-xs
+                        text-gray-700 font-medium uppercase">Collections</span>
                     <ol>
                         <router-link v-for="(collection) in collections" :key="collection.id"
                             :class="{ 'router-link-exact-active': isActiveLink('/c/' + collection.id) }"
-                            class="collection md:px-8 px-4"
+                            class="collection"
                             :to="'/c/' + collection.id">
-                            <svg-vue class="w-4 fill-current align-text-bottom mr-2" icon="remix/folder-fill"/>
+                            <svg-vue icon="remix/folder-fill"
+                                class="w-4 fill-current align-text-bottom mr-2"/>
                             <span class="align-middle text-gray-700">{{ collection.name }}</span>
                         </router-link>
                     </ol>
@@ -67,7 +76,7 @@ export default {
                 if (this.$route.meta.isHome) {
                     this.$store.dispatch('collection/getCurrentCollection', 0)
                 } else if (this.$route.params.collectionId !== null) {
-                    this.$store.dispatch('collection/getCurrentCollection', 
+                    this.$store.dispatch('collection/getCurrentCollection',
                         this.$route.params.collectionId)
                 }
             })
@@ -154,6 +163,12 @@ export default {
             .collection {
                 @apply inline-block w-full py-1;
                 @apply font-medium text-gray-500 cursor-pointer;
+                @apply px-4;
+            }
+            @screen sm {
+                .collection {
+                    @apply px-8;
+                }
             }
             .router-link-exact-active {
                 border-left: 3px solid;
