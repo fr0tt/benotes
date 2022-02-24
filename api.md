@@ -165,7 +165,7 @@ Example response:
 POST /api/collections
 ```
 
-Request body: 
+Request body:
 
 | Attribute | Value                                                        |
 | --------- | ------------------------------------------------------------ |
@@ -252,9 +252,15 @@ Query Parameters:
 | Attribute | Value     |
 | --------- | --------- |
 | collection_id     | Optional. Reduce the response to only posts of a particular collection |
-| is_uncategorized  | Optional. Return only uncategorized posts without a collection |
+| is_uncategorized  | Optional. Return only uncategorized posts without a collection. If set to `false` this attribute will be ignored |
 | filter 			| Optional. Filter the result based on a few characters or whole words |
 | limit 			| Optional. Limit the amount of posts returned |
+
+Example Query:
+
+```
+GET /api/posts?limit=2&is_uncategorized=true
+```
 
 Example Response:
 
@@ -335,7 +341,7 @@ Example Response:
 POST /api/posts
 ```
 
-Request body: 
+Request body:
 
 | Attribute     | Value                                                        |
 | ------------- | ------------------------------------------------------------ |
