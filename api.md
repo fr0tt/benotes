@@ -348,6 +348,7 @@ Request body:
 | collection_id | Optional. Specify a collection you wish to save your new post to, if not, your post will be uncategorized |
 | title         | Optional. Specify a title, gets automatically filled if your content is a link |
 | content       | Required. Specify a link, post, message, ..                  |
+| is_archived   | Optional. Archive or restore this post.                      |
 
 Example Request:
 

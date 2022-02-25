@@ -120,7 +120,7 @@ export default {
                 })
                 .catch(error => {
                     post.isUpdating = false
-                    this.$store.dispatch('notification/setNotification', {
+                    context.dispatch('notification/setNotification', {
                         type: 'error',
                         title: 'Error',
                         description: 'Post could not be updated.'

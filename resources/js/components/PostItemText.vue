@@ -22,7 +22,8 @@
             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
             <path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/>
         </svg>
-        <button v-else-if="restore" @click="restoreFunc()" title="Restore">
+        <button v-else-if="restore" @click="restoreFunc()"
+            :title="'Restore into ' + collectionName">
             <svg-vue class="restore-icon" icon="remix/inbox-unarchive-line"/>
         </button>
 
@@ -35,6 +36,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { getCollectionName } from './../api/collection.js'
 import { Editor, EditorContent } from '@tiptap/vue-2'
 import StarterKit from '@tiptap/starter-kit'
 import Typography from '@tiptap/extension-typography'
@@ -43,7 +45,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 import UnfurlingLink from '../UnfurlingLink'
 
 export default {
-    props: ['post', 'showContextMenu', 'permission', 'restore', 'restoreFunc'],
+    props: ['post', 'showContextMenu', 'permission', 'restore'],
     components: {
         EditorContent,
     },
@@ -91,9 +93,15 @@ export default {
                 this.post.isUpdating = true
                 this.$store.dispatch('post/updatePost', { post: this.localPost })
             }
+        },
+        restorePost () {
+            this.$store.dispatch('post/updatePost', { post: this.post, transfer: true, restore: true })
         }
     },
     computed: {
+        collectionName () {
+            return getCollectionName(this.post.collection_id)
+        },
         ...mapState([
             'isMobile'
         ])
