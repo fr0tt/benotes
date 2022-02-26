@@ -124,7 +124,9 @@ export default {
     watch: {
         collectionId () {
             this.init()
-            this.$store.dispatch('collection/getCurrentCollection', this.collectionId)
+            this.$store.dispatch('collection/getCurrentCollection', this.collectionId).then(() => {
+                this.$store.commit('appbar/setTitle', this.currentCollection.name)
+            })
             this.$store.dispatch('appbar/setOptions', [
                 {
                     label: 'Paste',

@@ -73,7 +73,6 @@ export default {
                 })
         },
         deleteCollection (context, id) {
-            return
             axios.delete('/api/collections/' + id)
                 .then(response => {
                     const index = context.state.collections.findIndex((collection) => {
