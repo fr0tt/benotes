@@ -1,5 +1,5 @@
 <template>
-    <NodeViewWrapper class="unfurling-link max-w-md block whitespace-normal" >
+    <NodeViewWrapper class="unfurling-link max-w-md block whitespace-normal">
         <a class="shadow-md flex my-1"
             target="_blank" rel="noopener noreferrer nofollow"
             :href="node.attrs.href"
@@ -41,7 +41,7 @@ export default {
     },
     created () {
 
-        if (this.node.attrs['data-title'] === null || 
+        if (this.node.attrs['data-title'] === null ||
             this.node.attrs['data-title'] === '') {
             axios.get('/api/meta', {
                 params: {
@@ -59,17 +59,20 @@ export default {
             }).catch(error => {
                 console.log(error)
             })
-        
+
         } else {
             const domain = new URL(this.node.attrs.href).origin.replace(/https?:\/\//, '')
             this.image = `https://external-content.duckduckgo.com/ip3/${domain}.ico`
         }
-        
+
     }
 }
 </script>
 <style>
     .has-focus {
         box-shadow: 0 1px 3px 0 rgb(255 119 0 / 42%), 0 1px 2px 0 rgb(255 119 0 / 38%);
+    }
+    .unfurling-link a {
+        @apply no-underline;
     }
 </style>

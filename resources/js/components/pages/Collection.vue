@@ -143,9 +143,6 @@ export default {
                     condition: this.isRealCollection
                 }
             ])
-        },
-        currentCollection: function (newValue, oldValue) {
-            this.$store.commit('appbar/setTitle', newValue.name, { root: true })
         }
     },
     computed: {

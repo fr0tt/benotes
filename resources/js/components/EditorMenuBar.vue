@@ -26,72 +26,75 @@
             </transition>
         </button>
 
-        <!--
-            really neccessary ?
-        <button class="menubar-button" :class="{ 'is-active': editor.isActive('paragraph') }"
-            @click="editor.chain().focus().setParagraph().run()">
-            <svg-vue class="editor-icon" icon="zondicons/text-decoration"/>
-        </button>
-        -->
-
         <i class="delimiter"></i>
 
         <button class="menubar-button" :class="{ 'is-active': editor.isActive('bold') }"
-            @click="editor.chain().focus().toggleBold().run()">
+            @click="editor.chain().focus().toggleBold().run()" title="Bold">
             <svg-vue class="editor-icon" icon="material/format_bold"/>
         </button>
 
         <button class="menubar-button" :class="{ 'is-active': editor.isActive('italic') }"
-            @click="editor.chain().focus().toggleItalic().run()">
+            @click="editor.chain().focus().toggleItalic().run()" title="Italic">
             <svg-vue class="editor-icon" icon="material/format_italic"/>
         </button>
 
         <button
             class="menubar-button" :class="{ 'is-active': editor.isActive('underline') }"
-            @click="editor.chain().focus().toggleUnderline().run()">
+            @click="editor.chain().focus().toggleUnderline().run()" title="Underline">
             <svg-vue class="editor-icon" icon="material/format_underlined"/>
         </button>
 
         <i class="delimiter"></i>
 
         <button class="menubar-button" :class="{ 'is-active': editor.isActive('bulletList') }"
-            @click="editor.chain().focus().toggleBulletList().run()" >
+            @click="editor.chain().focus().toggleBulletList().run()" title="Bullet List">
             <svg-vue class="editor-icon" icon="material/list_bulleted"/>
         </button>
 
         <button class="menubar-button" :class="{ 'is-active': editor.isActive('orderedList') }"
-            @click="editor.chain().focus().toggleOrderedList().run()">
+            @click="editor.chain().focus().toggleOrderedList().run()" title="Ordered List">
             <svg-vue class="editor-icon" icon="material/list_numbered"/>
         </button>
-        
+
         <i class="delimiter"></i>
 
         <button class="menubar-button" :class="{ 'is-active': editor.isActive('blockquote') }"
-            @click="editor.chain().focus().toggleBlockquote().run()">
+            @click="editor.chain().focus().toggleBlockquote().run()" title="Blockquote">
             <svg-vue class="editor-icon" icon="material/format_quote"/>
         </button>
 
         <button class="menubar-button" :class="{ 'is-active': editor.isActive('codeBlock') }"
-            @click="editor.chain().focus().toggleCodeBlock().run()">
+            @click="editor.chain().focus().toggleCodeBlock().run()" title="Code Block">
             <svg-vue class="editor-icon" icon="material/code"/>
         </button>
-        
-        <button class="menubar-button" @click="editor.chain().focus().setHorizontalRule().run()">
+
+        <button class="menubar-button" @click="editor.chain().focus().setHorizontalRule().run()"
+            title="Horizontal Rule">
             <svg-vue class="editor-icon" icon="material/horizontal_rule"/>
         </button>
 
         <i class="delimiter"></i>
 
-        <button class="menubar-button" @click="editor.chain().focus().undo().run()">
+        <button class="menubar-button" @click="editor.chain().focus().setUnfurlingLink().run()"
+            title="Unfurling Link">
+            <svg-vue class="editor-icon" icon="material/art_track"/>
+        </button>
+
+        <i class="delimiter"></i>
+
+        <button class="menubar-button" @click="editor.chain().focus().undo().run()"
+            title="Undo">
             <svg-vue class="editor-icon" icon="material/undo"/>
         </button>
 
-        <button class="menubar-button" @click="editor.chain().focus().redo().run()">
+        <button class="menubar-button" @click="editor.chain().focus().redo().run()"
+            title="Redo">
             <svg-vue class="editor-icon" icon="material/redo"/>
         </button>
 
     </div>
 </template>
+
 <script>
 export default {
     props: ['editor'],

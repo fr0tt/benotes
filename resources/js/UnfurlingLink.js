@@ -50,15 +50,12 @@ export default Node.create({
 
     addCommands() {
         return {
-            setUnfurlingLink: options => ({ tr, dispatch }) => {
-                const { selection } = tr
-                const node = this.type.create(options)
-
-                if (dispatch) {
-                    tr.replaceRangeWith(selection.from, selection.to, node)
-                }
-
-                return true
+            setUnfurlingLink: options => ({ commands, editor }) => {
+                commands.deleteSelection()
+                return commands.insertContent({
+                    type: this.name,
+                    attrs: { href: editor.state.selection.$to.nodeBefore.text },
+                })
             },
         }
     },
