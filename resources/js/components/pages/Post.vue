@@ -33,6 +33,7 @@ import StarterKit from '@tiptap/starter-kit'
 import Typography from '@tiptap/extension-typography'
 import Underline from '@tiptap/extension-underline'
 import Placeholder from '@tiptap/extension-placeholder'
+import Link from '@tiptap/extension-link'
 import UnfurlingLink from '../../UnfurlingLink'
 
 import EditorMenuBar from '../EditorMenuBar.vue'
@@ -63,9 +64,10 @@ export default {
                 editable: true,
                 extensions: [
                     StarterKit,
-                    Typography, // e.g. ->
+                    Typography, // e.g. for:  ->
                     Underline,
                     Placeholder,
+                    Link,
                     UnfurlingLink
                 ],
             })

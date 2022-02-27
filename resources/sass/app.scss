@@ -122,6 +122,9 @@ label.label {
     p {
         line-height: 1.45;
     }
+    a {
+        @apply underline text-blue-600;
+    }
     blockquote {
         @apply italic border-gray-500 my-1 pl-2 text-gray-700;
         border-left-width: 3px;
