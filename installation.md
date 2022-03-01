@@ -68,7 +68,7 @@ and change ```APP_PORT``` if necessary
 (_do some necessary work like database migration and admin account creation_)
 - if you wish to use it on a production server change in your ```.env``` file ```APP_ENV``` from ```local``` to ```production```
 - (based on your setup you might want to configure a reverse proxy as well)
-- for persiting data see [below](optional-s3-as-filesystem)
+- for persisting data see [below](optional-s3-as-filesystem)
 
 
 ### Upgrade (Docker)
@@ -84,10 +84,9 @@ and change ```APP_PORT``` if necessary
 
 ### Installation (Heroku)
 
-- [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-(_if the referrer link won't work properly on your device, try to use for deploying the original application: https://heroku.com/deploy?template=https://github.com/fr0tt/benotes_)
+- [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/fr0tt/benotes)
 - run command: ```php artisan install --only-user``` (_by clicking the 'more' button and 'run console'_)
-- for persiting data see [below](optional-s3-as-filesystem)
+- for persisting data see [below](optional-s3-as-filesystem)
 
 Please note that this button **only** allows you to easily install the application. For updating it see section *Upgrade on Heroku* in **Upgrade** down below.
 
