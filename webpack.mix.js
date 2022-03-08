@@ -42,7 +42,8 @@ mix.js('resources/js/app.js', 'public/js')
         svgoSettings: [
             { removeTitle: false },
             { removeViewBox: false },
-            { removeDimensions: true }
+            { removeDimensions: true },
+            { cleanupIDs: false }
         ]
     })
     .webpackConfig({

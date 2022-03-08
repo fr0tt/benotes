@@ -40,7 +40,13 @@
                             :class="{ 'router-link-exact-active': isActiveLink('/c/' + collection.id) }"
                             class="collection"
                             :to="'/c/' + collection.id">
-                            <svg-vue icon="remix/folder-fill"
+                            <svg-vue
+                                v-if="collectionIconIsInline(collection.icon_id)"
+                                :icon="'glyphs/' + collection.icon_id" class="w-6 h-6 glyphs"/>
+                            <svg v-else-if="collection.icon_id" class="w-6 h-6 glyphs">
+                                <use :xlink:href="'/glyphs.svg#' + collection.icon_id"></use>
+                            </svg>
+                            <svg-vue v-else icon="remix/folder-fill"
                                 class="w-4 fill-current align-text-bottom mr-2"/>
                             <span class="align-middle text-gray-700">{{ collection.name }}</span>
                         </router-link>
@@ -63,6 +69,7 @@
 <script>
 import { mapState } from 'vuex'
 import axios from 'axios'
+import { collectionIconIsInline } from './../api/collection'
 export default {
     name: 'Sidebar',
     data () {
@@ -90,7 +97,8 @@ export default {
         },
         isActiveLink (route) {
             return route === this.$route.path
-        }
+        },
+        collectionIconIsInline
     },
     computed: {
         ...mapState([
@@ -176,6 +184,13 @@ export default {
                 svg {
                     margin-left: -3px;
                 }
+                .glyphs {
+                    margin-left: calc(-0.25rem + -3px);
+                }
+            }
+            .glyphs {
+                margin-left: -0.25rem;
+                margin-right: 0.25rem;
             }
         }
     }

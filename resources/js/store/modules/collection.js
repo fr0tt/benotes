@@ -7,8 +7,8 @@ export default {
     state: {
         collections: null,
         currentCollection: {
-            'id': null,
-            'name': ''
+            id: null,
+            name: ''
         },
         collectionMenu: {
             isVisible: false,
@@ -57,9 +57,11 @@ export default {
         addCollection (context, collection) {
             context.commit('addCollection', collection)
         },
-        updateCollection (context, { id, name }) {
+        updateCollection (context, { id, name, iconId }) {
+            console.log(iconId)
             axios.patch('/api/collections/' + id, {
-                name: name
+                name: name,
+                icon_id: iconId
             })
                 .then((response) => {
                     const newCollection = response.data.data

@@ -9,10 +9,26 @@
                 <input v-model="name" placeholder="Name" autofocus class="input"/>
             </div>
 
-            <div v-if="!isNew" class="mb-16">
+            <div class="mb-10 relative">
+                <label class="label">Collection Icon</label>
+                <button @click="showPicker = true"
+                    class="border-2 border-gray-400 rounded py-2 px-2">
+                    <svg-vue v-if="collectionIconIsInline(iconId)"
+                        :icon="'glyphs/' + iconId" class="w-6 h-6"/>
+                    <svg v-else-if="iconId" class="w-6 h-6">
+                        <use :xlink:href="'/glyphs.svg#' + iconId"></use>
+                    </svg>
+                    <svg-vue v-else icon="remix/folder-fill"
+                        class="w-6 text-gray-500 fill-current align-text-bottom"/>
+                </button>
+                <IconPicker v-if="showPicker" @iconSelected="iconSelect"/>
+                <p class="mt-4">Select an optional icon for your collection.</p>
+            </div>
+
+            <div v-if="!isNew" class="mt-16 mb-16">
                 <label class="label inline-block">Collection Url</label>
                 <button @click="is_active = !is_active" class="switch"
-                    :class="[is_active ? 'bg-orange-600 border-orange-600 text-white' 
+                    :class="[is_active ? 'bg-orange-600 border-orange-600 text-white'
                     : 'border-gray-600 text-gray-600']">
                     {{ switchValue }}
                 </button>
@@ -20,23 +36,28 @@
                 <div class="w-full mt-4 md:mt-0 md:flex">
                     <input class="input readonly" :value="domain" readonly/>
                     <div class="flex flex-1 mt-1 md:mt-0">
-                        <input v-model="token" class="input flex-1 mx-1" placeholder="Collection Url"/>
-                        <div v-if="isSupported" @click="copy" 
+                        <input v-model="token" class="input flex-1 mx-1"
+                            placeholder="Collection Url"/>
+                        <div v-if="isSupported" @click="copy"
                             class="bg-gray-300 px-2 mr-1 rounded cursor-pointer">
                             <svg-vue class="w-6 mt-2.5" icon="material/link"/>
                         </div>
-                        <div @click="generate()" 
+                        <div @click="generate()"
                             class="px-2 bg-gray-300 rounded cursor-pointer">
                             <svg-vue class="w-6 mt-2.5" icon="material/autorenew"/>
                         </div>
                     </div>
                 </div>
+
+                <p class="mt-4">Make this collection publicly available by
+                    visiting the specified URL.</p>
             </div>
 
             <div v-if="!isNew" class="mb-14 py-6 px-6 bg-red-400 rounded">
                 <h3 class="text-xl font-semibold mb-1">Delete collection</h3>
                 <p class="mb-4">Delete this collection and all its content.</p>
-                <button title="Delete Collection" @click="deleteCollection" class="button red mb-2">
+                <button title="Delete Collection" @click="deleteCollection"
+                    class="button red mb-2">
                     Delete
                 </button>
             </div>
@@ -47,8 +68,13 @@
 <script>
 import axios from 'axios'
 import { mapState } from 'vuex'
+import { collectionIconIsInline } from './../../api/collection'
+import IconPicker from '../IconPicker.vue'
 export default {
     props: ['id', 'isNew'],
+    components: {
+        IconPicker
+    },
     data () {
         return {
             name: '',
@@ -59,13 +85,16 @@ export default {
             headline: (this.isNew) ? 'Create Collection' : 'Collection Settings',
             description: (this.isNew) ? 'Specify a name for your new collection.'
                 : 'Update your collection\'s title and public available URL.',
-            isSupported: null
+            isSupported: null,
+            iconId: null,
+            showPicker: false
         }
     },
     methods: {
         create () {
             axios.post('/api/collections', {
-                name: this.name
+                name: this.name,
+                icon_id: this.iconId
             })
                 .then(response => {
                     this.$store.dispatch('collection/addCollection', response.data.data)
@@ -76,7 +105,9 @@ export default {
                 })
         },
         update () {
-            this.$store.dispatch('collection/updateCollection', { id: this.id, name: this.name })
+            this.$store.dispatch('collection/updateCollection', {
+                id: this.id, name: this.name, iconId: this.iconId
+            })
             this.handleShare()
             this.$router.push({ path: '/c/' + this.id })
         },
@@ -123,31 +154,42 @@ export default {
                 })
         },
         handleShare () {
-            if (this.share === null) {
-                axios.post('/api/shares', {
-                    token: this.token,
-                    collection_id: this.id,
-                    is_active: this.is_active
-                })
-                    .catch(error => {
-                        console.log(error.response.data)
+            if (this.share === null && this.is_active === false) {
+                return
+            }
+
+            if (this.is_active && this.token !== '') {
+                if (this.share) {
+                    axios.patch('/api/shares/' + this.share.id, {
+                        token: this.token,
+                        collection_id: this.id,
+                        is_active: this.is_active
                     })
-            } else if (this.token === '') {
+                        .catch(error => {
+                            console.log(error.response.data)
+                        })
+                } else {
+                    axios.post('/api/shares', {
+                        token: this.token,
+                        collection_id: this.id,
+                        is_active: this.is_active
+                    })
+                        .catch(error => {
+                            console.log(error.response.data)
+                        })
+                }
+            } else if (!this.is_active && this.share) {
                 axios.delete('/api/shares/' + this.share.id)
                     .catch(error => {
                         console.log(error.response.data)
                     })
-            } else if (this.token !== '') {
-                axios.patch('/api/shares/' + this.share.id, {
-                    token: this.token,
-                    collection_id: this.id,
-                    is_active: this.is_active
-                })
-                    .catch(error => {
-                        console.log(error.response.data)
-                    })
             }
-        }
+        },
+        iconSelect (event) {
+            this.iconId = Number(event.id)
+            this.showPicker = false
+        },
+        collectionIconIsInline
     },
     computed: {
         switchValue () {
@@ -174,6 +216,7 @@ export default {
                 .then(response => {
                     const collection = response.data.data
                     this.name = collection.name
+                    this.iconId = collection.icon_id
                 })
                 .catch(error => {
                     console.log(error.response.data)
@@ -195,7 +238,7 @@ export default {
                     label: 'Save',
                     callback: this.create,
                     icon: 'checkmark'
-                } 
+                }
             })
         }
         navigator.permissions.query({ name: 'clipboard-write' }).then(result => {

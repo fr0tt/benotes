@@ -12,3 +12,7 @@ export function getCollectionName (collectionId) {
     }
     return collection.name
 }
+
+export function collectionIconIsInline (iconId) {
+    return [4003, 4008, 4010, 4017, 4103].indexOf(iconId) > -1
+}

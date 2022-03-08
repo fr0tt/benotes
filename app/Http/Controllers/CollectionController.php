@@ -31,12 +31,14 @@ class CollectionController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required|string',
+            'name'    => 'required|string',
+            'icon_id' => 'nullable|integer'
         ]);
 
         $collection = Collection::create([
             'name' => $request->name,
-            'user_id' => Auth::user()->id
+            'user_id' => Auth::user()->id,
+            'icon_id' => $request->icon_id
         ]);
 
         return response()->json(['data' => $collection], 201);
@@ -45,12 +47,15 @@ class CollectionController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'name' => 'required|string',
+            'name'    => 'required|string',
+            'icon_id' => 'nullable|integer'
         ]);
 
         $collection = Collection::find($id);
         $this->authorize('update', $collection);
+
         $collection->name = $request->name;
+        $collection->icon_id = $request->icon_id;
         $collection->save();
 
         return response()->json(['data' => $collection], 200);
