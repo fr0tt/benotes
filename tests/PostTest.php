@@ -256,7 +256,6 @@ class PostTest extends TestCase
         $this->actingAs($user)->json('PATCH', 'api/posts/' . $post2->id, [
             'is_archived' => true
         ]);
-        $this->assertEquals(Response::HTTP_NO_CONTENT, $this->response->status());
         $this->assertTrue(Post::onlyTrashed()->find($post2->id)->trashed());
 
     }
