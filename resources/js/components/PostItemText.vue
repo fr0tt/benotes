@@ -22,7 +22,7 @@
             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
             <path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/>
         </svg>
-        <button v-else-if="restore" @click="restoreFunc()"
+        <button v-else-if="restore" @click="restorePost()"
             :title="'Restore into ' + collectionName">
             <svg-vue class="restore-icon" icon="remix/inbox-unarchive-line"/>
         </button>
@@ -41,7 +41,9 @@ import { Editor, EditorContent } from '@tiptap/vue-2'
 import StarterKit from '@tiptap/starter-kit'
 import Typography from '@tiptap/extension-typography'
 import Underline from '@tiptap/extension-underline'
-import Placeholder from '@tiptap/extension-placeholder'
+import Link from '@tiptap/extension-link'
+import TaskList from '@tiptap/extension-task-list'
+import TaskItem from '@tiptap/extension-task-item'
 import UnfurlingLink from '../UnfurlingLink'
 
 export default {
@@ -59,7 +61,9 @@ export default {
                     StarterKit,
                     Typography,
                     Underline,
-                    Placeholder,
+                    Link,
+                    TaskList,
+                    TaskItem,
                     UnfurlingLink
                 ],
                 content: this.post.content

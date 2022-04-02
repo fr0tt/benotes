@@ -145,6 +145,25 @@ label.label {
     ol {
         list-style-type: decimal;
     }
+    ul[data-type=taskList] {
+        list-style: none;
+        padding: 0;
+        li {
+            display: flex;
+            padding: 0;
+            input {
+                @apply w-4 h-4 appearance-none align-middle bg-gray-100 rounded border border-gray-300;
+                margin-top: -0.15rem;
+            }
+            input:checked {
+                @apply bg-orange-600 border-orange-600;
+                background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZiI+PHBhdGggZD0iTTAgMGgyNHYyNEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik05IDE2LjE3TDQuODMgMTJsLTEuNDIgMS40MUw5IDE5IDIxIDdsLTEuNDEtMS40MXoiLz48L3N2Zz4=);
+            }
+            div {
+                @apply ml-4;
+            }
+        }
+    }
     li {
         padding: 0 0.25rem;
     }

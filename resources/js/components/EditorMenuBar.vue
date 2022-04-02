@@ -56,6 +56,11 @@
             <svg-vue class="editor-icon" icon="material/list_numbered"/>
         </button>
 
+        <button class="menubar-button" @click="editor.chain().focus().toggleTaskList().run()"
+            title="Task List">
+            <svg-vue class="editor-icon" icon="material/check_box"/>
+        </button>
+
         <i class="delimiter"></i>
 
         <button class="menubar-button" :class="{ 'is-active': editor.isActive('blockquote') }"

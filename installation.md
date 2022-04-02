@@ -44,9 +44,9 @@ For PostgreSQL have a look at https://github.com/fr0tt/benotes/issues/14
 - ```git pull```
 (*upgrade files*)
 - ```composer install```
-(*upgrade dependencies. See composer part of Installation for information about php8 above*)
+(*upgrade dependencies. See composer part of Installation for information regarding errors with php8 above*)
 - ```php artisan migrate```
-(*upgrade database schemas*)
+(*upgrade database schemas. See composer part of Installation for information regarding errors with php8 above*)
 
 ---
 
