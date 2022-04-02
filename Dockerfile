@@ -9,7 +9,7 @@ ENV TZ=UTC
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 
-RUN apk --no-cache update && apk --no-cache add \  
+RUN apk --no-cache update && apk --no-cache add \
     git \
     curl \
     curl-dev \
@@ -32,10 +32,10 @@ RUN docker-php-ext-configure gd \
     --enable-gd \
     --with-jpeg
 
-RUN docker-php-ext-install \ 
+RUN docker-php-ext-install \
     pdo \
     pdo_mysql \
-    mysqli \ 
+    mysqli \
     pgsql \
     pdo_pgsql \
     opcache \
@@ -52,12 +52,18 @@ RUN docker-php-ext-install \
 COPY ./docker/nginx/default.conf /opt/docker/etc/nginx/main.conf
 
 
-USER $user
-
 # will be overriden by the bind mount - if used
 COPY . /var/www/
 
+RUN chown -R $user:$user /var/www
+
+
 WORKDIR /var/www
+
+RUN chown -R $user:www-data storage && chmod -R 775 storage
+
+
+USER $user
 
 
 ARG USE_COMPOSER
