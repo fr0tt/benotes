@@ -110,7 +110,8 @@ export default {
             }
             this.$store.dispatch('post/fetchPosts', {
                 collectionId: this.searchCollection ? this.searchCollection.id : null,
-                filter: this.searchValue
+                filter: this.searchValue,
+                limit: 0
             })
         },
         onArrowDown (event) {

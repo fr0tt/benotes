@@ -1,12 +1,12 @@
 <template>
-    <div class="min-h-full collection">
+    <div class="min-h-full relative collection">
         <div class="sm:ml-4 -ml-2 px-2">
             <transition name="collection-fade">
                 <Draggable v-if="!isLoading" tag="ol" v-model="posts"
                     @start="drag = true" @end="dragged"
                     :delay="90" :delayOnTouchOnly="true"
                     v-bind="{ animation: 200 }"
-                    class="pt-4 pb-24">
+                    class="pt-4 pb-16">
                     <transition-group name="grid-fade">
                         <Post v-for="post in posts"
                             :class="drag ? '' : 'item-transition'"
@@ -19,6 +19,7 @@
             </transition>
         </div>
         <CollectionMenu v-if="collectionMenu.isVisible"/>
+        <PostLoader :collectionId="collectionId"/>
     </div>
 </template>
 <script>
@@ -26,6 +27,7 @@ import axios from 'axios'
 import { mapGetters, mapState } from 'vuex'
 import Post from '../PostItem.vue'
 import CollectionMenu from '../CollectionMenu.vue'
+import PostLoader from '../PostLoader.vue'
 import Draggable from 'vuedraggable'
 
 export default {
@@ -36,7 +38,8 @@ export default {
     components: {
         Post,
         CollectionMenu,
-        Draggable
+        PostLoader,
+        Draggable,
     },
     data () {
         return {
@@ -217,7 +220,7 @@ export default {
         } else {
             this.$store.commit('appbar/setTitle', this.currentCollection.name, { root: true })
         }
-    },
+    }
 }
 </script>
 <style lang="scss">

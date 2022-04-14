@@ -1,10 +1,14 @@
 import axios from 'axios'
 import { getPosts } from './../../api/post.js'
 
+const STANDARD_LIMIT = 20
+
 export default {
     namespaced: true,
     state: {
         posts: [],
+        offset: 0,
+        isCompletelyLoaded: false,
         isLoading: false,
         isUpdating: false,
         contextMenu: {
@@ -53,14 +57,23 @@ export default {
                 })
             }
             state.posts = posts
+        },
+        setOffset (state, offset) {
+            state.offset = offset
+        },
+        isCompletelyLoaded (state, isLoaded) {
+            state.isCompletelyLoaded = isLoaded
         }
     },
     actions: {
-        fetchPosts (context, { collectionId, filter = null, isArchived = false }) {
+        fetchPosts (context, { collectionId, filter = null,
+                isArchived = false, limit = STANDARD_LIMIT }) {
             context.commit('isLoading', true)
             context.commit('setPlaceholderPosts')
+            context.commit('setOffset', 0)
+            context.commit('isCompletelyLoaded', false)
 
-            getPosts(collectionId, filter, isArchived)
+            getPosts(collectionId, filter, isArchived, limit)
                 .then(response => {
                     const posts = response.data.data
                     context.commit('isLoading', false)
@@ -70,6 +83,26 @@ export default {
                     console.log(error)
                     context.commit('isLoading', false)
                 })
+        },
+        fetchMorePosts(context, { collectionId, filter = null, isArchived = false }) {
+            return new Promise((resolve, reject) => {
+                const offset = context.state.offset + STANDARD_LIMIT
+                getPosts(collectionId, filter, isArchived, STANDARD_LIMIT, offset)
+                    .then(response => {
+                        const posts = response.data.data
+                        if (posts.length === 0) {
+                            context.commit('isCompletelyLoaded', true)
+                            resolve()
+                        }
+                        context.commit('setOffset', offset)
+                        context.commit('setPosts', context.state.posts.concat(posts))
+                        resolve()
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        reject(error)
+                    })
+            })
         },
         getPost (context, id) {
             return new Promise((resolve, reject) => {

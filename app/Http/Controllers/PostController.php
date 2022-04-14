@@ -31,6 +31,7 @@ class PostController extends Controller
             // it should/could be used in a query string
             'filter'           => 'string|nullable',
             'is_archived'      => 'nullable', // same as is_uncategorized
+            'offset'           => 'integer|nullable',
             'limit'            => 'integer|nullable',
         ]);
 
@@ -46,6 +47,7 @@ class PostController extends Controller
             strval($request->filter),
             $auth_type,
             $this->service->boolValue($request->is_archived),
+            intval($request->offset),
             intval($request->limit)
         );
 

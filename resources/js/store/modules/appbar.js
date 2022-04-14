@@ -23,7 +23,9 @@ export default {
         },
         setTitle (state, title) {
             state.title = title
-            document.title = 'Benotes - ' + title
+            if (title) {
+                document.title = 'Benotes - ' + title
+            }
         },
         setOptions (state, options) {
             state.options = options

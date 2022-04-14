@@ -254,6 +254,7 @@ Query Parameters:
 | collection_id     | Optional. Reduce the response to only posts of a particular collection |
 | is_uncategorized  | Optional. Return only uncategorized posts without a collection. If set to `false` this attribute will be ignored |
 | filter 			| Optional. Filter the result based on a few characters or whole words |
+| offset 			| Optional. Skip an amount of posts |
 | limit 			| Optional. Limit the amount of posts returned |
 
 Example Query:

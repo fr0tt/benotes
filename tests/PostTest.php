@@ -529,6 +529,29 @@ class PostTest extends TestCase
         $this->assertEquals(403, $this->response->status());
     }
 
+    public function testGetPostWithOffset()
+    {
+        $user = factory(User::class)->create();
+        $post1 = factory(Post::class)->create([
+            'order' => 1
+        ]);
+        $post2 = factory(Post::class)->create([
+            'order' => 2
+        ]);
+        $post3 = factory(Post::class)->create([
+            'order' => 3
+        ]);
+        $post4 = factory(Post::class)->create([
+            'order' => 4
+        ]);
+
+        $this->actingAs($user)->json('GET', 'api/posts?offset=2&limit=2');
+        $data = $this->response->getData()->data;
+        $this->assertEquals(count($data), 2);
+        $this->assertEquals($data[0]->order, 2);
+
+    }
+
     public function testGetPostWithoutAuth()
     {
         $user = factory(User::class)->create();

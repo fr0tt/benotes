@@ -1,6 +1,6 @@
 <template>
-    <div class="min-h-full restore">
-        <div class="sm:ml-8 px-2 md:px-8">
+    <div class="min-h-full relative restore">
+        <div class="sm:ml-8 px-2 md:px-8 pb-16">
             <div class="py-4 md:pt-16 mb-6">
                 <h1 class="text-3xl font-medium text-gray-800">
                     Recycle Bin
@@ -21,6 +21,7 @@
                 </ul>
             </transition>
         </div>
+        <PostLoader :isArchived="true"/>
     </div>
 </template>
 
@@ -28,10 +29,12 @@
 
 import { mapState } from 'vuex'
 import Post from '../PostItem.vue'
+import PostLoader from '../PostLoader.vue'
 
 export default {
     components: {
-        Post
+        Post,
+        PostLoader
     },
     computed: {
         ...mapState('post', [
@@ -60,7 +63,7 @@ export default {
         this.$store.dispatch('post/fetchPosts', {
             isArchived: 1
         })
-    },
+    }
 }
 </script>
 <style lang="scss">

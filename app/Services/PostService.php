@@ -19,6 +19,7 @@ class PostService
                         string $filter = '',
                         int $auth_type = User::UNAUTHORIZED_USER,
                         bool $is_archived = false,
+                        int $offset = -1,
                         int $limit = -1) : \Illuminate\Database\Eloquent\Collection
     {
 
@@ -48,6 +49,10 @@ class PostService
                 $query->where('title', 'LIKE', "%{$filter}%")
                 ->orWhere('content', 'LIKE', "%{$filter}%");
             });
+        }
+
+        if ($offset > 0) {
+            $posts = $posts->offset($offset);
         }
 
         if ($limit > 0) {
