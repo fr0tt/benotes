@@ -48,6 +48,9 @@ export default {
     },
     mounted () {
         document.querySelector('#view').addEventListener('scroll', this.handleScroll)
+    },
+    beforeDestroy () {
+        document.querySelector('#view').addEventListener('scroll', this.handleScroll)
     }
 }
 </script>

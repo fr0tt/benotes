@@ -1,6 +1,6 @@
 <template>
     <div class="min-h-full search">
-        <div class="sm:ml-8 px-2 md:px-8">
+        <div class="sm:ml-8 px-2 md:px-8 pb-12">
             <div class="py-4 md:pt-16 mb-6">
                 <h1 class="text-3xl font-medium text-gray-800">
                     Search
