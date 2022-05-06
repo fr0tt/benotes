@@ -25,6 +25,9 @@ export default {
                 return
             }
             const view = document.querySelector('#view')
+            if (view.scrollTop <= 0) {
+                return
+            }
             if (view.scrollHeight === window.innerHeight + view.scrollTop) {
                 this.showSpinner = true
                 let data = {
@@ -50,7 +53,7 @@ export default {
         document.querySelector('#view').addEventListener('scroll', this.handleScroll)
     },
     beforeDestroy () {
-        document.querySelector('#view').addEventListener('scroll', this.handleScroll)
-    }
+        document.querySelector('#view').removeEventListener('scroll', this.handleScroll)
+    },
 }
 </script>
