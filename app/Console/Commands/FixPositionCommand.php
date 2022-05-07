@@ -43,7 +43,7 @@ class FixPositionCommand extends Command
             $uncategorized->name = 'Uncategorized';
             $collections->push($uncategorized);
             foreach ($collections as $collection) {
-                echo $collection->name . ' by ' . $user->name . ':' . PHP_EOL;
+                echo '------- ' . $collection->name . ' by ' . $user->name . ':' . ' -------' . PHP_EOL;
                 $collection_id = $collection->id;
                 $posts = Post::where('user_id', $user_id)
                     ->where('collection_id', $collection_id)
@@ -54,7 +54,7 @@ class FixPositionCommand extends Command
                     $post = $posts[$i];
                     $post->order = $i + 1;
                     $post->save();
-                    echo $post['title'] . ' ' . $post['order'] . PHP_EOL;
+                    echo $post['order'] . ': ' . $post['title'] . PHP_EOL;
                 };
             }
         }

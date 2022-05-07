@@ -31,7 +31,22 @@ Currently their are three options for you to choose from:
 - [Docker](installation.md#docker)
 - [Heroku](installation.md#heroku)
 
+## Issues
+
 Feel free to [contact me](https://twitter.com/_fr0tt) if you need any help or open an [issue](https://github.com/fr0tt/benotes/issues) or a [discussion](https://github.com/fr0tt/benotes/discussions).
+
+
+Q: Having trouble with reordering posts ?
+
+Try this command in order to fix it.
+```
+php artisan fix-position
+```
+or
+```
+/usr/bin/php7.4 artisan fix-position
+```
+
 
 ## Rest API
 
