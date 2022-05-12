@@ -19,8 +19,9 @@ class PostService
                         string $filter = '',
                         int $auth_type = User::UNAUTHORIZED_USER,
                         bool $is_archived = false,
+                        Post $after_post = null,
                         int $offset = -1,
-                        int $limit = -1) : \Illuminate\Database\Eloquent\Collection
+                        int $limit = 50) : \Illuminate\Database\Eloquent\Collection
     {
 
         if ($auth_type === User::API_USER) {
@@ -51,7 +52,9 @@ class PostService
             });
         }
 
-        if ($offset > 0) {
+        if ($after_post !== null) {
+            $posts = $posts->where('order', '<', $after_post->order);
+        } else if ($offset > 0) {
             $posts = $posts->offset($offset);
         }
 

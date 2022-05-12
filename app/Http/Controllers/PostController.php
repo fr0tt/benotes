@@ -31,6 +31,7 @@ class PostController extends Controller
             // it should/could be used in a query string
             'filter'           => 'string|nullable',
             'is_archived'      => 'nullable', // same as is_uncategorized
+            'after_id'         => 'integer|nullable',
             'offset'           => 'integer|nullable',
             'limit'            => 'integer|nullable',
         ]);
@@ -41,12 +42,31 @@ class PostController extends Controller
             return response()->json('', Response::HTTP_UNAUTHORIZED);
         }
 
+        $after_post = null;
+        if (isset($request->after_id)) {
+            if (!isset($request->collection_id) && isset($request->is_uncategorized)) {
+                return response()->json('collection_id or is_uncategorized is required',
+                    Response::HTTP_BAD_REQUEST);
+            }
+            $after_post = Post::find($request->after_id);
+            if ($after_post == null) {
+                return response()->json('after_id does not exist', Response::HTTP_NOT_FOUND);
+            }
+            $this->authorize('view', $after_post);
+            $collection_id = Collection::getCollectionId(
+                $request->collection_id, $request->is_uncategorized);
+            if ($after_post->collection_id !== $collection_id) {
+                return response()->json('Wrong collection', Response::HTTP_BAD_REQUEST);
+            }
+        }
+
         $posts = $this->service->all(
             intval($request->collection_id),
             $this->service->boolValue($request->is_uncategorized),
             strval($request->filter),
             $auth_type,
             $this->service->boolValue($request->is_archived),
+            $after_post,
             intval($request->offset),
             intval($request->limit)
         );

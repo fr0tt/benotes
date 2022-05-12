@@ -20,10 +20,6 @@
         </div>
         <CollectionMenu v-if="collectionMenu.isVisible"/>
         <PostLoader :collectionId="collectionId"/>
-        <div v-if="debug" class="fixed right-0 top-0 mt-16 mr-4 z-50
-            text-xl bg-red-500 text-white">
-            {{ offset }}
-        </div>
     </div>
 </template>
 <script>
@@ -48,7 +44,6 @@ export default {
     data () {
         return {
             drag: false,
-            debug: false
         }
     },
     methods: {
@@ -110,7 +105,7 @@ export default {
                     })
                     .catch(error => {
                         this.$store.commit('post/deletePost', id)
-                        let message = 'Post was unable to be created.'
+                        let message = 'Post could not be created.'
                         if (!['undefined', 'object'].includes(typeof error))
                             message = toString(error).substring(0, 60)
                         this.$store.dispatch('notification/setNotification', {
@@ -188,9 +183,6 @@ export default {
         ]),
         ...mapState('collection', [
             'collectionMenu'
-        ]),
-        ...mapState('post', [
-            'offset'
         ])
     },
     created () {

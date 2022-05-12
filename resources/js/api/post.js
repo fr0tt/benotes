@@ -5,9 +5,9 @@ import axios from 'axios'
  * @param {string} filter
  * @param {boolean} isArchived
  * @param {int} limit
- * @param {int} offset
+ * @param {int} after_id
  */
-function getPosts (collection_id, filter = null, isArchived = false, limit = 0, offset = 0) {
+function getPosts (collection_id, filter = null, isArchived = false, limit = 0, after_id = null) {
     return axios.get('/api/posts', {
         params: {
             collection_id: collection_id,
@@ -15,7 +15,7 @@ function getPosts (collection_id, filter = null, isArchived = false, limit = 0, 
             filter: filter,
             is_archived: isArchived,
             limit: limit,
-            offset: offset
+            after_id: after_id
         }
     })
 }

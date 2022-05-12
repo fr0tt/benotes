@@ -7,7 +7,6 @@ export default {
     namespaced: true,
     state: {
         posts: [],
-        offset: 0,
         isCompletelyLoaded: false,
         isLoading: false,
         isUpdating: false,
@@ -20,6 +19,9 @@ export default {
     getters: {
         maxOrder: state => {
             return state.posts.length > 0 ? state.posts[0].order : 0
+        },
+        lastId: state => {
+            return state.posts[state.posts.length - 1].id
         }
     },
     mutations: {
@@ -58,9 +60,6 @@ export default {
             }
             state.posts = posts
         },
-        setOffset (state, offset) {
-            state.offset = offset
-        },
         isCompletelyLoaded (state, isLoaded) {
             state.isCompletelyLoaded = isLoaded
         }
@@ -70,7 +69,6 @@ export default {
                 isArchived = false, limit = STANDARD_LIMIT }) {
             context.commit('isLoading', true)
             context.commit('setPlaceholderPosts')
-            context.commit('setOffset', 0)
             context.commit('isCompletelyLoaded', false)
 
             getPosts(collectionId, filter, isArchived, limit)
@@ -86,15 +84,13 @@ export default {
         },
         fetchMorePosts(context, { collectionId, filter = null, isArchived = false }) {
             return new Promise((resolve, reject) => {
-                const offset = context.state.offset + STANDARD_LIMIT
-                getPosts(collectionId, filter, isArchived, STANDARD_LIMIT, offset)
+                getPosts(collectionId, filter, isArchived, STANDARD_LIMIT, this.getters['post/lastId'])
                     .then(response => {
                         const posts = response.data.data
                         if (posts.length === 0) {
                             context.commit('isCompletelyLoaded', true)
                             resolve()
                         }
-                        context.commit('setOffset', offset)
                         context.commit('setPosts', context.state.posts.concat(posts))
                         resolve()
                     })

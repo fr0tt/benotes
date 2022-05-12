@@ -552,6 +552,30 @@ class PostTest extends TestCase
 
     }
 
+    public function testGetPostWithSeekPagination()
+    {
+        $user = factory(User::class)->create();
+        $post4 = factory(Post::class)->create([
+            'order' => 4
+        ]);
+        $post3 = factory(Post::class)->create([
+            'order' => 3
+        ]);
+        $post2 = factory(Post::class)->create([
+            'order' => 2
+        ]);
+        $post1 = factory(Post::class)->create([
+            'order' => 1
+        ]);
+
+
+        $this->actingAs($user)->json('GET', 'api/posts?after_id=' . $post3->id . '&limit=2');
+        $data = $this->response->getData()->data;
+        $this->assertEquals(count($data), 2);
+        $this->assertEquals($data[0]->id, $post2->id);
+        $this->assertEquals($data[1]->id, $post1->id);
+    }
+
     public function testGetPostWithoutAuth()
     {
         $user = factory(User::class)->create();
