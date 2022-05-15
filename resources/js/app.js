@@ -3,9 +3,34 @@ import VueRouter from 'vue-router'
 import VueCookie from 'vue-cookie'
 import SvgVue from 'svg-vue'
 import VueLazyload from 'vue-lazyload'
+import axios from 'axios'
 
 import routes from './routes.js'
 import store from './store'
+
+import { refresh } from './api/auth'
+
+
+axios.interceptors.response.use(function (response) {
+    return response
+}, function (error) {
+    if (error.response.status !== 401) {
+        return Promise.reject(error)
+    }
+
+    if (error.response.config.url.includes('/api/auth')) {
+        return Promise.reject(error)
+    }
+
+    refresh().then(response => {
+            return Promise.resolve(response)
+        }).catch(error => {
+            return Promise.reject(error)
+        })
+
+    return Promise.reject(error)
+})
+
 
 Vue.use(VueCookie)
 Vue.use(VueRouter)

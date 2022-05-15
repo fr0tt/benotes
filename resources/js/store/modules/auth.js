@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios'
+import { refresh } from './../../api/auth'
 
 export default {
     namespaced: true,
@@ -55,22 +56,11 @@ export default {
                     })
                     .catch(error => {
                         if (error.response.status === 401) {
-                            axios.post('/api/auth/refresh')
-                                .then(response => {
-                                    const token = response.data.data.token.access_token
-                                    Vue.cookie.set('token', token, { expires: 14, samesite: 'Strict' })
-                                    axios.defaults.headers.common = { 'Authorization': `Bearer ${token}` }
-                                    axios.get('/api/auth/me')
-                                        .then(response => {
-                                            const user = response.data.data
-                                            context.commit('setAuthUser', user)
-                                            context.commit('setStaticAuth', null)
-                                            resolve(user)
-                                        })
-                                })
-                                .catch(error => {
-                                    reject(error)
-                                })
+                            refresh().then(response => {
+                                resolve(response.data.data)
+                            }).catch(error => {
+                                reject(error)
+                            })
                         } else {
                             reject(error)
                         }

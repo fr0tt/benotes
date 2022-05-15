@@ -153,7 +153,7 @@ export default {
                         type: 'error',
                         title: 'Error',
                         description: 'Post could not be updated.'
-                    })
+                    }, { root: true })
                 })
         },
         setPostById (context, { id, post }) {
