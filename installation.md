@@ -85,7 +85,7 @@ and change ```APP_PORT``` if necessary
 ### Installation (Heroku)
 
 - [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/fr0tt/benotes)
-- run command: ```php artisan install --only-user``` (_by clicking the 'more' button and 'run console'_)
+- run command: ```php artisan install --only-user``` (_by clicking the 'more' button and 'run console' in your dashboard_)
 - for persisting data see [below](optional-s3-as-filesystem)
 
 Please note that this button **only** allows you to easily install the application. For updating it see section *Upgrade on Heroku* in **Upgrade** down below.

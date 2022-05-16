@@ -103,6 +103,30 @@ class PostTest extends TestCase
         $this->assertEquals($content, $data->content);
     }
 
+    public function testCreateUncategorizedPostInCorrectOrder() {
+
+        $user = factory(User::class)->create();
+
+        $post = factory(Post::class)->create([
+            'order' => 1
+        ]);
+        $post2 = factory(Post::class)->create([
+            'order' => 2
+        ]);
+
+        $content = 'Post no.3 should have order 3';
+
+        $this->actingAs($user)->json('POST', 'api/posts', [
+            'content' => $content
+        ]);
+
+        $this->assertEquals(201, $this->response->status());
+        $data = $this->response->getData()->data;
+        $this->assertEquals(3, $data->order);
+        $this->assertEquals($content, $data->content);
+
+    }
+
     public function testUpdatePost()
     {
         $user = factory(User::class)->create();

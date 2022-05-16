@@ -30,7 +30,7 @@ class Collection extends Model
 
     public static function getCollectionId($id, $is_uncategorized = false)
     {
-        return $is_uncategorized ? null : intval($id);
+        return $is_uncategorized || $id === null ? null : intval($id);
     }
 
 }
