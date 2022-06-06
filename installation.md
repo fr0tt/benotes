@@ -12,7 +12,7 @@
 - git  (_https://git-scm.com_)
 - composer  (_https://getcomposer.org_)
 - PHP ≥ 7.2.5
-- MySQL, Postgres, SQLite or SQL Server (currently only MySQL and PostgreSQL were tested)
+- MySQL, Postgres, SQLite or SQL Server (currently only MySQL and PostgreSQL and SQLite were tested)
 
 ### Installation (Classic)
 
