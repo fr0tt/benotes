@@ -15,6 +15,9 @@ class RemoveUnusedColumnsAndAddPermissionsToUsers extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('email_verified_at');
+        });
+
+        Schema::table('users', function (Blueprint $table) {
             $table->unsignedTinyInteger('permission');
         });
     }

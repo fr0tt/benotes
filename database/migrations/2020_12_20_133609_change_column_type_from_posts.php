@@ -15,6 +15,10 @@ class ChangeColumnTypeFromPosts extends Migration
     {
         Schema::table('posts', function (Blueprint $table) {
             $table->string('url', 512)->change();
+        });
+
+        // for sqlite
+        Schema::table('posts', function (Blueprint $table) {
             $table->string('image_path', 512)->change();
         });
     }
