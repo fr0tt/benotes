@@ -15,7 +15,8 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\InstallCommand::class,
         Commands\ExportCommand::class,
-        Commands\FixPositionCommand::class
+        Commands\FixPositionCommand::class,
+        Commands\KeyGenerateCommand::class
     ];
 
     /**

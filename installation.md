@@ -50,9 +50,9 @@ For PostgreSQL have a look at https://github.com/fr0tt/benotes/issues/14
 
 ---
 
-## Docker
+## Docker from Source with docker-compose
 
-### Installation (Docker)
+### Installation
 
 - ```git clone https://github.com/fr0tt/benotes```
 - ```cp .env.docker.example .env```
@@ -68,15 +68,56 @@ and change ```APP_PORT``` if necessary
 (_do some necessary work like database migration and admin account creation_)
 - if you wish to use it on a production server change in your ```.env``` file ```APP_ENV``` from ```local``` to ```production```
 - (based on your setup you might want to configure a reverse proxy as well)
-- for persisting data see [below](optional-s3-as-filesystem)
+- for persisting data see [below](#optional-s3-as-filesystem)
 
 
-### Upgrade (Docker)
+### Upgrade
 
 - ```git pull```
 - ```docker-compose exec app sh```
 - ```sh docker/update.sh```
 (_Type yes if asked_)
+
+---
+
+## Docker with CLI
+
+### Installation
+
+- wget -O .env https://raw.githubusercontent.com/fr0tt/benotes/master/.env.sqlite.example
+(_copy the content of this [file](https://raw.githubusercontent.com/fr0tt/benotes/master/.env.sqlite.example) into a new file called ```.env```_)
+- edit ```.env``` by setting a random secret for ```APP_KEY``` (generated with e.g. ```openssl rand -base64 32```) and ```JWT_SECRET```
+- **only if** you do not want to use SQLite: also edit ```DB_DATABASE```, ```DB_HOST```, ```DB_USERNAME```, ```DB_PASSWORD```, ```DB_CONNECTION``` and ```DB_PORT``` according to your database.
+(For instance for PostgreSQL have a look at https://github.com/fr0tt/benotes/issues/14)
+- ```
+    docker run -p 8000:80 -it --rm \
+        -v benotes_storage:/var/www/storage \
+        -v "$(pwd)"/nginx/logs/:/var/lib/nginx/logs/ \
+        -v "$(pwd)"/.env:/var/www/.env \
+        --env-file ./.env \
+        --name benotes benotes
+    ```
+(_run the docker container (with a named volume to store data, a bind mount for webserver logs and env variables from your .env file)_)
+- ```docker exec -it benotes sh```
+(_reference the image by its name, in this case as previously defined: benotes_)
+- ```php artisan migrate```
+- ```php artisan install --only-user```
+(_execute those two commands in your container to initialize the application_)
+
+### Upgrade
+
+- ```
+    docker run -p 8000:80 -it --rm \
+        -v benotes_storage:/var/www/storage \
+        -v "$(pwd)"/nginx/logs/:/var/lib/nginx/logs/ \
+        -v "$(pwd)"/.env:/var/www/.env \
+        --env-file ./.env \
+        --name benotes benotes
+    ```
+(_rerun the container in order to use the latest build_)
+- ```docker exec -it benotes sh```
+- ```sh docker/update.sh```
+(_type yes if asked_)
 
 ---
 

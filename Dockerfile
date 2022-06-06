@@ -22,6 +22,7 @@ RUN apk --no-cache update && apk --no-cache add \
     libmcrypt-dev \
     libpq \
     postgresql-dev \
+    sqlite \
     zip \
     unzip \
     libzip-dev \
@@ -50,7 +51,7 @@ RUN docker-php-ext-install \
 
 
 COPY ./docker/nginx/default.conf /opt/docker/etc/nginx/main.conf
-
+COPY ./docker/entrypoint.sh /entrypoint.d/app_entrypoint.sh
 
 # will be overriden by the bind mount - if used
 COPY . /var/www/
@@ -71,14 +72,6 @@ RUN if [ "$USE_COMPOSER" = "true" ] ; \
     then \
         composer install --prefer-dist --no-interaction ; \
     fi
-
-
-ARG RUN_MIGRATION
-RUN if [ "$RUN_MIGRATION" = "true" ] ; \
-    then \
-    php artisan migrate --force ; \
-    fi
-
 
 USER root
 

@@ -5,16 +5,18 @@ services:
         build:
             args:
                 - USE_COMPOSER=${USE_COMPOSER}
-                - RUN_MIGRATIONS=${RUN_MIGRATIONS}
                 - INSTALL_NODE=${INSTALL_NODE}
             context: ./
         restart: unless-stopped
+        environment:
+            DB_CONNECTION: ${DB_CONNECTION}
+            RUN_MIGRATIONS: ${RUN_MIGRATIONS}
         ports:
             - ${APP_PORT}:80
         volumes:
             - ./:/var/www
             #- benotes_storage:/var/www/storage
-            - ./docker/data/nginx/logs/:/var/lib/nginx/logs/ 
+            - ./docker/data/nginx/logs/:/var/lib/nginx/logs/
         networks:
             - benotes
 
