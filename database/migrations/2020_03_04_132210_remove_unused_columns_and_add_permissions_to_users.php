@@ -17,9 +17,17 @@ class RemoveUnusedColumnsAndAddPermissionsToUsers extends Migration
             $table->dropColumn('email_verified_at');
         });
 
-        Schema::table('users', function (Blueprint $table) {
-            $table->unsignedTinyInteger('permission');
-        });
+        if (env('DB_CONNECTION') === 'sqlite') {
+            // SQLite does not support adding a column to an existing table
+            // with a NOT NULL constraint without a default value
+            Schema::table('users', function (Blueprint $table) {
+                $table->unsignedTinyInteger('permission')->default(0);
+            });
+        } else {
+            Schema::table('users', function (Blueprint $table) {
+                $table->unsignedTinyInteger('permission');
+            });
+        }
     }
 
     /**

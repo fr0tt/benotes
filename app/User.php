@@ -15,13 +15,22 @@ use Illuminate\Support\Facades\Auth;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject, AuthCanResetPassword
 {
-    use Authenticatable, Authorizable, CanResetPassword, Notifiable; 
+    use Authenticatable, Authorizable, CanResetPassword, Notifiable;
 
     const ADMIN = 255;
 
     const API_USER = 1;
     const SHARE_USER = 2;
     const UNAUTHORIZED_USER = 0;
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'permission' => 'integer', // because of SQLite
+    ];
 
     /**
      * The attributes that are mass assignable.

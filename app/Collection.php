@@ -11,6 +11,15 @@ class Collection extends Model
     use SoftDeletes;
 
     /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'user_id' => 'integer', // because of SQLite
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array

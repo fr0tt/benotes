@@ -16,12 +16,22 @@ class Post extends Model
 
 
     /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'user_id' => 'integer', // because of SQLite
+        'order' => 'integer', // because of SQLite
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'content', 'type', 'url', 'base_url', 'title', 'description', 
+        'content', 'type', 'url', 'base_url', 'title', 'description',
         'color', 'image_path', 'user_id', 'collection_id', 'order'
     ];
 
@@ -36,11 +46,10 @@ class Post extends Model
 
     public function getTypeAttribute($value)
     {
-        if ($value === self::POST_TYPE_TEXT) {
-            return 'text';
-        } else if ($value === self::POST_TYPE_LINK) {
+        if (intval($value) === self::POST_TYPE_LINK) {
             return 'link';
         }
+        return 'text';
     }
 
     public static function getTypeFromString($value)
@@ -54,11 +63,11 @@ class Post extends Model
 
     public function getImagePathAttribute($value)
     {
-        
+
         if (Str::startsWith($value, 'thumbnail_')) {
             return Storage::url('thumbnails/' . $value);
         }
-        
+
         return $value;
     }
 
@@ -70,7 +79,7 @@ class Post extends Model
     public function seedIntroData($user_id, $collection_id = null)
     {
         $i = 1;
-        
+
         Post::create([
             'title'         => 'GitHub - fr0tt/benotes: An open source self hosted web app for your notes and bookmarks.',
             'content'       => 'https://github.com/fr0tt/benotes',
@@ -110,7 +119,7 @@ class Post extends Model
             'user_id'       => $user_id,
             'order'         => $i++
         ]);
-        
+
     }
 
 }
