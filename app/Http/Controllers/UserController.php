@@ -37,7 +37,7 @@ class UserController extends Controller
         ]);
 
         $this->authorize('create', User::class);
-        
+
         $alreadyExistingUser = User::where('email', $request->email)->first();
 
         if (!empty($alreadyExistingUser)) {
@@ -46,7 +46,7 @@ class UserController extends Controller
 
         $user = new User;
         $user->name = $request->name;
-        $user->email = $request->email; 
+        $user->email = $request->email;
         $user->password = Hash::make($request->password);
         $user->permission = 7;
         $user->save();
@@ -57,21 +57,21 @@ class UserController extends Controller
     }
 
     public function update(Request $request, int $id)
-    { 
+    {
         $this->validate($request, [
             'name' => 'string',
             'email' => 'email',
             'password_old' => 'string',
             'password_new' => 'string|required_with:password_old'
         ]);
-            
+
         if (isset($request->email)) {
             $emailUser = User::where('email', $request->email)->first();
             if ($emailUser->id !== $id) {
                 return response()->json('Email is already in use.', 400);
             }
         }
-        
+
         $user = User::find($id);
         if (!$user) {
             return response()->json('User not found.', 404);
