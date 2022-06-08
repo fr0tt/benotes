@@ -1,7 +1,8 @@
 # Installation & Upgrade
 
 - [Classic](#classic)
-- [Docker](#docker)
+- [Docker](#docker-with-cli)
+- [Docker Compose](#docker-from-source-with-docker-compose)
 - [Heroku](#heroku)
 - [Optional: S3 as Filesystem](#optional-s3-as-filesystem)
 
@@ -95,7 +96,7 @@ and change ```APP_PORT``` if necessary
         -v "$(pwd)"/nginx/logs/:/var/lib/nginx/logs/ \
         -v "$(pwd)"/.env:/var/www/.env \
         --env-file ./.env \
-        --name benotes benotes
+        --name benotes fr0tt/benotes
     ```
 (_run the docker container (with a named volume to store data, a bind mount for webserver logs and env variables from your .env file)_)
 - ```docker exec -it benotes sh```
@@ -112,7 +113,7 @@ and change ```APP_PORT``` if necessary
         -v "$(pwd)"/nginx/logs/:/var/lib/nginx/logs/ \
         -v "$(pwd)"/.env:/var/www/.env \
         --env-file ./.env \
-        --name benotes benotes
+        --name benotes fr0tt/benotes
     ```
 (_rerun the container in order to use the latest build_)
 - ```docker exec -it benotes sh```

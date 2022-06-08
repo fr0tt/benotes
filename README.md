@@ -28,8 +28,8 @@ This project is currently in **Beta**. You may encounter bugs or errors.
 
 Currently their are three options for you to choose from:
 - [Normal classical way](installation.md#classic)
-- [Docker Compose](installation.md#docker-from-source-with-docker-compose)
 - [Docker](installation.md#docker-with-cli)
+- [Docker Compose](installation.md#docker-from-source-with-docker-compose)
 - [Heroku](installation.md#heroku)
 
 ## Issues
