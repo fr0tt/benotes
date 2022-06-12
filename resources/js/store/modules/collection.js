@@ -52,13 +52,12 @@ export default {
                 .catch(error => {
                     console.log(error)
                 })
-            return collectionsPromise // test
+            return collectionsPromise
         },
         addCollection (context, collection) {
             context.commit('addCollection', collection)
         },
         updateCollection (context, { id, name, iconId }) {
-            console.log(iconId)
             axios.patch('/api/collections/' + id, {
                 name: name,
                 icon_id: iconId

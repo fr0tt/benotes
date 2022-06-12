@@ -35,8 +35,8 @@ export default {
     },
     methods: {
         transfer (collectionId) {
-            // neccessary in order to copy the post instead of referencing it
-            const post = JSON.parse(JSON.stringify(this.collectionMenu.post)) 
+            // necessary in order to copy the post instead of referencing it
+            const post = JSON.parse(JSON.stringify(this.collectionMenu.post))
             post.collection_id = collectionId
             this.$store.dispatch('post/updatePost', { post: post, transfer: true })
             this.$store.dispatch('collection/setCollectionMenu', {
