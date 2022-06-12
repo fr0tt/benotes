@@ -1,5 +1,5 @@
 <template>
-    <div class="absolute z-20 px-4 py-4 bg-white shadow-lg">
+    <div id="iconPicker" class="absolute z-20 px-4 py-4 bg-white shadow-lg">
         <h4 class="text-lg font-medium mb-2">Icons</h4>
         <div class="-ml-1 w-25">
             <button title="No Icon" @click="selectIcon({ id: null, label: 'No Icon' })"

@@ -21,7 +21,9 @@ export default {
             return state.posts.length > 0 ? state.posts[0].order : 0
         },
         lastId: state => {
-            return state.posts[state.posts.length - 1].id
+            return (state.posts.length > 0 &&
+                typeof(state.posts[state.posts.length - 1].id) === 'number') ?
+                state.posts[state.posts.length - 1].id : null
         }
     },
     mutations: {

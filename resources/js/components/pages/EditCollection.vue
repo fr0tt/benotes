@@ -11,7 +11,7 @@
 
             <div class="mb-10 relative">
                 <label class="label">Collection Icon</label>
-                <button @click="showPicker = true"
+                <button @click="openPicker()"
                     class="border-2 border-gray-400 rounded py-2 px-2">
                     <svg-vue v-if="collectionIconIsInline(iconId)"
                         :icon="'glyphs/' + iconId" class="w-6 h-6"/>
@@ -21,7 +21,9 @@
                     <svg-vue v-else icon="remix/folder-fill"
                         class="w-6 text-gray-500 fill-current align-text-bottom"/>
                 </button>
-                <IconPicker v-if="showPicker" @iconSelected="iconSelect"/>
+                <transition name="fade">
+                    <IconPicker v-if="showPicker" @iconSelected="iconSelect"/>
+                </transition>
                 <p class="mt-4">Select an optional icon for your collection.</p>
             </div>
 
@@ -185,9 +187,21 @@ export default {
                     })
             }
         },
+        openPicker () {
+            this.showPicker = true
+            document.querySelector('#app').addEventListener('click', this.hidePicker, true)
+        },
+        hidePicker () {
+            if (document.querySelector('#iconPicker').contains(event.target)) {
+                return
+            }
+            this.showPicker = false
+            document.querySelector('#app').removeEventListener('click', this.hidePicker, true)
+        },
         iconSelect (event) {
             this.iconId = Number(event.id)
             this.showPicker = false
+            document.querySelector('#app').removeEventListener('click', this.hidePicker, true)
         },
         collectionIconIsInline
     },
