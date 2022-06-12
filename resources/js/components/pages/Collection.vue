@@ -213,7 +213,7 @@ export default {
             ]
         })
 
-        if (this.currentCollection.name == '') {
+        if (this.currentCollection.name == '' || this.currentCollection.id !== this.collectionId) {
             this.$store.dispatch('collection/getCurrentCollection', this.collectionId).then(() => {
                 this.$store.commit('appbar/setTitle', this.currentCollection.name, { root: true })
             })
