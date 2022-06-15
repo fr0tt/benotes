@@ -86,7 +86,7 @@ export default {
         },
         fetchMorePosts(context, { collectionId, filter = null, isArchived = false }) {
             return new Promise((resolve, reject) => {
-                getPosts(collectionId, filter, isArchived, STANDARD_LIMIT, this.getters['post/lastId'])
+                getPosts(collectionId, filter, isArchived, STANDARD_LIMIT, context.getters.lastId)
                     .then(response => {
                         const posts = response.data.data
                         if (posts.length === 0) {

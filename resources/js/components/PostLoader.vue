@@ -8,7 +8,7 @@
     </div>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 export default {
     props: {
         collectionId: Number,
@@ -26,6 +26,9 @@ export default {
             }
             const view = document.querySelector('#view')
             if (view.scrollTop <= 0) {
+                return
+            }
+            if (!this.lastId) {
                 return
             }
             if (view.scrollHeight === window.innerHeight + view.scrollTop) {
@@ -47,6 +50,9 @@ export default {
     computed: {
         ...mapState('post', [
             'isCompletelyLoaded'
+        ]),
+        ...mapGetters('post', [
+            'lastId'
         ]),
     },
     mounted () {
