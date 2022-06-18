@@ -234,6 +234,9 @@ export default {
                 float: left;
                 @apply not-italic text-gray-600; //text-orange-600
             }
+            .is-empty.is-editor-empty {
+                height: calc(100vh - 21rem);
+            }
         }
     }
     .w-80 {
