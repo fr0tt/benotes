@@ -37,17 +37,44 @@ Currently their are three options for you to choose from:
 Feel free to [contact me](https://twitter.com/_fr0tt) if you need any help or open an [issue](https://github.com/fr0tt/benotes/issues) or a [discussion](https://github.com/fr0tt/benotes/discussions).
 
 
-Q: Having trouble with reordering posts ?
+Q: Having trouble with **reordering** posts ?
 
-Try this command in order to fix it.
+Use this command in order to fix it.
 ```
 php artisan fix-position
 ```
-or
+or if you have already installed newer php versions on your system
 ```
 /usr/bin/php7.4 artisan fix-position
 ```
 
+## Backup
+
+Currently SQL Server and backing up S3 storage is not supported.
+
+Backups can be triggered manually by executing the following command:
+```
+php artisan backup:run
+```
+
+Or schedule them by adding this line to your servers cron entries:
+```
+10 * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+```
+(This will check every hour if there is any task to run.)
+
+
+If you wish to store your data with S3 compatible Object Storage
+(such as AWS S3, Digital Ocean Spaces, Minio, etc.), add the following to your `.env` file:
+```
+BACKUP_DISK           = s3
+
+AWS_ACCESS_KEY_ID     = yourKeyId
+AWS_SECRET_ACCESS_KEY = yourAccessKey
+AWS_DEFAULT_REGION    = us-east-1
+AWS_BUCKET            = yourCreativeBucketName
+AWS_ENDPOINT          = endpointUrl
+```
 
 ## Rest API
 

@@ -16,7 +16,8 @@ class Kernel extends ConsoleKernel
         Commands\InstallCommand::class,
         Commands\ExportCommand::class,
         Commands\FixPositionCommand::class,
-        Commands\KeyGenerateCommand::class
+        Commands\KeyGenerateCommand::class,
+        Commands\RunBackupCommand::class,
     ];
 
     /**
@@ -27,6 +28,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        //
+        $schedule->command('backup:run')->cron(config('benotes.backup_interval'));
     }
 }

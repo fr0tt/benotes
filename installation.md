@@ -83,6 +83,8 @@ and change ```APP_PORT``` if necessary
 
 ## Docker with CLI
 
+Docker Image can be found [here](https://hub.docker.com/r/fr0tt/benotes)
+
 ### Installation
 
 - wget -O .env https://raw.githubusercontent.com/fr0tt/benotes/master/.env.sqlite.example
