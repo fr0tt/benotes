@@ -59,10 +59,20 @@ php artisan backup:run
 
 Or schedule them by adding this line to your servers cron entries:
 ```
-10 * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+0 * * * * cd /path-to-your-project && /usr/bin/php7.4 artisan schedule:run >> /dev/null 2>&1
 ```
-(This will check every hour if there is any task to run.)
+(This will check every hour if there is any task to run)
 
+If you use docker add to your host system cron entries:
+```
+0 * * * * cd /path-to-your-project && docker exec -it benotes php artisan schedule:run >> /dev/null 2>&1
+```
+
+By default scheduled backups are created every night. If you wish to change that
+add the following to your `.env` file:
+```
+BACKUP_INTERVAL = 0 0 */7 * *  // this would translate to a weekly backup
+```
 
 If you wish to store your data with S3 compatible Object Storage
 (such as AWS S3, Digital Ocean Spaces, Minio, etc.), add the following to your `.env` file:

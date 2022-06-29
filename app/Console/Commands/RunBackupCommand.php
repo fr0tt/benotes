@@ -42,7 +42,7 @@ class RunBackupCommand extends Command
         $tempDirPath = config('benotes.temporary_directory');
 
         $tempDirectory = (new TemporaryDirectory($tempDirPath))
-            ->name('temp')
+            ->name('tmp')
             ->force()
             ->create()
             ->empty();
