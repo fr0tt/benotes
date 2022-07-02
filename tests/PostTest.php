@@ -212,6 +212,28 @@ class PostTest extends TestCase
         $this->assertEquals(1, Post::find($post2->id)->order);
     }
 
+    public function testUpdateOrderByProvidingWrongOrder()
+    {
+        $user = factory(User::class)->create();
+        $collection = factory(Collection::class)->create();
+
+        $post = factory(Post::class)->create([
+            'collection_id' => $collection->id,
+            'order' => 1
+        ]);
+        $post2 = factory(Post::class)->create([
+            'collection_id' => $collection->id,
+            'order' => 2
+        ]);
+
+        $this->actingAs($user)->json('PATCH', 'api/posts/' . $post->id, [
+            'order' => 3
+        ]);
+
+        $this->assertEquals(2, Post::find($post->id)->order);
+        $this->assertEquals(1, Post::find($post2->id)->order);
+    }
+
     public function testUpdateOrderAndDeletePost()
     {
         $user = factory(User::class)->create();

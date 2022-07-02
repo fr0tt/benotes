@@ -55,14 +55,15 @@ export default {
             if (event.oldIndex === event.newIndex) {
                 return
             }
-            let post = this.$store.state.post.posts[event.newIndex]
 
+            let post = this.$store.state.post.posts[event.newIndex]
+            const newOrder = post.order + (event.oldIndex - event.newIndex)
             axios.patch('/api/posts/' + post.id, {
-                order: this.maxOrder - event.newIndex
+                order: newOrder
             })
             .then(() => {
-                this.$store.dispatch('post/updatePostOrder', {
-                    oldIndex: event.oldIndex, newIndex: event.newIndex
+                this.$store.dispatch('post/updatePostOrders', {
+                    oldIndex: event.oldIndex, newIndex: event.newIndex, newOrder: newOrder
                 })
             })
             .catch(error => {

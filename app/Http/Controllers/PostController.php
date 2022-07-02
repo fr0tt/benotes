@@ -171,9 +171,16 @@ class PostController extends Controller
             Post::where('collection_id', $post->collection_id)
                 ->where('order', '>', $post->order)->decrement('order');
         } else if (isset($validatedData['order'])) {
-            // post wants to only be positioned somewhere else
+            // post wants to be positioned somewhere else
             // staying in the same collection as before
             $newOrder = $validatedData['order'];
+
+            // check authenticity of order
+            if (!Post::where('collection_id', $post->collection_id)->where('order', $newOrder)->exists()) {
+                $newOrder = Post::where('collection_id', $post->collection_id)->max('order');
+                $newValues['order'] = $newOrder;
+            }
+
             $oldOrder = $post->order;
             if ($newOrder !== $oldOrder) {
                 if ($newOrder > $oldOrder) {

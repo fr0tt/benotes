@@ -36,9 +36,10 @@ export default {
         setPost (state, { post, index }) {
             state.posts.splice(index, 1, post)
         },
-        updatePostOrders (state, { start, end }) {
+        updatePostOrders(state, { start, end, highestOrder }) {
+            console.log('s', start, 'e', end, 'h', highestOrder)
             for (let i = start; i <= end; i++) {
-                state.posts[i].order = this.getters['post/maxOrder'] - i
+                state.posts[i].order = highestOrder - (i - start)
             }
         },
         deletePost (state, index) {
@@ -167,10 +168,13 @@ export default {
                 index: index
             })
         },
-        updatePostOrder (context, { oldIndex, newIndex }) {
+        updatePostOrders(context, { oldIndex, newIndex, newOrder }) {
+            const highestOrder = (oldIndex > newIndex) ?
+                newOrder : context.state.posts[newIndex].order
             context.commit('updatePostOrders', {
-                start: (oldIndex < newIndex) ? oldIndex : newIndex,
-                end: (newIndex > oldIndex) ? newIndex : oldIndex
+                start: Math.min(oldIndex, newIndex),
+                end: Math.max(newIndex, oldIndex),
+                highestOrder: highestOrder
             })
         },
         deletePost (context, id) {
