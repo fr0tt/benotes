@@ -5,7 +5,7 @@
 
 <h1 align="center">Benotes</h1>
 
-<img src="https://user-images.githubusercontent.com/33751346/115884212-ee754800-a44e-11eb-940d-b9e96eeeab36.png"
+<img src="https://user-images.githubusercontent.com/33751346/177018302-61f0e613-c7ff-40ff-b260-771f78489233.jpg"
     alt="Benotes Thumbnail">
 
 An open source self hosted web app for your notes and bookmarks side by side.
@@ -23,6 +23,7 @@ This project is currently in **Beta**. You may encounter bugs or errors.
 - can be hosted almost anywhere thanks to its use of the lightweight Lumen framework and well supported PHP language
 - works with and without a persistent storage layer (both filesystem and S3 are supported)
 - can also be hosted via Docker or on Heroku
+- protect your data with daily backups
 
 ## Installation & Upgrade
 

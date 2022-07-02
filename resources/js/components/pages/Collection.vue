@@ -3,7 +3,7 @@
         <div class="sm:ml-4 -ml-2 px-2">
             <transition name="collection-fade">
                 <Draggable v-if="!isLoading" tag="ol" v-model="posts"
-                    @start="drag = true" @end="dragged"
+                    @start="drag = true" @end="dragged" :disabled="isUpdating"
                     :delay="90" :delayOnTouchOnly="true"
                     v-bind="{ animation: 200 }"
                     class="pt-4 pb-16">
@@ -55,7 +55,7 @@ export default {
             if (event.oldIndex === event.newIndex) {
                 return
             }
-
+            this.$store.commit('post/isUpdating', true)
             let post = this.$store.state.post.posts[event.newIndex]
             const newOrder = post.order + (event.oldIndex - event.newIndex)
             axios.patch('/api/posts/' + post.id, {
@@ -67,6 +67,7 @@ export default {
                 })
             })
             .catch(error => {
+                this.$store.commit('post/isUpdating', false)
                 this.$store.dispatch('notification/setNotification', {
                     type: 'error',
                     title: 'Error',
@@ -181,6 +182,9 @@ export default {
         ]),
         ...mapState('post', [
             'isLoading'
+        ]),
+        ...mapState('post', [
+            'isUpdating'
         ]),
         ...mapState('collection', [
             'collectionMenu'

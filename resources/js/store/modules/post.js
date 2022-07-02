@@ -37,10 +37,10 @@ export default {
             state.posts.splice(index, 1, post)
         },
         updatePostOrders(state, { start, end, highestOrder }) {
-            console.log('s', start, 'e', end, 'h', highestOrder)
             for (let i = start; i <= end; i++) {
                 state.posts[i].order = highestOrder - (i - start)
             }
+            state.isUpdating = false
         },
         deletePost (state, index) {
             state.posts.splice(index, 1)
@@ -50,6 +50,9 @@ export default {
         },
         isLoading (state, isLoading) {
             state.isLoading = isLoading
+        },
+        isUpdating(state, isUpdating) {
+            state.isUpdating = isUpdating
         },
         setPlaceholderPosts (state) {
             let posts = [];
