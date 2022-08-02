@@ -76,6 +76,14 @@ class Post extends Model
         $this->attributes['image_path'] = (strlen($value) > 512) ? null : $value;
     }
 
+    /**
+     * Tags that belong to the post.
+     */
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
+    }
+
     public function seedIntroData($user_id, $collection_id = null)
     {
         $i = 1;

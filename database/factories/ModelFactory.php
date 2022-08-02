@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Hash;
 use App\User;
 use App\Post;
 use App\Collection;
+use App\Tag;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,5 +44,12 @@ $factory->define(Post::class, function (Faker $faker) {
         'type' => Post::POST_TYPE_TEXT,
         'user_id' => User::first()->id,
         'order' => Post::where('collection_id', null)->count()
+    ];
+});
+
+$factory->define(Tag::class, function (Faker $faker) {
+    return [
+        'name' => $faker->word(),
+        'user_id' => User::first()->id
     ];
 });

@@ -3,7 +3,7 @@
     "description": "App for bookmarks and notes.",
     "keywords": ["laravel", "lumen", "bookmark", "notes"],
     "license": "MIT",
-    "version": "2.2.6-p1",
+    "version": "2.2.8",
     "type": "project",
     "require": {
         "php": "^7.2.5",

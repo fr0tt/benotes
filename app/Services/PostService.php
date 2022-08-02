@@ -9,20 +9,34 @@ use Illuminate\Support\Facades\Storage;
 use App\Post;
 use App\Collection;
 use App\User;
+use App\PostTag;
 use ColorThief\ColorThief;
 
 class PostService
 {
 
-    public function all(int $collection_id = -1,
-                        bool $is_uncategorized = false,
-                        string $filter = '',
-                        int $auth_type = User::UNAUTHORIZED_USER,
-                        bool $is_archived = false,
-                        Post $after_post = null,
-                        int $offset = -1,
-                        int $limit = 50) : \Illuminate\Database\Eloquent\Collection
-    {
+    public function all(
+        int $collection_id = -1,
+        bool $is_uncategorized = false,
+        int $tag_id = -1,
+        bool $withTags = false,
+        string $filter = '',
+        int $auth_type = User::UNAUTHORIZED_USER,
+        bool $is_archived = false,
+        Post $after_post = null,
+        int $offset = -1,
+        int $limit = 50
+    ): \Illuminate\Database\Eloquent\Collection {
+        $posts = new Post;
+
+        if ($withTags) {
+            $posts = $posts->with('tags:id,name');
+        }
+
+        if ($tag_id > 0) {
+            $post_ids = PostTag::where('tag_id', $tag_id)->select('post_id')->get();
+            $posts = $posts->whereIn('id', $post_ids);
+        }
 
         if ($auth_type === User::API_USER) {
             if ($collection_id > 0 || $is_uncategorized === true) {
@@ -30,16 +44,16 @@ class PostService
                     $collection_id,
                     $is_uncategorized
                 );
-                $posts = Post::where([
+                $posts = $posts->where([
                     ['collection_id', '=', $collection_id],
                     ['user_id', '=', Auth::user()->id]
                 ]);
             } else {
-                $posts = Post::where('user_id', Auth::user()->id);
+                $posts = $posts->where('user_id', Auth::user()->id);
             }
         } else if ($auth_type === User::SHARE_USER) {
             $share = Auth::guard('share')->user();
-            $posts = Post::where([
+            $posts = $posts->where([
                 'collection_id' => $share->collection_id,
                 'user_id' => $share->created_by
             ]);
@@ -48,7 +62,7 @@ class PostService
         if ($filter !== '' && $auth_type === User::API_USER) {
             $posts = $posts->where(function ($query) use ($filter) {
                 $query->where('title', 'LIKE', "%{$filter}%")
-                ->orWhere('content', 'LIKE', "%{$filter}%");
+                    ->orWhere('content', 'LIKE', "%{$filter}%");
             });
         }
 
@@ -67,10 +81,9 @@ class PostService
         }
 
         return $posts->orderBy('order', 'desc')->get();
-
     }
 
-    public function delete(Post $post) : void
+    public function delete(Post $post): void
     {
         Post::where('collection_id', $post->collection_id)
             ->where('order', '>', $post->order)
@@ -79,7 +92,7 @@ class PostService
         $post->delete();
     }
 
-    public function restore(Post $post) : Post
+    public function restore(Post $post): Post
     {
         $maxOrder = Post::where('collection_id', $post->collection_id)->max('order');
         if ($post->order <= $maxOrder) {
@@ -124,7 +137,7 @@ class PostService
     public function sanitize(string $str)
     {
         return strip_tags($str, '<a><strong><b><em><i><s><p><h1><h2><h3><h4><h5>' .
-        '<pre><br><hr><blockquote><ul><li><ol><code><unfurling-link>');
+            '<pre><br><hr><blockquote><ul><li><ol><code><unfurling-link>');
     }
 
     public function getInfo(string $url, $act_as_bot = false)
@@ -133,7 +146,7 @@ class PostService
         $base_url = $base_url['scheme'] . '://' . $base_url['host'];
 
         $useragent = $act_as_bot ? 'Googlebot/2.1 (+http://www.google.com/bot.html)' :
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36';
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36';
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
@@ -220,6 +233,16 @@ class PostService
         return $hex;
     }
 
+    public function saveTags(int $post_id, array $tags)
+    {
+        foreach ($tags as $tag_id) {
+            PostTag::firstOrCreate([
+                'post_id' => $post_id,
+                'tag_id' => $tag_id
+            ]);
+        }
+    }
+
     public function saveImage($image_path, Post $post)
     {
         if (empty($image_path)) {
@@ -245,9 +268,8 @@ class PostService
         $post->save();
     }
 
-    public function boolValue($value = null) : bool
+    public function boolValue($value = null): bool
     {
         return filter_var($value, FILTER_VALIDATE_BOOLEAN);
     }
-
 }

@@ -30,6 +30,12 @@ Route::group([
 
     Route::get('api/meta', 'PostController@getUrlInfo');
 
+    Route::get('api/tags', 'TagController@index');
+    Route::get('api/tags/{id}', 'TagController@show');
+    Route::post('api/tags', 'TagController@store');
+    Route::patch('api/tags/{id}', 'TagController@update');
+    Route::delete('api/tags/{id}', 'TagController@destroy');
+
     Route::get('api/collections', 'CollectionController@index');
     Route::get('api/collections/{id}', 'CollectionController@show');
     Route::post('api/collections', 'CollectionController@store');
@@ -46,7 +52,6 @@ Route::group([
     Route::post('api/shares', 'ShareController@store');
     Route::patch('api/shares/{id}', 'ShareController@update');
     Route::delete('api/shares/{id}', 'ShareController@destroy');
-
 });
 
 Route::group([

@@ -204,7 +204,7 @@ Request body:
 
 | Attribute | Value                                                        |
 | --------- | ------------------------------------------------------------ |
-| name      | Required. Specify a name for your new collection             |
+| name      | Required. Specify a new name for your existing collection    |
 
 Example request:
 
@@ -440,4 +440,178 @@ DELETE /api/posts/{id}
 *Delete a post by its id*
 
 
+---
 
+## Tags
+
+### Retrieve all Tags
+
+*Get multiple tags*
+
+```
+GET /api/tags
+```
+
+Example response:
+
+``` json
+{
+	"data": [
+		{
+			"id": 1,
+			"name": "important"
+		},
+		{
+			"id": 2,
+			"name": "programming"
+		},
+		{
+			"id": 3,
+			"name": "complicated"
+		},
+	]
+}
+```
+
+### Retrieve tags
+
+*Get one tag by its id*
+
+```
+GET /api/tags/{id}
+```
+
+Example response:
+
+``` json
+{
+	"data": [
+		{
+			"id": 1,
+			"name": "important"
+		}
+	]
+}
+```
+
+### Create tags
+
+*Create a new tag*
+
+```
+POST /api/tags
+```
+
+Request body:
+
+| Attribute | Value                                                        |
+| --------- | ------------------------------------------------------------ |
+| name      | Required. Specify a name for your new tag                    |
+
+Example request:
+
+``` json
+{
+	"name": "video"
+}
+```
+
+Example response:
+
+``` json
+{
+	"data": [
+		{
+			"id": 4,
+			"name": "video"
+		}
+	]
+}
+```
+
+### Create multiple tags
+
+*Create several tag at once*
+
+```
+POST /api/tags
+```
+
+Request body:
+
+| Attribute      | Value                                                        |
+| -------------- | ------------------------------------------------------------ |
+| tags.*.name    | Required. Specify a name for your new tag                    |
+
+Example request:
+
+``` json
+{
+	"tags": {
+		{ "name": "videos" },
+		{ "name": "movies" }
+	}
+}
+```
+
+Example response:
+
+``` json
+{
+	"data": [
+		{
+			"id": 4,
+			"name": "videos"
+		},
+		{
+			"id": 5,
+			"name": "movies"
+		}
+	]
+}
+```
+
+### Update tags
+
+*Update an existing tag*
+
+```
+PATCH /api/tags/{id}
+```
+
+Request body:
+
+| Attribute | Value                                                        |
+| --------- | ------------------------------------------------------------ |
+| name      | Required. Specify a new name for your existing tag           |
+
+Example request:
+
+``` json
+{
+	"name": "music-videos"
+}
+```
+
+Example Response:
+
+``` json
+{
+	"data": [
+		{
+			"id": 4,
+			"name": "music-videos"
+		}
+	]
+}
+```
+
+### Delete tags
+
+```
+DELETE /api/tags/{id}
+```
+
+*Delete a tag by its id*
+
+---

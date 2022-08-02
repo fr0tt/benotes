@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Post;
 use App\Collection;
 use App\User;
+use App\Tag;
 use App\Services\PostService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -29,6 +30,8 @@ class PostController extends Controller
             'is_uncategorized' => 'nullable',
             // should support: 0, 1, true, false, "true", "false" because
             // it should/could be used in a query string
+            'tag_id'           => 'integer|nullable',
+            'withTags'         => 'nullable',
             'filter'           => 'string|nullable',
             'is_archived'      => 'nullable', // same as is_uncategorized
             'after_id'         => 'integer|nullable',
@@ -45,8 +48,10 @@ class PostController extends Controller
         $after_post = null;
         if (isset($request->after_id)) {
             if (!isset($request->collection_id) && isset($request->is_uncategorized)) {
-                return response()->json('collection_id or is_uncategorized is required',
-                    Response::HTTP_BAD_REQUEST);
+                return response()->json(
+                    'collection_id or is_uncategorized is required',
+                    Response::HTTP_BAD_REQUEST
+                );
             }
             $after_post = Post::find($request->after_id);
             if ($after_post == null) {
@@ -54,33 +59,57 @@ class PostController extends Controller
             }
             $this->authorize('view', $after_post);
             $collection_id = Collection::getCollectionId(
-                $request->collection_id, $request->is_uncategorized);
+                $request->collection_id,
+                $request->is_uncategorized
+            );
             if ($after_post->collection_id !== $collection_id) {
                 return response()->json('Wrong collection', Response::HTTP_BAD_REQUEST);
+            }
+        }
+
+        if (isset($request->tag_id)) {
+            if (!Tag::find($request->tag_id)->exists()) {
+                return response()->json('Tag does not exist', Response::HTTP_BAD_REQUEST);
             }
         }
 
         $posts = $this->service->all(
             intval($request->collection_id),
             $this->service->boolValue($request->is_uncategorized),
+            intval($request->tag_id),
+            $this->service->boolValue($request->withTags),
             strval($request->filter),
             $auth_type,
             $this->service->boolValue($request->is_archived),
             $after_post,
             intval($request->offset),
-            intval($request->limit)
+            intval($request->limit),
         );
 
         return response()->json(['data' => $posts], Response::HTTP_OK);
     }
 
-    public function show(int $id)
+    public function show(int $id, Request $request)
     {
-        $post = Post::find($id);
+
+        $this->validate($request, [
+            'withTags' => 'nullable',
+        ]);
+        $withTags = $this->service->boolValue($request->withTags);
+
+        $post = null;
+
+        if ($withTags) {
+            $post = Post::with('tags:id,name')->find($id);
+        } else {
+            $post = Post::find($id);
+        }
+
         if ($post === null) {
             return response()->json('Post does not exist', Response::HTTP_NOT_FOUND);
         }
         $this->authorize('view', $post);
+
         return response()->json(['data' => $post], Response::HTTP_OK);
     }
 
@@ -89,7 +118,9 @@ class PostController extends Controller
         $validatedData = $this->validate($request, [
             'title' => 'string|nullable',
             'content' => 'required|string',
-            'collection_id' => 'integer|nullable'
+            'collection_id' => 'integer|nullable',
+            'tags' => 'array|nullable',
+            'tags.*' => 'integer',
         ]);
 
         if (isset($request->collection_id)) {
@@ -112,6 +143,9 @@ class PostController extends Controller
         if ($info['type'] === Post::POST_TYPE_LINK) {
             $this->service->saveImage($info['image_path'], $post);
         }
+        if (isset($validatedData['tags'])) {
+            $this->service->saveTags($post->id, $validatedData['tags']);
+        }
 
         return response()->json(['data' => $post], Response::HTTP_CREATED);
     }
@@ -120,12 +154,14 @@ class PostController extends Controller
     {
 
         $validatedData = $this->validate($request, [
-            'title' => 'string|nullable',
-            'content' => 'string|nullable',
-            'collection_id' => 'integer|nullable',
-            'is_uncategorized' => 'boolean|nullable',
-            'order' => 'integer|nullable',
-            'is_archived' => 'boolean|nullable'
+            'title'             => 'string|nullable',
+            'content'           => 'string|nullable',
+            'collection_id'     => 'integer|nullable',
+            'is_uncategorized'  => 'boolean|nullable',
+            'tags'              => 'array|nullable',
+            'tags.*'            => 'integer|required_with:tags',
+            'order'             => 'integer|nullable',
+            'is_archived'       => 'boolean|nullable'
         ]);
 
         $post = Post::withTrashed()->find($id);
@@ -194,6 +230,9 @@ class PostController extends Controller
         }
 
         $post->update($newValues);
+        if (isset($newValues['tags'])) {
+            $this->service->saveTags($post->id, $newValues['tags']);
+        }
 
         if (isset($request->is_archived)) {
             $request->is_archived = filter_var($request->is_archived, FILTER_VALIDATE_BOOLEAN);
@@ -225,7 +264,6 @@ class PostController extends Controller
         $this->service->delete($post);
 
         return response()->json('', Response::HTTP_NO_CONTENT);
-
     }
 
     public function getUrlInfo(Request $request)
@@ -236,5 +274,4 @@ class PostController extends Controller
 
         return response()->json($this->service->getInfo($request->url));
     }
-
 }

@@ -20,7 +20,7 @@ class CollectionController extends Controller
         if (!is_numeric($id)) {
             return response()->json('Requires an id', 400);
         }
-        $collection = Collection::findOrFail($id);
+        $collection = Collection::find($id);
         if (!$collection) {
             return response()->json('Collection not found', 404);
         }

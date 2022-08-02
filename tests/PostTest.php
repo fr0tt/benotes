@@ -6,6 +6,8 @@ use Symfony\Component\HttpFoundation\Response;
 use App\User;
 use App\Post;
 use App\Collection;
+use App\Tag;
+use App\PostTag;
 
 class PostTest extends TestCase
 {
@@ -37,7 +39,6 @@ class PostTest extends TestCase
             $this->assertNotEquals(null, $data->url);
         }
         $this->assertNotEquals(null, $data->collection_id);
-
     }
 
     /**
@@ -103,7 +104,8 @@ class PostTest extends TestCase
         $this->assertEquals($content, $data->content);
     }
 
-    public function testCreateUncategorizedPostInCorrectOrder() {
+    public function testCreateUncategorizedPostInCorrectOrder()
+    {
 
         $user = factory(User::class)->create();
 
@@ -124,7 +126,33 @@ class PostTest extends TestCase
         $data = $this->response->getData()->data;
         $this->assertEquals(3, $data->order);
         $this->assertEquals($content, $data->content);
+    }
 
+    public function testCreatePostWithTags()
+    {
+        $user = factory(User::class)->create();
+        $collection = factory(Collection::class)->create();
+        $tag1 = factory(Tag::class)->create();
+        $tag2 = factory(Tag::class)->create();
+
+        $content = 'https://github.com';
+
+        $this->actingAs($user)->json('POST', 'api/posts', [
+            'content' => $content,
+            'collection_id' => $collection->id,
+            'tags' => [$tag1->id, $tag2->id]
+        ]);
+
+        $this->assertEquals(201, $this->response->status());
+        $data = $this->response->getData()->data;
+        $this->assertEquals('link', $data->type);
+        $this->assertEquals($content, $data->content);
+        $this->assertTrue(
+            PostTag::where('post_id', $data->id)->where('tag_id', $tag1->id)->exists()
+        );
+        $this->assertTrue(
+            PostTag::where('post_id', $data->id)->where('tag_id', $tag2->id)->exists()
+        );
     }
 
     public function testUpdatePost()
@@ -133,9 +161,9 @@ class PostTest extends TestCase
         $collection = factory(Collection::class)->create();
 
         $content = '<h2>Hi there,</h2><p>this is a very <em>basic</em> example of tiptap.</p>' .
-        '<pre><code>body { display: none; }</code></pre>' .
-        '<ul><li><p>A regular list</p></li><li><p>With regular items</p></li></ul><blockquote>' .
-        '<p>It\'s amazing 👏 <br>– mom</p></blockquote>';
+            '<pre><code>body { display: none; }</code></pre>' .
+            '<ul><li><p>A regular list</p></li><li><p>With regular items</p></li></ul><blockquote>' .
+            '<p>It\'s amazing 👏 <br>– mom</p></blockquote>';
 
         $this->actingAs($user)->json('POST', 'api/posts', [
             'content' => $content,
@@ -303,7 +331,6 @@ class PostTest extends TestCase
             'is_archived' => true
         ]);
         $this->assertTrue(Post::onlyTrashed()->find($post2->id)->trashed());
-
     }
 
     public function testDeleteAndRestorePost()
@@ -335,8 +362,10 @@ class PostTest extends TestCase
 
         $this->assertTrue(Post::onlyTrashed()->find($postId)->trashed());
         $this->assertEquals(3, $posts->count());
-        $this->assertEquals([3, 2, 1],
-            [$posts[0]->order, $posts[1]->order, $posts[2]->order]);
+        $this->assertEquals(
+            [3, 2, 1],
+            [$posts[0]->order, $posts[1]->order, $posts[2]->order]
+        );
 
         // restore
         $this->actingAs($user)->json('PATCH', 'api/posts/' . $postId, [
@@ -347,9 +376,10 @@ class PostTest extends TestCase
             ->orderBy('order', 'desc')->get();
 
         $this->assertNotNull(Post::find($postId));
-        $this->assertEquals([4, 3, 2, 1],
-            [$posts[0]->order, $posts[1]->order, $posts[2]->order , $posts[3]->order]);
-
+        $this->assertEquals(
+            [4, 3, 2, 1],
+            [$posts[0]->order, $posts[1]->order, $posts[2]->order, $posts[3]->order]
+        );
     }
 
     public function testDeleteAndRestoreFirstPost()
@@ -381,7 +411,8 @@ class PostTest extends TestCase
 
         $this->assertTrue(Post::onlyTrashed()->find($postId)->trashed());
         $this->assertEquals(2, $posts->count());
-        $this->assertEquals([2, 1],
+        $this->assertEquals(
+            [2, 1],
             [$posts[0]->order, $posts[1]->order]
         );
 
@@ -398,8 +429,6 @@ class PostTest extends TestCase
             [3, 2, 1],
             [$posts[0]->order, $posts[1]->order, $posts[2]->order]
         );
-
-
     }
 
     public function testDeleteMultipleAndRestoreOnePost()
@@ -412,13 +441,14 @@ class PostTest extends TestCase
 
         // -5- -4- 3 2 1  --> 3 2 1   --> 4 3 2 1
 
-        array_map(function ($order) use ($collection, $user) {
-            factory(Post::class)->create([
-                'collection_id' => $collection->id,
-                'user_id' => $user->id,
-                'order' => $order
-            ]);
-        },
+        array_map(
+            function ($order) use ($collection, $user) {
+                factory(Post::class)->create([
+                    'collection_id' => $collection->id,
+                    'user_id' => $user->id,
+                    'order' => $order
+                ]);
+            },
             [1, 2, 3, 4, 5]
         );
 
@@ -456,7 +486,6 @@ class PostTest extends TestCase
             $posts[0]->order, $posts[1]->order, $posts[2]->order,
             $posts[3]->order
         ]);
-
     }
 
     public function testChangeCollection()
@@ -556,8 +585,10 @@ class PostTest extends TestCase
             'user_id' => $user->id
         ]);
         $this->assertEquals(201, $this->response->status());
-        $this->assertLessThan(Post::where('user_id', $user2->id)->count(),
-            Post::where('user_id', $user->id)->count());
+        $this->assertLessThan(
+            Post::where('user_id', $user2->id)->count(),
+            Post::where('user_id', $user->id)->count()
+        );
     }
 
     public function testCreatePostWithNotOwnedCollection()
@@ -595,7 +626,6 @@ class PostTest extends TestCase
         $data = $this->response->getData()->data;
         $this->assertEquals(count($data), 2);
         $this->assertEquals($data[0]->order, 2);
-
     }
 
     public function testGetPostWithSeekPagination()
@@ -691,5 +721,4 @@ class PostTest extends TestCase
         $this->assertStringStartsWith('/storage/thumbnails/thumbnail_', $data->image_path);
         $this->assertStringStartsNotWith('https://', $data->image_path);
     }
-
 }
