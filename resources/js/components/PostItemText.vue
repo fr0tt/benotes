@@ -1,9 +1,11 @@
 <template>
-    <div class="card bg-gray-100" :class="{ 'active' : isActive }">
+    <div class="card bg-gray-100" :class="{ active: isActive }">
         <router-link v-if="isMobile" :to="'/p/' + post.id" class="block w-full">
             <div class="p-6 h-full">
                 <div class="text-gray-900 text-xl outline-none h-full w-full">
-                    <p v-if="post.title" class="text-orange-600 text-xl bg-transparent font-semibold">
+                    <p
+                        v-if="post.title"
+                        class="text-orange-600 text-xl bg-transparent font-semibold">
                         {{ post.title }}
                     </p>
                     <EditorContent :editor="editor" class="editorContent" />
@@ -11,25 +13,38 @@
             </div>
         </router-link>
         <div v-else class="p-6 h-full">
-            <div @click="edit()" class="text-gray-900 text-xl outline-none h-full w-full"
-                :class="{ 'overflow-hidden cursor-pointer' : !isActive }">
-                <input v-if="post.title" v-model="localPost.title"
-                    class="text-orange-600 text-xl bg-transparent font-semibold"/>
+            <div
+                class="text-gray-900 text-xl outline-none h-full w-full"
+                :class="{ 'overflow-hidden cursor-pointer': !isActive }"
+                @click="edit()">
+                <input
+                    v-if="post.title"
+                    v-model="localPost.title"
+                    class="text-orange-600 text-xl bg-transparent font-semibold" />
                 <EditorContent :editor="editor" class="editorContent" />
             </div>
+            <PostItemTags :tags="post.tags" class="item-text" />
         </div>
-        <svg v-if="permission > 4" @click="showContextMenu($event)" class="more-icon"
-            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-            <path d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/>
+        <svg
+            v-if="permission > 4"
+            class="more-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            @click="showContextMenu($event)">
+            <path
+                d="M10 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0-6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 12a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" />
         </svg>
-        <button v-else-if="restore" @click="restorePost()"
-            :title="'Restore into ' + collectionName">
-            <svg-vue class="restore-icon" icon="remix/inbox-unarchive-line"/>
+        <button
+            v-else-if="restore"
+            :title="'Restore into ' + collectionName"
+            @click="restorePost()">
+            <svg-vue class="restore-icon" icon="remix/inbox-unarchive-line" />
         </button>
 
         <div v-if="post.isUpdating" class="absolute bottom-0 left-0 mb-5 ml-5 bg-white">
-            <svg-vue icon="remix/refresh-line"
-                class="button-icon remix animate-spin fill-current text-gray-900"/>
+            <svg-vue
+                icon="remix/refresh-line"
+                class="button-icon remix animate-spin fill-current text-gray-900" />
         </div>
     </div>
 </template>
@@ -37,6 +52,7 @@
 <script>
 import { mapState } from 'vuex'
 import { getCollectionName } from './../api/collection.js'
+import { restorePost } from './../api/post.js'
 import { Editor, EditorContent } from '@tiptap/vue-2'
 import StarterKit from '@tiptap/starter-kit'
 import Typography from '@tiptap/extension-typography'
@@ -45,13 +61,15 @@ import Link from '@tiptap/extension-link'
 import TaskList from '@tiptap/extension-task-list'
 import TaskItem from '@tiptap/extension-task-item'
 import UnfurlingLink from '../UnfurlingLink'
+import PostItemTags from './PostItemTags.vue'
 
 export default {
-    props: ['post', 'showContextMenu', 'permission', 'restore'],
     components: {
         EditorContent,
+        PostItemTags,
     },
-    data () {
+    props: ['post', 'showContextMenu', 'permission', 'restore'],
+    data() {
         return {
             isActive: false,
             localPost: null,
@@ -64,26 +82,28 @@ export default {
                     Link,
                     TaskList,
                     TaskItem,
-                    UnfurlingLink
+                    UnfurlingLink,
                 ],
-                content: this.post.content
-            })
+                content: this.post.content,
+            }),
         }
     },
     methods: {
-        edit () {
+        edit() {
             if (this.isActive) {
                 return
             }
             this.setActive(true)
             document.querySelector('#app').addEventListener('click', this.stopEditing, true)
         },
-        setActive (value) {
+        setActive(value) {
             this.editor.setEditable(value)
             this.isActive = value
         },
-        stopEditing (event) {
-            const currentPostTarget = document.querySelector(`[post-id="${this.localPost.id}"] .ProseMirror`)
+        stopEditing(event) {
+            const currentPostTarget = document.querySelector(
+                `[post-id="${this.localPost.id}"] .ProseMirror`
+            )
             if (!currentPostTarget.contains(event.target)) {
                 this.setActive(false)
                 document.querySelector('#app').removeEventListener('click', this.stopEditing, true)
@@ -98,23 +118,21 @@ export default {
                 this.$store.dispatch('post/updatePost', { post: this.localPost })
             }
         },
-        restorePost () {
-            this.$store.dispatch('post/updatePost', { post: this.post, transfer: true, restore: true })
-        }
+        restorePost() {
+            restorePost(this.post)
+        },
     },
     computed: {
-        collectionName () {
+        collectionName() {
             return getCollectionName(this.post.collection_id)
         },
-        ...mapState([
-            'isMobile'
-        ])
+        ...mapState(['isMobile']),
     },
-    created () {
+    created() {
         this.localPost = Object.assign({}, this.post)
     },
-    beforeDestroy () {
+    beforeDestroy() {
         this.editor.destroy()
-    }
+    },
 }
 </script>

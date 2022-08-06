@@ -13,27 +13,28 @@ export default {
         contextMenu: {
             post: null,
             target: null,
-            positionX: 0
-        }
+            positionX: 0,
+        },
     },
     getters: {
-        maxOrder: state => {
+        maxOrder: (state) => {
             return state.posts.length > 0 ? state.posts[0].order : 0
         },
-        lastId: state => {
-            return (state.posts.length > 0 &&
-                typeof(state.posts[state.posts.length - 1].id) === 'number') ?
-                state.posts[state.posts.length - 1].id : null
-        }
+        lastId: (state) => {
+            return state.posts.length > 0 &&
+                typeof state.posts[state.posts.length - 1].id === 'number'
+                ? state.posts[state.posts.length - 1].id
+                : null
+        },
     },
     mutations: {
-        setPosts (state, posts) {
+        setPosts(state, posts) {
             state.posts = posts
         },
-        addPost (state, post) {
+        addPost(state, post) {
             state.posts.unshift(post)
         },
-        setPost (state, { post, index }) {
+        setPost(state, { post, index }) {
             state.posts.splice(index, 1, post)
         },
         updatePostOrders(state, { start, end, highestOrder }) {
@@ -42,56 +43,72 @@ export default {
             }
             state.isUpdating = false
         },
-        deletePost (state, index) {
+        deletePost(state, index) {
             state.posts.splice(index, 1)
         },
-        setContextMenu (state, contextMenu) {
+        setContextMenu(state, contextMenu) {
             state.contextMenu = contextMenu
         },
-        isLoading (state, isLoading) {
+        isLoading(state, isLoading) {
             state.isLoading = isLoading
         },
         isUpdating(state, isUpdating) {
             state.isUpdating = isUpdating
         },
-        setPlaceholderPosts (state) {
-            let posts = [];
+        setPlaceholderPosts(state) {
+            let posts = []
             const max = 8
             for (let i = 1; i <= max; i++) {
                 posts.push({
                     id: 'placeholder-' + i,
                     type: 'placeholder',
-                    order: max - i + 1
+                    order: max - i + 1,
                 })
             }
             state.posts = posts
         },
-        isCompletelyLoaded (state, isLoaded) {
+        isCompletelyLoaded(state, isLoaded) {
             state.isCompletelyLoaded = isLoaded
-        }
+        },
     },
     actions: {
-        fetchPosts (context, { collectionId, filter = null,
-                isArchived = false, limit = STANDARD_LIMIT }) {
+        fetchPosts(
+            context,
+            {
+                collectionId,
+                tagId = null,
+                filter = null,
+                isArchived = false,
+                limit = STANDARD_LIMIT,
+            }
+        ) {
             context.commit('isLoading', true)
             context.commit('setPlaceholderPosts')
             context.commit('isCompletelyLoaded', false)
 
-            getPosts(collectionId, filter, isArchived, limit)
-                .then(response => {
+            getPosts(collectionId, tagId, filter, isArchived, limit, null, true)
+                .then((response) => {
                     const posts = response.data.data
                     context.commit('isLoading', false)
                     context.commit('setPosts', posts)
                 })
-                .catch(error => {
+                .catch((error) => {
                     console.log(error)
                     context.commit('isLoading', false)
                 })
         },
         fetchMorePosts(context, { collectionId, filter = null, isArchived = false }) {
             return new Promise((resolve, reject) => {
-                getPosts(collectionId, filter, isArchived, STANDARD_LIMIT, context.getters.lastId)
-                    .then(response => {
+                getPosts(
+                    collectionId,
+                    null,
+                    filter,
+                    isArchived,
+                    STANDARD_LIMIT,
+                    context.getters.lastId,
+                    true
+                )
+                    .then((response) => {
                         const posts = response.data.data
                         if (posts.length === 0) {
                             context.commit('isCompletelyLoaded', true)
@@ -100,44 +117,47 @@ export default {
                         context.commit('setPosts', context.state.posts.concat(posts))
                         resolve()
                     })
-                    .catch(error => {
+                    .catch((error) => {
                         console.log(error)
                         reject(error)
                     })
             })
         },
-        getPost (context, id) {
+        getPost(context, id) {
             return new Promise((resolve, reject) => {
-                axios.get('/api/posts/' + id)
-                    .then(response => {
+                axios
+                    .get('/api/posts/' + id, { params: { withTags: true } })
+                    .then((response) => {
                         const post = response.data.data
                         resolve(post)
                     })
-                    .catch(error => {
+                    .catch((error) => {
                         console.log(error)
                         reject(error)
                     })
             })
         },
-        addPost (context, post) {
+        addPost(context, post) {
             context.commit('addPost', post)
         },
-        updatePost (context, { post, transfer = false, restore = false }) {
+        updatePost(context, { post, transfer = false, restore = false }) {
             const params = {}
             params.title = post.title
             params.content = post.content
             params.collection_id = post.collection_id
             params.is_uncategorized = (post.collection_id <= 0) | 0
+            params.tags = post.tags
             if (restore) {
                 params.is_archived = false
             }
-            axios.patch('/api/posts/' + post.id, params)
-                .then(response => {
+            axios
+                .patch('/api/posts/' + post.id, params)
+                .then((response) => {
                     const newPost = response.data.data
                     if (context.state.posts === null) {
                         return
                     }
-                    const index = context.state.posts.findIndex(item => {
+                    const index = context.state.posts.findIndex((item) => {
                         return post.id === item.id
                     })
 
@@ -148,59 +168,62 @@ export default {
 
                     context.commit('setPost', {
                         post: newPost,
-                        index: index
+                        index: index,
                     })
-
-
                 })
-                .catch(error => {
+                .catch(() => {
                     post.isUpdating = false
-                    context.dispatch('notification/setNotification', {
-                        type: 'error',
-                        title: 'Error',
-                        description: 'Post could not be updated.'
-                    }, { root: true })
+                    context.dispatch(
+                        'notification/setNotification',
+                        {
+                            type: 'error',
+                            title: 'Error',
+                            description: 'Post could not be updated.',
+                        },
+                        { root: true }
+                    )
                 })
         },
-        setPostById (context, { id, post }) {
-            const index = context.state.posts.findIndex(item => {
+        setPostById(context, { id, post }) {
+            const index = context.state.posts.findIndex((item) => {
                 return id === item.id
             })
             context.commit('setPost', {
                 post: post,
-                index: index
+                index: index,
             })
         },
         updatePostOrders(context, { oldIndex, newIndex, newOrder }) {
-            const highestOrder = (oldIndex > newIndex) ?
-                newOrder : context.state.posts[newIndex].order
+            const highestOrder =
+                oldIndex > newIndex ? newOrder : context.state.posts[newIndex].order
             context.commit('updatePostOrders', {
                 start: Math.min(oldIndex, newIndex),
                 end: Math.max(newIndex, oldIndex),
-                highestOrder: highestOrder
+                highestOrder: highestOrder,
             })
         },
-        deletePost (context, id) {
-            axios.delete('/api/posts/' + id)
-                .then(response => {
+        deletePost(context, id) {
+            axios
+                .delete('/api/posts/' + id)
+                .then(() => {
                     const index = context.state.posts.findIndex((post) => {
                         return post.id === id
                     })
                     context.commit('deletePost', index)
                 })
-                .catch(error => {
+                .catch((error) => {
                     console.log(error)
                 })
         },
-        setContextMenu (context, contextMenu) {
+        setContextMenu(context, contextMenu) {
             context.commit('setContextMenu', contextMenu)
         },
-        hideContextMenu (context) {
+        hideContextMenu(context) {
             context.commit('setContextMenu', {
                 post: null,
                 target: null,
-                positionX: 0
+                positionX: 0,
             })
-        }
-    }
+        },
+    },
 }

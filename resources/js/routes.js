@@ -6,6 +6,7 @@ import Search from './components/pages/Search'
 import Restore from './components/pages/Restore'
 import Users from './components/pages/Users'
 import User from './components/pages/User'
+import Tag from './components/pages/Tag'
 import Login from './components/pages/Login'
 import Forgot from './components/pages/Forgot'
 import Reset from './components/pages/Reset'
@@ -22,33 +23,33 @@ export default [
                 component: Collection,
                 props: {
                     collectionId: 0,
-                    permission: 7
+                    permission: 7,
                 },
                 meta: {
                     isHome: true,
-                    authUser: true
+                    authUser: true,
                 },
             },
             {
                 path: 'c/create',
                 component: EditCollection,
                 props: {
-                    isNew: true
+                    isNew: true,
                 },
                 meta: {
-                    authUser: true
-                }
+                    authUser: true,
+                },
             },
             {
                 path: 'c/:id/edit',
                 component: EditCollection,
                 props: (route) => ({
                     id: route.params.id,
-                    isNew: false
+                    isNew: false,
                 }),
                 meta: {
-                    authUser: true
-                }
+                    authUser: true,
+                },
             },
             {
                 path: 'c/:collectionId',
@@ -56,11 +57,11 @@ export default [
                 component: Collection,
                 props: (route) => ({
                     collectionId: parseInt(route.params.collectionId),
-                    permission: 7
+                    permission: 7,
                 }),
                 meta: {
-                    authUser: true
-                }
+                    authUser: true,
+                },
             },
             {
                 path: 'c/:collectionId/p/create',
@@ -70,58 +71,58 @@ export default [
                     shareTargetApi: {
                         headline: route.query.title,
                         text: route.query.text,
-                        url: route.query.url
-                    }
+                        url: route.query.url,
+                    },
                 }),
                 meta: {
-                    authUser: true
-                }
+                    authUser: true,
+                },
             },
             {
                 path: 'search',
                 name: 'search',
                 component: Search,
                 meta: {
-                    authUser: true
-                }
+                    authUser: true,
+                },
             },
             {
                 path: 'restore',
                 name: 'restore',
                 component: Restore,
                 meta: {
-                    authUser: true
-                }
+                    authUser: true,
+                },
             },
             {
                 path: 'p/:id',
                 name: 'post',
                 component: Post,
                 props: (route) => ({
-                    id: parseInt(route.params.id)
+                    id: parseInt(route.params.id),
                 }),
                 meta: {
                     authUser: true,
-                    staticAuth: true
-                }
+                    staticAuth: true,
+                },
             },
             {
                 path: '/users',
                 name: 'users',
                 component: Users,
                 meta: {
-                    authUser: true
-                }
+                    authUser: true,
+                },
             },
             {
                 path: '/users/create',
                 component: User,
                 props: {
-                    isNew: true
+                    isNew: true,
                 },
                 meta: {
-                    authUser: true
-                }
+                    authUser: true,
+                },
             },
             {
                 path: '/users/:id',
@@ -129,11 +130,22 @@ export default [
                 component: User,
                 props: (route) => ({
                     id: route.params.id,
-                    isNew: false
+                    isNew: false,
                 }),
                 meta: {
-                    authUser: true
-                }
+                    authUser: true,
+                },
+            },
+            {
+                path: '/tags/:id',
+                name: 'tag',
+                component: Tag,
+                props: (route) => ({
+                    id: parseInt(route.params.id),
+                }),
+                meta: {
+                    authUser: true,
+                },
             },
             {
                 path: '/s',
@@ -143,38 +155,38 @@ export default [
                     if (store.state.auth.staticAuth) {
                         return {
                             collectionId: store.state.auth.staticAuth.collection_id,
-                            permission: store.state.auth.staticAuth.permission
+                            permission: store.state.auth.staticAuth.permission,
                         }
                     } else {
                         return {
                             collectionId: null,
-                            permission: 0
+                            permission: 0,
                         }
                     }
                 },
                 meta: {
-                    staticAuth: true
-                }
-            }
-        ]
+                    staticAuth: true,
+                },
+            },
+        ],
     },
     {
         path: '/login',
         name: 'Login',
-        component: Login
+        component: Login,
     },
     {
         path: '/forgot',
         name: 'Forgot',
-        component: Forgot
+        component: Forgot,
     },
     {
         path: '/reset',
         name: 'Reset',
         component: Reset,
-        props: route => ({
+        props: (route) => ({
             email: route.query.email,
-            token: route.query.token
-        })
-    }
+            token: route.query.token,
+        }),
+    },
 ]

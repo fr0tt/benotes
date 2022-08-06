@@ -1,6 +1,9 @@
 import store from './../store'
 
 export function getCollectionName (collectionId) {
+    if (collectionId === null) {
+        return 'Uncategorized'
+    }
     if (store.state.collection.collections == null) {
         return ''
     }

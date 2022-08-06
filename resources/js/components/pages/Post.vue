@@ -3,15 +3,40 @@
         <div class="md:mx-6 mx-1 md:my-6 mt-2">
             <div class="mx-4 editor">
                 <div class="max-w-5xl mt-4" @keyup.ctrl.alt.83="keySave">
-                    <input class="block w-full text-3xl font-medium placeholder-orange-600
-                        text-orange-600 bg-transparent outline-none"
-                        v-model="title" placeholder="Title" tabindex="1" autofocus/>
-                    <div class="mt-4 mb-6">
-                        <Select class="inline-block w-80" v-model="collection"
-                            label="name" :options="optionsCollections" :tabindex="2"/>
+                    <input
+                        v-model="title"
+                        class="block w-full text-3xl font-medium placeholder-orange-600 text-orange-600 bg-transparent outline-none"
+                        placeholder="Title"
+                        tabindex="1"
+                        autofocus />
+                    <div class="mt-4 mb-4">
+                        <Select
+                            v-model="collection"
+                            class="inline-block w-80"
+                            label="name"
+                            :options="optionsCollections"
+                            :tabindex="2" />
                     </div>
-                    <EditorMenuBar :editor="editor" class="w-full my-4"/>
-                    <EditorContent :editor="editor" class="editorContent text-lg my-4"/>
+
+                    <Select
+                        v-model="tags"
+                        placeholder="Add tag"
+                        class="tags block w-full"
+                        taggable
+                        multiple
+                        :close-on-select="false"
+                        label="name"
+                        :tabindex="3"
+                        :options="optionsTags">
+                        <template #selected-option="{ id, name }">
+                            <router-link :to="'/tags/' + id">
+                                {{ name }}
+                            </router-link>
+                        </template>
+                    </Select>
+
+                    <EditorMenuBar :editor="editor" class="w-full my-4" />
+                    <EditorContent :editor="editor" class="editorContent text-lg my-4" />
                 </div>
             </div>
         </div>
@@ -19,7 +44,6 @@
 </template>
 
 <script>
-
 import axios from 'axios'
 import { mapState } from 'vuex'
 
@@ -28,6 +52,7 @@ import OpenIndicator from '../OpenIndicator.vue'
 import Deselect from '../Deselect.vue'
 import 'vue-select/dist/vue-select.css'
 
+import EditorMenuBar from '../EditorMenuBar.vue'
 import { Editor, EditorContent } from '@tiptap/vue-2'
 import StarterKit from '@tiptap/starter-kit'
 import Typography from '@tiptap/extension-typography'
@@ -38,14 +63,7 @@ import TaskList from '@tiptap/extension-task-list'
 import TaskItem from '@tiptap/extension-task-item'
 import UnfurlingLink from '../../UnfurlingLink'
 
-import EditorMenuBar from '../EditorMenuBar.vue'
-
 export default {
-    props: {
-        collectionId: Number,
-        id: Number,
-        shareTargetApi: Object
-    },
     components: {
         Select,
         OpenIndicator,
@@ -53,13 +71,20 @@ export default {
         EditorContent,
         EditorMenuBar,
     },
-    data () {
+    props: {
+        collectionId: Number,
+        id: Number,
+        shareTargetApi: Object,
+    },
+    data() {
         return {
             isNewPost: isNaN(this.id),
             post: null,
             title: null,
             collection: null,
             optionsCollections: [],
+            tags: null,
+            optionsTags: [],
             autofocus: true,
             injectCSS: false,
             editor: new Editor({
@@ -72,30 +97,35 @@ export default {
                     Link,
                     TaskList,
                     TaskItem,
-                    UnfurlingLink
+                    UnfurlingLink,
                 ],
-            })
+            }),
         }
     },
     methods: {
-        save () {
+        save() {
             let content = this.editor.getHTML()
             if (content === '' || this.currentCollection === null) {
                 return
             }
+
+            let tags = this.saveTags()
+
             const matches = content.match(/^<p>(?<content>.(?:(?!<p>)(?!<\/p>).)*)<\/p>$/)
             if (matches !== null) {
                 content = matches[1]
             }
 
             if (this.isNewPost) {
-                axios.post('/api/posts', {
-                    title: this.title,
-                    content: content,
-                    collection_id: this.collection.id,
-                    is_uncategorized: this.collection.id > 0 ? false : true
-                })
-                    .then(response => {
+                axios
+                    .post('/api/posts', {
+                        title: this.title,
+                        content: content,
+                        collection_id: this.collection.id,
+                        is_uncategorized: this.collection.id > 0 ? false : true,
+                        tags: tags,
+                    })
+                    .then((response) => {
                         if (this.posts !== null) {
                             this.$store.dispatch('post/addPost', response.data.data)
                         }
@@ -104,7 +134,7 @@ export default {
                         this.$store.dispatch('notification/setNotification', {
                             type: 'error',
                             title: 'Error',
-                            description: 'Post could not be created.'
+                            description: 'Post could not be created.',
                         })
                     })
                 this.$router.push({ path: '/c/' + this.collectionId })
@@ -113,33 +143,61 @@ export default {
                 this.post.title = this.title
                 this.post.content = content
                 this.post.collection_id = this.collection.id
+                this.post.tags = tags
                 this.$store.dispatch('post/updatePost', { post: this.post })
                 const route = originCollectionId === null ? '/' : '/c/' + originCollectionId
                 this.$router.push({ path: route })
             }
         },
-        keySave (event) {
+        keySave(event) {
             event.preventDefault()
             this.save()
         },
-        delete () {
+        saveTags() {
+            let newTags = []
+            let existingTags = []
+            if (!this.tags) {
+                return null
+            }
+            this.tags.forEach((tag) => {
+                if (typeof tag.id === 'undefined') {
+                    newTags.push(tag)
+                } else {
+                    existingTags.push(tag)
+                }
+            })
+
+            if (newTags.length > 0) {
+                try {
+                    axios
+                        .post('/api/tags', {
+                            tags: newTags,
+                        })
+                        .then((response) => {
+                            existingTags = existingTags.concat(response.data.data)
+                        })
+                } catch (err) {
+                    this.$store.dispatch('notification/setNotification', {
+                        type: 'error',
+                        title: 'Error',
+                        description: 'Tag(s) could not be created.',
+                    })
+                }
+            }
+            return existingTags.map((tag) => tag.id)
+        },
+        delete() {
             this.$store.dispatch('post/deletePost', this.id)
             const route = this.post.collection_id > 0 ? '/c/' + this.post.collection_id : '/'
             this.$router.push(route)
-        }
+        },
     },
     computed: {
-        ...mapState('collection', [
-            'currentCollection'
-        ]),
-        ...mapState('collection', [
-            'collections'
-        ]),
-        ...mapState('post', [
-            'posts'
-        ])
+        ...mapState('collection', ['currentCollection']),
+        ...mapState('collection', ['collections']),
+        ...mapState('post', ['posts']),
     },
-    created () {
+    created() {
         Select.props.components.default = () => ({ OpenIndicator, Deselect })
         // @todo does this actually work ?
         this.editor.view.props.attributes = { tabindex: '3' }
@@ -150,13 +208,17 @@ export default {
             this.optionsCollections = this.optionsCollections.concat(this.collections)
         })
 
+        axios.get('/api/tags').then((response) => {
+            this.optionsTags = response.data.data
+        })
+
         if (this.isNewPost) {
             this.$store.dispatch('collection/fetchCollections').then(() => {
                 if (this.collectionId === 0 || typeof this.collectionId === 'undefined') {
                     this.collection = uncategorized
                 } else {
-                    this.collection = this.collections.find(collection =>
-                        collection.id === this.collectionId
+                    this.collection = this.collections.find(
+                        (collection) => collection.id === this.collectionId
                     )
                 }
             })
@@ -165,47 +227,51 @@ export default {
                 button: {
                     label: 'Save',
                     callback: this.save,
-                    icon: 'checkmark'
-                }
+                    icon: 'checkmark',
+                },
             })
         } else {
-            this.$store.dispatch('post/getPost', this.id)
-                .then(post => {
+            this.$store
+                .dispatch('post/getPost', this.id)
+                .then((post) => {
                     this.post = post
                     this.title = post.title
                     this.$store.dispatch('collection/fetchCollections').then(() => {
                         if (post.collection_id === null) {
                             this.collection = uncategorized
                         } else {
-                            this.collection = this.collections.find(collection =>
-                                collection.id === post.collection_id
+                            this.collection = this.collections.find(
+                                (collection) => collection.id === post.collection_id
                             )
                         }
                     })
+                    this.tags = post.tags
                     this.editor.commands.setContent(this.post.content)
                 })
-                .catch(error => {
+                .catch((error) => {
                     console.log(error)
-            })
+                })
             this.$store.dispatch('appbar/setAppbar', {
                 title: 'Edit Post',
                 button: {
                     label: 'Save',
                     callback: this.save,
-                    icon: 'checkmark'
+                    icon: 'checkmark',
                 },
-                options: [{
-                    label: 'Delete',
-                    longLabel: 'Delete Post',
-                    callback: this.delete,
-                    icon: 'delete',
-                    color: 'red',
-                    condition: true
-                }]
+                options: [
+                    {
+                        label: 'Delete',
+                        longLabel: 'Delete Post',
+                        callback: this.delete,
+                        icon: 'delete',
+                        color: 'red',
+                        condition: true,
+                    },
+                ],
             })
         }
     },
-    mounted () {
+    mounted() {
         if (!this.shareTargetApi) {
             return
         }
@@ -218,34 +284,72 @@ export default {
             this.editor.commands.setContent(this.shareTargetApi.text)
         }
     },
-    beforeDestroy () {
+    beforeDestroy() {
         this.editor.destroy()
-    }
+    },
 }
 </script>
 <style lang="scss">
-    .editor {
-        .editorContent {
-            font-family: Inter, 'Noto Sans', 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
-            p.is-editor-empty:first-child::before {
-                content: attr(data-placeholder);
-                pointer-events: none;
-                height: 0;
-                float: left;
-                @apply not-italic text-gray-600; //text-orange-600
-            }
-            .is-empty.is-editor-empty {
-                height: calc(100vh - 21rem);
-            }
+.editor {
+    .editorContent {
+        font-family: Inter, 'Noto Sans', 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+            Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+        p.is-editor-empty:first-child::before {
+            content: attr(data-placeholder);
+            pointer-events: none;
+            height: 0;
+            float: left;
+            @apply not-italic text-gray-600; //text-orange-600
+        }
+        .is-empty.is-editor-empty {
+            height: calc(100vh - 21rem);
         }
     }
-    .w-80 {
-        width: 20rem;
+    .vs__dropdown-toggle {
+        @apply border-gray-300 border-2;
     }
-    .ProseMirror {
-        @apply h-full;
+    .vs__dropdown-menu {
+        @apply p-0 order-2 border-gray-300 shadow-none;
+        .vs__dropdown-option--highlight {
+            @apply bg-orange-500;
+        }
     }
-    .mb-0\.25 {
-        margin-bottom: 0.0675rem;
+}
+.w-80 {
+    width: 20rem;
+}
+.ProseMirror {
+    @apply h-full;
+}
+.mb-0\.25 {
+    margin-bottom: 0.0675rem;
+}
+.editor .tags {
+    input.vs__search {
+        @apply text-gray-500;
     }
+    .vs__dropdown-toggle {
+        @apply border-t-0 border-l-0 border-r-0 border-b-2 border-gray-300;
+        border-radius: 0;
+    }
+    .vs__dropdown-menu {
+        @apply max-w-xs bg-gray-200 border-gray-200 rounded;
+        margin-top: -2px;
+        .vs__dropdown-option {
+            @apply pt-1 pb-1;
+        }
+    }
+    .vs__actions {
+        display: none;
+    }
+    .vs__selected {
+        @apply pl-2 pr-1 rounded bg-orange-600 text-white border-none;
+    }
+    .vs__deselect svg {
+        fill: #fff;
+    }
+    .vs__dropdown-option--selected {
+        display: none;
+    }
+}
 </style>
