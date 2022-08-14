@@ -26,8 +26,8 @@
             </div>
             <PostItemTags
                 :tags="post.tags"
-                class="px-6 py-1"
-                :class="post.tags && post.tags.length > 0 ? '' : 'py-4'" />
+                class="px-6"
+                :class="post.tags && post.tags.length > 0 ? 'md:py-1' : 'py-3 md:py-4'" />
             <div class="px-6 pt-1 mr-2 truncate">
                 <img
                     :src="'https://external-content.duckduckgo.com/ip3/' + domain + '.ico'"

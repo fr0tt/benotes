@@ -10,6 +10,7 @@
                     </p>
                     <EditorContent :editor="editor" class="editorContent" />
                 </div>
+                <PostItemTags :tags="post.tags" class="item-text" />
             </div>
         </router-link>
         <div v-else class="p-6 h-full">
@@ -88,6 +89,18 @@ export default {
             }),
         }
     },
+    computed: {
+        collectionName() {
+            return getCollectionName(this.post.collection_id)
+        },
+        ...mapState(['isMobile']),
+    },
+    created() {
+        this.localPost = Object.assign({}, this.post)
+    },
+    beforeDestroy() {
+        this.editor.destroy()
+    },
     methods: {
         edit() {
             if (this.isActive) {
@@ -121,18 +134,6 @@ export default {
         restorePost() {
             restorePost(this.post)
         },
-    },
-    computed: {
-        collectionName() {
-            return getCollectionName(this.post.collection_id)
-        },
-        ...mapState(['isMobile']),
-    },
-    created() {
-        this.localPost = Object.assign({}, this.post)
-    },
-    beforeDestroy() {
-        this.editor.destroy()
     },
 }
 </script>
