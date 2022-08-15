@@ -23,10 +23,10 @@ axios.interceptors.response.use(function (response) {
     }
 
     refresh().then(response => {
-            return Promise.resolve(response)
-        }).catch(error => {
-            return Promise.reject(error)
-        })
+        return Promise.resolve(response)
+    }).catch(error => {
+        return Promise.reject(error)
+    })
 
     return Promise.reject(error)
 })
