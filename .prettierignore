@@ -1,0 +1,5 @@
+/vendor
+/public
+/notes
+*.json
+*.lock

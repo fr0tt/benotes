@@ -5,7 +5,11 @@ module.exports = {
     },
     "extends": [
         "eslint:recommended",
-        "plugin:vue-libs/recommended"
+        "plugin:vue/recommended",
+        "prettier"
+    ],
+    "plugins": [
+        "prettier"
     ],
     "globals": {
         "Atomics": "readonly",
@@ -16,6 +20,15 @@ module.exports = {
         "sourceType": "module"
     },
     "rules": {
-        "indent": ["error", 4]
-    }
+        "indent": ["error", 4],
+        "vue/multi-word-component-names": "off",
+        "prettier/prettier": "warn"
+    },
+    "ignorePatterns": [
+        ".eslintrc.js",
+        "webpack.mix.js",
+        "vendor/",
+        "public/",
+        "notes/"
+    ]
 };
