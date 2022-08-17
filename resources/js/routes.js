@@ -10,6 +10,8 @@ import Tag from './components/pages/Tag'
 import Login from './components/pages/Login'
 import Forgot from './components/pages/Forgot'
 import Reset from './components/pages/Reset'
+//import Installation from './components/pages/Installation'
+//import Installation2 from './components/pages/Installation2'
 
 import store from './store'
 
@@ -189,4 +191,14 @@ export default [
             token: route.query.token,
         }),
     },
+    /*{
+        path: '/installation',
+        name: 'Installation',
+        component: Installation
+    },
+    {
+        path: '/installation/admin',
+        name: 'Installation2',
+        component: Installation2
+    },*/
 ]

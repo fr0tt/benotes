@@ -1,65 +1,80 @@
 <template>
     <div class="py-12 px-12 md:px-40 md:pt-32 max-w-5xl">
         <div class="w-full collection">
-            <h1 class="text-3xl font-bold mb-4">{{ headline }}</h1>
-            <p class="text-xl mb-16">{{ description }}</p>
+            <h1 class="text-3xl font-bold mb-4">
+                {{ headline }}
+            </h1>
+            <p class="text-xl mb-16">
+                {{ description }}
+            </p>
 
             <div class="mb-10">
                 <label class="label">Name of Collection</label>
-                <input v-model="name" placeholder="Name" autofocus class="input"/>
+                <input v-model="name" placeholder="Name" autofocus class="input" />
             </div>
 
             <div class="mb-10 relative">
                 <label class="label">Collection Icon</label>
-                <button @click="openPicker()"
-                    class="border-2 border-gray-400 rounded py-2 px-2">
-                    <svg-vue v-if="collectionIconIsInline(iconId)"
-                        :icon="'glyphs/' + iconId" class="w-6 h-6"/>
+                <button class="border-2 border-gray-400 rounded py-2 px-2" @click="openPicker()">
+                    <svg-vue
+                        v-if="collectionIconIsInline(iconId)"
+                        :icon="'glyphs/' + iconId"
+                        class="w-6 h-6" />
                     <svg v-else-if="iconId" class="w-6 h-6">
-                        <use :xlink:href="'/glyphs.svg#' + iconId"></use>
+                        <use :xlink:href="'/glyphs.svg#' + iconId" />
                     </svg>
-                    <svg-vue v-else icon="remix/folder-fill"
-                        class="w-6 text-gray-500 fill-current align-text-bottom"/>
+                    <svg-vue
+                        v-else
+                        icon="remix/folder-fill"
+                        class="w-6 text-gray-500 fill-current align-text-bottom" />
                 </button>
                 <transition name="fade">
-                    <IconPicker v-if="showPicker" @iconSelected="iconSelect"/>
+                    <IconPicker v-if="showPicker" @iconSelected="iconSelect" />
                 </transition>
                 <p class="mt-4">Select an optional icon for your collection.</p>
             </div>
 
             <div v-if="!isNew" class="mt-16 mb-16">
                 <label class="label inline-block">Collection Url</label>
-                <button @click="is_active = !is_active" class="switch"
-                    :class="[is_active ? 'bg-orange-600 border-orange-600 text-white'
-                    : 'border-gray-600 text-gray-600']">
+                <button
+                    class="switch"
+                    :class="[
+                        is_active
+                            ? 'bg-orange-600 border-orange-600 text-white'
+                            : 'border-gray-600 text-gray-600',
+                    ]"
+                    @click="is_active = !is_active">
                     {{ switchValue }}
                 </button>
 
                 <div class="w-full mt-4 md:mt-0 md:flex">
-                    <input class="input readonly" :value="domain" readonly/>
+                    <input class="input readonly" :value="domain" readonly />
                     <div class="flex flex-1 mt-1 md:mt-0">
-                        <input v-model="token" class="input flex-1 mx-1"
-                            placeholder="Collection Url"/>
-                        <div v-if="isSupported" @click="copy"
-                            class="bg-gray-300 px-2 mr-1 rounded cursor-pointer">
-                            <svg-vue class="w-6 mt-2.5" icon="material/link"/>
+                        <input
+                            v-model="token"
+                            class="input flex-1 mx-1"
+                            placeholder="Collection Url" />
+                        <div
+                            v-if="isSupported"
+                            class="bg-gray-300 px-2 mr-1 rounded cursor-pointer"
+                            @click="copy">
+                            <svg-vue class="w-6 mt-2.5" icon="material/link" />
                         </div>
-                        <div @click="generate()"
-                            class="px-2 bg-gray-300 rounded cursor-pointer">
-                            <svg-vue class="w-6 mt-2.5" icon="material/autorenew"/>
+                        <div class="px-2 bg-gray-300 rounded cursor-pointer" @click="generate()">
+                            <svg-vue class="w-6 mt-2.5" icon="material/autorenew" />
                         </div>
                     </div>
                 </div>
 
-                <p class="mt-4">Make this collection publicly available by
-                    visiting the specified URL.</p>
+                <p class="mt-4">
+                    Make this collection publicly available by visiting the specified URL.
+                </p>
             </div>
 
             <div v-if="!isNew" class="mb-14 py-6 px-6 bg-red-400 rounded">
                 <h3 class="text-xl font-semibold mb-1">Delete collection</h3>
                 <p class="mb-4">Delete this collection and all its content.</p>
-                <button title="Delete Collection" @click="deleteCollection"
-                    class="button red mb-2">
+                <button title="Delete Collection" class="button red mb-2" @click="deleteCollection">
                     Delete
                 </button>
             </div>
@@ -73,61 +88,65 @@ import { mapState } from 'vuex'
 import { collectionIconIsInline } from './../../api/collection'
 import IconPicker from '../IconPicker.vue'
 export default {
-    props: ['id', 'isNew'],
     components: {
-        IconPicker
+        IconPicker,
     },
-    data () {
+    props: ['id', 'isNew'],
+    data() {
         return {
             name: '',
             token: '',
             share: null,
             is_active: false,
-            switch: (this.is_active) ? 'active' : 'inactive',
-            headline: (this.isNew) ? 'Create Collection' : 'Collection Settings',
-            description: (this.isNew) ? 'Specify a name for your new collection.'
-                : 'Update your collection\'s title and public available URL.',
+            switch: this.is_active ? 'active' : 'inactive',
+            headline: this.isNew ? 'Create Collection' : 'Collection Settings',
+            description: this.isNew
+                ? 'Specify a name for your new collection.'
+                : "Update your collection's title and public available URL.",
             isSupported: null,
             iconId: null,
-            showPicker: false
+            showPicker: false,
         }
     },
     methods: {
-        create () {
-            axios.post('/api/collections', {
-                name: this.name,
-                icon_id: this.iconId
-            })
-                .then(response => {
+        create() {
+            axios
+                .post('/api/collections', {
+                    name: this.name,
+                    icon_id: this.iconId,
+                })
+                .then((response) => {
                     this.$store.dispatch('collection/addCollection', response.data.data)
                     this.$router.push({ path: '/c/' + response.data.data.id })
                 })
-                .catch(error => {
+                .catch((error) => {
                     console.log(error.response.data)
                 })
         },
-        update () {
+        update() {
             this.$store.dispatch('collection/updateCollection', {
-                id: this.id, name: this.name, iconId: this.iconId
+                id: this.id,
+                name: this.name,
+                iconId: this.iconId,
             })
             this.handleShare()
             this.$router.push({ path: '/c/' + this.id })
         },
-        deleteCollection () {
+        deleteCollection() {
             this.$store.dispatch('collection/deleteCollection', this.id)
             this.$store.dispatch('notification/setNotification', {
                 type: 'deletion',
                 title: 'Collection deleted',
-                description: 'Collection was successfully deleted.'
+                description: 'Collection was successfully deleted.',
             })
             this.$router.push({ path: '/' })
         },
-        copy (event) {
+        copy(event) {
             navigator.clipboard.writeText(this.domain + this.token).catch((error) => {
                 console.log(error)
             })
         },
-        generate () {
+        generate() {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
             const charsLength = chars.length
             let value = ''
@@ -136,13 +155,14 @@ export default {
             }
             this.token = value
         },
-        getShares () {
-            axios.get('/api/shares/', {
-                params: {
-                    collection_id: this.id
-                }
-            })
-                .then(response => {
+        getShares() {
+            axios
+                .get('/api/shares/', {
+                    params: {
+                        collection_id: this.id,
+                    },
+                })
+                .then((response) => {
                     if (response.data.data.length === 0) {
                         return
                     }
@@ -151,88 +171,88 @@ export default {
                     this.token = share.token
                     this.is_active = share.is_active
                 })
-                .catch(error => {
+                .catch((error) => {
                     console.log(error.response.data)
                 })
         },
-        handleShare () {
+        handleShare() {
             if (this.share === null && this.is_active === false) {
                 return
             }
 
             if (this.is_active && this.token !== '') {
                 if (this.share) {
-                    axios.patch('/api/shares/' + this.share.id, {
-                        token: this.token,
-                        collection_id: this.id,
-                        is_active: this.is_active
-                    })
-                        .catch(error => {
+                    axios
+                        .patch('/api/shares/' + this.share.id, {
+                            token: this.token,
+                            collection_id: this.id,
+                            is_active: this.is_active,
+                        })
+                        .catch((error) => {
                             console.log(error.response.data)
                         })
                 } else {
-                    axios.post('/api/shares', {
-                        token: this.token,
-                        collection_id: this.id,
-                        is_active: this.is_active
-                    })
-                        .catch(error => {
+                    axios
+                        .post('/api/shares', {
+                            token: this.token,
+                            collection_id: this.id,
+                            is_active: this.is_active,
+                        })
+                        .catch((error) => {
                             console.log(error.response.data)
                         })
                 }
             } else if (!this.is_active && this.share) {
-                axios.delete('/api/shares/' + this.share.id)
-                    .catch(error => {
-                        console.log(error.response.data)
-                    })
+                axios.delete('/api/shares/' + this.share.id).catch((error) => {
+                    console.log(error.response.data)
+                })
             }
         },
-        openPicker () {
+        openPicker() {
             this.showPicker = true
             document.querySelector('#app').addEventListener('click', this.hidePicker, true)
         },
-        hidePicker () {
+        hidePicker() {
             if (document.querySelector('#iconPicker').contains(event.target)) {
                 return
             }
             this.showPicker = false
             document.querySelector('#app').removeEventListener('click', this.hidePicker, true)
         },
-        iconSelect (event) {
+        iconSelect(event) {
             this.iconId = Number(event.id)
             this.showPicker = false
             document.querySelector('#app').removeEventListener('click', this.hidePicker, true)
         },
-        collectionIconIsInline
+        collectionIconIsInline,
     },
     computed: {
-        switchValue () {
+        switchValue() {
             if (this.is_active) {
                 return 'active'
             } else {
                 return 'inactive'
             }
         },
-        domain () {
+        domain() {
             return origin + '/s?token='
         },
-        ...mapState('collection', [
-            'collections'
-        ])
+        ...mapState('collection', ['collections']),
     },
-    created () {
+    created() {
         if (!this.isNew) {
             if (parseInt(this.id) === 0) {
                 this.$router.push({ path: '/' })
                 return
             }
-            axios.get('/api/collections/' + this.id)
-                .then(response => {
+            axios
+                .get('/api/collections/' + this.id)
+                .then((response) => {
                     const collection = response.data.data
                     this.name = collection.name
                     this.iconId = collection.icon_id
                 })
-                .catch(error => {
+                .catch((error) => {
                     console.log(error.response.data)
                 })
             this.getShares()
@@ -242,8 +262,8 @@ export default {
                 button: {
                     label: 'Save',
                     callback: this.update,
-                    icon: 'checkmark'
-                }
+                    icon: 'checkmark',
+                },
             })
         } else {
             this.$store.dispatch('appbar/setAppbar', {
@@ -251,41 +271,44 @@ export default {
                 button: {
                     label: 'Save',
                     callback: this.create,
-                    icon: 'checkmark'
-                }
+                    icon: 'checkmark',
+                },
             })
         }
-        navigator.permissions.query({ name: 'clipboard-write' }).then(result => {
-            this.isSupported = result.state === 'granted' || result.state === 'prompt'
-        }).catch(() => {
-            this.isSupported = false
-        })
-    }
+        navigator.permissions
+            .query({ name: 'clipboard-write' })
+            .then((result) => {
+                this.isSupported = result.state === 'granted' || result.state === 'prompt'
+            })
+            .catch(() => {
+                this.isSupported = false
+            })
+    },
 }
 </script>
 <style lang="scss">
-    button.switch {
-        @apply float-right border-2 uppercase font-medium tracking-wide text-sm px-2 mb-1;
-        padding-top: 0.125rem;
-        padding-bottom: 0.125rem;
-        transition: color, background-color 0.2s;
+button.switch {
+    @apply float-right border-2 uppercase font-medium tracking-wide text-sm px-2 mb-1;
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem;
+    transition: color, background-color 0.2s;
+}
+button.switch:hover {
+    @apply bg-white text-orange-600;
+}
+.collection {
+    input.readonly {
+        @apply text-white border-gray-700 bg-gray-600 w-auto;
     }
-    button.switch:hover {
-        @apply bg-white text-orange-600;
+    .label.inline-block {
+        @apply inline-block;
     }
-    .collection {
-        input.readonly {
-            @apply text-white border-gray-700 bg-gray-600 w-auto;
-        }
-        .label.inline-block {
-            @apply inline-block;
-        }
-    }
-    .px-1\.5 {
-        padding-right: 0.375rem;
-        padding-left: 0.375rem;
-    }
-    .button.red:hover {
-        border-color: #fff;
-    }
+}
+.px-1\.5 {
+    padding-right: 0.375rem;
+    padding-left: 0.375rem;
+}
+.button.red:hover {
+    border-color: #fff;
+}
 </style>

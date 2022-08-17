@@ -8,9 +8,12 @@
                         Select a collection you wish to transfer your post to.
                     </p>
                     <ol v-for="collection in collections" :key="collection.id">
-                        <li class="py-3 px-4 cursor-pointer hover:text-orange-500 transition-color-0.2"
+                        <li
+                            class="py-3 px-4 cursor-pointer hover:text-orange-500 transition-color-0.2"
                             @click="transfer(collection.id)">
-                            <span class="block font-medium gray-700 open-sans">{{ collection.name }}</span>
+                            <span class="block font-medium gray-700 open-sans">{{
+                                collection.name
+                            }}</span>
                         </li>
                     </ol>
                 </div>
@@ -22,50 +25,50 @@
 import { mapState } from 'vuex'
 export default {
     computed: {
-        collections () {
-            const uncategorized = [{
-                id: null,
-                name: 'Uncategorized'
-            }]
+        collections() {
+            const uncategorized = [
+                {
+                    id: null,
+                    name: 'Uncategorized',
+                },
+            ]
             return uncategorized.concat(this.$store.state.collection.collections)
         },
-        ...mapState('collection', [
-            'collectionMenu'
-        ])
+        ...mapState('collection', ['collectionMenu']),
+    },
+    created() {
+        document.querySelector('#app').addEventListener('click', this.hide, true)
     },
     methods: {
-        transfer (collectionId) {
+        transfer(collectionId) {
             // necessary in order to copy the post instead of referencing it
             const post = JSON.parse(JSON.stringify(this.collectionMenu.post))
             post.collection_id = collectionId
             this.$store.dispatch('post/updatePost', { post: post, transfer: true })
             this.$store.dispatch('collection/setCollectionMenu', {
                 isVisible: false,
-                post: null
+                post: null,
             })
         },
-        hide (event) {
+        hide(event) {
             if (this.$refs.cmModal == event.target) {
                 this.$store.dispatch('collection/setCollectionMenu', {
                     isVisible: false,
-                    post: null
+                    post: null,
                 })
                 document.querySelector('#app').removeEventListener('click', this.hide, true)
             }
-        }
+        },
     },
-    created () {
-        document.querySelector('#app').addEventListener('click', this.hide, true)
-    }
 }
 </script>
 <style lang="scss">
-    .bg-half-transparent {
-        background-color: rgba(0, 0, 0, 0.5);
-    }
-    .transition-color-0\.2 {
-        transition: color 0.2s;
-        -webkit-transition: color 0.2s;
-        -moz-transition: color 0.2s;
-    }
+.bg-half-transparent {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+.transition-color-0\.2 {
+    transition: color 0.2s;
+    -webkit-transition: color 0.2s;
+    -moz-transition: color 0.2s;
+}
 </style>

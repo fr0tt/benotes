@@ -1,8 +1,4 @@
-import {
-    Node,
-    nodeInputRule,
-    mergeAttributes,
-} from '@tiptap/core'
+import { Node, nodeInputRule, mergeAttributes } from '@tiptap/core'
 import { VueNodeViewRenderer } from '@tiptap/vue-2'
 
 import { Plugin, PluginKey } from 'prosemirror-state'
@@ -10,10 +6,10 @@ import { DecorationSet, Decoration } from 'prosemirror-view'
 
 import Component from './components/UnfurlingLink.vue'
 
-const inputRegex = /^<https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z]{2,}\b(?:[-a-zA-Z0-9@:%._+~#=?!&/]*)(?:[-a-zA-Z0-9@:%._+~#=?!&/]*)>$/ // /^<.*>$/
+const inputRegex =
+    /^<https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z]{2,}\b(?:[-a-zA-Z0-9@:%._+~#=?!&/]*)(?:[-a-zA-Z0-9@:%._+~#=?!&/]*)>$/ // /^<.*>$/
 
 export default Node.create({
-
     name: 'unfurlingLink',
     group: 'block',
     atom: true, // "aren’t directly editable and should be treated as a single unit"
@@ -26,22 +22,23 @@ export default Node.create({
     addAttributes() {
         return {
             href: {
-                default: null
+                default: null,
             },
             'data-title': {
-                default: null
-            }
+                default: null,
+            },
         }
     },
 
     parseHTML() {
-        return [
-            { tag: 'unfurling-link[data-title]' },
-        ]
+        return [{ tag: 'unfurling-link[data-title]' }]
     },
 
     renderHTML({ HTMLAttributes }) {
-        return ['unfurling-link', mergeAttributes(HTMLAttributes/*, this.options.HTMLAttributes*/)/*, 0*/]
+        return [
+            'unfurling-link',
+            mergeAttributes(HTMLAttributes /*, this.options.HTMLAttributes*/) /*, 0*/,
+        ]
     },
 
     addNodeView() {
@@ -50,13 +47,15 @@ export default Node.create({
 
     addCommands() {
         return {
-            setUnfurlingLink: options => ({ commands, editor }) => {
-                commands.deleteSelection()
-                return commands.insertContent({
-                    type: this.name,
-                    attrs: { href: editor.state.selection.$to.nodeBefore.text },
-                })
-            },
+            setUnfurlingLink:
+                (options) =>
+                    ({ commands, editor }) => {
+                        commands.deleteSelection()
+                        return commands.insertContent({
+                            type: this.name,
+                            attrs: { href: editor.state.selection.$to.nodeBefore.text },
+                        })
+                    },
         }
     },
 
@@ -65,7 +64,7 @@ export default Node.create({
             nodeInputRule({
                 find: inputRegex,
                 type: this.type,
-                getAttributes: match => {
+                getAttributes: (match) => {
                     const link = match[0].replace(/<|>/g, '')
                     return { href: link }
                 },
@@ -103,7 +102,7 @@ export default Node.create({
                                 return false
                             }
 
-                            const isCurrent = anchor >= pos && anchor <= (pos + node.nodeSize - 1)
+                            const isCurrent = anchor >= pos && anchor <= pos + node.nodeSize - 1
 
                             if (!isCurrent) {
                                 return false
@@ -111,16 +110,19 @@ export default Node.create({
 
                             currentLevel += 1
 
-                            const outOfScope = (mode === 'deepest' && maxLevels - currentLevel > 0)
-                                || (mode === 'shallowest' && currentLevel > 1)
+                            const outOfScope =
+                                (mode === 'deepest' && maxLevels - currentLevel > 0) ||
+                                (mode === 'shallowest' && currentLevel > 1)
 
                             if (outOfScope) {
                                 return mode === 'deepest'
                             }
 
-                            decorations.push(Decoration.node(pos, pos + node.nodeSize, {
-                                class: 'has-focus',
-                            }))
+                            decorations.push(
+                                Decoration.node(pos, pos + node.nodeSize, {
+                                    class: 'has-focus',
+                                })
+                            )
                         })
 
                         return DecorationSet.create(doc, decorations)
@@ -129,5 +131,4 @@ export default Node.create({
             }),
         ]
     },
-
 })

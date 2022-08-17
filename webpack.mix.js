@@ -36,24 +36,24 @@ mix.js('resources/js/app.js', 'public/js')
     .sass('resources/sass/app.scss', 'public/css')
     .options({
         processCssUrls: false,
-        postCss: [tailwindcss('./tailwind.config.js')]
+        postCss: [tailwindcss('./tailwind.config.js')],
     })
     .svgVue({
         svgoSettings: [
             { removeTitle: false },
             { removeViewBox: false },
             { removeDimensions: true },
-            { cleanupIDs: false }
-        ]
+            { cleanupIDs: false },
+        ],
     })
     .webpackConfig({
         plugins: [
             new InjectManifest({
-                swSrc: './resources/js/service-worker.js'
-            })
+                swSrc: './resources/js/service-worker.js',
+            }),
         ],
         output: {
-            publicPath: ''
-        }
+            publicPath: '',
+        },
     })
     .browserSync(process.env.APP_URL)

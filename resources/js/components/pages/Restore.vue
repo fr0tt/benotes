@@ -2,31 +2,30 @@
     <div class="min-h-full relative restore">
         <div class="sm:ml-8 px-2 md:px-8 pb-16">
             <div class="py-4 md:pt-16 mb-6">
-                <h1 class="text-3xl font-medium text-gray-800">
-                    Recycle Bin
-                </h1>
+                <h1 class="text-3xl font-medium text-gray-800">Recycle Bin</h1>
             </div>
             <transition name="collection-fade">
                 <ul v-if="isLoading" class="-ml-4">
                     <Post v-for="post in posts" :key="post.id" :post="post" />
                 </ul>
-                <div v-else-if="posts.length < 1">
-                    There is nothing yet in here.
-                </div>
+                <div v-else-if="posts.length < 1">There is nothing yet in here.</div>
                 <ul v-else class="-ml-4">
                     <transition-group name="grid-fade">
-                        <Post v-for="post in posts" class="item-transition"
-                            :key="post.id" :post="post" :restore="true" />
+                        <Post
+                            v-for="post in posts"
+                            :key="post.id"
+                            class="item-transition"
+                            :post="post"
+                            :restore="true" />
                     </transition-group>
                 </ul>
             </transition>
         </div>
-        <PostLoader :isArchived="true"/>
+        <PostLoader :is-archived="true" />
     </div>
 </template>
 
 <script>
-
 import { mapState } from 'vuex'
 import Post from '../PostItem.vue'
 import PostLoader from '../PostLoader.vue'
@@ -34,44 +33,42 @@ import PostLoader from '../PostLoader.vue'
 export default {
     components: {
         Post,
-        PostLoader
+        PostLoader,
     },
     computed: {
-        ...mapState('post', [
-            'posts'
-        ]),
-        ...mapState('post', [
-            'isLoading'
-        ]),
+        ...mapState('post', ['posts']),
+        ...mapState('post', ['isLoading']),
     },
-    methods: {
-        goToCreatePost() {
-            this.$router.push(`/c/0/p/create`)
-        }
-    },
-    created () {
+    created() {
         this.$store.commit('post/setPosts', [])
         this.$store.dispatch('appbar/setAppbar', {
             title: 'Recycle Bin',
             button: {
                 label: null,
                 callback: null,
-                icon: null
+                icon: null,
             },
             options: null,
         })
         this.$store.dispatch('post/fetchPosts', {
-            isArchived: 1
+            isArchived: 1,
         })
-    }
+    },
+    methods: {
+        goToCreatePost() {
+            this.$router.push(`/c/0/p/create`)
+        },
+    },
 }
 </script>
 <style lang="scss">
 .restore {
-    .collection-fade-enter-active, .collection-fade-leave {
-        transition: opacity .6s;
+    .collection-fade-enter-active,
+    .collection-fade-leave {
+        transition: opacity 0.6s;
     }
-    .collection-fade-enter, .collection-fade-leave-to {
+    .collection-fade-enter,
+    .collection-fade-leave-to {
         opacity: 0;
     }
     .item-transition {

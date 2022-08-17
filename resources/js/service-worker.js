@@ -9,7 +9,6 @@ precacheAndRoute(self.__WB_MANIFEST)
 clientsClaim()
 self.skipWaiting()
 
-
 registerRoute(
     ({ request }) => request.destination === 'image',
     new CacheFirst({
@@ -24,8 +23,7 @@ registerRoute(
 )
 
 registerRoute(
-    ({ request }) => request.destination === 'script' ||
-        request.destination === 'style',
+    ({ request }) => request.destination === 'script' || request.destination === 'style',
     new StaleWhileRevalidate({
         cacheName: 'static-resources',
     })
@@ -37,12 +35,12 @@ registerRoute(
         cacheName: 'html-content',
         plugins: [
             new CacheableResponsePlugin({
-                statuses: [0, 200]
+                statuses: [0, 200],
             }),
             new ExpirationPlugin({
                 maxEntries: 50,
-                maxAgeSeconds: 30 * 3600
-            })
-        ]
+                maxAgeSeconds: 30 * 3600,
+            }),
+        ],
     })
 )

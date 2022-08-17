@@ -20,15 +20,15 @@ export default new Vuex.Store({
     strict: process.env.NODE_ENV !== 'production',
     state: {
         isMobile: false,
-        showSidebar: (localStorage.getItem('sidebar') === 'false') ? false : true,
+        showSidebar: localStorage.getItem('sidebar') === 'false' ? false : true,
         showBottomSheet: false,
-        bottomSheet: []
+        bottomSheet: [],
     },
     mutations: {
-        isMobile (state, isMobile) {
+        isMobile(state, isMobile) {
             state.isMobile = isMobile
         },
-        showSidebar (state, showSidebar) {
+        showSidebar(state, showSidebar) {
             state.showSidebar = showSidebar
         },
         showBottomSheet(state, showBottomSheet) {
@@ -36,19 +36,19 @@ export default new Vuex.Store({
         },
         setBottomSheet(state, bottomSheet) {
             state.bottomSheet = bottomSheet
-        }
+        },
     },
     actions: {
-        toggleSidebar (context) {
+        toggleSidebar(context) {
             const showSidebar = !this.state.showSidebar
             context.commit('showSidebar', showSidebar)
             localStorage.setItem('sidebar', showSidebar)
         },
-        hideSidebarOnMobile (context) {
+        hideSidebarOnMobile(context) {
             if (this.state.isMobile && this.state.showSidebar) {
                 context.commit('showSidebar', false)
                 localStorage.setItem('sidebar', false)
             }
-        }
-    }
+        },
+    },
 })

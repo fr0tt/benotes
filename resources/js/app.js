@@ -10,27 +10,30 @@ import store from './store'
 
 import { refresh } from './api/auth'
 
+axios.interceptors.response.use(
+    function (response) {
+        return response
+    },
+    function (error) {
+        if (error.response.status !== 401) {
+            return Promise.reject(error)
+        }
 
-axios.interceptors.response.use(function (response) {
-    return response
-}, function (error) {
-    if (error.response.status !== 401) {
+        if (error.response.config.url.includes('/api/auth')) {
+            return Promise.reject(error)
+        }
+
+        refresh()
+            .then((response) => {
+                return Promise.resolve(response)
+            })
+            .catch((error) => {
+                return Promise.reject(error)
+            })
+
         return Promise.reject(error)
     }
-
-    if (error.response.config.url.includes('/api/auth')) {
-        return Promise.reject(error)
-    }
-
-    refresh().then(response => {
-        return Promise.resolve(response)
-    }).catch(error => {
-        return Promise.reject(error)
-    })
-
-    return Promise.reject(error)
-})
-
+)
 
 Vue.use(VueCookie)
 Vue.use(VueRouter)
@@ -39,13 +42,14 @@ Vue.use(VueLazyload)
 
 const router = new VueRouter({
     mode: 'history',
-    routes
+    routes,
 })
 
 router.beforeEach((to, from, next) => {
-    if (to.matched.some(record => record.meta.staticAuth) && to.query.token) {
-        store.dispatch('auth/getStaticAuth', to.query.token)
-            .then(share => {
+    if (to.matched.some((record) => record.meta.staticAuth) && to.query.token) {
+        store
+            .dispatch('auth/getStaticAuth', to.query.token)
+            .then((share) => {
                 if (!share) {
                     next({ path: '/login' })
                 } else {
@@ -56,9 +60,10 @@ router.beforeEach((to, from, next) => {
             .catch(() => {
                 next({ path: '/login' })
             })
-    } else if (to.matched.some(record => record.meta.authUser)) {
-        store.dispatch('auth/getAuthUser')
-            .then(authUser => {
+    } else if (to.matched.some((record) => record.meta.authUser)) {
+        store
+            .dispatch('auth/getAuthUser')
+            .then((authUser) => {
                 if (!authUser) {
                     next({ path: '/login' })
                 } else {
@@ -78,26 +83,25 @@ router.beforeEach((to, from, next) => {
 /* const app = */ new Vue({
     el: '#app',
     router,
-    store
+    store,
 })
-
 
 let refreshTimer = setInterval(() => {
     if (Vue.cookie.get('token')) {
-        store.dispatch('auth/getAuthUser')
-            .then(authUser => {
-                if (!authUser)
-                    window.location = '/login'
+        store
+            .dispatch('auth/getAuthUser')
+            .then((authUser) => {
+                if (!authUser) window.location = '/login'
             })
-            .catch(error => {
+            .catch((error) => {
                 console.log(error)
                 clearInterval(refreshTimer)
             })
     }
 }, 11 * 60 * 1000)
 
-
-if (!Vue.config.devtools) { // if not dev env
+if (!Vue.config.devtools) {
+    // if not dev env
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/service-worker.js')

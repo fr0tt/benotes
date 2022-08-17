@@ -6,33 +6,33 @@ export default {
         button: {
             label: '',
             icon: '',
-            callback: null
+            callback: null,
         },
-        options: []
+        options: [],
     },
     mutations: {
-        setAppbar (state, appbar) {
+        setAppbar(state, appbar) {
             state.title = appbar.title
             state.hint = appbar.hint
             state.button = {
                 label: appbar.button.label,
                 callback: appbar.button.callback,
-                icon: appbar.button.icon
+                icon: appbar.button.icon,
             }
             state.options = appbar.options
         },
-        setTitle (state, title) {
+        setTitle(state, title) {
             state.title = title
             if (title) {
                 document.title = 'Benotes - ' + title
             }
         },
-        setOptions (state, options) {
+        setOptions(state, options) {
             state.options = options
-        }
+        },
     },
     actions: {
-        setAppbar (context, appbar) {
+        setAppbar(context, appbar) {
             context.commit('setAppbar', appbar)
             if (appbar && appbar.title) {
                 document.title = 'Benotes - ' + appbar.title
@@ -42,6 +42,6 @@ export default {
         },
         setOptions(context, options) {
             context.commit('setOptions', options)
-        }
-    }
+        },
+    },
 }

@@ -8,60 +8,62 @@ export default {
         collections: null,
         currentCollection: {
             id: null,
-            name: ''
+            name: '',
         },
         collectionMenu: {
             isVisible: false,
-            post: null
-        }
+            post: null,
+        },
     },
     mutations: {
-        setCollections (state, collections) {
+        setCollections(state, collections) {
             state.collections = collections
         },
-        addCollection (state, collection) {
+        addCollection(state, collection) {
             state.collections.push(collection)
         },
-        deleteCollection (state, index) {
+        deleteCollection(state, index) {
             state.collections.splice(index, 1)
         },
-        setCollection (state, { index, collection }) {
+        setCollection(state, { index, collection }) {
             state.collections.splice(index, 1, collection)
         },
-        setCurrentCollection (state, collection) {
+        setCurrentCollection(state, collection) {
             state.currentCollection = collection
         },
-        setCollectionMenu (state, collectionMenu) {
+        setCollectionMenu(state, collectionMenu) {
             state.collectionMenu = collectionMenu
-        }
+        },
     },
     actions: {
-        fetchCollections (context, force = false) {
+        fetchCollections(context, force = false) {
             if (collectionsPromise) {
                 return collectionsPromise
             }
             if (context.state.collections !== null && force == false) {
                 return
             }
-            collectionsPromise = axios.get('/api/collections')
-                .then(response => {
+            collectionsPromise = axios
+                .get('/api/collections')
+                .then((response) => {
                     const collections = response.data.data
                     context.commit('setCollections', collections)
                     collectionsPromise = null
                 })
-                .catch(error => {
+                .catch((error) => {
                     console.log(error)
                 })
             return collectionsPromise
         },
-        addCollection (context, collection) {
+        addCollection(context, collection) {
             context.commit('addCollection', collection)
         },
-        updateCollection (context, { id, name, iconId }) {
-            axios.patch('/api/collections/' + id, {
-                name: name,
-                icon_id: iconId
-            })
+        updateCollection(context, { id, name, iconId }) {
+            axios
+                .patch('/api/collections/' + id, {
+                    name: name,
+                    icon_id: iconId,
+                })
                 .then((response) => {
                     const newCollection = response.data.data
                     const index = context.state.collections.findIndex((collection) => {
@@ -69,23 +71,24 @@ export default {
                     })
                     context.commit('setCollection', { index, collection: newCollection })
                 })
-                .catch(error => {
+                .catch((error) => {
                     console.log(error.response.data)
                 })
         },
-        deleteCollection (context, id) {
-            axios.delete('/api/collections/' + id)
-                .then(response => {
+        deleteCollection(context, id) {
+            axios
+                .delete('/api/collections/' + id)
+                .then((response) => {
                     const index = context.state.collections.findIndex((collection) => {
                         return collection.id === id
                     })
                     context.commit('deleteCollection', index)
                 })
-                .catch(error => {
+                .catch((error) => {
                     console.log(error)
                 })
         },
-        getCurrentCollection (context, id) {
+        getCurrentCollection(context, id) {
             return new Promise((resolve, reject) => {
                 if (id === null) {
                     resolve()
@@ -96,8 +99,8 @@ export default {
                 id = parseInt(id)
                 if (id === 0) {
                     const collection = {
-                        'id': 0,
-                        'name': 'Uncategorized'
+                        id: 0,
+                        name: 'Uncategorized',
                     }
                     context.commit('setCurrentCollection', collection)
                     resolve()
@@ -110,8 +113,8 @@ export default {
                 })
             })
         },
-        setCollectionMenu (context, collectionMenu) {
+        setCollectionMenu(context, collectionMenu) {
             context.commit('setCollectionMenu', collectionMenu)
-        }
-    }
+        },
+    },
 }

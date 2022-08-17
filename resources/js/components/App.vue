@@ -1,17 +1,17 @@
 <template>
-    <div class="w-full outline-none" @keyup.ctrl.alt.78="createNewPost()" tabindex="0" autofocus>
+    <div class="w-full outline-none" tabindex="0" autofocus @keyup.ctrl.alt.78="createNewPost()">
         <div class="flex">
-            <Sidebar class="pt-16 z-40" v-if="!staticAuth"/>
+            <Sidebar v-if="!staticAuth" class="pt-16 z-40" />
             <div id="view" class="flex-1 h-screen overflow-y-scroll pt-16">
-                <Appbar/>
+                <Appbar />
                 <transition name="router-fade" mode="out-in">
-                    <router-view></router-view>
+                    <router-view />
                 </transition>
             </div>
         </div>
         <div class="absolute bottom-0 w-full overflow-hidden">
-            <Notification/>
-            <BottomSheet/>
+            <Notification />
+            <BottomSheet />
         </div>
     </div>
 </template>
@@ -28,28 +28,24 @@ export default {
         Sidebar,
         Appbar,
         BottomSheet,
-        Notification
+        Notification,
     },
     methods: {
-        createNewPost () {
+        createNewPost() {
             this.$router.push({ path: `/c/${this.currentCollection.id}/p/create` })
         },
-        isMobile () {
+        isMobile() {
             let media = window.matchMedia('(max-width: 768px)')
             this.$store.commit('isMobile', media.matches)
-            media.addEventListener("change", this.isMobile, { once: true })
-        }
+            media.addEventListener('change', this.isMobile, { once: true })
+        },
     },
     computed: {
-        ...mapState('collection', [
-            'currentCollection'
-        ]),
-        ...mapState('auth', [
-            'staticAuth'
-        ])
+        ...mapState('collection', ['currentCollection']),
+        ...mapState('auth', ['staticAuth']),
     },
-    created () {
+    created() {
         this.isMobile()
-    }
+    },
 }
 </script>

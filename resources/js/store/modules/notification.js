@@ -14,7 +14,7 @@ export default {
         },
         showNotification(state, isVisible) {
             state.isVisible = isVisible
-        }
+        },
     },
     actions: {
         setNotification(context, notification) {
@@ -24,5 +24,5 @@ export default {
                 context.commit('showNotification', false)
             }, 3 * 1000)
         },
-    }
+    },
 }

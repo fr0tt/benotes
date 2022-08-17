@@ -1,24 +1,30 @@
 <template>
     <transition
-        enter-active-class="transition ease-out duration-300" 
-		enter-class="transform translate-y-64"
-		enter-to-class="transform translate-y-0"
-        leave-active-class="transition ease-in duration-300 opacity-0 translate-y-64 transform"
-    >
-        <div v-if="showBottomSheet" id="bottomSheet" 
+        enter-active-class="transition ease-out duration-300"
+        enter-class="transform translate-y-64"
+        enter-to-class="transform translate-y-0"
+        leave-active-class="transition ease-in duration-300 opacity-0 translate-y-64 transform">
+        <div
+            v-if="showBottomSheet"
+            id="bottomSheet"
             class="w-full bg-white -shadow-md rounded-t-lg">
             <div class="relative px-8 py-4 border-b-2 border-gray-400">
-                <button @click="hide" class="absolute">
-                    <svg-vue class="icon text-gray-600" icon="remix/arrow-down-s-line"/>
+                <button class="absolute" @click="hide">
+                    <svg-vue class="icon text-gray-600" icon="remix/arrow-down-s-line" />
                 </button>
                 <span class="block text-center font-medium">{{ title }}</span>
             </div>
             <div class="px-8 py-3">
                 <ol v-for="option in bottomSheet" :key="option.label" class="">
-                    <li v-if="option.condition" @click="executeCallback(option.callback($event))" 
-                        class="block py-3 font-medium text-gray-700">
-                        <svg v-html="icon(option.icon)" class="icon -mt-1 mr-6 text-gray-600"
-                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"></svg>
+                    <li
+                        v-if="option.condition"
+                        class="block py-3 font-medium text-gray-700"
+                        @click="executeCallback(option.callback($event))">
+                        <svg
+                            class="icon -mt-1 mr-6 text-gray-600"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                            v-html="icon(option.icon)" />
                         {{ option.longLabel }}
                     </li>
                 </ol>
@@ -30,21 +36,15 @@
 import { mapState } from 'vuex'
 export default {
     computed: {
-        ...mapState([
-            'showBottomSheet',
-        ]),
-        ...mapState([
-            'bottomSheet',
-        ]),
-        ...mapState('appbar', [
-            'title'
-        ])
+        ...mapState(['showBottomSheet']),
+        ...mapState(['bottomSheet']),
+        ...mapState('appbar', ['title']),
     },
     methods: {
-        hide () {
+        hide() {
             this.$store.commit('showBottomSheet', false)
         },
-        icon (icon) {
+        icon(icon) {
             if (icon === 'add')
                 return '<path d="M11 9h4v2h-4v4H9v-4H5V9h4V5h2v4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/>'
             else if (icon === 'checkmark')
@@ -56,18 +56,18 @@ export default {
             else if (icon === 'delete')
                 return '<path d="M6 2l2-2h4l2 2h4v2H2V2h4zM3 6h14l-1 14H4L3 6zm5 2v10h1V8H8zm3 0v10h1V8h-1z"/>'
         },
-        executeCallback (callback) {
+        executeCallback(callback) {
             this.callback
             this.hide
-        }
-    }
+        },
+    },
 }
 </script>
 <style>
-    .icon {
-        @apply w-5 align-middle inline-block fill-current;
-    }
-    .-shadow-md {
-        box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 -2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
+.icon {
+    @apply w-5 align-middle inline-block fill-current;
+}
+.-shadow-md {
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 -2px 4px -1px rgba(0, 0, 0, 0.06);
+}
 </style>

@@ -1,35 +1,36 @@
 <template>
-    <form @submit.prevent="search" class="flex relative searchbar w-full max-w-2xl shadow-sm
-        bg-gray-200 rounded text-gray-600 border-2
-        focus-in:border-orange-500 focus-in:bg-white">
-        <svg-vue icon="remix/search-line"
-            class="flex-none w-5 mx-3 fill-current text-gray-600"/>
+    <form
+        class="flex relative searchbar w-full max-w-2xl shadow-sm bg-gray-200 rounded text-gray-600 border-2 focus-in:border-orange-500 focus-in:bg-white"
+        @submit.prevent="search">
+        <svg-vue icon="remix/search-line" class="flex-none w-5 mx-3 fill-current text-gray-600" />
         <div v-show="searchCollection" class="flex-none my-auto">
-            <div class="px-2 py-0.5 rounded-xl font-medium text-white
-                border-2 border-orange-500 bg-orange-500">
+            <div
+                class="px-2 py-0.5 rounded-xl font-medium text-white border-2 border-orange-500 bg-orange-500">
                 {{ searchCollectionName }}
             </div>
         </div>
         <input
+            id="search"
+            placeholder="Type to search"
+            class="flex-auto w-full px-2 py-1.5 bg-transparent text-gray-700 font-medium rounded outline-none duration-200 ease-in-out transition-colors"
+            autocomplete="off"
+            type="text"
             @keydown.down="onArrowDown"
             @keydown.up="onArrowUp"
             @keyup.delete="onBackspace"
             @click="searchInput"
-            @input="searchInput"
-            id="search"
-            placeholder="Type to search"
-            class="flex-auto w-full px-2 py-1.5 bg-transparent text-gray-700 font-medium
-                rounded outline-none
-                duration-200 ease-in-out transition-colors"
-            autocomplete="off"
-            type="text">
-        <ul v-if="showOptions && options.length > 0" class="absolute w-full mt-10 -ml-0.5 py-1
-            bg-gray-200 z-40 rounded text-gray-800 shadow-sm" role="listbox">
-            <li v-for="(item, i) in options" :key="item.id"
-                @click="selectOption(item)"
+            @input="searchInput" />
+        <ul
+            v-if="showOptions && options.length > 0"
+            class="absolute w-full mt-10 -ml-0.5 py-1 bg-gray-200 z-40 rounded text-gray-800 shadow-sm"
+            role="listbox">
+            <li
+                v-for="(item, i) in options"
+                :key="item.id"
                 class="pl-14 pr-4 py-1 font-medium searchOption cursor-pointer"
-                :class="{ 'isActive': i === arrowCount }"
-                role="option">
+                :class="{ isActive: i === arrowCount }"
+                role="option"
+                @click="selectOption(item)">
                 {{ item.name }}
             </li>
         </ul>
@@ -39,18 +40,33 @@
 <script>
 export default {
     name: 'Searchbar',
-    data () {
+    data() {
         return {
             showOptions: false,
             options: [],
             arrowCount: -1,
             lastSearchLength: -1,
             searchValue: '',
-            searchCollection: null
+            searchCollection: null,
         }
     },
+    computed: {
+        collections() {
+            return [
+                {
+                    id: 0,
+                    name: 'Uncategorized',
+                },
+            ].concat(this.$store.state.collection.collections)
+        },
+        searchCollectionName() {
+            // yes this is necessary in order to use v-show instead of v-if
+            // (which seems to mess with focus)
+            return this.searchCollection ? this.searchCollection.name : ''
+        },
+    },
     methods: {
-        onBackspace () {
+        onBackspace() {
             if (this.lastSearchLength === 0 && this.searchValue.length === 0) {
                 this.searchCollection = null
                 this.showOptions = true
@@ -59,10 +75,9 @@ export default {
             }
             this.lastSearchLength = this.searchValue.length
         },
-        searchInput () {
+        searchInput() {
             this.searchValue = document.querySelector('#search').value
             const input = this.searchValue
-
 
             if (this.searchCollection) {
                 this.showOptions = false
@@ -73,7 +88,7 @@ export default {
                 this.options = this.collections.slice(0, 4)
             } else {
                 const inputValue = input.toLowerCase()
-                this.options = this.collections.filter(col => {
+                this.options = this.collections.filter((col) => {
                     return col.name.toLowerCase().includes(inputValue)
                 })
             }
@@ -83,7 +98,7 @@ export default {
                 document.querySelector('#app').addEventListener('click', this.hideResults)
             }
         },
-        hideResults (event) {
+        hideResults(event) {
             if (document.querySelector('#search') == event.target) {
                 return
             }
@@ -94,7 +109,7 @@ export default {
             document.querySelector('#app').removeEventListener('click', this.hideResults)
             document.querySelector('#search').focus()
         },
-        selectOption (option) {
+        selectOption(option) {
             this.searchCollection = option
             this.searchValue = ''
             this.arrowCount = -1
@@ -103,7 +118,7 @@ export default {
             document.querySelector('#search').value = ''
             document.querySelector('#search').focus()
         },
-        search () {
+        search() {
             if (this.arrowCount >= 0) {
                 this.selectOption(this.options[this.arrowCount])
                 return
@@ -111,16 +126,16 @@ export default {
             this.$store.dispatch('post/fetchPosts', {
                 collectionId: this.searchCollection ? this.searchCollection.id : null,
                 filter: this.searchValue,
-                limit: 0
+                limit: 0,
             })
         },
-        onArrowDown (event) {
+        onArrowDown(event) {
             if (this.arrowCount < this.options.length - 1) {
                 this.arrowCount = this.arrowCount + 1
             }
             event.preventDefault()
         },
-        onArrowUp (event) {
+        onArrowUp(event) {
             if (this.arrowCount > -1) {
                 this.arrowCount = this.arrowCount - 1
             }
@@ -128,35 +143,23 @@ export default {
         },
         toSnakeCase(value) {
             return value.toLowerCase().replace(/\s/g, '_')
-        }
-    },
-    computed: {
-        collections () {
-            return [{
-                'id': 0,
-                'name': 'Uncategorized'
-            }].concat(this.$store.state.collection.collections)
         },
-        searchCollectionName () {
-            // yes this is necessary in order to use v-show instead of v-if
-            // (which seems to mess with focus)
-            return this.searchCollection ? this.searchCollection.name : ''
-        }
     },
 }
 </script>
 
 <style lang="scss">
-    .searchbar .isActive, .searchbar .searchOption:hover {
-        @apply text-orange-600 bg-orange-200;//@apply bg-gray-400;
-    }
-    .focus-in\:border-orange-500:focus-within {
-        @apply border-orange-500;
-    }
-    .focus-in\:bg-white:focus-within {
-        @apply bg-white;
-    }
-    .pl-14 {
-        padding-left: 3.5rem;
-    }
+.searchbar .isActive,
+.searchbar .searchOption:hover {
+    @apply text-orange-600 bg-orange-200; //@apply bg-gray-400;
+}
+.focus-in\:border-orange-500:focus-within {
+    @apply border-orange-500;
+}
+.focus-in\:bg-white:focus-within {
+    @apply bg-white;
+}
+.pl-14 {
+    padding-left: 3.5rem;
+}
 </style>
