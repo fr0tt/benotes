@@ -15,7 +15,6 @@ class PostTest extends TestCase
     use DatabaseMigrations;
 
     /**
-     * @group failing
      * @dataProvider createPostsProvider
      */
     public function testCreatePost($content, $type)

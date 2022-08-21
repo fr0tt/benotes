@@ -233,6 +233,7 @@ class PostController extends Controller
         if (isset($newValues['tags'])) {
             $this->service->saveTags($post->id, $newValues['tags']);
         }
+        $post->tags = $post->tags()->get();
 
         if (isset($request->is_archived)) {
             $request->is_archived = filter_var($request->is_archived, FILTER_VALIDATE_BOOLEAN);

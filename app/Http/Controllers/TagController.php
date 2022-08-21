@@ -103,5 +103,4 @@ class TagController extends Controller
 
         return $tag;
     }
-
 }

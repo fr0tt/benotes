@@ -33,6 +33,9 @@
                                 {{ name }}
                             </router-link>
                         </template>
+                        <template #no-options="{ search, searching, loading }">
+                            No additional tags found
+                        </template>
                     </Select>
 
                     <EditorMenuBar :editor="editor" class="w-full my-4" />
@@ -102,100 +105,23 @@ export default {
             }),
         }
     },
-    methods: {
-        save() {
-            let content = this.editor.getHTML()
-            if (content === '' || this.currentCollection === null) {
-                return
-            }
-
-            let tags = this.saveTags()
-
-            const matches = content.match(/^<p>(?<content>.(?:(?!<p>)(?!<\/p>).)*)<\/p>$/)
-            if (matches !== null) {
-                content = matches[1]
-            }
-
-            if (this.isNewPost) {
-                axios
-                    .post('/api/posts', {
-                        title: this.title,
-                        content: content,
-                        collection_id: this.collection.id,
-                        is_uncategorized: this.collection.id > 0 ? false : true,
-                        tags: tags,
-                    })
-                    .then((response) => {
-                        if (this.posts !== null) {
-                            this.$store.dispatch('post/addPost', response.data.data)
-                        }
-                    })
-                    .catch(() => {
-                        this.$store.dispatch('notification/setNotification', {
-                            type: 'error',
-                            title: 'Error',
-                            description: 'Post could not be created.',
-                        })
-                    })
-                this.$router.push({ path: '/c/' + this.collectionId })
-            } else {
-                const originCollectionId = this.post.collection_id
-                this.post.title = this.title
-                this.post.content = content
-                this.post.collection_id = this.collection.id
-                this.post.tags = tags
-                this.$store.dispatch('post/updatePost', { post: this.post })
-                const route = originCollectionId === null ? '/' : '/c/' + originCollectionId
-                this.$router.push({ path: route })
-            }
-        },
-        keySave(event) {
-            event.preventDefault()
-            this.save()
-        },
-        saveTags() {
-            let newTags = []
-            let existingTags = []
-            if (!this.tags) {
-                return null
-            }
-            this.tags.forEach((tag) => {
-                if (typeof tag.id === 'undefined') {
-                    newTags.push(tag)
-                } else {
-                    existingTags.push(tag)
-                }
-            })
-
-            if (newTags.length > 0) {
-                try {
-                    axios
-                        .post('/api/tags', {
-                            tags: newTags,
-                        })
-                        .then((response) => {
-                            existingTags = existingTags.concat(response.data.data)
-                        })
-                } catch (err) {
-                    this.$store.dispatch('notification/setNotification', {
-                        type: 'error',
-                        title: 'Error',
-                        description: 'Tag(s) could not be created.',
-                    })
-                }
-            }
-            return existingTags.map((tag) => tag.id)
-        },
-        delete() {
-            this.$store.dispatch('post/deletePost', this.id)
-            const route = this.post.collection_id > 0 ? '/c/' + this.post.collection_id : '/'
-            this.$router.push(route)
-        },
-    },
     computed: {
         ...mapState('collection', ['currentCollection']),
         ...mapState('collection', ['collections']),
         ...mapState('post', ['posts']),
+    },
+    mounted() {
+        if (!this.shareTargetApi) {
+            return
+        }
+        if (this.shareTargetApi.headline) {
+            this.title = this.shareTargetApi.headline
+        }
+        if (this.shareTargetApi.url) {
+            this.editor.commands.setContent(this.shareTargetApi.url)
+        } else if (this.shareTargetApi.text) {
+            this.editor.commands.setContent(this.shareTargetApi.text)
+        }
     },
     created() {
         Select.props.components.default = () => ({ OpenIndicator, Deselect })
@@ -271,21 +197,96 @@ export default {
             })
         }
     },
-    mounted() {
-        if (!this.shareTargetApi) {
-            return
-        }
-        if (this.shareTargetApi.headline) {
-            this.title = this.shareTargetApi.headline
-        }
-        if (this.shareTargetApi.url) {
-            this.editor.commands.setContent(this.shareTargetApi.url)
-        } else if (this.shareTargetApi.text) {
-            this.editor.commands.setContent(this.shareTargetApi.text)
-        }
-    },
     beforeDestroy() {
         this.editor.destroy()
+    },
+    methods: {
+        save() {
+            let content = this.editor.getHTML()
+            if (content === '' || this.currentCollection === null) {
+                return
+            }
+
+            let tags = this.saveTags()
+
+            const matches = content.match(/^<p>(?<content>.(?:(?!<p>)(?!<\/p>).)*)<\/p>$/)
+            if (matches !== null) {
+                content = matches[1]
+            }
+
+            if (this.isNewPost) {
+                axios
+                    .post('/api/posts', {
+                        title: this.title,
+                        content: content,
+                        collection_id: this.collection.id,
+                        is_uncategorized: this.collection.id > 0 ? false : true,
+                        tags: tags,
+                    })
+                    .then((response) => {
+                        if (this.posts !== null) {
+                            this.$store.dispatch('post/addPost', response.data.data)
+                        }
+                    })
+                    .catch(() => {
+                        this.$store.dispatch('notification/setNotification', {
+                            type: 'error',
+                            title: 'Error',
+                            description: 'Post could not be created.',
+                        })
+                    })
+                this.$router.push({ path: '/c/' + this.collectionId })
+            } else {
+                const originCollectionId = this.post.collection_id
+                this.post.title = this.title
+                this.post.content = content
+                this.post.collection_id = this.collection.id
+                this.post.tags = tags
+                this.$store.dispatch('post/updatePost', { post: this.post })
+                const route = originCollectionId === null ? '/' : '/c/' + originCollectionId
+                this.$router.push({ path: route })
+            }
+        },
+        keySave(event) {
+            event.preventDefault()
+            this.save()
+        },
+        saveTags() {
+            let newTags = []
+            let existingTags = []
+            if (!this.tags) {
+                return null
+            }
+            this.tags.forEach((tag) => {
+                if (typeof tag.id === 'undefined') {
+                    newTags.push(tag)
+                } else {
+                    existingTags.push(tag)
+                }
+            })
+            if (newTags.length > 0) {
+                axios
+                    .post('/api/tags', {
+                        tags: newTags,
+                    })
+                    .then((response) => {
+                        existingTags = existingTags.concat(response.data.data)
+                    })
+                    .catch(() => {
+                        this.$store.dispatch('notification/setNotification', {
+                            type: 'error',
+                            title: 'Error',
+                            description: 'Tag(s) could not be created.',
+                        })
+                    })
+            }
+            return existingTags.map((tag) => tag.id)
+        },
+        delete() {
+            this.$store.dispatch('post/deletePost', this.id)
+            const route = this.post.collection_id > 0 ? '/c/' + this.post.collection_id : '/'
+            this.$router.push(route)
+        },
     },
 }
 </script>
