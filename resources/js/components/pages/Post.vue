@@ -259,7 +259,7 @@ export default {
             }
             this.tags.forEach((tag) => {
                 if (typeof tag.id === 'undefined') {
-                    newTags.push(tag)
+                    newTags.push({ name: tag })
                 } else {
                     existingTags.push(tag)
                 }
