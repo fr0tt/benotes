@@ -140,12 +140,15 @@ class PostController extends Controller
             ->max('order') + 1;
 
         $post = Post::create($attributes);
+
         if ($info['type'] === Post::POST_TYPE_LINK) {
             $this->service->saveImage($info['image_path'], $post);
         }
         if (isset($validatedData['tags'])) {
             $this->service->saveTags($post->id, $validatedData['tags']);
         }
+
+        $post->tags = $post->tags()->get();
 
         return response()->json(['data' => $post], Response::HTTP_CREATED);
     }

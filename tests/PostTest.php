@@ -183,6 +183,36 @@ class PostTest extends TestCase
         $this->assertEquals($new_content, $data->content);
     }
 
+    public function testUpdatePostWithTag()
+    {
+        $user = factory(User::class)->create();
+        $collection = factory(Collection::class)->create();
+        $tag1 = factory(Tag::class)->create();
+        $tag2 = factory(Tag::class)->create();
+
+        $content = 'This is a very basic example.';
+
+        $this->actingAs($user)->json('POST', 'api/posts', [
+            'content' => $content,
+            'collection_id' => $collection->id,
+            'tags' => [$tag1->id]
+        ]);
+
+        $this->assertEquals(201, $this->response->status());
+        $data = $this->response->getData()->data;
+        $this->assertEquals($tag1->id, $data->tags[0]->id);
+
+        $new_content = $content . '<p>++</p>';
+
+        $this->actingAs($user)->json('PATCH', 'api/posts/' . $data->id, [
+            'tags' => [$tag2->id]
+        ]);
+
+        $this->assertEquals(200, $this->response->status());
+        $data = $this->response->getData()->data;
+        $this->assertEquals($tag2->id, $data->tags[0]->id);
+    }
+
     public function testUpdatePostOrder()
     {
         $user = factory(User::class)->create();

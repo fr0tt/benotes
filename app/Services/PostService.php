@@ -233,14 +233,23 @@ class PostService
         return $hex;
     }
 
-    public function saveTags(int $post_id, array $tags)
+    public function saveTags(int $post_id, array $tag_ids)
     {
-        foreach ($tags as $tag_id) {
-            PostTag::firstOrCreate([
-                'post_id' => $post_id,
-                'tag_id' => $tag_id
-            ]);
+        $old_tags_obj = PostTag::select('tag_id')->where('post_id', $post_id)->get();
+        $old_tags = [];
+        foreach ($old_tags_obj as $old_tag) {
+            $old_tags[] = $old_tag->tag_id;
         }
+
+        foreach ($tag_ids as $tag_id) {
+            if (!in_array($tag_id, $old_tags)) {
+                PostTag::create([
+                    'post_id' => $post_id,
+                    'tag_id' => $tag_id
+                ]);
+            }
+        }
+        PostTag::whereNotIn('tag_id', $tag_ids)->where('post_id', $post_id)->delete();
     }
 
     public function saveImage($image_path, Post $post)

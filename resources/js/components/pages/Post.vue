@@ -201,13 +201,13 @@ export default {
         this.editor.destroy()
     },
     methods: {
-        save() {
+        async save() {
             let content = this.editor.getHTML()
             if (content === '' || this.currentCollection === null) {
                 return
             }
 
-            let tags = this.saveTags()
+            let tags = await this.saveTags()
 
             const matches = content.match(/^<p>(?<content>.(?:(?!<p>)(?!<\/p>).)*)<\/p>$/)
             if (matches !== null) {
@@ -251,7 +251,7 @@ export default {
             event.preventDefault()
             this.save()
         },
-        saveTags() {
+        async saveTags() {
             let newTags = []
             let existingTags = []
             if (!this.tags) {
@@ -264,23 +264,31 @@ export default {
                     existingTags.push(tag)
                 }
             })
-            if (newTags.length > 0) {
-                axios
-                    .post('/api/tags', {
-                        tags: newTags,
-                    })
-                    .then((response) => {
-                        existingTags = existingTags.concat(response.data.data)
-                    })
-                    .catch(() => {
-                        this.$store.dispatch('notification/setNotification', {
-                            type: 'error',
-                            title: 'Error',
-                            description: 'Tag(s) could not be created.',
+            return this.combineTags(existingTags, newTags)
+        },
+        combineTags(existingTags, newTags) {
+            return new Promise((resolve) => {
+                if (newTags.length > 0) {
+                    axios
+                        .post('/api/tags', {
+                            tags: newTags,
                         })
-                    })
-            }
-            return existingTags.map((tag) => tag.id)
+                        .then((response) => {
+                            existingTags = existingTags.concat(response.data.data)
+                            resolve(existingTags.map((tag) => tag.id))
+                        })
+                        .catch(() => {
+                            this.$store.dispatch('notification/setNotification', {
+                                type: 'error',
+                                title: 'Error',
+                                description: 'Tag(s) could not be created.',
+                            })
+                            resolve(existingTags.map((tag) => tag.id))
+                        })
+                } else {
+                    resolve(existingTags.map((tag) => tag.id))
+                }
+            })
         },
         delete() {
             this.$store.dispatch('post/deletePost', this.id)
