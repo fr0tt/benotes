@@ -31,6 +31,7 @@ export default {
         }
     }
     .tags.item-text {
+        position: absolute;
         margin-top: -0.875rem;
     }
     .tags .tag:hover {

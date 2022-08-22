@@ -24,7 +24,7 @@
                     class="text-orange-600 text-xl bg-transparent font-semibold" />
                 <EditorContent :editor="editor" class="editorContent" />
             </div>
-            <PostItemTags :tags="post.tags" class="item-text" />
+            <PostItemTags v-if="!isActive" :tags="post.tags" class="item-text" />
         </div>
         <svg
             v-if="permission > 4"

@@ -275,7 +275,7 @@ export default {
                         })
                         .then((response) => {
                             existingTags = existingTags.concat(response.data.data)
-                            resolve(existingTags.map((tag) => tag.id))
+                            resolve(existingTags)
                         })
                         .catch(() => {
                             this.$store.dispatch('notification/setNotification', {
@@ -283,10 +283,10 @@ export default {
                                 title: 'Error',
                                 description: 'Tag(s) could not be created.',
                             })
-                            resolve(existingTags.map((tag) => tag.id))
+                            resolve(existingTags)
                         })
                 } else {
-                    resolve(existingTags.map((tag) => tag.id))
+                    resolve(existingTags)
                 }
             })
         },

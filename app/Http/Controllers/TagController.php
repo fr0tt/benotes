@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\PostTag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Tag;
@@ -83,6 +84,8 @@ class TagController extends Controller
             return response()->json('Tag not found.', 400);
         }
         $this->authorize('delete', $tag);
+
+        PostTag::where('tag_id', $id)->delete();
         $tag->delete();
 
         return response()->json('', 204);
