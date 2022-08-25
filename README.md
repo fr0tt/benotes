@@ -31,7 +31,7 @@ Currently their are three options for you to choose from:
 - [Normal classical way](installation.md#classic)
 - [Docker](installation.md#docker-with-cli)
 - [Docker Compose](installation.md#docker-from-source-with-docker-compose)
-- [Heroku](installation.md#heroku)
+- [Heroku](installation.md#heroku) ([not free anymore](https://blog.heroku.com/next-chapter))
 
 ## Issues
 

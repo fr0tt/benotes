@@ -41,7 +41,7 @@ class KeyGenerateCommand extends Command
         // Next, we will replace the application key in the environment file so it is
         // automatically setup for this developer. This key gets generated using a
         // secure random byte generator and is later base64 encoded for storage.
-        if (! $this->setKeyInEnvironmentFile($key)) {
+        if (!$this->setKeyInEnvironmentFile($key)) {
             return;
         }
 
@@ -57,7 +57,7 @@ class KeyGenerateCommand extends Command
      */
     protected function generateRandomKey()
     {
-        return 'base64:'.base64_encode(random_bytes(
+        return 'base64:' . base64_encode(random_bytes(
             $this->laravel['config']['app.cipher'] == 'AES-128-CBC' ? 16 : 32
         ));
     }
@@ -72,11 +72,11 @@ class KeyGenerateCommand extends Command
     {
         $currentKey = $this->laravel['config']['app.key'] ?: env('APP_KEY');
 
-        if (strlen($currentKey) !== 0 && (! $this->confirmToProceed())) {
+        if (strlen($currentKey) !== 0 && (!$this->confirmToProceed())) {
             return false;
         }
 
-        //$this->writeNewEnvironmentFileWith($key);
+        $this->writeNewEnvironmentFileWith($key);
 
         return true;
     }
@@ -91,7 +91,7 @@ class KeyGenerateCommand extends Command
     {
         file_put_contents($this->laravel->basePath('.env'), preg_replace(
             $this->keyReplacementPattern($key),
-            'APP_KEY='.$key,
+            'APP_KEY=' . $key,
             file_get_contents($this->laravel->basePath('.env'))
         ));
     }
@@ -104,7 +104,7 @@ class KeyGenerateCommand extends Command
     protected function keyReplacementPattern()
     {
         $currentKey = $this->laravel['config']['app.key'] ?: env('APP_KEY');
-        $escaped = preg_quote('='.$currentKey, '/');
+        $escaped = preg_quote('=' . $currentKey, '/');
 
         return "/^APP_KEY{$escaped}/m";
     }
