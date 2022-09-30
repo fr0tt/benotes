@@ -6,6 +6,7 @@ import Search from './components/pages/Search'
 import Restore from './components/pages/Restore'
 import Users from './components/pages/Users'
 import User from './components/pages/User'
+import Tags from './components/pages/Tags'
 import Tag from './components/pages/Tag'
 import Login from './components/pages/Login'
 import Forgot from './components/pages/Forgot'
@@ -134,6 +135,14 @@ export default [
                     id: route.params.id,
                     isNew: false,
                 }),
+                meta: {
+                    authUser: true,
+                },
+            },
+            {
+                path: '/tags',
+                name: 'tags',
+                component: Tags,
                 meta: {
                     authUser: true,
                 },

@@ -8,6 +8,10 @@
                         <svg-vue class="w-4 fill-current mr-2" icon="remix/search-line" />
                         <span class="align-middle text-gray-700">Search</span>
                     </router-link>
+                    <router-link to="/tags" tag="li" class="collection">
+                        <svg-vue class="w-5 fill-current mr-1" icon="material/label" />
+                        <span class="align-middle text-gray-700">Tags</span>
+                    </router-link>
                     <router-link
                         to="/restore"
                         class="collection"
