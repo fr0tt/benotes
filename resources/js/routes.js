@@ -7,12 +7,11 @@ import Restore from './components/pages/Restore'
 import Users from './components/pages/Users'
 import User from './components/pages/User'
 import Tags from './components/pages/Tags'
+import EditTag from './components/pages/EditTag'
 import Tag from './components/pages/Tag'
 import Login from './components/pages/Login'
 import Forgot from './components/pages/Forgot'
 import Reset from './components/pages/Reset'
-//import Installation from './components/pages/Installation'
-//import Installation2 from './components/pages/Installation2'
 
 import store from './store'
 
@@ -148,11 +147,32 @@ export default [
                 },
             },
             {
+                path: '/tags/create',
+                component: EditTag,
+                props: {
+                    isNew: true,
+                },
+                meta: {
+                    authUser: true,
+                },
+            },
+            {
+                path: '/tags/:id/edit',
+                component: EditTag,
+                props: (route) => ({
+                    id: route.params.id,
+                    isNew: false,
+                }),
+                meta: {
+                    authUser: true,
+                },
+            },
+            {
                 path: '/tags/:id',
                 name: 'tag',
                 component: Tag,
                 props: (route) => ({
-                    id: parseInt(route.params.id),
+                    id: Number(route.params.id),
                 }),
                 meta: {
                     authUser: true,
@@ -200,14 +220,4 @@ export default [
             token: route.query.token,
         }),
     },
-    /*{
-        path: '/installation',
-        name: 'Installation',
-        component: Installation
-    },
-    {
-        path: '/installation/admin',
-        name: 'Installation2',
-        component: Installation2
-    },*/
 ]

@@ -86,7 +86,7 @@ export default {
     },
     methods: {
         create() {
-            this.$router.push('/tags/create') // @TODO
+            this.$router.push('/tags/create')
         },
         deleteTag() {
             axios

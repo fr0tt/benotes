@@ -96,7 +96,9 @@ export default {
                     StarterKit,
                     Typography, // e.g. for:  ->
                     Underline,
-                    Placeholder,
+                    Placeholder.configure({
+                        placeholder: 'Write something or paste a link',
+                    }),
                     Link,
                     TaskList,
                     TaskItem,

@@ -33,6 +33,20 @@ import { mapState } from 'vuex'
 export default {
     name: 'ContextMenu',
     props: ['postId'],
+    computed: {
+        ...mapState('post', ['contextMenu']),
+        show() {
+            return this.contextMenu.post !== null && this.contextMenu.post.id === this.postId
+        },
+        position() {
+            if (this.contextMenu.positionX + 150 > screen.availWidth) {
+                return {
+                    right: 0.5 + 'rem',
+                }
+            }
+            return null
+        },
+    },
     methods: {
         edit() {
             this.$router.push({
@@ -54,20 +68,6 @@ export default {
         },
         hide() {
             this.$store.dispatch('post/hideContextMenu')
-        },
-    },
-    computed: {
-        ...mapState('post', ['contextMenu']),
-        show() {
-            return this.contextMenu.post !== null && this.contextMenu.post.id === this.postId
-        },
-        position() {
-            if (this.contextMenu.positionX + 150 > screen.availWidth) {
-                return {
-                    right: 0.5 + 'rem',
-                }
-            }
-            return null
         },
     },
 }
