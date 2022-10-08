@@ -1,11 +1,11 @@
 <template>
     <div class="w-full outline-none" tabindex="0" autofocus @keyup.ctrl.alt.78="createNewPost()">
         <Appbar />
-        <div class="flex">
+        <div>
             <Sidebar v-if="!staticAuth" />
             <div
                 id="view"
-                class="flex-1 pt-16 view-slide-transition"
+                class="pt-16 view-slide-transition"
                 :class="{ 'xl:pl-1/6 lg:pl-64 md:pl-48': showSidebar }">
                 <transition name="router-fade" mode="out-in">
                     <router-view />

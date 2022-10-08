@@ -1,8 +1,6 @@
 <template>
     <transition name="sidebar-slide">
-        <div
-            v-if="showSidebar"
-            class="sidebar w-full h-full fixed md:w-48 overflow-y-auto lg:w-64 xl:w-1/6 pb-6 pt-20 z-40 bg-white">
+        <div v-if="showSidebar" class="sidebar md:w-48 lg:w-64 xl:w-1/6">
             <div class="list pt-2">
                 <div class="mb-12">
                     <router-link to="/search" tag="li" class="collection">
@@ -77,7 +75,7 @@
                     icon="remix/folder-add-fill" />
                 <span class="align-middle">Create a new collection</span>
             </router-link>
-            <div class="w-full px-4 md:px-6 absolute bottom-4">
+            <div class="w-full px-4 md:px-6 mb-0 mt-auto pt-12">
                 <svg-vue class="w-6 align-text-bottom" icon="logo_64x64" />
                 <span class="flex-1 ml-1 text-orange-600 text-xl font-medium">Benotes</span>
             </div>
@@ -162,6 +160,7 @@ export default {
     opacity: 0;
 }
 .sidebar {
+    @apply h-full fixed flex flex-col  pb-6 pt-20 overflow-y-auto z-40 bg-white;
     font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
         Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     box-shadow: 2px 3px 3px 0 rgba(0, 0, 0, 0.1);
