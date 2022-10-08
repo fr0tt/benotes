@@ -1,5 +1,5 @@
 <template>
-    <div class="absolute top-0 right-0 w-full bg-white z-50">
+    <div class="fixed top-0 right-0 w-full bg-white z-50">
         <div class="flex sm:px-8 px-4 py-3">
             <div class="w-16 my-auto">
                 <button v-if="authUser" class="align-bottom" @click="toggleSidebar()">

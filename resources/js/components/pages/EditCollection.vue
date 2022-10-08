@@ -304,10 +304,6 @@ button.switch:hover {
         @apply inline-block;
     }
 }
-.px-1\.5 {
-    padding-right: 0.375rem;
-    padding-left: 0.375rem;
-}
 .button.red:hover {
     border-color: #fff;
 }

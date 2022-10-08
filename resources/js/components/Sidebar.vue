@@ -1,9 +1,10 @@
 <template>
-    <transition name="sidebar-slide" mode="out-in">
-        <div v-if="showSidebar" class="sidebar w-full relative md:w-48 xl:w-1/6 pb-6 bg-white">
-            <div>
-                <br />
-                <div class="list">
+    <transition name="sidebar-slide">
+        <div
+            v-if="showSidebar"
+            class="sidebar w-full h-full fixed md:w-48 overflow-y-auto lg:w-64 xl:w-1/6 pb-6 pt-20 z-40 bg-white">
+            <div class="list pt-2">
+                <div class="mb-12">
                     <router-link to="/search" tag="li" class="collection">
                         <svg-vue class="w-4 fill-current mr-2" icon="remix/search-line" />
                         <span class="align-middle text-gray-700">Search</span>
@@ -33,54 +34,49 @@
                         <svg-vue class="w-4 fill-current mr-2" icon="remix/logout-circle-line" />
                         <span class="align-middle text-gray-700">Logout</span>
                     </a>
-                    <br /><br /><br />
-                    <router-link
-                        to="/"
-                        class="collection mb-4"
-                        :class="{ 'router-link-exact-active': isActiveLink('/') }">
-                        <svg-vue
-                            icon="remix/folder-unknow-fill"
-                            class="w-4 fill-current align-text-bottom mr-2" />
-                        <span class="align-middle text-gray-700">Uncategorized</span>
-                    </router-link>
-                    <span
-                        class="mb-2 md:px-8 px-4 block text-xs text-gray-700 font-medium uppercase"
-                        >Collections</span
-                    >
-                    <ol>
-                        <router-link
-                            v-for="collection in collections"
-                            :key="collection.id"
-                            :class="{
-                                'router-link-exact-active': isActiveLink('/c/' + collection.id),
-                            }"
-                            class="collection"
-                            :to="'/c/' + collection.id">
-                            <svg-vue
-                                v-if="collectionIconIsInline(collection.icon_id)"
-                                :icon="'glyphs/' + collection.icon_id"
-                                class="w-6 h-6 glyphs" />
-                            <svg v-else-if="collection.icon_id" class="w-6 h-6 glyphs">
-                                <use :xlink:href="'/glyphs.svg#' + collection.icon_id" />
-                            </svg>
-                            <svg-vue
-                                v-else
-                                icon="remix/folder-fill"
-                                class="w-4 fill-current align-text-bottom mr-2" />
-                            <span class="align-middle text-gray-700">{{ collection.name }}</span>
-                        </router-link>
-                    </ol>
                 </div>
                 <router-link
-                    to="/c/create"
-                    class="block md:ml-8 ml-4 mt-4 text-orange-600 font-medium">
+                    to="/"
+                    class="collection mb-4"
+                    :class="{ 'router-link-exact-active': isActiveLink('/') }">
                     <svg-vue
-                        class="w-4 mr-2 fill-current align-text-bottom"
-                        icon="remix/folder-add-fill" />
-                    <span class="align-middle">Create a new collection</span>
+                        icon="remix/folder-unknow-fill"
+                        class="w-4 fill-current align-text-bottom mr-2" />
+                    <span class="align-middle text-gray-700">Uncategorized</span>
                 </router-link>
+                <span class="mb-2 md:px-8 px-4 block text-xs text-gray-700 font-medium uppercase">
+                    Collections
+                </span>
+                <ol>
+                    <router-link
+                        v-for="collection in collections"
+                        :key="collection.id"
+                        :class="{
+                            'router-link-exact-active': isActiveLink('/c/' + collection.id),
+                        }"
+                        class="collection"
+                        :to="'/c/' + collection.id">
+                        <svg-vue
+                            v-if="collectionIconIsInline(collection.icon_id)"
+                            :icon="'glyphs/' + collection.icon_id"
+                            class="w-6 h-6 glyphs" />
+                        <svg v-else-if="collection.icon_id" class="w-6 h-6 glyphs">
+                            <use :xlink:href="'/glyphs.svg#' + collection.icon_id" />
+                        </svg>
+                        <svg-vue
+                            v-else
+                            icon="remix/folder-fill"
+                            class="w-4 fill-current align-text-bottom mr-2" />
+                        <span class="align-middle text-gray-700">{{ collection.name }}</span>
+                    </router-link>
+                </ol>
             </div>
-            <br /><br /><br /><br /><br />
+            <router-link to="/c/create" class="block md:mx-8 mx-4 mt-4 text-orange-600 font-medium">
+                <svg-vue
+                    class="w-4 mr-2 fill-current align-text-bottom"
+                    icon="remix/folder-add-fill" />
+                <span class="align-middle">Create a new collection</span>
+            </router-link>
             <div class="w-full px-4 md:px-6 absolute bottom-4">
                 <svg-vue class="w-6 align-text-bottom" icon="logo_64x64" />
                 <span class="flex-1 ml-1 text-orange-600 text-xl font-medium">Benotes</span>
@@ -148,10 +144,17 @@ export default {
 .bottom-4 {
     bottom: 1rem;
 }
-.sidebar-slide-enter-active,
+.sidebar-slide-enter-active {
+    transition: width cubic-bezier(0.4, 0, 0.2, 1) 0.35s, opacity 0.5s;
+    -webkit-transition: width cubic-bezier(0.4, 0, 0.2, 1) 0.35s, opacity 0.5s;
+    -moz-transition: width cubic-bezier(0.4, 0, 0.2, 1) 0.35s, opacity 0.5s;
+}
+
 .sidebar-slide-leave-active {
-    transition: width, opacity 1s;
-    transition-timing-function: cubic-bezier(1, 0.01, 1, 0.9);
+    // transition: width, opacity 0.8s;
+    transition: width cubic-bezier(0.4, 0, 0.2, 1) 0.35s;
+    -webkit-transition: width cubic-bezier(0.4, 0, 0.2, 1) 0.35s;
+    -moz-transition: width cubic-bezier(0.4, 0, 0.2, 1) 0.35s;
 }
 .sidebar-slide-enter,
 .sidebar-slide-leave-to {
@@ -162,17 +165,6 @@ export default {
     font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
         Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     box-shadow: 2px 3px 3px 0 rgba(0, 0, 0, 0.1);
-    transition: width cubic-bezier(0.4, 0, 0.2, 1) 0.35s;
-    -webkit-transition: width cubic-bezier(0.4, 0, 0.2, 1) 0.35s;
-    -moz-transition: width cubic-bezier(0.4, 0, 0.2, 1) 0.35s;
-    .fade-enter-active,
-    .fade-leave-active {
-        transition: opacity 0.2s;
-    }
-    .fade-enter,
-    .fade-leave-to {
-        opacity: 0;
-    }
     svg {
         display: inline-block;
     }
@@ -215,5 +207,17 @@ export default {
             margin-right: 0.25rem;
         }
     }
+}
+.sidebar::-webkit-scrollbar {
+    width: 3px;
+    background-color: #f5f5f5;
+}
+.sidebar::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: rgba(255, 255, 255, 0.8);
+}
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: #86827d;
+    border-radius: 8px;
 }
 </style>

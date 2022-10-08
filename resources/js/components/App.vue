@@ -1,9 +1,12 @@
 <template>
     <div class="w-full outline-none" tabindex="0" autofocus @keyup.ctrl.alt.78="createNewPost()">
+        <Appbar />
         <div class="flex">
-            <Sidebar v-if="!staticAuth" class="pt-16 z-40" />
-            <div id="view" class="flex-1 h-screen overflow-y-scroll pt-16">
-                <Appbar />
+            <Sidebar v-if="!staticAuth" />
+            <div
+                id="view"
+                class="flex-1 pt-16 view-slide-transition"
+                :class="{ 'xl:pl-1/6 lg:pl-64 md:pl-48': showSidebar }">
                 <transition name="router-fade" mode="out-in">
                     <router-view />
                 </transition>
@@ -30,6 +33,14 @@ export default {
         BottomSheet,
         Notification,
     },
+    computed: {
+        ...mapState('collection', ['currentCollection']),
+        ...mapState('auth', ['staticAuth']),
+        ...mapState(['showSidebar']),
+    },
+    created() {
+        this.isMobile()
+    },
     methods: {
         createNewPost() {
             this.$router.push({ path: `/c/${this.currentCollection.id}/p/create` })
@@ -40,12 +51,17 @@ export default {
             media.addEventListener('change', this.isMobile, { once: true })
         },
     },
-    computed: {
-        ...mapState('collection', ['currentCollection']),
-        ...mapState('auth', ['staticAuth']),
-    },
-    created() {
-        this.isMobile()
-    },
 }
 </script>
+
+<style lang="scss">
+.view-slide-transition {
+    transition: padding 0.3s;
+}
+
+@screen xl {
+    .xl\:pl-1\/6 {
+        padding-left: 16.66%;
+    }
+}
+</style>

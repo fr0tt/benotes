@@ -33,6 +33,11 @@ module.exports = {
                     'monospace',
                 ],
             },
+            spacing: {
+                1.5: '0.375rem',
+                7: '1.75rem',
+                80: '20rem',
+            },
         },
     },
     variants: {},
