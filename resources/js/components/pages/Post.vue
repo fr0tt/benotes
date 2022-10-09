@@ -222,7 +222,7 @@ export default {
                         title: this.title,
                         content: content,
                         collection_id: this.collection.id,
-                        is_uncategorized: this.collection.id > 0 ? false : true,
+                        is_uncategorized: this.collection.id <= 0,
                         tags: tags,
                     })
                     .then((response) => {
@@ -237,16 +237,17 @@ export default {
                             description: 'Post could not be created.',
                         })
                     })
-                this.$router.push({ path: '/c/' + this.collectionId })
+                this.$router.push({ path: '/c/' + this.collection.id })
             } else {
-                const originCollectionId = this.post.collection_id
                 this.post.title = this.title
                 this.post.content = content
                 this.post.collection_id = this.collection.id
                 this.post.tags = tags
                 this.$store.dispatch('post/updatePost', { post: this.post })
-                const route = originCollectionId === null ? '/' : '/c/' + originCollectionId
-                this.$router.push({ path: route })
+                const originCollectionId = this.post.collection_id
+                this.$router.push({
+                    path: originCollectionId === null ? '/' : '/c/' + originCollectionId,
+                })
             }
         },
         keySave(event) {

@@ -147,9 +147,7 @@ export default {
     -webkit-transition: width cubic-bezier(0.4, 0, 0.2, 1) 0.35s, opacity 0.5s;
     -moz-transition: width cubic-bezier(0.4, 0, 0.2, 1) 0.35s, opacity 0.5s;
 }
-
 .sidebar-slide-leave-active {
-    // transition: width, opacity 0.8s;
     transition: width cubic-bezier(0.4, 0, 0.2, 1) 0.35s;
     -webkit-transition: width cubic-bezier(0.4, 0, 0.2, 1) 0.35s;
     -moz-transition: width cubic-bezier(0.4, 0, 0.2, 1) 0.35s;
