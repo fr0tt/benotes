@@ -554,6 +554,33 @@ class PostTest extends TestCase
         $this->assertEquals(Post::find($post4->id)->order, $post4->order);
     }
 
+    public function testChangeCollectionWithoutTag()
+    {
+        $user = factory(User::class)->create();
+        $collection = factory(Collection::class)->create();
+        $collection2 = factory(Collection::class)->create();
+
+        $content = 'https://github.com';
+
+        $this->actingAs($user)->json('POST', 'api/posts', [
+            'content' => $content,
+            'collection_id' => $collection->id
+        ]);
+
+        $this->assertEquals(201, $this->response->status());
+        $post = $this->response->getData()->data;
+
+        $this->actingAs($user)->json('PATCH', 'api/posts/' . $post->id, [
+            'collection_id' => $collection2->id,
+            'is_uncategorized' => false,
+            'tags' => [],
+        ]);
+
+        $this->assertEquals(200, $this->response->status());
+        $data = $this->response->getData()->data;
+        $this->assertEquals($collection2->id, $data->collection_id);
+    }
+
     public function testCreatePostWithDifferentCollections()
     {
 

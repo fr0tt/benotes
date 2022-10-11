@@ -222,7 +222,7 @@ export default {
                         title: this.title,
                         content: content,
                         collection_id: this.collection.id,
-                        is_uncategorized: this.collection.id <= 0,
+                        is_uncategorized: this.collection.id === null || 0,
                         tags: tags,
                     })
                     .then((response) => {

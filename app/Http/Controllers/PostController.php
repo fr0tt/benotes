@@ -233,10 +233,6 @@ class PostController extends Controller
         }
 
         $post->update($newValues);
-        if (isset($newValues['tags'])) {
-            $this->service->saveTags($post->id, $newValues['tags']);
-        }
-        $post->tags = $post->tags()->get();
 
         if (isset($request->is_archived)) {
             $request->is_archived = filter_var($request->is_archived, FILTER_VALIDATE_BOOLEAN);
@@ -251,6 +247,11 @@ class PostController extends Controller
         if ($info['type'] === Post::POST_TYPE_LINK && isset($validatedData['content'])) {
             $this->service->saveImage($info['image_path'], $post);
         }
+
+        if (isset($newValues['tags'])) {
+            $this->service->saveTags($post->id, $newValues['tags']);
+        }
+        $post->tags = $post->tags()->get();
 
         return response()->json(['data' => $post], Response::HTTP_OK);
     }
