@@ -1,8 +1,6 @@
 import axios from 'axios'
 import { getPosts } from './../../api/post.js'
 
-const STANDARD_LIMIT = 20
-
 export default {
     namespaced: true,
     state: {
@@ -25,6 +23,9 @@ export default {
                 typeof state.posts[state.posts.length - 1].id === 'number'
                 ? state.posts[state.posts.length - 1].id
                 : null
+        },
+        standardLimit: (state, getters, rootState) => {
+            return rootState.isMobile ? 10 : 20
         },
     },
     mutations: {
@@ -79,7 +80,7 @@ export default {
                 tagId = null,
                 filter = null,
                 isArchived = false,
-                limit = STANDARD_LIMIT,
+                limit = context.getters.standardLimit,
             }
         ) {
             context.commit('isLoading', true)
@@ -104,7 +105,7 @@ export default {
                     null,
                     filter,
                     isArchived,
-                    STANDARD_LIMIT,
+                    context.getters.standardLimit,
                     context.getters.lastId,
                     true
                 )

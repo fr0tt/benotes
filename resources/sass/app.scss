@@ -140,8 +140,8 @@ label.label {
             display: flex;
             padding: 0;
             input {
-                @apply w-4 h-4 appearance-none align-middle bg-gray-100 rounded border border-gray-300;
-                margin-top: -0.15rem;
+                @apply w-4 h-4 appearance-none align-middle bg-gray-200 rounded border border-gray-400;
+                margin-top: -0.2rem;
             }
             input:checked {
                 @apply bg-orange-600 border-orange-600;

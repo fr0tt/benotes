@@ -1,6 +1,8 @@
 <template>
-    <div v-if="showSpinner">
-        <div class="absolute bottom-0 pb-6 left-0 right-0 text-center animate-pulse text-gray-700">
+    <div class="post-loader">
+        <div
+            v-if="showSpinner"
+            class="absolute bottom-0 pb-6 left-0 right-0 text-center animate-pulse text-gray-700">
             <svg-vue
                 icon="remix/refresh-line"
                 class="button-icon w-6 inline-block align-top animate-spin fill-current" />
@@ -20,19 +22,29 @@ export default {
             showSpinner: false,
         }
     },
+    computed: {
+        ...mapState('post', ['isCompletelyLoaded']),
+        ...mapGetters('post', ['lastId']),
+    },
+    mounted() {
+        window.addEventListener('scroll', this.handleScroll)
+    },
+    beforeDestroy() {
+        window.removeEventListener('scroll', this.handleScroll)
+    },
     methods: {
         handleScroll() {
             if (this.showSpinner || this.isCompletelyLoaded) {
                 return
             }
-            const view = document.querySelector('#view')
-            if (view.scrollTop <= 0) {
-                return
-            }
             if (!this.lastId) {
                 return
             }
-            if (view.scrollHeight === window.innerHeight + view.scrollTop) {
+            const rect = document.querySelector('.post-loader').getBoundingClientRect()
+            if (
+                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+                rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+            ) {
                 this.showSpinner = true
                 let data = {
                     collectionId: this.collectionId,
@@ -47,16 +59,6 @@ export default {
                 })
             }
         },
-    },
-    computed: {
-        ...mapState('post', ['isCompletelyLoaded']),
-        ...mapGetters('post', ['lastId']),
-    },
-    mounted() {
-        document.querySelector('#view').addEventListener('scroll', this.handleScroll)
-    },
-    beforeDestroy() {
-        document.querySelector('#view').removeEventListener('scroll', this.handleScroll)
     },
 }
 </script>
