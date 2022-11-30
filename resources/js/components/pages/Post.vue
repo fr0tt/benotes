@@ -223,7 +223,7 @@ export default {
                         content: content,
                         collection_id: this.collection.id,
                         is_uncategorized: this.collection.id === null || 0,
-                        tags: tags,
+                        tags: tags.map((tag) => tag.id),
                     })
                     .then((response) => {
                         if (this.posts !== null) {
@@ -265,7 +265,7 @@ export default {
                 if (typeof tag.id === 'undefined') {
                     newTags.push(tag)
                 } else {
-                    existingTags.push(tag.id)
+                    existingTags.push(tag)
                 }
             })
             return this.combineTags(existingTags, newTags)
@@ -280,8 +280,7 @@ export default {
                         tags: newTags,
                     })
                     .then((response) => {
-                        const tags = response.data.data
-                        existingTags = existingTags.concat(tags.map((tag) => tag.id))
+                        existingTags = existingTags.concat(response.data.data)
                         resolve(existingTags)
                     })
                     .catch(() => {
