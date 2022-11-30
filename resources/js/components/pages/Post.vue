@@ -260,37 +260,38 @@ export default {
             if (!this.tags) {
                 return null
             }
+
             this.tags.forEach((tag) => {
                 if (typeof tag.id === 'undefined') {
-                    newTags.push({ name: tag })
+                    newTags.push(tag)
                 } else {
-                    existingTags.push(tag)
+                    existingTags.push(tag.id)
                 }
             })
             return this.combineTags(existingTags, newTags)
         },
         combineTags(existingTags, newTags) {
             return new Promise((resolve) => {
-                if (newTags.length > 0) {
-                    axios
-                        .post('/api/tags', {
-                            tags: newTags,
-                        })
-                        .then((response) => {
-                            existingTags = existingTags.concat(response.data.data)
-                            resolve(existingTags)
-                        })
-                        .catch(() => {
-                            this.$store.dispatch('notification/setNotification', {
-                                type: 'error',
-                                title: 'Error',
-                                description: 'Tag(s) could not be created.',
-                            })
-                            resolve(existingTags)
-                        })
-                } else {
-                    resolve(existingTags)
+                if (newTags.length === 0) {
+                    return resolve(existingTags)
                 }
+                axios
+                    .post('/api/tags', {
+                        tags: newTags,
+                    })
+                    .then((response) => {
+                        const tags = response.data.data
+                        existingTags = existingTags.concat(tags.map((tag) => tag.id))
+                        resolve(existingTags)
+                    })
+                    .catch(() => {
+                        this.$store.dispatch('notification/setNotification', {
+                            type: 'error',
+                            title: 'Error',
+                            description: 'Tag(s) could not be created.',
+                        })
+                        resolve(existingTags)
+                    })
             })
         },
         delete() {
