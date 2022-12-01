@@ -237,7 +237,9 @@ export default {
                             description: 'Post could not be created.',
                         })
                     })
-                this.$router.push({ path: '/c/' + this.collection.id })
+                this.$router.push({
+                    path: this.collection.id === null ? '/' : '/c/' + this.collection.id,
+                })
             } else {
                 this.post.title = this.title
                 this.post.content = content
