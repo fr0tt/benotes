@@ -105,7 +105,7 @@ $app->register(Illuminate\Mail\MailServiceProvider::class);
 $app->register(Laravel\Tinker\TinkerServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
-
+$app->register(Intervention\Image\ImageServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

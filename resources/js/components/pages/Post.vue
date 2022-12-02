@@ -223,7 +223,7 @@ export default {
                         content: content,
                         collection_id: this.collection.id,
                         is_uncategorized: this.collection.id === null || 0,
-                        tags: tags.map((tag) => tag.id),
+                        tags: tags === null ? null : tags.map((tag) => tag.id),
                     })
                     .then((response) => {
                         if (this.posts !== null) {
