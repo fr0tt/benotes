@@ -41,10 +41,7 @@ export default {
                 return
             }
             const rect = document.querySelector('.post-loader').getBoundingClientRect()
-            if (
-                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-                rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-            ) {
+            if (rect.bottom < (window.innerHeight || document.documentElement.clientHeight) + 80) {
                 this.showSpinner = true
                 let data = {
                     collectionId: this.collectionId,

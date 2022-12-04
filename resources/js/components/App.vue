@@ -12,7 +12,7 @@
                 </transition>
             </div>
         </div>
-        <div class="absolute bottom-0 w-full overflow-hidden">
+        <div class="fixed bottom-0 w-full overflow-hidden">
             <Notification />
             <BottomSheet />
         </div>

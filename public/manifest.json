@@ -16,6 +16,7 @@
     ],
     "share_target": {
         "action": "/c/0/p/create",
+        "method": "GET",
         "params": {
             "title": "title",
             "text": "text",
