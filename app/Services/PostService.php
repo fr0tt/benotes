@@ -6,10 +6,10 @@ use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
-use App\Post;
-use App\Collection;
-use App\User;
-use App\PostTag;
+use App\Models\Post;
+use App\Models\Collection;
+use App\Models\User;
+use App\Models\PostTag;
 use ColorThief\ColorThief;
 
 class PostService

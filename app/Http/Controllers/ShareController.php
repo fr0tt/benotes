@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-use App\Share;
-use App\Collection;
+use App\Models\Share;
+use App\Models\Collection;
 
 class ShareController extends Controller
 {
@@ -21,8 +21,8 @@ class ShareController extends Controller
             $shares = Share::where('created_by', Auth::user()->id)->get();
         } else {
             $shares = Share::where('created_by', Auth::user()->id)
-                           ->where('collection_id', $request->collection_id)
-                           ->get();
+                ->where('collection_id', $request->collection_id)
+                ->get();
         }
 
         return response()->json(['data' => $shares], 200);
@@ -86,7 +86,7 @@ class ShareController extends Controller
     public function destroy($id)
     {
         $share = Share::find($id);
-        
+
         if ($share) {
             $this->authorize('delete', $share);
             $share->delete();
@@ -100,5 +100,4 @@ class ShareController extends Controller
     {
         return response()->json(['data' => Auth::guard('share')->user()]);
     }
-
 }

@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Gate;
 
-use App\User;
-use App\Collection;
-use App\Post;
+use App\Models\User;
+use App\Models\Collection;
+use App\Models\Post;
 
 class UserController extends Controller
 {
@@ -51,7 +51,7 @@ class UserController extends Controller
         $user->permission = 7;
         $user->save();
 
-        (new \App\Post())->seedIntroData($user->id);
+        (new \App\Models\Post())->seedIntroData($user->id);
 
         return response()->json(['data' => $user], 201);
     }
@@ -106,7 +106,5 @@ class UserController extends Controller
         $user->forceDelete();
 
         return response()->json('User was deleted.', 200);
-
     }
-
 }

@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-use App\Post;
-use App\Collection;
-use App\User;
-use App\Tag;
+use App\Models\Post;
+use App\Models\Collection;
+use App\Models\User;
+use App\Models\Tag;
 use App\Services\PostService;
 use Symfony\Component\HttpFoundation\Response;
 

@@ -3,9 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\User;
-use App\Post;
-use App\Collection;
+use App\Models\User;
+use App\Models\Post;
+use App\Models\Collection;
 use stdClass;
 
 class FixPositionCommand extends Command
@@ -60,7 +60,5 @@ class FixPositionCommand extends Command
         }
 
         $this->info('completed.');
-
     }
-
 }

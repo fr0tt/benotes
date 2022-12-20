@@ -4,9 +4,9 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Validator;
-use App\User;
-use App\Collection;
-use App\Post;
+use App\Models\User;
+use App\Models\Collection;
+use App\Models\Post;
 
 class ExportCommand extends Command
 {

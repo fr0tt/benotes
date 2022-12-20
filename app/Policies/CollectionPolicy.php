@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\User;
-use App\Collection;
+use App\Models\User;
+use App\Models\Collection;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class CollectionPolicy
@@ -11,10 +11,20 @@ class CollectionPolicy
     use HandlesAuthorization;
 
     /**
+     * Create a new policy instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
      * Determine whether the user can view the collection.
      *
-     * @param  \App\User  $user
-     * @param  \App\Collection  $collection
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Collection  $collection
      * @return mixed
      */
     public function view(User $user, Collection $collection)
@@ -25,8 +35,8 @@ class CollectionPolicy
     /**
      * Determine whether the user can update the collection.
      *
-     * @param  \App\User  $user
-     * @param  \App\Collection  $collection
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Collection  $collection
      * @return mixed
      */
     public function update(User $user, Collection $collection)
@@ -37,8 +47,8 @@ class CollectionPolicy
     /**
      * Determine whether the user can delete the collection.
      *
-     * @param  \App\User  $user
-     * @param  \App\Collection  $collection
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Collection  $collection
      * @return mixed
      */
     public function delete(User $user, Collection $collection)
@@ -50,5 +60,4 @@ class CollectionPolicy
     {
         return $user->id === $collection->user_id;
     }
-
 }

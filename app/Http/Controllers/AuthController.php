@@ -12,9 +12,10 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+
         $token = Auth::attempt($request->only('email', 'password'));
 
-        if(!$token) {
+        if (!$token) {
             return response()->json('Invalid login credentials', 400);
         }
 
@@ -22,7 +23,7 @@ class AuthController extends Controller
             "token" => [
                 "access_token" => $token,
                 "token_type"   => 'Bearer',
-                "expire"       => (int) Auth::guard()->factory()->getTTL()
+                "expire"       => (int) config('jwt.ttl')
             ]
         ];
         return response()->json(compact('data'));
@@ -39,7 +40,7 @@ class AuthController extends Controller
             "token" => [
                 "access_token" => Auth::refresh(),
                 "token_type"   => 'Bearer',
-                "expire"       => (int) Auth::guard()->factory()->getTTL()
+                "expire"       => (int) config('jwt.ttl')
             ]
         ];
         return response()->json(compact('data'));
@@ -48,6 +49,7 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::logout();
+        // Auth::user()->tokens()->where('id', 'device_name')->delete();
         return response()->json('', 204);
     }
 
@@ -56,7 +58,7 @@ class AuthController extends Controller
         $this->validate($request, [
             'email' => 'required|email'
         ]);
-        
+
         $response = Password::broker()->sendResetLink(
             $request->only('email')
         );
@@ -79,7 +81,7 @@ class AuthController extends Controller
         ]);
 
         $response = Password::broker()->reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'), 
+            $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
                 $user->password = Hash::make($password);
                 $user->save();
@@ -94,5 +96,4 @@ class AuthController extends Controller
             return response()->json(['error' => $response], 500);
         }
     }
-
 }

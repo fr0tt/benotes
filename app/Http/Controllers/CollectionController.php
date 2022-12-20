@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Collection;
+use App\Models\Collection;
 
 class CollectionController extends Controller
 {
@@ -72,5 +72,4 @@ class CollectionController extends Controller
 
         return response()->json('', 204);
     }
-
 }

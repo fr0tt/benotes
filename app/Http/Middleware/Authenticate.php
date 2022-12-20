@@ -3,26 +3,24 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Auth\Factory as Auth;
+use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use Illuminate\Support\Facades\Auth;
 
-class Authenticate
+class Authenticate extends Middleware
 {
     /**
-     * The authentication guard factory instance.
+     * Get the path the user should be redirected to when they are not authenticated.
      *
-     * @var \Illuminate\Contracts\Auth\Factory
+     * @param  \Illuminate\Http\Request  $request
+     * @return string|null
      */
-    protected $auth;
-
-    /**
-     * Create a new middleware instance.
-     *
-     * @param  \Illuminate\Contracts\Auth\Factory  $auth
-     * @return void
-     */
-    public function __construct(Auth $auth)
+    protected function redirectTo($request)
     {
-        $this->auth = $auth;
+        /*
+        if (!$request->expectsJson()) {
+            return route('login');
+        }
+        */
     }
 
     /**
@@ -30,20 +28,24 @@ class Authenticate
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
-     * @param  string|null  $guard
+     * @param  string[]  ...$guards
      * @return mixed
+     *
+     * @throws \Illuminate\Auth\AuthenticationException
      */
     public function handle($request, Closure $next, ...$guards)
     {
-
-        if (in_array('share', $guards) && $this->auth->guard('share')->check()) {
-            config()->set('auth.defaults.guard', 'share');
+        if (in_array(/*'auth:sanctum'*/'auth:api', $guards) && Auth::guard('api')->check()) {
             return $next($request);
-        } else if ($this->auth->guard('api')->check()) {
-            return $next($request);
-        } else if ($this->auth->guard()->guest()) {
-            return response()->json('Unauthorized.', 401);
         }
 
+        if (in_array('share', $guards)) {
+            if (Auth::guard('share')->check()) {
+                config()->set('auth.defaults.guard', 'share');
+                return $next($request);
+            }
+        }
+        //$this->authenticate($request, $guards);
+        return $next($request);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 
@@ -11,9 +11,19 @@ class UserPolicy
     use HandlesAuthorization;
 
     /**
+     * Create a new policy instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
      * Determine whether the user can create users.
      *
-     * @param  \App\User  $authUser
+     * @param  \App\Models\User  $authUser
      * @return mixed
      */
     public function create(User $authUser)
@@ -24,8 +34,8 @@ class UserPolicy
     /**
      * Determine whether the user can update the user.
      *
-     * @param  \App\User  $authUser
-     * @param  \App\User  $user
+     * @param  \App\Models\User  $authUser
+     * @param  \App\Models\User  $user
      * @return mixed
      */
     public function update(User $authUser, User $user)
@@ -38,12 +48,11 @@ class UserPolicy
     /**
      * Determine whether the user can delete the user.
      *
-     * @param  \App\User  $authUser
+     * @param  \App\Models\User  $authUser
      * @return mixed
      */
     public function delete(User $authUser)
     {
         return $authUser->permission === User::ADMIN;
     }
-
 }

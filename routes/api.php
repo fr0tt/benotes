@@ -1,0 +1,71 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\CollectionController;
+use App\Http\Controllers\TagController;
+use App\Http\Controllers\ShareController;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
+
+Route::post('auth/login', [AuthController::class, 'login']);
+Route::post('auth/refresh', [AuthController::class, 'refresh']);
+Route::post('auth/forgot', [AuthController::class, 'sendReset']);
+Route::post('auth/reset', [AuthController::class, 'reset']);
+
+Route::group([
+    'middleware' => 'auth:api' //'auth:sanctum'
+], function () {
+
+    Route::get('auth/me', [AuthController::class, 'me']);
+    Route::post('auth/logout', [AuthController::class, 'logout']);
+
+    Route::post('posts', [PostController::class, 'store']);
+    Route::patch('posts/{id}', [PostController::class, 'update']);
+    Route::delete('posts/{id}', [PostController::class, 'destroy']);
+
+    Route::get('meta', [PostController::class, 'getUrlInfo']);
+
+    Route::get('tags', [TagController::class, 'index']);
+    Route::get('tags/{id}', [TagController::class, 'show']);
+    Route::post('tags', [TagController::class, 'store']);
+    Route::patch('tags/{id}', [TagController::class, 'update']);
+    Route::delete('tags/{id}', [TagController::class, 'destroy']);
+
+    Route::get('collections', [CollectionController::class, 'index']);
+    Route::get('collections/{id}', [CollectionController::class, 'show']);
+    Route::post('collections', [CollectionController::class, 'store']);
+    Route::patch('collections/{id}', [CollectionController::class, 'update']);
+    Route::delete('collections/{id}', [CollectionController::class, 'destroy']);
+
+    Route::get('users', [UserController::class, 'index']);
+    Route::get('users/{id}', [UserController::class, 'show']);
+    Route::post('users', [UserController::class, 'store']);
+    Route::patch('users/{id}', [UserController::class, 'update']);
+    Route::delete('users/{id}', [UserController::class, 'destroy']);
+
+    Route::get('shares', [ShareController::class, 'index']);
+    Route::post('shares', [ShareController::class, 'store']);
+    Route::patch('shares/{id}', [ShareController::class, 'update']);
+    Route::delete('shares/{id}', [ShareController::class, 'destroy']);
+});
+
+Route::group([
+    'middleware' => 'auth:share,api' // ,auth:sanctum
+], function () {
+    Route::get('posts', [PostController::class, 'index']);
+    Route::get('posts/{id}', [PostController::class, 'show']);
+
+    Route::get('shares/me', [ShareController::class, 'me']);
+});

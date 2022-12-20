@@ -5,7 +5,8 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
-use App\User;
+use App\Models\User;
+use App\Models\Post;
 
 class InstallCommand extends Command
 {
@@ -34,12 +35,13 @@ class InstallCommand extends Command
         $createOnlyUser = $this->option('only-user');
 
         $this->line('Initiate installation...');
+        $this->line(PHP_EOL);
 
         if (!$createOnlyUser) {
 
             $bar = $this->output->createProgressBar(3);
             $bar->start();
-            
+
             // jwt secret
             $this->call('jwt:secret');
             $bar->advance();
@@ -48,10 +50,9 @@ class InstallCommand extends Command
             $this->call('migrate');
             $bar->advance();
             $this->line(PHP_EOL);
-
         }
 
-        // database seeding 
+        // database seeding
         $this->info('Create your Admin account:');
         $username = $this->ask('Username', 'Admin');
         $email = $this->ask('Email');
@@ -79,16 +80,14 @@ class InstallCommand extends Command
         $user->permission = User::ADMIN;
         $user->save();
 
-        (new \App\Post())->seedIntroData($user->id);
+        (new Post())->seedIntroData($user->id);
 
         if (!$createOnlyUser) {
 
             $bar->finish();
-
         }
-        
+
         $this->line(PHP_EOL);
         $this->info('Installation complete.');
     }
-
 }

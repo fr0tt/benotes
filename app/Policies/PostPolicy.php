@@ -2,9 +2,9 @@
 
 namespace App\Policies;
 
-use App\User;
-use App\Share;
-use App\Post;
+use App\Models\User;
+use App\Models\Post;
+use App\Models\Share;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PostPolicy
@@ -12,10 +12,20 @@ class PostPolicy
     use HandlesAuthorization;
 
     /**
+     * Create a new policy instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
      * Determine whether the user can view the post.
      *
      * @param  mixed      $user
-     * @param  \App\Post  $post
+     * @param  \App\Models\Post  $post
      * @return mixed
      */
     public function view($user, Post $post)
@@ -29,8 +39,8 @@ class PostPolicy
     /**
      * Determine whether the user can update the post.
      *
-     * @param  \App\User  $user
-     * @param  \App\Post  $post
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Post  $post
      * @return mixed
      */
     public function update(User $user, Post $post)
@@ -41,13 +51,12 @@ class PostPolicy
     /**
      * Determine whether the user can delete the post.
      *
-     * @param  \App\User  $user
-     * @param  \App\Post  $post
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Post  $post
      * @return mixed
      */
     public function delete(User $user, Post $post)
     {
         return $user->id === $post->user_id;
     }
-
 }
