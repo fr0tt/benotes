@@ -56,4 +56,5 @@ mix.js('resources/js/app.js', 'public/js')
             publicPath: '',
         },
     })
+    .version()
     .browserSync(process.env.APP_URL)

@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Benotes</title>
     <link href="/css/inter.css" type="text/css" rel="stylesheet">
-    <link href="/css/app.css" type="text/css" rel="stylesheet">
+    <link href="{{ mix('css/app.css') }}" type="text/css" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="/logo_144x144.png" />
     <link rel="manifest" href="/manifest.json">
 </head>
@@ -18,7 +18,7 @@
             <router-view></router-view>
         </div>
     </div>
-    <script src="/js/app.js"></script>
+    <script src="{{ mix('js/app.js') }}"></script>
 </body>
 
 </html>
