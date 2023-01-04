@@ -6,6 +6,7 @@
 /vendor
 .env
 .env.backup
+.env.playwright
 .phpunit.result.cache
 docker-compose.override.yml
 Homestead.json
@@ -14,3 +15,12 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/playwright/state.json
+*.zip
+
