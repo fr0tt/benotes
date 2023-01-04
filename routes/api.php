@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CollectionController;
+use App\Http\Controllers\TestingController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\ShareController;
 
@@ -69,3 +70,9 @@ Route::group([
 
     Route::get('shares/me', [ShareController::class, 'me']);
 });
+
+
+
+Route::post('__e2e__/user', [TestingController::class, 'user']);
+Route::post('__e2e__/setup', [TestingController::class, 'setup']);
+Route::post('__e2e__/teardown', [TestingController::class, 'teardown']);
