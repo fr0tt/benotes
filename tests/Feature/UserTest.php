@@ -8,6 +8,8 @@ use App\Models\User;
 use App\Models\Collection;
 use App\Models\Post;
 
+use function PHPUnit\Framework\assertGreaterThan;
+
 class UserTest extends TestCase
 {
 
@@ -28,6 +30,17 @@ class UserTest extends TestCase
         $this->assertEquals(201, $response->status());
         $data = $response->getData()->data;
         $this->assertNotEquals(null, $data);
+    }
+
+    public function testCreateUserWithoutAuth()
+    {
+        $response = $this->json('POST', 'api/users', [
+            'name' => 'Johnny Smith',
+            'email' => 'johnny@example.com',
+            'password' => 'Foo1234bar'
+        ]);
+
+        $this->assertGreaterThan(299, $response->status());
     }
 
     public function testChangeUserPassword()

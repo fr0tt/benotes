@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class Authenticate extends Middleware
 {
@@ -35,7 +36,7 @@ class Authenticate extends Middleware
      */
     public function handle($request, Closure $next, ...$guards)
     {
-        if (in_array(/*'auth:sanctum'*/'auth:api', $guards) && Auth::guard('api')->check()) {
+        if (in_array(/*'auth:sanctum'*/'api', $guards) && Auth::guard('api')->check()) {
             return $next($request);
         }
 
@@ -46,6 +47,6 @@ class Authenticate extends Middleware
             }
         }
         //$this->authenticate($request, $guards);
-        return $next($request);
+        return response('', Response::HTTP_UNAUTHORIZED);
     }
 }
