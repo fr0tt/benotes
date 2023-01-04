@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\User;
 use App\Models\Post;
@@ -620,7 +621,7 @@ class PostTest extends TestCase
         $post = [
             'content' => 'foo bar'
         ];
-        $this->json('POST', 'api/posts', $post);
+        $response = $this->json('POST', 'api/posts', $post);
         $this->assertEquals(401, $response->status());
     }
 
@@ -747,9 +748,10 @@ class PostTest extends TestCase
         $this->assertEquals(403, $response->status());
     }
 
-    public function testCreatePostWithoutStorage()
+    public function testCreatePostWithAndWithoutStorage()
     {
-        config(['benotes.use_filesystem' => false]);
+        Config::set('benotes.use_filesystem', false);
+        $this->assertFalse(config('benotes.use_filesystem'));
 
         $user = User::factory()->create();
         $collection = Collection::factory()->create();
@@ -765,8 +767,9 @@ class PostTest extends TestCase
         $this->assertStringStartsNotWith('/storage/thumbnails/thumbnail_', $data->image_path);
         $this->assertStringStartsWith('https://', $data->image_path);
 
-
-        config(['benotes.use_filesystem' => true]);
+        // with storage
+        Config::set('benotes.use_filesystem', true);
+        $this->assertTrue(config('benotes.use_filesystem'));
 
         $response = $this->actingAs($user)->json('POST', 'api/posts', [
             'content' => 'https://nyt.com',
