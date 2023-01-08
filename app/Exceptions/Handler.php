@@ -29,7 +29,7 @@ class Handler extends ExceptionHandler
         'password',
         'password_confirmation',
     ];
-    
+
 
     /**
      * Register the exception handling callbacks for the application.
@@ -54,10 +54,10 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        if ($exception instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
+        if ($exception instanceof \PHPOpenSourceSaver\JWTAuth\Exceptions\TokenExpiredException) {
             return response()->json('Token has expired', 401);
-        } else if ($exception instanceof \Tymon\JWTAuth\Exceptions\TokenBlacklistedException ||
-                   $exception instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
+        } else if ($exception instanceof \PHPOpenSourceSaver\JWTAuth\Exceptions\TokenBlacklistedException ||
+                   $exception instanceof \PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException) {
             return response()->json('Token is invalid', 401);
         } else if ($exception instanceof \Intervention\Image\Exception\NotWritableException) {
             return response()->json('Storage path not writable.', 403);
