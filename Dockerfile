@@ -1,4 +1,4 @@
-FROM webdevops/php-nginx:7.4-alpine
+FROM webdevops/php-nginx:8.1-alpine
 
 LABEL mantainer="github.com/fr0tt"
 LABEL description="Benotes"
@@ -14,7 +14,6 @@ RUN apk --no-cache update && apk --no-cache add \
     curl \
     curl-dev \
     zlib-dev \
-    php7-zlib \
     libpng-dev \
     libjpeg-turbo \
     libjpeg-turbo-dev \
@@ -41,7 +40,6 @@ RUN docker-php-ext-install \
     pdo_pgsql \
     opcache \
     exif \
-    tokenizer \
     pcntl \
     bcmath \
     gd \
@@ -70,7 +68,7 @@ USER $user
 ARG USE_COMPOSER
 RUN if [ "$USE_COMPOSER" = "true" ] ; \
     then \
-        composer install --prefer-dist --no-interaction ; \
+    composer install --prefer-dist --no-interaction ; \
     fi
 
 USER root
@@ -79,7 +77,7 @@ USER root
 ARG INSTALL_NODE
 RUN if [ "$INSTALL_NODE" = "true" ] ; \
     then \
-        apk --no-cache add nodejs npm ; \
+    apk --no-cache add nodejs npm ; \
     fi
 
 # will be overriden by the bind mount - if used
