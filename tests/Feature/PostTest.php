@@ -764,7 +764,7 @@ class PostTest extends TestCase
         $this->assertEquals(201, $response->status());
         $data = $response->getData()->data;
         $this->assertEquals('link', $data->type);
-        $this->assertStringStartsNotWith('/storage/thumbnails/thumbnail_', $data->image_path);
+        $this->assertStringStartsNotWith(url('/storage/thumbnails/thumbnail_'), $data->image_path);
         $this->assertStringStartsWith('https://', $data->image_path);
 
         // with storage
@@ -779,7 +779,7 @@ class PostTest extends TestCase
         $this->assertEquals(201, $response->status());
         $data = $response->getData()->data;
         $this->assertEquals('link', $data->type);
-        $this->assertStringStartsWith('/storage/thumbnails/thumbnail_', $data->image_path);
+        $this->assertStringStartsWith(url('/storage/thumbnails/thumbnail_'), $data->image_path);
         $this->assertStringStartsNotWith('https://', $data->image_path);
     }
 }
