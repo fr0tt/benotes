@@ -41,6 +41,7 @@ class InstallCommand extends Command
 
             $bar = $this->output->createProgressBar(4);
             $bar->start();
+            $this->line(PHP_EOL);
 
             // APP_KEY
             $this->call('key:generate');
@@ -48,10 +49,13 @@ class InstallCommand extends Command
 
             // jwt secret
             $this->call('jwt:secret');
+            $this->line(PHP_EOL);
             $bar->advance();
+            $this->line(PHP_EOL);
 
             // database migration
             $this->call('migrate');
+            $this->line(PHP_EOL);
             $bar->advance();
             $this->line(PHP_EOL);
         }
