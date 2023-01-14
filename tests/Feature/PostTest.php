@@ -49,19 +49,18 @@ class PostTest extends TestCase
     public function createPostsProvider()
     {
         return [
-            1 => ['https://test.de', 'link'],
-            2 => ['https://go-rel.github.io/', 'link'],
-            3 => ['https://www.youtube.com/watch?v=ZyURjdnYQaU', 'link'],
-            4 => ['https://github.com/verlok/vanilla-lazyload', 'link'],
-            5 => ['https://www.amazon.com/Design-Everyday-Things-Revised-Expanded/dp/0465050654/ref=sr_1_1?dchild=1&keywords=don+norman&link_code=qs&qid=1608495907&sr=8-1&tag=operabrowser-21', 'link'],
-            6 => ['<a href="https://www.wolframalpha.com" rel="noopener noreferrer nofollow">https://www.wolframalpha.com</a>', 'link'],
-            7 => ['<p class="">dfgd adijfds https://google.com</p>', 'text'],
-            8 => ['<p>https://www.wolframalpha.com</p><p>https://laravel.com</p>', 'text'],
-            9 => ['Hdfgd fijsdoij <a href="https://slack.com" rel="noopener noreferrer nofollow">https://slack.com</a>', 'text'],
-            10 => ['https://laravel.com', 'link'],
-            11 => ['Lorem ipsum https://fonts.adobe.com/fonts/realist', 'text'],
-            12 => ['https://gamesindustry.biz', 'link'],
-            13 => ['https://www.php.net/manual/en/function.parse-url.php', 'link'],
+            1 => ['https://go-rel.github.io/', 'link'],
+            2 => ['https://www.youtube.com/watch?v=ZyURjdnYQaU', 'link'],
+            3 => ['https://github.com/verlok/vanilla-lazyload', 'link'],
+            4 => ['https://www.amazon.com/Design-Everyday-Things-Revised-Expanded/dp/0465050654/ref=sr_1_1?dchild=1&keywords=don+norman&link_code=qs&qid=1608495907&sr=8-1&tag=operabrowser-21', 'link'],
+            5 => ['<a href="https://www.wolframalpha.com" rel="noopener noreferrer nofollow">https://www.wolframalpha.com</a>', 'link'],
+            6 => ['<p class="">dfgd adijfds https://google.com</p>', 'text'],
+            7 => ['<p>https://www.wolframalpha.com</p><p>https://laravel.com</p>', 'text'],
+            8 => ['Hdfgd fijsdoij <a href="https://slack.com" rel="noopener noreferrer nofollow">https://slack.com</a>', 'text'],
+            9 => ['https://laravel.com', 'link'],
+            10 => ['Lorem ipsum https://fonts.adobe.com/fonts/realist', 'text'],
+            11 => ['https://gamesindustry.biz', 'link'],
+            12 => ['https://www.php.net/manual/en/function.parse-url.php', 'link'],
         ];
     }
 
@@ -70,7 +69,7 @@ class PostTest extends TestCase
         $user = User::factory()->create();
 
         $collection = Collection::factory()->create();
-        $content = 'https://test.com';
+        $content = 'https://sdoifhpsuidfsiuedhsdiuhfuidhipdh.com';
 
         $response = $this->actingAs($user)->json('POST', 'api/posts', [
             'content' => $content,
