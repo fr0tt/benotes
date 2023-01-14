@@ -39,8 +39,12 @@ class InstallCommand extends Command
 
         if (!$createOnlyUser) {
 
-            $bar = $this->output->createProgressBar(3);
+            $bar = $this->output->createProgressBar(4);
             $bar->start();
+
+            // APP_KEY
+            $this->call('key:generate');
+            $bar->advance();
 
             // jwt secret
             $this->call('jwt:secret');
