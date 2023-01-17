@@ -5,12 +5,12 @@
                 <Draggable
                     v-if="!isLoading"
                     v-model="posts"
-                    tag="ol"
+                    tag="div"
                     :disabled="isUpdating"
                     :delay="90"
                     :delay-on-touch-only="true"
                     v-bind="{ animation: 200 }"
-                    class="pt-4 pb-16"
+                    class="pt-4 pb-16 grid grid-cols-3"
                     @start="drag = true"
                     @end="dragged">
                     <transition-group name="grid-fade">
@@ -22,9 +22,9 @@
                             :permission="permission" />
                     </transition-group>
                 </Draggable>
-                <ul v-else>
+                <div v-else>
                     <Post v-for="post in posts" :key="post.id" :post="post" />
-                </ul>
+                </div>
             </transition>
         </div>
         <CollectionMenu v-if="collectionMenu.isVisible" />

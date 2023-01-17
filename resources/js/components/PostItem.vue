@@ -1,5 +1,5 @@
 <template>
-    <li class="md:inline-block mx-6 md:mx-4 my-4 relative text-left post" :post-id="post.id">
+    <div class="md:inline-block mx-6 md:mx-4 my-4 relative text-left post" :post-id="post.id">
         <PostItemLink
             v-if="post.type === 'link'"
             :post="post"
@@ -18,7 +18,7 @@
             <span class="px-1 bg-orange-200 float-right">o:{{ post.order }}</span>
         </div>
         <ContextMenu :post-id="post.id" />
-    </li>
+    </div>
 </template>
 <script>
 import { mapState } from 'vuex'
