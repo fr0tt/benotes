@@ -34,9 +34,14 @@ Currently their are three options for you to choose from:
 -   [Docker Compose](https://benotes.org/docs/installation/docker-compose)
 -   [Heroku](https://benotes.org/docs/installation/heroku) ([not free anymore](https://blog.heroku.com/next-chapter))
 
+## Additional Features
+
+-   [Backups](https://benotes.org/docs/extras/backup)
+-   [Bookmarklet](https://benotes.org/docs/extras/bookmarklet)
+
 ## Issues
 
-Feel free to [contact me](https://twitter.com/_fr0tt) if you need any help or open an [issue](https://github.com/fr0tt/benotes/issues) or a [discussion](https://github.com/fr0tt/benotes/discussions).
+Feel free to [contact me](https://twitter.com/_fr0tt) if you need any help or open an [issue](https://github.com/fr0tt/benotes/issues) or a [discussion](https://github.com/fr0tt/benotes/discussions) or join the [subreddit](https://reddit.com/r/benotes).
 
 Q: Having trouble with **reordering** posts ?
 
@@ -46,54 +51,10 @@ Use this command in order to fix it.
 php artisan fix-position
 ```
 
-or if you have already installed newer php versions on your system
+or if you have already installed newer php versions on your system:
 
 ```
-php artisan fix-position
-```
-
-## Backup
-
-Currently SQL Server and backing up S3 storage is not supported.
-
-Backups can be triggered manually by executing the following command:
-
-```
-php artisan backup:run
-```
-
-Or schedule them by adding this line to your servers cron entries:
-
-```
-0 * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
-```
-
-(This will check every hour if there is any task to run)
-
-If you use docker add to your host system cron entries:
-
-```
-0 * * * * cd /path-to-your-project && docker exec -it benotes php artisan schedule:run >> /dev/null 2>&1
-```
-
-By default scheduled backups are created every night. If you wish to change that
-add the following to your `.env` file:
-
-```
-BACKUP_INTERVAL = 0 0 */7 * *  // this would translate to a weekly backup
-```
-
-If you wish to store your data with S3 compatible Object Storage
-(such as AWS S3, Digital Ocean Spaces, Minio, etc.), add the following to your `.env` file:
-
-```
-BACKUP_DISK           = s3
-
-AWS_ACCESS_KEY_ID     = yourKeyId
-AWS_SECRET_ACCESS_KEY = yourAccessKey
-AWS_DEFAULT_REGION    = us-east-1
-AWS_BUCKET            = yourCreativeBucketName
-AWS_ENDPOINT          = endpointUrl
+/usr/bin/php7.4 artisan fix-position
 ```
 
 ## Rest API
