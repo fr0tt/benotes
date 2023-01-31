@@ -153,11 +153,17 @@ export default {
     padding-top: 0.375rem;
     padding-bottom: 0.375rem;
 }
+.menubar {
+    position: sticky;
+    z-index: 100;   
+    top: 63px;
+}
 @media (max-width: 768px) {
     .menubar {
         overflow-x: scroll;
         white-space: nowrap;
         @apply py-1.5;
+        top: 58px;
     }
 }
 .delimiter {
