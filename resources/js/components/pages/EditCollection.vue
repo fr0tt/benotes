@@ -13,6 +13,22 @@
                 <input v-model="name" placeholder="Name" autofocus class="input" />
             </div>
 
+            <div class="mb-10">
+                <label class="label">Subcollection of</label>
+
+                <Select
+                    ref="parentCollection"
+                    v-model="parentCollection"
+                    class="inline-block w-80"
+                    label="name"
+                    :options="optionsCollections"
+                    @close="
+                        () => {
+                            $refs.parentCollection?.$el.querySelector('input[type=search]')?.blur()
+                        }
+                    " />
+            </div>
+
             <div class="mb-10 relative">
                 <label class="label">Collection Icon</label>
                 <button class="border-2 border-gray-400 rounded py-2 px-2" @click="openPicker()">
@@ -87,9 +103,16 @@ import axios from 'axios'
 import { mapState } from 'vuex'
 import { collectionIconIsInline } from './../../api/collection'
 import IconPicker from '../IconPicker.vue'
+import Select from 'vue-select'
+import OpenIndicator from '../OpenIndicator.vue'
+import Deselect from '../Deselect.vue'
+import 'vue-select/dist/vue-select.css'
 export default {
     components: {
         IconPicker,
+        Select,
+        OpenIndicator,
+        Deselect,
     },
     props: ['id', 'isNew'],
     data() {
@@ -106,6 +129,8 @@ export default {
             isSupported: null,
             iconId: null,
             showPicker: false,
+            optionsCollections: [],
+            parentCollection: null,
         }
     },
     methods: {
@@ -113,6 +138,7 @@ export default {
             axios
                 .post('/api/collections', {
                     name: this.name,
+                    parent_id: this.parentCollection?.id, // @TODO check if this works or not
                     icon_id: this.iconId,
                 })
                 .then((response) => {
@@ -127,13 +153,14 @@ export default {
             this.$store.dispatch('collection/updateCollection', {
                 id: this.id,
                 name: this.name,
+                parentId: this.parentCollection?.id,
                 iconId: this.iconId,
             })
             this.handleShare()
             this.$router.push({ path: '/c/' + this.id })
         },
         deleteCollection() {
-            this.$store.dispatch('collection/deleteCollection', this.id)
+            this.$store.dispatch('collection/deleteCollection', { id: this.id, nested: true })
             this.$store.dispatch('notification/setNotification', {
                 type: 'deletion',
                 title: 'Collection deleted',
@@ -275,6 +302,10 @@ export default {
                 },
             })
         }
+        Select.props.components.default = () => ({ OpenIndicator, Deselect })
+        this.$store.dispatch('collection/fetchCollections').then(() => {
+            this.optionsCollections = this.optionsCollections.concat(this.collections)
+        })
         navigator.permissions
             .query({ name: 'clipboard-write' })
             .then((result) => {
@@ -302,6 +333,15 @@ button.switch:hover {
     }
     .label.inline-block {
         @apply inline-block;
+    }
+    .vs__dropdown-toggle {
+        @apply border-gray-400 border-2;
+    }
+    .vs__dropdown-menu {
+        @apply p-0 order-2 border-gray-400 shadow-none;
+        .vs__dropdown-option--highlight {
+            @apply bg-orange-500;
+        }
     }
 }
 .button.red:hover {

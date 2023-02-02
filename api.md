@@ -4,11 +4,12 @@
 
 ### Login
 
-*Logs in a user*
+_Logs in a user_
 
-``` curl
+```curl
 POST /api/auth/login
 ```
+
 Request body:
 
 | Attribute | Value     |
@@ -17,60 +18,63 @@ Request body:
 | password  | Required. |
 
 Example Request:
-``` json
+
+```json
 {
-	"email": "mail@example.com",
-	"password": "supersecretpassword"
+    "email": "mail@example.com",
+    "password": "supersecretpassword"
 }
 ```
+
 Example Response:
 
-``` json
+```json
 {
-	"data": {
-		"token": {
-			"access_token": "eyD0kXAiOiJKL9QiLCJybGciOiJIUzI1NiJ5.eyApc3MiOiJodHRwOlwvXC9ib29rbm90ZXMudGVzdFwvYXBpXC9hdXRoXC4sb2dpbiIsImlhdCI6MTY0MzkzMjc5NSwiZXhwIjoxNjQzOTM2Mqk1LCJuYmYiOjE2NDM5MzP3OTUsSmp0aSI6Ik5jb3dqUEQ1c3BGVkY2NlIiLCJzdWIiOjEsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlSzk9MTUzSFE0ZTLiTDQ3NTQ2YWEifQ.A_x07CzfIUxwxvJB12u1SRNfY6TpknBRA9ODsLP1EGB",
-			"token_type": "Bearer",
-			"expire": 60
-		}
-	}
+    "data": {
+        "token": {
+            "access_token": "eyD0kXAiOiJKL9QiLCJybGciOiJIUzI1NiJ5.eyApc3MiOiJodHRwOlwvXC9ib29rbm90ZXMudGVzdFwvYXBpXC9hdXRoXC4sb2dpbiIsImlhdCI6MTY0MzkzMjc5NSwiZXhwIjoxNjQzOTM2Mqk1LCJuYmYiOjE2NDM5MzP3OTUsSmp0aSI6Ik5jb3dqUEQ1c3BGVkY2NlIiLCJzdWIiOjEsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlSzk9MTUzSFE0ZTLiTDQ3NTQ2YWEifQ.A_x07CzfIUxwxvJB12u1SRNfY6TpknBRA9ODsLP1EGB",
+            "token_type": "Bearer",
+            "expire": 60
+        }
+    }
 }
 ```
 
-| Remember: |
-| --------- |
+| Remember:                                                                                                |
+| -------------------------------------------------------------------------------------------------------- |
 | **`access_token` needs to be added to every following request as an Bearer Token Authorization Header.** |
 
 ### Refresh
 
-*Refreshes the JWT Token*
+_Refreshes the JWT Token_
 
 ```
 POST /api/auth/refresh
 ```
 
 Example Request:
+
 ```
 Authorization: Bearer eyD0kXAiOiJKL9QiLCJybGciOiJIUzI1NiJ5.eyApc3MiOiJodHRwOlwvXC9ib29rbm90ZXMudGVzdFwvYXBpXC9hdXRoXC4sb2dpbiIsImlhdCI6MTY0MzkzMjc5NSwiZXhwIjoxNjQzOTM2Mqk1LCJuYmYiOjE2NDM5MzP3OTUsSmp0aSI6Ik5jb3dqUEQ1c3BGVkY2NlIiLCJzdWIiOjEsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlSzk9MTUzSFE0ZTLiTDQ3NTQ2YWEifQ.A_x07CzfIUxwxvJB12u1SRNfY6TpknBRA9ODsLP1EGB
 ```
 
 Example Response:
 
-``` json
+```json
 {
-	"data": {
-		"token": {
-			"access_token": "eyD0kXAiOiJKL9QiLCJybGciOiJIUzI1NiJ5.eyApc3MiOiJodHRwOlwvXC9ib29rbm90ZXMudGVzdFwvYXBpXC9hdXRoXC4sb2dpbiIsImlhdCI6MTY0MzkzMjc5NSwiZXhwIjoxNjQzOTM2Mqk1LCJuYmYiOjE2NDM5MzP3OTUsSmp0aSI6Ik5jb3dqUEQ1c3BGVkY2NlIiLCJzdWIiOjEsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlSzk9MTUzSFE0ZTLiTDQ3NTQ2YWEifQ.A_x07CzfIUxwxvJB12u1SRNfY6TpknBRA9ODsLP1EGB",
-			"token_type": "Bearer",
-			"expire": 60
-		}
-	}
+    "data": {
+        "token": {
+            "access_token": "eyD0kXAiOiJKL9QiLCJybGciOiJIUzI1NiJ5.eyApc3MiOiJodHRwOlwvXC9ib29rbm90ZXMudGVzdFwvYXBpXC9hdXRoXC4sb2dpbiIsImlhdCI6MTY0MzkzMjc5NSwiZXhwIjoxNjQzOTM2Mqk1LCJuYmYiOjE2NDM5MzP3OTUsSmp0aSI6Ik5jb3dqUEQ1c3BGVkY2NlIiLCJzdWIiOjEsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlSzk9MTUzSFE0ZTLiTDQ3NTQ2YWEifQ.A_x07CzfIUxwxvJB12u1SRNfY6TpknBRA9ODsLP1EGB",
+            "token_type": "Bearer",
+            "expire": 60
+        }
+    }
 }
 ```
 
 ### Check
 
-*Returns the authenticated user*
+_Returns the authenticated user_
 
 ```
 GET /api/auth/me
@@ -78,22 +82,22 @@ GET /api/auth/me
 
 Example response:
 
-``` json
+```json
 {
-	"data": {
-		"id": 1,
-		"name": "Admin",
-		"email": "mail@example.com",
-		"created_at": "2020-02-29 23:26:15",
-		"updated_at": "2020-02-29 23:26:15",
-		"permission": 255
-	}
+    "data": {
+        "id": 1,
+        "name": "Admin",
+        "email": "mail@example.com",
+        "created_at": "2020-02-29 23:26:15",
+        "updated_at": "2020-02-29 23:26:15",
+        "permission": 255
+    }
 }
 ```
 
 ### Logout
 
-*Logs out the authenticated user*
+_Logs out the authenticated user_
 
 ```
 POST /api/auth/logout
@@ -105,40 +109,54 @@ POST /api/auth/logout
 
 ### Retrieve all Collections
 
-*Get multiple collections*
+_Get multiple collections_
 
 ```
 GET /api/collections
 ```
 
+Query Parameters:
+
+| Attribute | Value                                                                                                                               |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| nested    | Optional. Return collections in a treelike (relationship aware) structure instead. If set to `false` this attribute will be ignored |
+
 Example response:
 
-``` json
+```json
 {
-	"data": [
-		{
-			"id": 1,
-			"name": "News 📰"
-		},
-		{
-			"id": 2,
-			"name": "Programming"
-		},
-		{
-			"id": 3,
-			"name": "Books 📖"
-		},
-		{
-			"id": 4,
-			"name": "Notes"
-		}
-	]
+    "data": [
+        {
+            "id": 1,
+            "name": "News 📰",
+            "parent_id": null,
+            "icon_id": 107
+        },
+        {
+            "id": 2,
+            "name": "Programming",
+            "parent_id": null,
+            "icon_id": 103
+        },
+        {
+            "id": 3,
+            "name": "Books 📖",
+            "parent_id": null,
+            "icon_id": null
+        },
+        {
+            "id": 4,
+            "name": "Notes",
+            "parent_id": 3,
+            "icon_id": null
+        }
+    ]
 }
 ```
 
 ### Retrieve collections
 
-*Get one collection by its id*
+_Get one collection by its id_
 
 ```
 GET /api/collections/{id}
@@ -146,20 +164,22 @@ GET /api/collections/{id}
 
 Example response:
 
-``` json
+```json
 {
-	"data": [
-		{
-			"id": 1,
-			"name": "News 📰"
-		}
-	]
+    "data": [
+        {
+            "id": 1,
+            "name": "News 📰",
+            "parent_id": null,
+            "icon_id": 107
+        }
+    ]
 }
 ```
 
 ### Create collections
 
-*Create a new collection*
+_Create a new collection_
 
 ```
 POST /api/collections
@@ -167,34 +187,39 @@ POST /api/collections
 
 Request body:
 
-| Attribute | Value                                                        |
-| --------- | ------------------------------------------------------------ |
-| name      | Required. Specify a name for your new collection             |
+| Attribute | Value                                                                          |
+| --------- | ------------------------------------------------------------------------------ |
+| name      | Required. Specify a name for your new collection                               |
+| parent_id | Optional. Specify a parent collection (in order to nest collections)           |
+| icon_id   | Optional. Specify a icon_id to be use. Be careful e.g. 109-200 does not exist. |
 
 Example request:
 
-``` json
+```json
 {
-	"name": "News"
+    "name": "News",
+    "icon_id": 409
 }
 ```
 
 Example response:
 
-``` json
+```json
 {
-	"data": [
-		{
-			"id": 1,
-			"name": "News"
-		}
-	]
+    "data": [
+        {
+            "id": 1,
+            "name": "News",
+            "parent_id": null,
+            "icon_id": 409
+        }
+    ]
 }
 ```
 
 ### Update collections
 
-*Update an existing collection*
+_Update an existing collection_
 
 ```
 PATCH /api/collections/{id}
@@ -202,28 +227,30 @@ PATCH /api/collections/{id}
 
 Request body:
 
-| Attribute | Value                                                        |
-| --------- | ------------------------------------------------------------ |
-| name      | Required. Specify a new name for your existing collection    |
+| Attribute | Value                                                                          |
+| --------- | ------------------------------------------------------------------------------ |
+| name      | Required. Specify a new name for your existing collection                      |
+| parent_id | Optional. Specify a parent collection (in order to nest collections)           |
+| icon_id   | Optional. Specify a icon_id to be use. Be careful e.g. 109-200 does not exist. |
 
 Example request:
 
-``` json
+```json
 {
-	"name": "News & Newsletters"
+    "name": "News & Newsletters"
 }
 ```
 
 Example Response:
 
-``` json
+```json
 {
-	"data": [
-		{
-			"id": 1,
-			"name": "News & Newsletters"
-		}
-	]
+    "data": [
+        {
+            "id": 1,
+            "name": "News & Newsletters"
+        }
+    ]
 }
 ```
 
@@ -233,7 +260,7 @@ Example Response:
 DELETE /api/collections/{id}
 ```
 
-*Delete a collection by its id*
+_Delete a collection by its id_
 
 ---
 
@@ -241,7 +268,7 @@ DELETE /api/collections/{id}
 
 ### Retrieve all Posts
 
-*Get multiple posts*
+_Get multiple posts_
 
 ```
 GET /api/posts
@@ -249,14 +276,14 @@ GET /api/posts
 
 Query Parameters:
 
-| Attribute | Value     |
-| --------- | --------- |
-| collection_id     | Optional. Reduce the response to only posts of a particular collection |
-| is_uncategorized  | Optional. Return only uncategorized posts without a collection. If set to `false` this attribute will be ignored |
-| filter 			| Optional. Filter the result based on a few characters or whole words |
-| after_id			| Optional. Only works without `offset` and with `collection_id` or `is_unategorized`. Returns only posts with lower order *after* a given post id (Seek Pagination) |
-| offset 			| Optional. Only works without `after_id` present. Skip an amount of posts |
-| limit 			| Optional. Limit the amount of posts returned |
+| Attribute        | Value                                                                                                                                                              |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| collection_id    | Optional. Reduce the response to only posts of a particular collection                                                                                             |
+| is_uncategorized | Optional. Return only uncategorized posts without a collection. If set to `false` this attribute will be ignored                                                   |
+| filter           | Optional. Filter the result based on a few characters or whole words                                                                                               |
+| after_id         | Optional. Only works without `offset` and with `collection_id` or `is_unategorized`. Returns only posts with lower order _after_ a given post id (Seek Pagination) |
+| offset           | Optional. Only works without `after_id` present. Skip an amount of posts                                                                                           |
+| limit            | Optional. Limit the amount of posts returned                                                                                                                       |
 
 Example Query:
 
@@ -266,46 +293,46 @@ GET /api/posts?limit=2&is_uncategorized=true
 
 Example Response:
 
-``` json
+```json
 {
-	"data": [
-		{
-			"id": 236,
-			"content": "https://www.theguardian.com/",
-			"type": "link",
-			"url": "https://www.theguardian.com/",
-			"title": "News, sport and opinion from the Guardian's global edition | The Guardian",
-			"description": "Latest international news, sport and comment from the Guardian",
-			"color": "#052962",
-			"image_path": "/storage/thumbnails/thumbnail_ca16a751932295691d8dd9bea75f2e09_255.jpg",
-			"base_url": "https://www.theguardian.com",
-			"collection_id": null,
-			"order": 39,
-			"created_at": "2022-02-01T09:56:52.000000Z",
-			"updated_at": "2022-02-01T09:56:52.000000Z"
-		},
-		{
-			"id": 229,
-			"content": "<p>This post demonstrates different features of Benotes. <br>You can write <strong>bold</strong>, <em>italic</em> or <strong>combine <em>them</em></strong><em>.</em></p><blockquote><p>Blockquotes are also a thing</p></blockquote><p></p>",
-			"type": "text",
-			"url": null,
-			"title": "Editor",
-			"description": null,
-			"color": null,
-			"image_path": null,
-			"base_url": null,
-			"collection_id": null,
-			"order": 38,
-			"created_at": "2022-01-28T23:38:10.000000Z",
-			"updated_at": "2022-01-28T23:38:10.000000Z"
-		}
-	]
+    "data": [
+        {
+            "id": 236,
+            "content": "https://www.theguardian.com/",
+            "type": "link",
+            "url": "https://www.theguardian.com/",
+            "title": "News, sport and opinion from the Guardian's global edition | The Guardian",
+            "description": "Latest international news, sport and comment from the Guardian",
+            "color": "#052962",
+            "image_path": "/storage/thumbnails/thumbnail_ca16a751932295691d8dd9bea75f2e09_255.jpg",
+            "base_url": "https://www.theguardian.com",
+            "collection_id": null,
+            "order": 39,
+            "created_at": "2022-02-01T09:56:52.000000Z",
+            "updated_at": "2022-02-01T09:56:52.000000Z"
+        },
+        {
+            "id": 229,
+            "content": "<p>This post demonstrates different features of Benotes. <br>You can write <strong>bold</strong>, <em>italic</em> or <strong>combine <em>them</em></strong><em>.</em></p><blockquote><p>Blockquotes are also a thing</p></blockquote><p></p>",
+            "type": "text",
+            "url": null,
+            "title": "Editor",
+            "description": null,
+            "color": null,
+            "image_path": null,
+            "base_url": null,
+            "collection_id": null,
+            "order": 38,
+            "created_at": "2022-01-28T23:38:10.000000Z",
+            "updated_at": "2022-01-28T23:38:10.000000Z"
+        }
+    ]
 }
 ```
 
 ### Retrieve posts
 
-*Get one post by its id*
+_Get one post by its id_
 
 ```
 GET /api/posts/{id}
@@ -313,31 +340,31 @@ GET /api/posts/{id}
 
 Example Response:
 
-``` json
+```json
 {
-	"data": [
-		{
-			"id": 111,
-			"content": "https://laravel.com",
-			"type": "link",
-			"url": "https://laravel.com",
-			"title": "Laravel - The PHP Framework For Web Artisans",
-			"description": null,
-			"color": "#ffffff",
-			"image_path": null,
-			"base_url": "https://laravel.com",
-			"collection_id": null,
-			"order": 30,
-			"created_at": "2022-02-01T09:56:52.000000Z",
-			"updated_at": "2022-02-01T09:56:52.000000Z"
-		}
-	]
+    "data": [
+        {
+            "id": 111,
+            "content": "https://laravel.com",
+            "type": "link",
+            "url": "https://laravel.com",
+            "title": "Laravel - The PHP Framework For Web Artisans",
+            "description": null,
+            "color": "#ffffff",
+            "image_path": null,
+            "base_url": "https://laravel.com",
+            "collection_id": null,
+            "order": 30,
+            "created_at": "2022-02-01T09:56:52.000000Z",
+            "updated_at": "2022-02-01T09:56:52.000000Z"
+        }
+    ]
 }
 ```
 
 ### Create posts
 
-*Create a new post*
+_Create a new post_
 
 ```
 POST /api/posts
@@ -345,47 +372,47 @@ POST /api/posts
 
 Request body:
 
-| Attribute     | Value                                                        |
-| ------------- | ------------------------------------------------------------ |
+| Attribute     | Value                                                                                                     |
+| ------------- | --------------------------------------------------------------------------------------------------------- |
 | collection_id | Optional. Specify a collection you wish to save your new post to, if not, your post will be uncategorized |
-| title         | Optional. Specify a title, gets automatically filled if your content is a link |
-| content       | Required. Specify a link, post, message, ..                  |
-| is_archived   | Optional. Archive or restore this post.                      |
+| title         | Optional. Specify a title, gets automatically filled if your content is a link                            |
+| content       | Required. Specify a link, post, message, ..                                                               |
+| is_archived   | Optional. Archive or restore this post.                                                                   |
 
 Example Request:
 
-``` json
+```json
 {
-	"content": "https://www.theguardian.com/",
-	"collection_id": 2
+    "content": "https://www.theguardian.com/",
+    "collection_id": 2
 }
 ```
 
 Example Response:
 
-``` json
+```json
 {
-	"data": {
-		"content": "https://www.theguardian.com/",
-		"collection_id": 2,
-		"url": "https://www.theguardian.com/",
-		"base_url": "https://www.theguardian.com",
-		"title": "News, sport and opinion from the Guardian's global edition | The Guardian",
-		"description": "Latest international news, sport and comment from the Guardian",
-		"color": "#052962",
-		"image_path": "/storage/thumbnails/thumbnail_ca16a751932295691d8dd9bea75f2e09_255.jpg",
-		"type": "link",
-		"order": 49,
-		"updated_at": "2022-02-01T13:56:09.000000Z",
-		"created_at": "2022-02-01T13:56:09.000000Z",
-		"id": 255
-	}
+    "data": {
+        "content": "https://www.theguardian.com/",
+        "collection_id": 2,
+        "url": "https://www.theguardian.com/",
+        "base_url": "https://www.theguardian.com",
+        "title": "News, sport and opinion from the Guardian's global edition | The Guardian",
+        "description": "Latest international news, sport and comment from the Guardian",
+        "color": "#052962",
+        "image_path": "/storage/thumbnails/thumbnail_ca16a751932295691d8dd9bea75f2e09_255.jpg",
+        "type": "link",
+        "order": 49,
+        "updated_at": "2022-02-01T13:56:09.000000Z",
+        "created_at": "2022-02-01T13:56:09.000000Z",
+        "id": 255
+    }
 }
 ```
 
 ### Update posts
 
-*Update an existing post*
+_Update an existing post_
 
 ```
 PATCH /api/posts/{id}
@@ -393,41 +420,41 @@ PATCH /api/posts/{id}
 
 Request body:
 
-| Attribute     | Value                                                        |
-| ------------- | ------------------------------------------------------------ |
+| Attribute     | Value                                                                                                                                                               |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | collection_id | Optional. Specify a collection you want to save your post to instead. To patch a post from the uncategorized collection simply use 0 as value for the collection_id |
-| title         | Optional. Change your posts title                            |
-| content       | Optional. Change your posts content                          |
-| order         | Optional. Specify a new order you wish to move your post to  |
+| title         | Optional. Change your posts title                                                                                                                                   |
+| content       | Optional. Change your posts content                                                                                                                                 |
+| order         | Optional. Specify a new order you wish to move your post to                                                                                                         |
 
 Example Request:
 
-``` json
+```json
 {
-	"title": "The Guardian - News",
-	"order": 37
+    "title": "The Guardian - News",
+    "order": 37
 }
 ```
 
 Example Response:
 
-``` json
+```json
 {
-	"data": {
-		"id": 236,
-		"content": "https://www.theguardian.com/",
-		"type": "link",
-		"url": "https://www.theguardian.com/",
-		"title": "News, sport and opinion from the Guardian's global edition | The Guardian",
-		"description": "Latest international news, sport and comment from the Guardian",
-		"color": "#052962",
-		"image_path": "/storage/thumbnails/thumbnail_ca16a751932295691d8dd9bea75f2e09_255.jpg",
-		"base_url": "https://www.theguardian.com",
-		"collection_id": null,
-		"order": 39,
-		"created_at": "2022-02-01T09:56:52.000000Z",
-		"updated_at": "2022-02-05T09:56:52.000000Z"
-	},
+    "data": {
+        "id": 236,
+        "content": "https://www.theguardian.com/",
+        "type": "link",
+        "url": "https://www.theguardian.com/",
+        "title": "News, sport and opinion from the Guardian's global edition | The Guardian",
+        "description": "Latest international news, sport and comment from the Guardian",
+        "color": "#052962",
+        "image_path": "/storage/thumbnails/thumbnail_ca16a751932295691d8dd9bea75f2e09_255.jpg",
+        "base_url": "https://www.theguardian.com",
+        "collection_id": null,
+        "order": 39,
+        "created_at": "2022-02-01T09:56:52.000000Z",
+        "updated_at": "2022-02-05T09:56:52.000000Z"
+    }
 }
 ```
 
@@ -437,8 +464,7 @@ Example Response:
 DELETE /api/posts/{id}
 ```
 
-*Delete a post by its id*
-
+_Delete a post by its id_
 
 ---
 
@@ -446,7 +472,7 @@ DELETE /api/posts/{id}
 
 ### Retrieve all Tags
 
-*Get multiple tags*
+_Get multiple tags_
 
 ```
 GET /api/tags
@@ -454,28 +480,28 @@ GET /api/tags
 
 Example response:
 
-``` json
+```json
 {
-	"data": [
-		{
-			"id": 1,
-			"name": "important"
-		},
-		{
-			"id": 2,
-			"name": "programming"
-		},
-		{
-			"id": 3,
-			"name": "complicated"
-		},
-	]
+    "data": [
+        {
+            "id": 1,
+            "name": "important"
+        },
+        {
+            "id": 2,
+            "name": "programming"
+        },
+        {
+            "id": 3,
+            "name": "complicated"
+        }
+    ]
 }
 ```
 
 ### Retrieve tags
 
-*Get one tag by its id*
+_Get one tag by its id_
 
 ```
 GET /api/tags/{id}
@@ -483,20 +509,20 @@ GET /api/tags/{id}
 
 Example response:
 
-``` json
+```json
 {
-	"data": [
-		{
-			"id": 1,
-			"name": "important"
-		}
-	]
+    "data": [
+        {
+            "id": 1,
+            "name": "important"
+        }
+    ]
 }
 ```
 
 ### Create tags
 
-*Create a new tag*
+_Create a new tag_
 
 ```
 POST /api/tags
@@ -504,34 +530,34 @@ POST /api/tags
 
 Request body:
 
-| Attribute | Value                                                        |
-| --------- | ------------------------------------------------------------ |
-| name      | Required. Specify a name for your new tag                    |
+| Attribute | Value                                     |
+| --------- | ----------------------------------------- |
+| name      | Required. Specify a name for your new tag |
 
 Example request:
 
-``` json
+```json
 {
-	"name": "video"
+    "name": "video"
 }
 ```
 
 Example response:
 
-``` json
+```json
 {
-	"data": [
-		{
-			"id": 4,
-			"name": "video"
-		}
-	]
+    "data": [
+        {
+            "id": 4,
+            "name": "video"
+        }
+    ]
 }
 ```
 
 ### Create multiple tags
 
-*Create several tag at once*
+_Create several tag at once_
 
 ```
 POST /api/tags
@@ -539,13 +565,13 @@ POST /api/tags
 
 Request body:
 
-| Attribute      | Value                                                        |
-| -------------- | ------------------------------------------------------------ |
-| tags.*.name    | Required. Specify a name for your new tag                    |
+| Attribute    | Value                                     |
+| ------------ | ----------------------------------------- |
+| tags.\*.name | Required. Specify a name for your new tag |
 
 Example request:
 
-``` json
+```json
 {
 	"tags": {
 		{ "name": "videos" },
@@ -556,24 +582,24 @@ Example request:
 
 Example response:
 
-``` json
+```json
 {
-	"data": [
-		{
-			"id": 4,
-			"name": "videos"
-		},
-		{
-			"id": 5,
-			"name": "movies"
-		}
-	]
+    "data": [
+        {
+            "id": 4,
+            "name": "videos"
+        },
+        {
+            "id": 5,
+            "name": "movies"
+        }
+    ]
 }
 ```
 
 ### Update tags
 
-*Update an existing tag*
+_Update an existing tag_
 
 ```
 PATCH /api/tags/{id}
@@ -581,28 +607,28 @@ PATCH /api/tags/{id}
 
 Request body:
 
-| Attribute | Value                                                        |
-| --------- | ------------------------------------------------------------ |
-| name      | Required. Specify a new name for your existing tag           |
+| Attribute | Value                                              |
+| --------- | -------------------------------------------------- |
+| name      | Required. Specify a new name for your existing tag |
 
 Example request:
 
-``` json
+```json
 {
-	"name": "music-videos"
+    "name": "music-videos"
 }
 ```
 
 Example Response:
 
-``` json
+```json
 {
-	"data": [
-		{
-			"id": 4,
-			"name": "music-videos"
-		}
-	]
+    "data": [
+        {
+            "id": 4,
+            "name": "music-videos"
+        }
+    ]
 }
 ```
 
@@ -612,6 +638,6 @@ Example Response:
 DELETE /api/tags/{id}
 ```
 
-*Delete a tag by its id*
+_Delete a tag by its id_
 
 ---

@@ -45,29 +45,8 @@
                 <span class="mb-2 md:px-8 px-4 block text-xs text-gray-700 font-medium uppercase">
                     Collections
                 </span>
-                <ol>
-                    <router-link
-                        v-for="collection in collections"
-                        :key="collection.id"
-                        :class="{
-                            'router-link-exact-active': isActiveLink('/c/' + collection.id),
-                        }"
-                        class="collection"
-                        :to="'/c/' + collection.id">
-                        <svg-vue
-                            v-if="collectionIconIsInline(collection.icon_id)"
-                            :icon="'glyphs/' + collection.icon_id"
-                            class="w-6 h-6 glyphs" />
-                        <svg v-else-if="collection.icon_id" class="w-6 h-6 glyphs">
-                            <use :xlink:href="'/glyphs.svg#' + collection.icon_id" />
-                        </svg>
-                        <svg-vue
-                            v-else
-                            icon="remix/folder-fill"
-                            class="w-4 fill-current align-text-bottom mr-2" />
-                        <span class="align-middle text-gray-700">{{ collection.name }}</span>
-                    </router-link>
-                </ol>
+
+                <CollectionSidebar :collections="collections" />
             </div>
             <router-link to="/c/create" class="block md:mx-8 mx-4 mt-4 text-orange-600 font-medium">
                 <svg-vue
@@ -87,8 +66,12 @@
 import { mapState } from 'vuex'
 import axios from 'axios'
 import { collectionIconIsInline } from './../api/collection'
+import CollectionSidebar from './CollectionSidebar.vue'
 export default {
     name: 'Sidebar',
+    components: {
+        CollectionSidebar,
+    },
     data() {
         return {
             menuIsOpen: false,
@@ -105,7 +88,7 @@ export default {
     },
     methods: {
         init() {
-            this.$store.dispatch('collection/fetchCollections').then(() => {
+            this.$store.dispatch('collection/fetchCollections', { nested: true }).then(() => {
                 if (this.$route.meta.isHome) {
                     this.$store.dispatch('collection/getCurrentCollection', 0)
                 } else if (this.$route.params.collectionId !== null) {
@@ -181,13 +164,19 @@ export default {
     .list {
         .collection {
             @apply inline-block w-full py-1;
-            @apply font-medium text-gray-500 cursor-pointer;
-            @apply px-4;
+            @apply font-medium text-gray-500;
+            @apply pl-4;
+            a {
+                @apply cursor-pointer;
+            }
         }
         @screen sm {
             .collection {
-                @apply px-8;
+                @apply pl-8;
             }
+        }
+        .nested .collection {
+            @apply pl-4;
         }
         .router-link-exact-active {
             border-left: 3px solid;
@@ -207,6 +196,7 @@ export default {
 }
 .sidebar::-webkit-scrollbar {
     width: 3px;
+    height: 3px;
     background-color: #f5f5f5;
 }
 .sidebar::-webkit-scrollbar-track {
@@ -216,5 +206,9 @@ export default {
 .sidebar::-webkit-scrollbar-thumb {
     background-color: #86827d;
     border-radius: 8px;
+}
+.sidebar .collection .fade-enter-active,
+.sidebar .collection.fade-leave-active {
+    transition: opacity 0.1s;
 }
 </style>

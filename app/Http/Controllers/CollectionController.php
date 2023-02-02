@@ -5,13 +5,29 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Collection;
+use Symfony\Component\HttpFoundation\Response;
 
 class CollectionController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $collections = Collection::where('user_id', Auth::user()->id)->orderBy('name')->get();
+        $this->validate($request, [
+            'nested' => 'nullable',
+        ]);
+
+        $request->nested = boolval($request->nested);
+        $collections = null;
+
+        if ($request->nested) {
+            $collections = Collection::with('nested')
+                ->where('user_id', Auth::user()->id)
+                ->whereNull('parent_id')
+                ->orderBy('name')
+                ->get();
+        } else {
+            $collections = Collection::where('user_id', Auth::user()->id)->orderBy('name')->get();
+        }
         return response()->json(['data' => $collections]);
     }
 
@@ -31,14 +47,26 @@ class CollectionController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name'    => 'required|string',
-            'icon_id' => 'nullable|integer'
+            'name'      => 'required|string',
+            'parent_id' => 'nullable|integer',
+            'icon_id'   => 'nullable|integer'
         ]);
 
+        $parent_id = null;
+        if (isset($request->parent_id)) {
+            $collection = Collection::find($request->parent_id);
+            if (!$collection) {
+                return response()->json('Collection not found', 404);
+            }
+            $this->authorize('inherit', $collection);
+            $parent_id = $collection->id;
+        }
+
         $collection = Collection::create([
-            'name' => $request->name,
-            'user_id' => Auth::user()->id,
-            'icon_id' => $request->icon_id
+            'name'      => $request->name,
+            'user_id'   => Auth::user()->id,
+            'parent_id' => $parent_id,
+            'icon_id'   => $request->icon_id
         ]);
 
         return response()->json(['data' => $collection], 201);
@@ -47,8 +75,9 @@ class CollectionController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'name'    => 'required|string',
-            'icon_id' => 'nullable|integer'
+            'name'      => 'required|string',
+            'parent_id' => 'nullable|integer',
+            'icon_id'   => 'nullable|integer'
         ]);
 
         $collection = Collection::find($id);
@@ -56,18 +85,40 @@ class CollectionController extends Controller
 
         $collection->name = $request->name;
         $collection->icon_id = $request->icon_id;
+
+        if (isset($request->parent_id)) {
+            if ($collection->id === $request->parent_id)
+                return response()->json('Not possible', Response::HTTP_BAD_REQUEST);
+            $parent_collection = Collection::find($request->parent_id);
+            if (!$parent_collection) {
+                return response()->json('Collection not found', Response::HTTP_NOT_FOUND);
+            }
+            $this->authorize('inherit', $parent_collection);
+            $collection->parent_id = $parent_collection->id;
+        }
+
         $collection->save();
 
         return response()->json(['data' => $collection], 200);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        $this->validate($request, [
+            'nested' => 'nullable',
+        ]);
+
+        $request->nested = boolval($request->nested);
+
         $collection = Collection::find($id);
         if (!$collection) {
             return response()->json('Collection not found.', 400);
         }
         $this->authorize('delete', $collection);
+
+        if ($request->nested) {
+            Collection::where('user_id', Auth::id())->where('parent_id', $collection->id)->delete();
+        }
         $collection->delete();
 
         return response()->json('', 204);

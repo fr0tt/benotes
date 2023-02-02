@@ -56,6 +56,18 @@ class CollectionPolicy
         return $user->id === $collection->user_id;
     }
 
+    /**
+     * Determine whether the user can inherit the collection.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Collection  $collection
+     * @return mixed
+     */
+    public function inherit(User $user, Collection $collection)
+    {
+        return $user->id === $collection->user_id;
+    }
+
     public function share(User $user, Collection $collection)
     {
         return $user->id === $collection->user_id;

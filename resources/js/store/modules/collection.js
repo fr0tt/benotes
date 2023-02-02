@@ -36,7 +36,7 @@ export default {
         },
     },
     actions: {
-        fetchCollections(context, force = false) {
+        fetchCollections(context, { force = false, nested = false }) {
             if (collectionsPromise) {
                 return collectionsPromise
             }
@@ -44,7 +44,11 @@ export default {
                 return
             }
             collectionsPromise = axios
-                .get('/api/collections')
+                .get('/api/collections', {
+                    params: {
+                        nested: nested,
+                    },
+                })
                 .then((response) => {
                     const collections = response.data.data
                     context.commit('setCollections', collections)
@@ -58,10 +62,11 @@ export default {
         addCollection(context, collection) {
             context.commit('addCollection', collection)
         },
-        updateCollection(context, { id, name, iconId }) {
+        updateCollection(context, { id, name, parentId, iconId }) {
             axios
                 .patch('/api/collections/' + id, {
                     name: name,
+                    parent_id: parentId,
                     icon_id: iconId,
                 })
                 .then((response) => {
@@ -75,9 +80,13 @@ export default {
                     console.log(error.response.data)
                 })
         },
-        deleteCollection(context, id) {
+        deleteCollection(context, { id, nested = false }) {
             axios
-                .delete('/api/collections/' + id)
+                .delete('/api/collections/' + id, {
+                    params: {
+                        nested: nested,
+                    },
+                })
                 .then((response) => {
                     const index = context.state.collections.findIndex((collection) => {
                         return collection.id === id

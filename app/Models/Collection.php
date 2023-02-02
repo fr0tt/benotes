@@ -26,7 +26,7 @@ class Collection extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'user_id', 'icon_id'
+        'name', 'user_id', 'icon_id', 'parent_id'
     ];
 
     /**
@@ -41,5 +41,20 @@ class Collection extends Model
     public static function getCollectionId($id, $is_uncategorized = false)
     {
         return $is_uncategorized || $id === null ? null : intval($id);
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(self::class, 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(self::class, 'parent_id');
+    }
+
+    public function nested()
+    {
+        return $this->children()->with('nested');
     }
 }
