@@ -132,7 +132,7 @@ export default {
 
         const uncategorized = { name: 'Uncategorized', id: null }
         this.optionsCollections.push(uncategorized)
-        this.$store.dispatch('collection/fetchCollections').then(() => {
+        this.$store.dispatch('collection/fetchCollections', {}).then(() => {
             this.optionsCollections = this.optionsCollections.concat(this.collections)
         })
 
@@ -141,7 +141,7 @@ export default {
         })
 
         if (this.isNewPost) {
-            this.$store.dispatch('collection/fetchCollections').then(() => {
+            this.$store.dispatch('collection/fetchCollections', {}).then(() => {
                 if (this.collectionId === 0 || typeof this.collectionId === 'undefined') {
                     this.collection = uncategorized
                 } else {
@@ -164,7 +164,7 @@ export default {
                 .then((post) => {
                     this.post = post
                     this.title = post.title
-                    this.$store.dispatch('collection/fetchCollections').then(() => {
+                    this.$store.dispatch('collection/fetchCollections', {}).then(() => {
                         if (post.collection_id === null) {
                             this.collection = uncategorized
                         } else {

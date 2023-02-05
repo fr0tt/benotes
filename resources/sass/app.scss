@@ -124,6 +124,12 @@ label.label {
         @apply italic border-gray-500 my-1 pl-2 text-gray-700;
         border-left-width: 3px;
     }
+    pre {
+        @apply bg-gray-700 px-4 py-3 rounded;
+        code {
+            @apply text-gray-100;
+        }
+    }
     ul, ol {
         padding: 0 1.25rem;
     }

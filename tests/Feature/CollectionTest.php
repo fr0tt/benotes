@@ -125,6 +125,26 @@ class CollectionTest extends TestCase
             $rootCollection->id . '?nested=true');
         $this->assertEquals(204, $response->status());
         $this->assertEquals(0, Collection::count());
-        $this->assertFalse($rootCollection->exists());
+        $this->assertNull(Collection::find($rootCollection->id));
+    }
+
+    public function testDeleteNotNestedCollectionCompletely()
+    {
+        $user = User::factory()->create([
+            'permission' => 255
+        ]);
+        $collection = Collection::factory()->create([
+            'user_id' => $user->id
+        ]);
+        $unnecessaryCollection = Collection::factory()->create([
+            'user_id' => $user->id
+        ]);
+
+        // use nested flag on purpose "wrong"
+        $response = $this->actingAs($user)->json('DELETE', 'api/collections/' .
+            $collection->id . '?nested=true');
+        $this->assertEquals(204, $response->status());
+        $this->assertEquals(1, Collection::count());
+        $this->assertNull(Collection::find($collection));
     }
 }

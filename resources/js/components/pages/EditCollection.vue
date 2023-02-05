@@ -303,7 +303,7 @@ export default {
             })
         }
         Select.props.components.default = () => ({ OpenIndicator, Deselect })
-        this.$store.dispatch('collection/fetchCollections').then(() => {
+        this.$store.dispatch('collection/fetchCollections', {}).then(() => {
             this.optionsCollections = this.optionsCollections.concat(this.collections)
         })
         navigator.permissions
