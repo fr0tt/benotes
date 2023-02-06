@@ -6,7 +6,7 @@
                     <svg-vue class="w-6 cursor-pointer" icon="remix/menu-line" />
                 </button>
             </div>
-            <div class="flex-1 mb-0 my-auto text-center">
+            <div class="flex-1 my-auto text-center">
                 <span class="text-gray-800 font-medium text-xl">{{ title }}</span>
             </div>
             <div v-if="permission >= 6">
