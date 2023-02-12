@@ -2,37 +2,53 @@
     <transition name="sidebar-slide">
         <div v-if="showSidebar" class="sidebar md:w-48 lg:w-64 xl:w-1/6">
             <div class="list pt-2">
-                <div class="mb-12">
-                    <router-link to="/search" tag="li" class="collection">
-                        <svg-vue class="w-4 fill-current mr-2" icon="remix/search-line" />
-                        <span class="align-middle text-gray-700">Search</span>
-                    </router-link>
-                    <router-link to="/tags" tag="li" class="collection">
-                        <svg-vue class="w-5 fill-current mr-1" icon="material/label" />
-                        <span class="align-middle text-gray-700">Tags</span>
-                    </router-link>
-                    <router-link
-                        to="/restore"
-                        class="collection"
-                        :class="{ 'router-link-exact-active': isActiveLink('/restore') }">
-                        <svg-vue
-                            icon="zondicons/trash"
-                            class="w-4 fill-current align-text-bottom mr-2" />
-                        <span class="align-middle text-gray-700">Recycle Bin</span>
-                    </router-link>
-                    <router-link to="/users" tag="li" class="collection">
-                        <svg-vue class="w-4 fill-current mr-2" icon="remix/group-fill" />
-                        <span class="align-middle text-gray-700">Users</span>
-                    </router-link>
-                    <router-link :to="'/users/' + authUser.id" tag="li" class="collection">
-                        <svg-vue class="w-4 fill-current mr-2" icon="remix/user-settings-fill" />
-                        <span class="align-middle text-gray-700">My Account</span>
-                    </router-link>
-                    <a class="collection" @click="logout()">
-                        <svg-vue class="w-4 fill-current mr-2" icon="remix/logout-circle-line" />
-                        <span class="align-middle text-gray-700">Logout</span>
-                    </a>
-                </div>
+                <ol class="mb-12">
+                    <li>
+                        <router-link to="/search" class="collection">
+                            <svg-vue class="w-4 fill-current mr-2" icon="remix/search-line" />
+                            <span class="align-middle text-gray-700">Search</span>
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link to="/tags" class="collection">
+                            <svg-vue class="w-5 fill-current mr-1" icon="material/label" />
+                            <span class="align-middle text-gray-700">Tags</span>
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link
+                            to="/restore"
+                            class="collection"
+                            :class="{ 'router-link-exact-active': isActiveLink('/restore') }">
+                            <svg-vue
+                                icon="zondicons/trash"
+                                class="w-4 fill-current align-text-bottom mr-2" />
+                            <span class="align-middle text-gray-700">Recycle Bin</span>
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link to="/users" class="collection">
+                            <svg-vue class="w-4 fill-current mr-2" icon="remix/group-fill" />
+                            <span class="align-middle text-gray-700">Users</span>
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link :to="'/users/' + authUser.id" class="collection">
+                            <svg-vue
+                                class="w-4 fill-current mr-2"
+                                icon="remix/user-settings-fill" />
+                            <span class="align-middle text-gray-700">My Account</span>
+                        </router-link>
+                    </li>
+                    <li class="collection">
+                        <a @click="logout()">
+                            <svg-vue
+                                class="w-4 fill-current mr-2"
+                                icon="remix/logout-circle-line" />
+                            <span class="align-middle text-gray-700">Logout</span>
+                        </a>
+                    </li>
+                </ol>
                 <router-link
                     to="/"
                     class="collection mb-4"
@@ -178,10 +194,11 @@ export default {
         .nested .collection {
             @apply pl-4;
         }
-        .router-link-exact-active {
+        .router-link-exact-active-parent {
+            //.router-link-exact-active {
             border-left: 3px solid;
             @apply bg-orange-200 text-gray-700 border-orange-600 font-semibold;
-            svg {
+            svg.no-glyph {
                 margin-left: -3px;
             }
             .glyphs {
