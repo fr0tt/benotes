@@ -182,6 +182,8 @@ export default {
             @apply inline-block w-full py-1;
             @apply font-medium text-gray-500;
             @apply pl-4;
+            border-left: 3px solid;
+            border-color: transparent;
             a {
                 @apply cursor-pointer;
             }
@@ -194,16 +196,9 @@ export default {
         .nested .collection {
             @apply pl-4;
         }
-        .router-link-exact-active-parent {
-            //.router-link-exact-active {
-            border-left: 3px solid;
+        .router-link-exact-active-parent,
+        .collection.router-link-exact-active {
             @apply bg-orange-200 text-gray-700 border-orange-600 font-semibold;
-            svg.no-glyph {
-                margin-left: -3px;
-            }
-            .glyphs {
-                margin-left: calc(-0.25rem + -3px);
-            }
         }
         .glyphs {
             margin-left: -0.25rem;
