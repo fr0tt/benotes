@@ -165,15 +165,7 @@ export default {
         })
 
         if (this.isNewPost) {
-            this.$store.dispatch('collection/fetchCollections', { nested: true }).then(() => {
-                if (this.collectionId === 0 || typeof this.collectionId === 'undefined') {
-                    this.selectedCollectionId = uncategorized.id
-                } else {
-                    this.selectedCollectionId = this.collections.find(
-                        (collection) => collection.id === this.collectionId
-                    ).id
-                }
-            })
+            this.selectedCollectionId = this.collectionId
             this.$store.dispatch('appbar/setAppbar', {
                 title: 'Create Post',
                 button: {
@@ -189,17 +181,7 @@ export default {
                 .then((post) => {
                     this.post = post
                     this.title = post.title
-                    this.$store
-                        .dispatch('collection/fetchCollections', { nested: true })
-                        .then(() => {
-                            if (post.collection_id === null) {
-                                this.selectedCollectionId = uncategorized.id
-                            } else {
-                                this.selectedCollectionId = this.collections.find(
-                                    (collection) => collection.id === post.collection_id
-                                ).id
-                            }
-                        })
+                    this.selectedCollectionId = post.collection_id
                     this.tags = post.tags
                     this.editor.commands.setContent(this.post.content)
                 })
