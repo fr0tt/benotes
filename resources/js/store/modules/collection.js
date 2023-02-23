@@ -90,14 +90,6 @@ export default {
                     icon_id: iconId,
                 })
                 .then((response) => {
-                    /*
-                    const newCollection = response.data.data
-                    const index = context.state.collections.findIndex((collection) => {
-                        return collection.id === newCollection.id
-                    })
-                    context.commit('setCollection', { index, collection: newCollection })
-                    */
-                    // @TODO test
                     context.dispatch('fetchCollections', {
                         nested: true,
                         force: true,

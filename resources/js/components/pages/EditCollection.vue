@@ -138,7 +138,7 @@ export default {
             axios
                 .post('/api/collections', {
                     name: this.name,
-                    parent_id: this.parentCollection?.id,
+                    parent_id: this.parentCollection,
                     icon_id: this.iconId,
                 })
                 .then((response) => {
@@ -157,7 +157,7 @@ export default {
             this.$store.dispatch('collection/updateCollection', {
                 id: this.id,
                 name: this.name,
-                parentId: this.parentCollection?.id,
+                parentId: this.parentCollection,
                 iconId: this.iconId,
             })
             this.handleShare()
