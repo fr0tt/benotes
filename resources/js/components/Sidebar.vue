@@ -1,6 +1,6 @@
 <template>
     <transition name="sidebar-slide">
-        <div v-if="showSidebar" class="sidebar md:w-48 lg:w-64 xl:w-1/6">
+        <div v-if="showSidebar" class="sidebar w-full md:w-48 lg:w-64 xl:w-1/6">
             <div class="list pt-2">
                 <ol class="mb-12">
                     <li>
@@ -62,7 +62,12 @@
                     Collections
                 </span>
 
-                <CollectionSidebar :collections="collections" />
+                <ol>
+                    <CollectionSidebar
+                        v-for="collection in collections"
+                        :key="collection.id"
+                        :collection="collection" />
+                </ol>
             </div>
             <router-link to="/c/create" class="block md:mx-8 mx-4 mt-4 text-orange-600 font-medium">
                 <svg-vue
@@ -157,7 +162,7 @@ export default {
     opacity: 0;
 }
 .sidebar {
-    @apply h-full fixed flex flex-col  pb-6 pt-20 overflow-y-auto z-40 bg-white;
+    @apply h-full fixed flex flex-col pb-6 pt-20 overflow-y-auto z-40 bg-white;
     font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
         Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     box-shadow: 2px 3px 3px 0 rgba(0, 0, 0, 0.1);

@@ -10,12 +10,32 @@
                         tabindex="1"
                         autofocus />
                     <div class="mt-4 mb-4">
+                        <!--
                         <Select
                             v-model="collection"
                             class="inline-block w-80"
                             label="name"
                             :options="optionsCollections"
                             :tabindex="2" />
+                        -->
+                        <Treeselect
+                            v-model="selectedCollectionId"
+                            :options="optionsCollections"
+                            :close-on-select="true"
+                            :clear-on-select="true"
+                            :normalizer="
+                                (node) => {
+                                    return {
+                                        id: node.id,
+                                        label: node.name,
+                                        children:
+                                            node.nested?.length > 0 ? node.nested : node.children,
+                                    }
+                                }
+                            "
+                            placeholder=""
+                            :tabIndex="2"
+                            class="inline-block w-80" />
                     </div>
 
                     <Select
@@ -54,6 +74,8 @@ import Select from 'vue-select'
 import OpenIndicator from '../OpenIndicator.vue'
 import Deselect from '../Deselect.vue'
 import 'vue-select/dist/vue-select.css'
+import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 import EditorMenuBar from '../EditorMenuBar.vue'
 import { Editor, EditorContent } from '@tiptap/vue-2'
@@ -71,6 +93,7 @@ export default {
         Select,
         OpenIndicator,
         Deselect,
+        Treeselect,
         EditorContent,
         EditorMenuBar,
     },
@@ -84,7 +107,7 @@ export default {
             isNewPost: isNaN(this.id),
             post: null,
             title: null,
-            collection: null,
+            selectedCollectionId: null,
             optionsCollections: [],
             tags: null,
             optionsTags: [],
@@ -130,9 +153,10 @@ export default {
         // @todo does this actually work ?
         this.editor.view.props.attributes = { tabindex: '3' }
 
-        const uncategorized = { name: 'Uncategorized', id: null }
+        // id has to be 0 because of Treeselect
+        const uncategorized = { name: 'Uncategorized', id: 0, nested: null }
         this.optionsCollections.push(uncategorized)
-        this.$store.dispatch('collection/fetchCollections', {}).then(() => {
+        this.$store.dispatch('collection/fetchCollections', { nested: true }).then(() => {
             this.optionsCollections = this.optionsCollections.concat(this.collections)
         })
 
@@ -141,13 +165,13 @@ export default {
         })
 
         if (this.isNewPost) {
-            this.$store.dispatch('collection/fetchCollections', {}).then(() => {
+            this.$store.dispatch('collection/fetchCollections', { nested: true }).then(() => {
                 if (this.collectionId === 0 || typeof this.collectionId === 'undefined') {
-                    this.collection = uncategorized
+                    this.selectedCollectionId = uncategorized.id
                 } else {
-                    this.collection = this.collections.find(
+                    this.selectedCollectionId = this.collections.find(
                         (collection) => collection.id === this.collectionId
-                    )
+                    ).id
                 }
             })
             this.$store.dispatch('appbar/setAppbar', {
@@ -159,20 +183,23 @@ export default {
                 },
             })
         } else {
+            // edit post
             this.$store
                 .dispatch('post/getPost', this.id)
                 .then((post) => {
                     this.post = post
                     this.title = post.title
-                    this.$store.dispatch('collection/fetchCollections', {}).then(() => {
-                        if (post.collection_id === null) {
-                            this.collection = uncategorized
-                        } else {
-                            this.collection = this.collections.find(
-                                (collection) => collection.id === post.collection_id
-                            )
-                        }
-                    })
+                    this.$store
+                        .dispatch('collection/fetchCollections', { nested: true })
+                        .then(() => {
+                            if (post.collection_id === null) {
+                                this.selectedCollectionId = uncategorized.id
+                            } else {
+                                this.selectedCollectionId = this.collections.find(
+                                    (collection) => collection.id === post.collection_id
+                                ).id
+                            }
+                        })
                     this.tags = post.tags
                     this.editor.commands.setContent(this.post.content)
                 })
@@ -221,8 +248,8 @@ export default {
                     .post('/api/posts', {
                         title: this.title,
                         content: content,
-                        collection_id: this.collection.id,
-                        is_uncategorized: this.collection.id === null || 0,
+                        collection_id: this.selectedCollectionId,
+                        is_uncategorized: this.selectedCollectionId === null || 0,
                         tags: tags === null ? null : tags.map((tag) => tag.id),
                     })
                     .then((response) => {
@@ -238,12 +265,15 @@ export default {
                         })
                     })
                 this.$router.push({
-                    path: this.collection.id === null ? '/' : '/c/' + this.collection.id,
+                    path:
+                        this.selectedCollectionId === null
+                            ? '/'
+                            : '/c/' + this.selectedCollectionId,
                 })
             } else {
                 this.post.title = this.title
                 this.post.content = content
-                this.post.collection_id = this.collection.id
+                this.post.collection_id = this.selectedCollectionId
                 this.post.tags = tags
                 this.$store.dispatch('post/updatePost', { post: this.post })
                 const originCollectionId = this.post.collection_id

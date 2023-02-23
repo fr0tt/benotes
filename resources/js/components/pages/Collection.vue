@@ -55,12 +55,44 @@ export default {
             drag: false,
         }
     },
+    computed: {
+        posts: {
+            get() {
+                return this.$store.state.post.posts
+            },
+            set(value) {
+                this.$store.commit('post/setPosts', value)
+            },
+        },
+        isSupported() {
+            if (typeof navigator.clipboard === 'undefined') {
+                return false
+            }
+            if (typeof navigator.clipboard.readText === 'undefined') {
+                return false
+            }
+            if (navigator.clipboard.readText() !== null) {
+                return true
+            }
+            return false
+        },
+        isRealCollection() {
+            return this.$route.params.collectionId > 0
+        },
+        ...mapState('collection', ['currentCollection']),
+        ...mapGetters('post', ['maxOrder']),
+        ...mapState('post', ['isLoading']),
+        ...mapState('post', ['isUpdating']),
+        ...mapState('collection', ['collectionMenu']),
+    },
     watch: {
         collectionId() {
             this.init()
-            this.$store.dispatch('collection/getCurrentCollection', this.collectionId).then(() => {
-                this.$store.commit('appbar/setTitle', this.currentCollection.name)
-            })
+            this.$store
+                .dispatch('collection/getCurrentCollection', this.collectionId)
+                .then((name) => {
+                    this.$store.commit('appbar/setTitle', name)
+                })
             this.$store.dispatch('appbar/setOptions', [
                 {
                     label: 'Paste',
@@ -79,6 +111,43 @@ export default {
                 },
             ])
         },
+    },
+    created() {
+        this.init()
+
+        this.$store.dispatch('appbar/setAppbar', {
+            hint: 'Ctrl + Alt + N',
+            button: {
+                label: 'Create',
+                callback: this.create,
+                icon: 'add',
+            },
+            options: [
+                {
+                    label: 'Paste',
+                    longLabel: 'Paste (a link)',
+                    callback: this.pasteNewPost,
+                    icon: 'paste',
+                    condition: this.isSupported,
+                },
+                {
+                    label: 'Edit',
+                    longLabel: 'Edit Collection',
+                    callback: this.editCollection,
+                    icon: 'edit',
+                    color: 'gray',
+                    condition: this.isRealCollection,
+                },
+            ],
+        })
+
+        if (this.currentCollection.name == '' || this.currentCollection.id !== this.collectionId) {
+            this.$store.dispatch('collection/getCurrentCollection', this.collectionId).then(() => {
+                this.$store.commit('appbar/setTitle', this.currentCollection.name, { root: true })
+            })
+        } else {
+            this.$store.commit('appbar/setTitle', this.currentCollection.name, { root: true })
+        }
     },
     methods: {
         init() {
@@ -158,79 +227,12 @@ export default {
             })
         },
         editCollection() {
-            this.$router.push({ path: '/c/' + this.currentCollection.id + '/edit' })
+            this.$router.push({ path: '/c/' + this.collectionId + '/edit' })
         },
         deleteCollection() {
-            this.$store.dispatch('collection/deleteCollection', this.currentCollection.id)
+            this.$store.dispatch('collection/deleteCollection', this.collectionId)
             this.$router.push({ path: '/' })
         },
-    },
-    computed: {
-        posts: {
-            get() {
-                return this.$store.state.post.posts
-            },
-            set(value) {
-                this.$store.commit('post/setPosts', value)
-            },
-        },
-        isSupported() {
-            if (typeof navigator.clipboard === 'undefined') {
-                return false
-            }
-            if (typeof navigator.clipboard.readText === 'undefined') {
-                return false
-            }
-            if (navigator.clipboard.readText() !== null) {
-                return true
-            }
-            return false
-        },
-        isRealCollection() {
-            return this.$route.params.collectionId > 0
-        },
-        ...mapState('collection', ['currentCollection']),
-        ...mapGetters('post', ['maxOrder']),
-        ...mapState('post', ['isLoading']),
-        ...mapState('post', ['isUpdating']),
-        ...mapState('collection', ['collectionMenu']),
-    },
-    created() {
-        this.init()
-
-        this.$store.dispatch('appbar/setAppbar', {
-            hint: 'Ctrl + Alt + N',
-            button: {
-                label: 'Create',
-                callback: this.create,
-                icon: 'add',
-            },
-            options: [
-                {
-                    label: 'Paste',
-                    longLabel: 'Paste (a link)',
-                    callback: this.pasteNewPost,
-                    icon: 'paste',
-                    condition: this.isSupported,
-                },
-                {
-                    label: 'Edit',
-                    longLabel: 'Edit Collection',
-                    callback: this.editCollection,
-                    icon: 'edit',
-                    color: 'gray',
-                    condition: this.isRealCollection,
-                },
-            ],
-        })
-
-        if (this.currentCollection.name == '' || this.currentCollection.id !== this.collectionId) {
-            this.$store.dispatch('collection/getCurrentCollection', this.collectionId).then(() => {
-                this.$store.commit('appbar/setTitle', this.currentCollection.name, { root: true })
-            })
-        } else {
-            this.$store.commit('appbar/setTitle', this.currentCollection.name, { root: true })
-        }
     },
 }
 </script>

@@ -166,3 +166,33 @@ label.label {
         border-top: 2px solid #e6e6e6;
     }
 }
+
+.vue-treeselect {
+    .vue-treeselect__control {
+        @apply border-gray-400 border-2;
+    }
+
+    .vue-treeselect__menu-container {
+        @apply p-0 order-2 border-gray-400 shadow-none;
+
+        .vue-treeselect__menu {
+            @apply py-0;
+        }
+
+        .vue-treeselect__option {
+            padding-top: 0.1rem;
+            padding-bottom: 0.1rem;
+        }
+
+        .vue-treeselect__option:hover {
+            @apply bg-orange-500 text-white;
+            .vue-treeselect__option-arrow-container svg {
+                fill: #fff;
+            }
+        }
+
+        .vue-treeselect__option--selected {
+            @apply text-orange-500 bg-orange-200 font-medium;
+        }
+    }
+}

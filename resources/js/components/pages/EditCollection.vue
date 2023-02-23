@@ -15,18 +15,22 @@
 
             <div class="mb-10">
                 <label class="label">Subcollection of</label>
-
-                <Select
-                    ref="parentCollection"
+                <Treeselect
                     v-model="parentCollection"
-                    class="inline-block w-80"
-                    label="name"
                     :options="optionsCollections"
-                    @close="
-                        () => {
-                            $refs.parentCollection?.$el.querySelector('input[type=search]')?.blur()
+                    :close-on-select="true"
+                    :clear-on-select="true"
+                    :normalizer="
+                        (node) => {
+                            return {
+                                id: node.id,
+                                label: node.name,
+                                children: node.nested.length > 0 ? node.nested : node.children,
+                            }
                         }
-                    " />
+                    "
+                    placeholder=""
+                    class="inline-block w-80" />
             </div>
 
             <div class="mb-10 relative">
@@ -103,16 +107,12 @@ import axios from 'axios'
 import { mapState } from 'vuex'
 import { collectionIconIsInline } from './../../api/collection'
 import IconPicker from '../IconPicker.vue'
-import Select from 'vue-select'
-import OpenIndicator from '../OpenIndicator.vue'
-import Deselect from '../Deselect.vue'
-import 'vue-select/dist/vue-select.css'
+import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 export default {
     components: {
         IconPicker,
-        Select,
-        OpenIndicator,
-        Deselect,
+        Treeselect,
     },
     props: ['id', 'isNew'],
     data() {
@@ -138,11 +138,15 @@ export default {
             axios
                 .post('/api/collections', {
                     name: this.name,
-                    parent_id: this.parentCollection?.id, // @TODO check if this works or not
+                    parent_id: this.parentCollection?.id,
                     icon_id: this.iconId,
                 })
                 .then((response) => {
-                    this.$store.dispatch('collection/addCollection', response.data.data)
+                    //this.$store.dispatch('collection/addCollection', response.data.data)
+                    this.$store.dispatch('collection/fetchCollections', {
+                        nested: true,
+                        force: true,
+                    })
                     this.$router.push({ path: '/c/' + response.data.data.id })
                 })
                 .catch((error) => {
@@ -278,6 +282,7 @@ export default {
                     const collection = response.data.data
                     this.name = collection.name
                     this.iconId = collection.icon_id
+                    this.parentCollection = collection.parent_id
                 })
                 .catch((error) => {
                     console.log(error.response.data)
@@ -302,7 +307,6 @@ export default {
                 },
             })
         }
-        Select.props.components.default = () => ({ OpenIndicator, Deselect })
         this.$store.dispatch('collection/fetchCollections', {}).then(() => {
             this.optionsCollections = this.optionsCollections.concat(this.collections)
         })
@@ -333,15 +337,6 @@ button.switch:hover {
     }
     .label.inline-block {
         @apply inline-block;
-    }
-    .vs__dropdown-toggle {
-        @apply border-gray-400 border-2;
-    }
-    .vs__dropdown-menu {
-        @apply p-0 order-2 border-gray-400 shadow-none;
-        .vs__dropdown-option--highlight {
-            @apply bg-orange-500;
-        }
     }
 }
 .button.red:hover {
