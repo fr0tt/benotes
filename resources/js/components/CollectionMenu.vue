@@ -60,6 +60,9 @@ export default {
         this.optionsCollections.push(uncategorized)
         this.$store.dispatch('collection/fetchCollections', { nested: true }).then(() => {
             this.optionsCollections = this.optionsCollections.concat(this.collections)
+            this.selectedCollectionId = this.collectionMenu.post.collection_id
+                ? this.collectionMenu.post.collection_id
+                : 0
         })
         document.querySelector('#app').addEventListener('click', this.hide, true)
     },
