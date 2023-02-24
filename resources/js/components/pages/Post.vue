@@ -183,7 +183,8 @@ export default {
                 .then((post) => {
                     this.post = post
                     this.title = post.title
-                    this.selectedCollectionId = post.collection_id
+                    this.selectedCollectionId =
+                        post.collection_id === null ? 0 : post.collection_id
                     this.tags = post.tags
                     this.editor.commands.setContent(this.post.content)
                 })

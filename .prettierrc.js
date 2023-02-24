@@ -4,6 +4,6 @@ module.exports = {
     semi: false,
     singleQuote: true,
     bracketSameLine: true,
-    printWidth: 100,
+    printWidth: 90,
     end_of_line: 'lf',
 }
