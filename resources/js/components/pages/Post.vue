@@ -29,7 +29,9 @@
                                         id: node.id,
                                         label: node.name,
                                         children:
-                                            node.nested?.length > 0 ? node.nested : node.children,
+                                            node.nested?.length > 0
+                                                ? node.nested
+                                                : node.children,
                                     }
                                 }
                             "
@@ -230,7 +232,10 @@ export default {
                     .post('/api/posts', {
                         title: this.title,
                         content: content,
-                        collection_id: this.selectedCollectionId,
+                        collection_id:
+                            this.selectedCollectionId > 0
+                                ? this.selectedCollectionId
+                                : null,
                         is_uncategorized: this.selectedCollectionId === null || 0,
                         tags: tags === null ? null : tags.map((tag) => tag.id),
                     })
@@ -309,7 +314,8 @@ export default {
         },
         delete() {
             this.$store.dispatch('post/deletePost', this.id)
-            const route = this.post.collection_id > 0 ? '/c/' + this.post.collection_id : '/'
+            const route =
+                this.post.collection_id > 0 ? '/c/' + this.post.collection_id : '/'
             this.$router.push(route)
         },
     },
@@ -318,8 +324,8 @@ export default {
 <style lang="scss">
 .editor {
     .editorContent {
-        font-family: Inter, 'Noto Sans', 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-            Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+        font-family: Inter, 'Noto Sans', 'Open Sans', -apple-system, BlinkMacSystemFont,
+            'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
         p.is-editor-empty:first-child::before {
             content: attr(data-placeholder);
             pointer-events: none;
