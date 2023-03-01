@@ -1,7 +1,7 @@
 <template>
     <div class="flex justify-center mt-32 h-full">
         <div class="w-full max-w-2xl">
-            <form class="bg-white shadow-md px-12 pt-12 pb-16 mb-4" @submit.prevent="authenticate">
+            <form class="shadow-md px-12 pt-12 pb-16 mb-4" @submit.prevent="authenticate">
                 <div class="mb-4">
                     <svg-vue class="w-16 block m-auto" icon="logo_64x64" />
                     <span

@@ -22,7 +22,6 @@ export default {
 <style lang="scss">
 .card {
     .tags {
-        @apply bg-gray-100;
         margin-left: -0.25rem;
         margin-right: -0.25rem;
         .tag {

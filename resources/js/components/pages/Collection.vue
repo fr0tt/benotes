@@ -141,12 +141,21 @@ export default {
             ],
         })
 
-        if (this.currentCollection.name == '' || this.currentCollection.id !== this.collectionId) {
-            this.$store.dispatch('collection/getCurrentCollection', this.collectionId).then(() => {
-                this.$store.commit('appbar/setTitle', this.currentCollection.name, { root: true })
-            })
+        if (
+            this.currentCollection.name == '' ||
+            this.currentCollection.id !== this.collectionId
+        ) {
+            this.$store
+                .dispatch('collection/getCurrentCollection', this.collectionId)
+                .then(() => {
+                    this.$store.commit('appbar/setTitle', this.currentCollection.name, {
+                        root: true,
+                    })
+                })
         } else {
-            this.$store.commit('appbar/setTitle', this.currentCollection.name, { root: true })
+            this.$store.commit('appbar/setTitle', this.currentCollection.name, {
+                root: true,
+            })
         }
     },
     methods: {

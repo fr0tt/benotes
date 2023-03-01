@@ -10,14 +10,6 @@
                         tabindex="1"
                         autofocus />
                     <div class="mt-4 mb-4">
-                        <!--
-                        <Select
-                            v-model="collection"
-                            class="inline-block w-80"
-                            label="name"
-                            :options="optionsCollections"
-                            :tabindex="2" />
-                        -->
                         <Treeselect
                             v-model="selectedCollectionId"
                             :options="optionsCollections"

@@ -1,8 +1,12 @@
 <template>
     <li>
         <div
-            class="collection"
-            :class="[isActiveLink('/c/' + collection.id) ? 'router-link-exact-active-parent' : '']"
+            class="collection theme__sidebar__collection"
+            :class="[
+                isActiveLink('/c/' + collection.id)
+                    ? 'router-link-exact-active-parent'
+                    : '',
+            ]"
             :style="paddingLeft">
             <router-link
                 class="inline-block w-full"
@@ -21,7 +25,9 @@
                     v-else
                     icon="remix/folder-fill"
                     class="no-glyph w-4 fill-current align-text-bottom mr-2" />
-                <span class="align-middle text-gray-700">{{ collection.name }}</span>
+                <span class="theme__sidebar__label align-middle text-gray-700">{{
+                    collection.name
+                }}</span>
             </router-link>
 
             <button v-if="isNested(collection)" @click="show = !show">

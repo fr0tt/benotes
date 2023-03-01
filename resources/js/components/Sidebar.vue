@@ -1,64 +1,97 @@
 <template>
     <transition name="sidebar-slide">
-        <div v-if="showSidebar" class="sidebar w-full md:w-48 lg:w-64 xl:w-1/6">
+        <div
+            v-if="showSidebar"
+            class="sidebar w-full md:w-48 lg:w-64 xl:w-1/6 theme__sidebar">
             <div class="list pt-2">
                 <ol class="mb-12">
                     <li>
-                        <router-link to="/search" class="collection">
-                            <svg-vue class="w-4 fill-current mr-2" icon="remix/search-line" />
-                            <span class="align-middle text-gray-700">Search</span>
+                        <router-link
+                            to="/search"
+                            class="collection theme__sidebar__collection">
+                            <svg-vue
+                                class="w-4 fill-current mr-2"
+                                icon="remix/search-line" />
+                            <span class="align-middle text-gray-700 theme__sidebar__label"
+                                >Search</span
+                            >
                         </router-link>
                     </li>
                     <li>
-                        <router-link to="/tags" class="collection">
-                            <svg-vue class="w-5 fill-current mr-1" icon="material/label" />
-                            <span class="align-middle text-gray-700">Tags</span>
+                        <router-link
+                            to="/tags"
+                            class="collection theme__sidebar__collection">
+                            <svg-vue
+                                class="w-5 fill-current mr-1"
+                                icon="material/label" />
+                            <span class="align-middle text-gray-700 theme__sidebar__label"
+                                >Tags</span
+                            >
                         </router-link>
                     </li>
                     <li>
                         <router-link
                             to="/restore"
-                            class="collection"
-                            :class="{ 'router-link-exact-active': isActiveLink('/restore') }">
+                            class="collection theme__sidebar__collection"
+                            :class="{
+                                'router-link-exact-active': isActiveLink('/restore'),
+                            }">
                             <svg-vue
                                 icon="zondicons/trash"
                                 class="w-4 fill-current align-text-bottom mr-2" />
-                            <span class="align-middle text-gray-700">Recycle Bin</span>
+                            <span class="align-middle text-gray-700 theme__sidebar__label"
+                                >Recycle Bin</span
+                            >
                         </router-link>
                     </li>
                     <li>
-                        <router-link to="/users" class="collection">
-                            <svg-vue class="w-4 fill-current mr-2" icon="remix/group-fill" />
-                            <span class="align-middle text-gray-700">Users</span>
+                        <router-link
+                            to="/users"
+                            class="collection theme__sidebar__collection">
+                            <svg-vue
+                                class="w-4 fill-current mr-2"
+                                icon="remix/group-fill" />
+                            <span class="align-middle text-gray-700 theme__sidebar__label"
+                                >Users</span
+                            >
                         </router-link>
                     </li>
                     <li>
-                        <router-link :to="'/users/' + authUser.id" class="collection">
+                        <router-link
+                            :to="'/users/' + authUser.id"
+                            class="collection theme__sidebar__collection">
                             <svg-vue
                                 class="w-4 fill-current mr-2"
                                 icon="remix/user-settings-fill" />
-                            <span class="align-middle text-gray-700">My Account</span>
+                            <span class="align-middle text-gray-700 theme__sidebar__label"
+                                >My Account</span
+                            >
                         </router-link>
                     </li>
-                    <li class="collection">
+                    <li class="collection theme__sidebar__collection">
                         <a @click="logout()">
                             <svg-vue
                                 class="w-4 fill-current mr-2"
                                 icon="remix/logout-circle-line" />
-                            <span class="align-middle text-gray-700">Logout</span>
+                            <span class="align-middle text-gray-700 theme__sidebar__label"
+                                >Logout</span
+                            >
                         </a>
                     </li>
                 </ol>
                 <router-link
                     to="/"
-                    class="collection mb-4"
+                    class="collection mb-4 theme__sidebar__collection"
                     :class="{ 'router-link-exact-active': isActiveLink('/') }">
                     <svg-vue
                         icon="remix/folder-unknow-fill"
                         class="w-4 fill-current align-text-bottom mr-2" />
-                    <span class="align-middle text-gray-700">Uncategorized</span>
+                    <span class="align-middle text-gray-700 theme__sidebar__label"
+                        >Uncategorized</span
+                    >
                 </router-link>
-                <span class="mb-2 md:px-8 px-4 block text-xs text-gray-700 font-medium uppercase">
+                <span
+                    class="mb-2 md:px-8 px-4 block text-xs text-gray-700 font-medium uppercase theme__sidebar__subhead">
                     Collections
                 </span>
 
@@ -69,7 +102,9 @@
                         :collection="collection" />
                 </ol>
             </div>
-            <router-link to="/c/create" class="block md:mx-8 mx-4 mt-4 text-orange-600 font-medium">
+            <router-link
+                to="/c/create"
+                class="block md:mx-8 mx-4 mt-4 text-orange-600 font-medium">
                 <svg-vue
                     class="w-4 mr-2 fill-current align-text-bottom"
                     icon="remix/folder-add-fill" />
@@ -77,7 +112,9 @@
             </router-link>
             <div class="w-full px-4 md:px-6 mb-0 mt-auto pt-12">
                 <svg-vue class="w-6 align-text-bottom" icon="logo_64x64" />
-                <span class="flex-1 ml-1 text-orange-600 text-xl font-medium">Benotes</span>
+                <span class="flex-1 ml-1 text-orange-600 text-xl font-medium"
+                    >Benotes</span
+                >
             </div>
         </div>
     </transition>
@@ -109,16 +146,18 @@ export default {
     },
     methods: {
         init() {
-            this.$store.dispatch('collection/fetchCollections', { nested: true }).then(() => {
-                if (this.$route.meta.isHome) {
-                    this.$store.dispatch('collection/getCurrentCollection', 0)
-                } else if (this.$route.params.collectionId !== null) {
-                    this.$store.dispatch(
-                        'collection/getCurrentCollection',
-                        this.$route.params.collectionId
-                    )
-                }
-            })
+            this.$store
+                .dispatch('collection/fetchCollections', { nested: true })
+                .then(() => {
+                    if (this.$route.meta.isHome) {
+                        this.$store.dispatch('collection/getCurrentCollection', 0)
+                    } else if (this.$route.params.collectionId !== null) {
+                        this.$store.dispatch(
+                            'collection/getCurrentCollection',
+                            this.$route.params.collectionId
+                        )
+                    }
+                })
         },
         logout() {
             axios.post('/api/auth/logout').catch((error) => {
@@ -163,8 +202,8 @@ export default {
 }
 .sidebar {
     @apply h-full fixed flex flex-col pb-6 pt-20 overflow-y-auto z-40 bg-white;
-    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-        Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     box-shadow: 2px 3px 3px 0 rgba(0, 0, 0, 0.1);
     svg {
         display: inline-block;
@@ -201,14 +240,15 @@ export default {
         .nested .collection {
             @apply pl-4;
         }
-        .router-link-exact-active-parent,
-        .collection.router-link-exact-active {
-            @apply bg-orange-200 text-gray-700 border-orange-600 font-semibold;
-        }
         .glyphs {
             margin-left: -0.25rem;
             margin-right: 0.25rem;
         }
+    }
+    // outside of .list in order to be able to be overriden
+    .router-link-exact-active-parent,
+    .collection.router-link-exact-active {
+        @apply bg-orange-200 text-gray-700 border-orange-600 font-semibold;
     }
 }
 .sidebar::-webkit-scrollbar {

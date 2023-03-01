@@ -49,7 +49,7 @@
     "@tiptap/vue-2": "^2.0.0-beta.73",
     "dotenv": "^8.2.0",
     "laravel-mix-svg-vue": "^0.3.6",
-    "tailwindcss": "^1.9.6",
+    "tailwindcss": "^2.2.16",
     "vue-cookie": "^1.1.4",
     "vue-lazyload": "^1.3.3",
     "vue-router": "^3.4.9",

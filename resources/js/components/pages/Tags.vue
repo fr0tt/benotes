@@ -7,7 +7,10 @@
         </div>
         <div class="relative">
             <ol class="list w-full">
-                <li v-for="tag in tags" :key="tag.id" class="row flex px-6 py-3">
+                <li
+                    v-for="tag in tags"
+                    :key="tag.id"
+                    class="row flex px-6 py-3 theme__tags__list_item">
                     <router-link :to="'/tags/' + tag.id" class="flex-1 cursor-pointer">
                         {{ tag.name }}
                     </router-link>
@@ -105,7 +108,9 @@ export default {
                     })
                 })
             this.show = false
-            document.querySelector('#app').removeEventListener('click', this.hideContextMenu)
+            document
+                .querySelector('#app')
+                .removeEventListener('click', this.hideContextMenu)
         },
         showContextMenu(event, id) {
             this.show = true
@@ -121,7 +126,9 @@ export default {
                 return
             }
             this.show = false
-            document.querySelector('#app').removeEventListener('click', this.hideContextMenu)
+            document
+                .querySelector('#app')
+                .removeEventListener('click', this.hideContextMenu)
         },
     },
 }
@@ -129,8 +136,8 @@ export default {
 
 <style lang="scss">
 .list {
-    font-family: Inter, Noto Sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: Inter, Noto Sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     .row:nth-child(even) {
         @apply bg-gray-200;
     }

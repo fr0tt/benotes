@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "theme";
+
 html {
   font-family: 'Inter', 'Noto Sans', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif';
 }
@@ -35,7 +37,7 @@ button:focus {
 }
 
 .button {
-    @apply border-2 border-orange-600 text-orange-600 bg-white rounded-lg
+    @apply border-2 border-orange-600 text-orange-600 bg-transparent rounded-lg
         outline-none leading-tight font-semibold text-base px-2 py-1 font-sans;
     .button-icon {
         @apply hidden;
@@ -78,7 +80,8 @@ button:focus {
 }
 
 input.input {
-    @apply border-2 border-gray-400 rounded appearance-none outline-none w-full text-gray-700;
+    @apply border-2 border-gray-400 rounded appearance-none;
+    @apply outline-none w-full text-gray-700 bg-transparent;
     padding: 0.675rem 0.75rem;
     line-height: 1.15;
 }

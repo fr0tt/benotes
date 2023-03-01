@@ -1,12 +1,15 @@
 <template>
-    <div class="card">
+    <div class="card theme__post_item">
         <a :href="post.url" target="_blank" rel="noopener" class="w-3/7 md:w-full">
             <div
                 v-if="post.image_path"
                 :key="post.image_path"
                 v-lazy:background-image="post.image_path"
                 class="h-cover w-full bg-cover bg-center" />
-            <div v-else class="h-cover w-full flex items-center justify-center" :style="color">
+            <div
+                v-else
+                class="h-cover w-full flex items-center justify-center"
+                :style="color">
                 <span class="text-white text-2xl font-medium">{{ domain }}</span>
             </div>
         </a>
@@ -20,7 +23,9 @@
                     class="text-gray-700 text-base overflow-hidden description">
                     {{ post.description }}
                 </p>
-                <p v-else class="text-gray-700 text-base italic overflow-hidden description">
+                <p
+                    v-else
+                    class="text-gray-700 text-base italic overflow-hidden description">
                     No description
                 </p>
             </div>
@@ -30,8 +35,10 @@
                 :class="post.tags && post.tags.length > 0 ? 'md:py-1' : 'py-3 md:py-4'" />
             <div class="px-6 pt-1 mr-2 truncate">
                 <img
-                    :src="'https://external-content.duckduckgo.com/ip3/' + domain + '.ico'"
-                    class="w-4 inline img-vertical-align" />
+                    :src="
+                        'https://external-content.duckduckgo.com/ip3/' + domain + '.ico'
+                    "
+                    class="w-4 inline favicon img-vertical-align" />
                 <a
                     :href="post.url"
                     :title="post.url"

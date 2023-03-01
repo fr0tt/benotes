@@ -25,7 +25,8 @@
                             return {
                                 id: node.id,
                                 label: node.name,
-                                children: node.nested.length > 0 ? node.nested : node.children,
+                                children:
+                                    node.nested.length > 0 ? node.nested : node.children,
                             }
                         }
                     "
@@ -35,7 +36,10 @@
 
             <div class="mb-10 relative">
                 <label class="label">Collection Icon</label>
-                <button class="border-2 border-gray-400 rounded py-2 px-2" @click="openPicker()">
+                <p class="mt-2 mb-4">Select an optional icon for your collection.</p>
+                <button
+                    class="border-2 border-gray-400 rounded py-2 px-2"
+                    @click="openPicker()">
                     <svg-vue
                         v-if="collectionIconIsInline(iconId)"
                         :icon="'glyphs/' + iconId"
@@ -49,9 +53,11 @@
                         class="w-6 text-gray-500 fill-current align-text-bottom" />
                 </button>
                 <transition name="fade">
-                    <IconPicker v-if="showPicker" @iconSelected="iconSelect" />
+                    <IconPicker
+                        v-if="showPicker"
+                        @iconSelected="iconSelect"
+                        class="mt-2" />
                 </transition>
-                <p class="mt-4">Select an optional icon for your collection.</p>
             </div>
 
             <div v-if="!isNew" class="mt-16 mb-16">
@@ -80,7 +86,9 @@
                             @click="copy">
                             <svg-vue class="w-6 mt-2.5" icon="material/link" />
                         </div>
-                        <div class="px-2 bg-gray-300 rounded cursor-pointer" @click="generate()">
+                        <div
+                            class="px-2 bg-gray-300 rounded cursor-pointer"
+                            @click="generate()">
                             <svg-vue class="w-6 mt-2.5" icon="material/autorenew" />
                         </div>
                     </div>
@@ -94,7 +102,10 @@
             <div v-if="!isNew" class="mb-14 py-6 px-6 bg-red-400 rounded">
                 <h3 class="text-xl font-semibold mb-1">Delete collection</h3>
                 <p class="mb-4">Delete this collection and all its content.</p>
-                <button title="Delete Collection" class="button red mb-2" @click="deleteCollection">
+                <button
+                    title="Delete Collection"
+                    class="button red mb-2"
+                    @click="deleteCollection">
                     Delete
                 </button>
             </div>
@@ -164,7 +175,10 @@ export default {
             this.$router.push({ path: '/c/' + this.id })
         },
         deleteCollection() {
-            this.$store.dispatch('collection/deleteCollection', { id: this.id, nested: true })
+            this.$store.dispatch('collection/deleteCollection', {
+                id: this.id,
+                nested: true,
+            })
             this.$store.dispatch('notification/setNotification', {
                 type: 'deletion',
                 title: 'Collection deleted',
@@ -241,19 +255,25 @@ export default {
         },
         openPicker() {
             this.showPicker = true
-            document.querySelector('#app').addEventListener('click', this.hidePicker, true)
+            document
+                .querySelector('#app')
+                .addEventListener('click', this.hidePicker, true)
         },
         hidePicker() {
             if (document.querySelector('#iconPicker').contains(event.target)) {
                 return
             }
             this.showPicker = false
-            document.querySelector('#app').removeEventListener('click', this.hidePicker, true)
+            document
+                .querySelector('#app')
+                .removeEventListener('click', this.hidePicker, true)
         },
         iconSelect(event) {
             this.iconId = Number(event.id)
             this.showPicker = false
-            document.querySelector('#app').removeEventListener('click', this.hidePicker, true)
+            document
+                .querySelector('#app')
+                .removeEventListener('click', this.hidePicker, true)
         },
         collectionIconIsInline,
     },
@@ -336,7 +356,7 @@ button.switch:hover {
         @apply text-white border-gray-700 bg-gray-600 w-auto;
     }
     .label.inline-block {
-        @apply inline-block;
+        display: inline-block;
     }
 }
 .button.red:hover {

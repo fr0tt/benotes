@@ -1,0 +1,91 @@
+html.dark {
+    @apply bg-gray-800 text-white;
+    .theme__appbar {
+        @apply bg-gray-800;
+    }
+    .theme__appbar__title {
+        @apply text-gray-100;
+    }
+    .theme__appbar__menu_icon {
+        @apply text-white;
+    }
+    .theme__sidebar {
+        @apply text-white bg-gray-800;
+        box-shadow: 2px 3px 3px 0 rgb(0 0 0 / 50%)
+    }
+    .theme__sidebar__collection.router-link-exact-active-parent, .theme__sidebar__collection.router-link-exact-active {
+        @apply bg-black border-orange-600 text-gray-300;
+    }
+    .theme__sidebar__label {
+        @apply text-white font-normal;
+    }
+    .theme__sidebar__subhead {
+        @apply text-gray-200;
+    }
+    .theme__post_item  {
+        @apply text-white;
+        background-color: #0f1115;
+        .description {
+            @apply text-gray-600;
+        }
+        .tag {
+            @apply text-orange-600 font-light;
+        }
+        .favicon {
+            @apply bg-white;
+            border-radius: 1rem;
+            padding: 0.05rem;
+        }
+        .more-icon, .restore-icon {
+            @apply text-gray-400 fill-current;
+        }
+    }
+    .theme__tags__list_item, .theme__users__list_item {
+        @apply text-white;
+    }
+    .theme__users__list_item:hover td {
+        @apply text-orange-600 bg-gray-900;
+    }
+    .theme__tags__list_item:nth-child(even),
+    .theme__users__list_item:nth-child(even) {
+        @apply text-black;
+    }
+    h1 {
+        @apply text-gray-100;
+    }
+    button.button {
+        @apply border font-normal;
+    }
+    .searchbar {
+        @apply bg-transparent;
+    }
+    input.input {
+        @apply text-white;
+    }
+    input.input:focus {
+        @apply border-white;
+    }
+    .editorContent {
+        @apply text-white;
+    }
+    #iconPicker {
+        @apply text-black;
+    }
+    .vue-treeselect__control {
+        @apply bg-transparent;
+    }
+    .vue-treeselect__single-value {
+        @apply text-white;
+    }
+    .vue-treeselect__menu {
+        @apply text-black;
+    }
+    .vs__dropdown-toggle {
+        @apply bg-transparent;
+    }
+    .vs__dropdown-menu {
+        @apply text-black;
+    }
+}
+
+

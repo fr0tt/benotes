@@ -15,7 +15,7 @@
                 :key="user.id"
                 :to="'/users/' + user.id"
                 tag="tr"
-                class="table-row cursor-pointer">
+                class="table-row cursor-pointer theme__users__list_item">
                 <td class="px-6 py-3 table-cell">
                     {{ user.name }}
                 </td>
@@ -63,9 +63,9 @@ export default {
 </script>
 
 <style lang="scss">
-table.users {
-    font-family: Inter, Noto Sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+.users {
+    font-family: Inter, Noto Sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     .table-row:nth-child(even) {
         @apply bg-gray-200;
     }

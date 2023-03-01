@@ -7,15 +7,29 @@
 
             <div class="mb-8">
                 <label class="label">Name</label>
-                <input v-model="name" placeholder="Name" type="text" class="input" required />
+                <input
+                    v-model="name"
+                    placeholder="Name"
+                    type="text"
+                    class="input"
+                    required />
             </div>
             <div class="mb-8">
                 <label class="label">Email</label>
-                <input v-model="email" placeholder="Email" type="email" class="input" required />
+                <input
+                    v-model="email"
+                    placeholder="Email"
+                    type="email"
+                    class="input"
+                    required />
             </div>
             <div class="mb-8">
                 <label class="label">Password</label>
-                <input v-model="password" placeholder="Password" type="password" class="input" />
+                <input
+                    v-model="password"
+                    placeholder="Password"
+                    type="password"
+                    class="input" />
             </div>
 
             <p v-if="error" class="text-red-500 mt-4">
@@ -27,18 +41,28 @@
     <div v-else class="mt-20 lg:mx-20 mx-10 pb-8">
         <div class="max-w-lg">
             <div class="mb-8">
-                <h2 class="text-3xl font-medium text-gray-800">
+                <h1 class="text-3xl font-medium text-gray-800">
                     {{ name }}
-                </h2>
+                </h1>
             </div>
 
             <div class="mb-8">
                 <label class="label">Name</label>
-                <input v-model="name" placeholder="Name" type="text" class="input" required />
+                <input
+                    v-model="name"
+                    placeholder="Name"
+                    type="text"
+                    class="input"
+                    required />
             </div>
             <div class="mb-8">
                 <label class="label">Email</label>
-                <input v-model="email" placeholder="Email" type="email" class="input" required />
+                <input
+                    v-model="email"
+                    placeholder="Email"
+                    type="email"
+                    class="input"
+                    required />
             </div>
             <div v-if="isOwner" class="mb-8">
                 <label class="label">Old Password</label>
@@ -60,6 +84,19 @@
             <p v-if="error" class="text-red-500 mt-4">
                 {{ error }}
             </p>
+
+            <h2 class="text-xl my-2 text-gray-800">Preferences</h2>
+
+            <div v-if="isOwner" class="mb-8">
+                <label class="label">Theme</label>
+                <Treeselect
+                    v-model="selectedTheme"
+                    :options="themes"
+                    :close-on-select="true"
+                    :clear-on-select="true"
+                    placeholder=""
+                    class="w-80" />
+            </div>
         </div>
     </div>
 </template>
@@ -67,8 +104,13 @@
 <script>
 import axios from 'axios'
 import { mapState } from 'vuex'
+import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 export default {
     name: 'User',
+    components: {
+        Treeselect,
+    },
     props: ['id', 'isNew'],
     data() {
         return {
@@ -78,10 +120,17 @@ export default {
             password_old: null,
             password_new: null,
             error: null,
+            themes: [
+                { id: 'default', label: 'Default' },
+                { id: 'dark', label: 'Dark' },
+            ],
+            selectedTheme: localStorage.getItem('theme') || 'default',
         }
     },
     methods: {
         update() {
+            this.setTheme()
+
             if (
                 this.name === this.authUser.name &&
                 this.email === this.authUser.email &&
@@ -106,7 +155,8 @@ export default {
                 .catch((error) => {
                     console.log(error)
                     if (typeof error.response.data === 'object') {
-                        const firstError = error.response.data[Object.keys(error.response.data)[0]]
+                        const firstError =
+                            error.response.data[Object.keys(error.response.data)[0]]
                         this.error = firstError.toString()
                     } else {
                         this.error = error.response.data
@@ -114,6 +164,7 @@ export default {
                 })
         },
         create() {
+            this.setTheme()
             axios
                 .post('/api/users', {
                     name: this.name,
@@ -125,7 +176,8 @@ export default {
                 })
                 .catch((error) => {
                     if (typeof error.response.data === 'object') {
-                        const firstError = error.response.data[Object.keys(error.response.data)[0]]
+                        const firstError =
+                            error.response.data[Object.keys(error.response.data)[0]]
                         this.error = firstError.toString()
                     } else {
                         this.error = error.response.data
@@ -145,6 +197,14 @@ export default {
                         this.error = 'Failed. Error ' + error.response.status
                     }
                 })
+        },
+        setTheme() {
+            if (!this.selectedTheme || this.selectedTheme == null) {
+                return
+            }
+            document.documentElement.classList.remove(localStorage.getItem('theme'))
+            localStorage.setItem('theme', this.selectedTheme)
+            document.documentElement.classList.add(this.selectedTheme)
         },
     },
     computed: {

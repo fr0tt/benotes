@@ -1,5 +1,9 @@
 <template>
-    <div class="w-full outline-none" tabindex="0" autofocus @keyup.ctrl.alt.78="createNewPost()">
+    <div
+        class="w-full outline-none"
+        tabindex="0"
+        autofocus
+        @keyup.ctrl.alt.78="createNewPost()">
         <Appbar />
         <div>
             <Sidebar v-if="!staticAuth" />
@@ -40,6 +44,7 @@ export default {
     },
     created() {
         this.isMobile()
+        document.documentElement.classList.add(localStorage.getItem('theme'))
     },
     methods: {
         createNewPost() {

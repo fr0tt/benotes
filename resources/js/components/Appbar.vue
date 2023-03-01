@@ -1,13 +1,21 @@
 <template>
-    <div class="fixed top-0 right-0 w-full bg-white z-50">
+    <div
+        class="fixed top-0 right-0 w-full bg-white z-50 border-b-2 border-orange-600 theme__appbar">
         <div class="flex sm:px-8 px-4 py-3">
             <div class="w-16 my-auto">
-                <button v-if="authUser" class="align-bottom" @click="toggleSidebar()">
-                    <svg-vue class="w-6 cursor-pointer" icon="remix/menu-line" />
+                <button
+                    v-if="authUser"
+                    class="align-bottom theme__appbar__menu_icon"
+                    @click="toggleSidebar()">
+                    <svg-vue
+                        class="w-6 fill-current cursor-pointer"
+                        icon="remix/menu-line" />
                 </button>
             </div>
             <div class="flex-1 mb-0 my-auto text-center">
-                <span class="text-gray-800 font-medium text-xl">{{ title }}</span>
+                <span class="text-gray-800 font-medium text-xl theme__appbar__title">{{
+                    title
+                }}</span>
             </div>
             <div v-if="permission >= 6">
                 <button
@@ -50,7 +58,6 @@
                 </div>
             </div>
         </div>
-        <hr class="block border-t-2 border-orange-600" />
     </div>
 </template>
 
@@ -84,7 +91,9 @@ export default {
                 return
             }
             this.$store.commit('showBottomSheet', false)
-            document.querySelector('#app').removeEventListener('click', this.closeBottomSheet, true)
+            document
+                .querySelector('#app')
+                .removeEventListener('click', this.closeBottomSheet, true)
         },
         icon(icon) {
             if (icon === 'add')

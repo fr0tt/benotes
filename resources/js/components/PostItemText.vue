@@ -1,5 +1,5 @@
 <template>
-    <div class="card bg-gray-100" :class="{ active: isActive }">
+    <div class="card theme__post_item bg-gray-100" :class="{ active: isActive }">
         <router-link v-if="isMobile" :to="'/p/' + post.id" class="block w-full">
             <div class="p-6 h-full">
                 <div class="text-gray-900 text-xl outline-none h-full w-full">
@@ -107,7 +107,9 @@ export default {
                 return
             }
             this.setActive(true)
-            document.querySelector('#app').addEventListener('click', this.stopEditing, true)
+            document
+                .querySelector('#app')
+                .addEventListener('click', this.stopEditing, true)
         },
         setActive(value) {
             this.editor.setEditable(value)
@@ -119,9 +121,13 @@ export default {
             )
             if (!currentPostTarget.contains(event.target)) {
                 this.setActive(false)
-                document.querySelector('#app').removeEventListener('click', this.stopEditing, true)
+                document
+                    .querySelector('#app')
+                    .removeEventListener('click', this.stopEditing, true)
                 const content = this.editor.getHTML()
-                const matches = content.match(/^<p>(?<content>.(?:(?!<p>)(?!<\/p>).)*)<\/p>$/)
+                const matches = content.match(
+                    /^<p>(?<content>.(?:(?!<p>)(?!<\/p>).)*)<\/p>$/
+                )
                 if (matches == null) {
                     this.localPost.content = content
                 } else {

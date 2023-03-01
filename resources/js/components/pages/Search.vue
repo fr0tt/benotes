@@ -12,7 +12,11 @@
                 <div v-else-if="posts.length < 1">No search results.</div>
                 <ul v-else class="-ml-4">
                     <transition-group name="grid-fade">
-                        <Post v-for="post in posts" :key="post.id" :post="post" :permission="7" />
+                        <Post
+                            v-for="post in posts"
+                            :key="post.id"
+                            :post="post"
+                            :permission="7" />
                     </transition-group>
                 </ul>
             </transition>

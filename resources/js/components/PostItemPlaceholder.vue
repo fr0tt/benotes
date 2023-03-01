@@ -1,5 +1,5 @@
 <template>
-    <div v-if="Math.random() > 0.4" class="card animate-pulse">
+    <div v-if="Math.random() > 0.4" class="card theme__post_item animate-pulse">
         <div class="w-3/7 md:w-full h-cover bg-cover bg-gray-400 bg-center" />
         <div class="w-4/7 md:w-full px-6 py-4 space-y-4">
             <div class="h-6 bg-gray-400 rounded w-3/4" />
@@ -11,7 +11,7 @@
             </div>
         </div>
     </div>
-    <div v-else class="card animate-pulse">
+    <div v-else class="card theme__post_item animate-pulse">
         <div class="w-full px-6 py-8 space-y-4">
             <div class="h-8 md:h-10 bg-gray-400 rounded w-5/6 mb-8" />
             <div class="h-4 bg-gray-400 rounded" />
