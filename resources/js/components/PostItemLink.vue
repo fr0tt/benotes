@@ -8,9 +8,11 @@
                 class="h-cover w-full bg-cover bg-center" />
             <div
                 v-else
-                class="h-cover w-full flex items-center justify-center"
+                class="h-cover w-full flex items-center justify-center overflow-hidden"
                 :style="color">
-                <span class="text-white text-2xl font-medium">{{ domain }}</span>
+                <span class="text-white md:text-2xl text-xl font-medium">{{
+                    domain
+                }}</span>
             </div>
         </a>
         <div class="w-4/7 md:w-full">

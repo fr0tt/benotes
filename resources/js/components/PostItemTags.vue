@@ -1,6 +1,6 @@
 <template>
     <div class="tags">
-        <ul class="truncate mr-2">
+        <ul class="truncate">
             <li v-for="tag in tags" :key="tag.id" class="tag">
                 <router-link :to="'/tags/' + tag.id"> #{{ tag.name }} </router-link>
             </li>
@@ -22,11 +22,12 @@ export default {
 <style lang="scss">
 .card {
     .tags {
-        margin-left: -0.25rem;
-        margin-right: -0.25rem;
+        @apply bg-gray-100;
         .tag {
             @apply inline text-gray-800 font-medium text-sm;
-            padding: 0.125rem 0.3rem;
+            padding-top: 0.3rem;
+            padding-bottom: 0.3rem;
+            padding-right: 0.125rem;
         }
     }
     .tags.item-text {

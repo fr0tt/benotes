@@ -28,6 +28,9 @@ html.dark {
         .description {
             @apply text-gray-600;
         }
+        .tags {
+            background-color: #0f1115;
+        }
         .tag {
             @apply text-orange-600 font-light;
         }
