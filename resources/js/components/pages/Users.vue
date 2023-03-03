@@ -6,9 +6,10 @@
             </div>
         </div>
         <table class="users table w-full">
-            <tr class="table-row">
-                <th class="table-cell px-6 py-3 text-left text-gray-800">Name</th>
-                <th class="table-cell px-6 py-3 text-left text-gray-800">Email</th>
+            <tr class="table-row theme__users__list_item">
+                <th class="table-cell px-6 pt-3 pb-6 text-left text-gray-800">Name</th>
+                <th class="table-cell px-6 pt-3 pb-6 text-left text-gray-800">Email</th>
+                <th></th>
             </tr>
             <router-link
                 v-for="user in users"
@@ -16,11 +17,14 @@
                 :to="'/users/' + user.id"
                 tag="tr"
                 class="table-row cursor-pointer theme__users__list_item">
-                <td class="px-6 py-3 table-cell">
-                    {{ user.name }}
-                </td>
-                <td class="px-6 py-3 table-cell">
-                    {{ user.email }}
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td class="text-right">
+                    <span
+                        v-if="user.permission == 255"
+                        class="px-2 py-1 bg-gray-800 text-white border border-white"
+                        >Owner</span
+                    >
                 </td>
             </router-link>
         </table>
@@ -70,6 +74,7 @@ export default {
         @apply bg-gray-200;
     }
     td {
+        @apply px-6 py-3 table-cell;
         transition: background-color 0.2s;
     }
     .table-row:hover td {
