@@ -4,7 +4,7 @@
             ref="cmModal"
             class="fixed top-0 left-0 w-full h-full bg-half-transparent z-50">
             <div
-                class="w-5/6 max-w-xl m-auto mt-10 border-gray-400 rounded-lg bg-gray-100">
+                class="w-5/6 max-w-xl m-auto mt-10 border-gray-400 rounded-lg bg-gray-100 theme__modal">
                 <div class="py-8 mx-6">
                     <h2 class="mb-4 mx-1 text-3xl text-orange-600 font-bold">
                         Collections

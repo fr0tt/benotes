@@ -104,7 +104,7 @@
                 <p class="mb-4">Delete this collection and all its content.</p>
                 <button
                     title="Delete Collection"
-                    class="button red mb-2"
+                    class="button red mb-2 bg-white"
                     @click="deleteCollection">
                     Delete
                 </button>

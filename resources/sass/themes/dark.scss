@@ -43,6 +43,9 @@ html.dark {
             @apply text-gray-400 fill-current;
         }
     }
+    .theme__modal {
+        @apply bg-gray-800;
+    }
     .theme__tags__list_item, .theme__users__list_item, .theme__users__list_item th {
         @apply text-white;
     }
