@@ -137,7 +137,7 @@ class PostService
     public function sanitize(string $str)
     {
         return strip_tags($str, '<a><strong><b><em><i><s><p><h1><h2><h3><h4><h5>' .
-            '<pre><br><hr><blockquote><ul><li><ol><code><unfurling-link>');
+            '<pre><br><hr><blockquote><ul><li><ol><code><img><unfurling-link>');
     }
 
     public function getInfo(string $url, $act_as_bot = false)

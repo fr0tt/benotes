@@ -3,7 +3,7 @@
     "description": "App for bookmarks and notes.",
     "keywords": ["laravel", "bookmark", "bookmarks", "notes", "posts", "todo"],
     "license": "MIT",
-    "version": "2.6.1",
+    "version": "2.6.2",
     "type": "project",
     "require": {
         "php": "^7.3|^8.0",

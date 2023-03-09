@@ -38,8 +38,9 @@
         <button
             v-else-if="restore"
             :title="'Restore into ' + collectionName"
-            @click="restorePost()">
-            <svg-vue class="restore-icon" icon="remix/inbox-unarchive-line" />
+            @click="restorePost()"
+            class="restore-icon">
+            <svg-vue icon="remix/inbox-unarchive-line" />
         </button>
 
         <div v-if="post.isUpdating" class="absolute bottom-0 left-0 mb-5 ml-5 bg-white">
@@ -61,6 +62,7 @@ import Underline from '@tiptap/extension-underline'
 import Link from '@tiptap/extension-link'
 import TaskList from '@tiptap/extension-task-list'
 import TaskItem from '@tiptap/extension-task-item'
+import Image from '@tiptap/extension-image'
 import UnfurlingLink from '../UnfurlingLink'
 import PostItemTags from './PostItemTags.vue'
 
@@ -83,6 +85,7 @@ export default {
                     Link,
                     TaskList,
                     TaskItem,
+                    Image,
                     UnfurlingLink,
                 ],
                 content: this.post.content,

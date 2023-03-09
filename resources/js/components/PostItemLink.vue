@@ -62,8 +62,9 @@
             <button
                 v-else-if="restore"
                 :title="'Restore into ' + collectionName"
-                @click="restorePost()">
-                <svg-vue class="restore-icon" icon="remix/inbox-unarchive-line" />
+                @click="restorePost()"
+                class="restore-icon">
+                <svg-vue icon="remix/inbox-unarchive-line" />
             </button>
         </div>
     </div>
