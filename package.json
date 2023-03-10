@@ -18,7 +18,7 @@
   "devDependencies": {
     "@playwright/test": "^1.31.2",
     "axios": "^0.21.4",
-    "browser-sync": "^2.26.14",
+    "browser-sync": "^2.27.12",
     "browser-sync-webpack-plugin": "^2.3.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.5.0",
