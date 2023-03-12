@@ -7,6 +7,7 @@
     "type": "project",
     "require": {
         "php": "^7.3|^8.0",
+        "chrome-php/chrome": "^1.7",
         "doctrine/dbal": "^3.5",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",

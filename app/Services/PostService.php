@@ -5,12 +5,14 @@ namespace App\Services;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
+use \HeadlessChromium\BrowserFactory;
 
 use App\Models\Post;
 use App\Models\Collection;
 use App\Models\User;
 use App\Models\PostTag;
 use ColorThief\ColorThief;
+use Illuminate\Support\Facades\Cache;
 
 class PostService
 {
@@ -254,6 +256,7 @@ class PostService
 
     public function saveImage($image_path, Post $post)
     {
+
         if (empty($image_path)) {
             return;
         }
@@ -275,6 +278,53 @@ class PostService
 
         $post->image_path = $filename;
         $post->save();
+    }
+
+    public function screenshot(String $path, String $url, int $width, int $height)
+    {
+        $useragent = 'Googlebot/2.1 (+http://www.google.com/bot.html)';
+
+        if (Cache::has('socket')) {
+
+            $socket = Cache::get('socket');
+            try {
+                $browser = BrowserFactory::connectToBrowser($socket);
+            } catch (\HeadlessChromium\Exception\BrowserConnectionFailed $e) {
+                $factory = new BrowserFactory('chromium-browser');
+                $browser = $factory->createBrowser([
+                    'keepAlive' => true,
+                    'userAgent' => $useragent,
+                ]);
+
+                Cache::put('socket', $browser->getSocketUri());
+            }
+        } else {
+            $factory = new BrowserFactory('chromium-browser');
+            $browser = $factory->createBrowser([
+                'keepAlive' => true,
+                'userAgent' => $useragent,
+                // 'debugLogger' => 'php://stdout',
+                // 'sendSyncDefaultTimeout' => 10000,
+                'customFlags' => [
+                    '--disable-dev-shm-usage',
+                ],
+            ]);
+
+            Cache::put('socket', $browser->getSocketUri());
+        }
+
+        try {
+            $page = $browser->createPage();
+            $page->navigate($url)->waitForNavigation();
+            // $page->navigate($url)->waitForNavigation(\HeadlessChromium\Page::DOM_CONTENT_LOADED, 10000);
+            $page->screenshot([
+                'format' => 'jpeg',
+                'quality' => 90,
+                'clip' => new \HeadlessChromium\Clip(0, 0, $width, $height)
+            ])->saveToFile($path);
+        } finally {
+            $browser->close();
+        }
     }
 
     public function boolValue($value = null): bool
