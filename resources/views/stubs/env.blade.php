@@ -15,9 +15,6 @@ DB_DATABASE={{ $db_database }}
 DB_USERNAME={{ $db_username }}
 DB_PASSWORD={{ $db_password }}
 
-CACHE_DRIVER=file
-QUEUE_CONNECTION=sync
-
 MAIL_DRIVER=smtp
 MAIL_HOST=
 MAIL_PORT=587
