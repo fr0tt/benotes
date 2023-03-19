@@ -15,7 +15,15 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('backup:run')->cron(config('benotes.backup_interval'));
+        if (config('benotes.use_filesystem') == false) {
+            return;
+        }
+        if (config('benotes.run_backup')) {
+            $schedule->command('backup:run')->cron(config('benotes.backup_interval'));
+        }
+        if (config('benotes.generate_missing_thumbnails')) {
+            $schedule->command('queue:work --max-jobs=10')->cron(config('thumbnail_filler_interval'));
+        }
     }
 
     /**
@@ -25,7 +33,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

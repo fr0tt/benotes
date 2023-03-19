@@ -44,7 +44,7 @@ class ThumbnailCommand extends Command
     {
 
         $this->info('What post would you like to "improve" ?');
-        $post_id = $this->ask('Please specify a post id or type all.');
+        $post_id = $this->ask('Please specify a post id or type all');
         if ($post_id === 'all') {
             $this->info('This can take several minutes...');
             $posts = Post::whereNull('deleted_at')
@@ -69,9 +69,14 @@ class ThumbnailCommand extends Command
             return;
         }
 
+        if (@get_headers($post->url) == false) {
+            $this->error('Post has no existing link');
+            return;
+        }
+
         $filename = 'thumbnail_' . md5($post->url) . '_' . $post->id . '.jpg';
         $path = storage_path('app/public/thumbnails/' . $filename);
-        $this->service->screenshot($path, $post->url, 400, 210);
+        $this->service->screenshot($filename, $path, $post->url, 400, 210);
         if (file_exists($path)) {
             $post->image_path = $filename;
             $post->save();

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\ProcessMissingThumbnail;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
@@ -258,6 +259,7 @@ class PostService
     {
 
         if (empty($image_path)) {
+            ProcessMissingThumbnail::dispatchIf(config('benotes.generate_missing_thumbnails'), $post);
             return;
         }
 
@@ -280,8 +282,9 @@ class PostService
         $post->save();
     }
 
-    public function screenshot(String $path, String $url, int $width, int $height)
+    public function screenshot(String $filename, String $path, String $url, int $width = 400, int $height = 210)
     {
+        // use googlebot in order to avoid among others cookie consensus banners
         $useragent = 'Googlebot/2.1 (+http://www.google.com/bot.html)';
 
         if (Cache::has('socket')) {
@@ -303,8 +306,6 @@ class PostService
             $browser = $factory->createBrowser([
                 'keepAlive' => true,
                 'userAgent' => $useragent,
-                // 'debugLogger' => 'php://stdout',
-                // 'sendSyncDefaultTimeout' => 10000,
                 'customFlags' => [
                     '--disable-dev-shm-usage',
                 ],
@@ -317,11 +318,14 @@ class PostService
             $page = $browser->createPage();
             $page->navigate($url)->waitForNavigation();
             // $page->navigate($url)->waitForNavigation(\HeadlessChromium\Page::DOM_CONTENT_LOADED, 10000);
-            $page->screenshot([
-                'format' => 'jpeg',
-                'quality' => 90,
-                'clip' => new \HeadlessChromium\Clip(0, 0, $width, $height)
-            ])->saveToFile($path);
+            $page->screenshot()->saveToFile($path);
+            // temporally store the image
+            $image = Image::make($path);
+            if (!$image) {
+                return;
+            }
+            $image = $image->fit($width, $height)->limitColors(255);
+            Storage::put('thumbnails/' . $filename, $image->stream());
         } finally {
             $browser->close();
         }

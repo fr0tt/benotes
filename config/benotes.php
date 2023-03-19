@@ -24,6 +24,8 @@ return [
 
     'curl_timeout' => env('CURL_TIMEOUT', 10),
 
+    'run_backup' => env('RUN_BACKUP', false),
+
     /*
     |--------------------------------------------------------------------------
     | Backup Disk
@@ -58,5 +60,19 @@ return [
     'backup_interval' => env('BACKUP_INTERVAL', '0 1 * * *'),
 
     'temporary_directory' => storage_path('tmp'),
+
+    'generate_missing_thumbnails' => env('GENERATE_MISSING_THUMBNAILS', false),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Missing Thumbnail Generation Interval
+    |--------------------------------------------------------------------------
+    |
+    | This option controls how often missing thumbnails should be created.
+    | Default is set to every hour at minute 30.
+    |
+    */
+
+    'thumbnail_filler_interval' => env('THUMBNAIL_FILLER_INTERVAL', '30 * * * *'),
 
 ];
