@@ -69,10 +69,10 @@ return [
     |--------------------------------------------------------------------------
     |
     | This option controls how often missing thumbnails should be created.
-    | Default is set to every hour at minute 30.
+    | Default is set to every 6 hours.
     |
     */
 
-    'thumbnail_filler_interval' => env('THUMBNAIL_FILLER_INTERVAL', '30 * * * *'),
+    'thumbnail_filler_interval' => env('THUMBNAIL_FILLER_INTERVAL', '0 */6 * * *'),
 
 ];
