@@ -74,9 +74,9 @@ class ThumbnailCommand extends Command
             return;
         }
 
-        $filename = 'thumbnail_' . md5($post->url) . '_' . $post->id . '.jpg';
-        $path = storage_path('app/public/thumbnails/' . $filename);
-        $this->service->screenshot($filename, $path, $post->url, 400, 210);
+        $filename = $this->service->generateThumbnailFilename($post->url, $post->id);
+        $path = $this->service->getThumbnailPath($filename);
+        $this->service->screenshot($filename, $path, $post->url);
         if (file_exists($path)) {
             $post->image_path = $filename;
             $post->save();

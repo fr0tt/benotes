@@ -5,7 +5,6 @@ namespace App\Jobs;
 use App\Models\Post;
 use App\Services\PostService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -16,8 +15,7 @@ class ProcessMissingThumbnail implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private $post, $service; // @TODO needs to e public or not ?
-
+    private $post, $service;
 
     /**
      * The number of times the job may be attempted.
@@ -34,7 +32,7 @@ class ProcessMissingThumbnail implements ShouldQueue
      */
     public function __construct(Post $post)
     {
-        $this->post = $post->withoutRelations(); // @TODO not sure if necessary
+        $this->post = $post->withoutRelations();
         $this->service = new PostService();
     }
 
@@ -61,13 +59,16 @@ class ProcessMissingThumbnail implements ShouldQueue
         if (!empty($this->post->image_path)) {
             return;
         }
+        if (!empty($this->post->deleted_at)) {
+            return;
+        }
         if (@get_headers($this->post->url) == false) {
             return;
         }
 
-        $filename = 'thumbnail_' . md5($this->post->url) . '_' . $this->post->id . '.jpg';
-        $path = storage_path('app/public/thumbnails/' . $filename);
-        $this->service->screenshot($path, $this->post->url, 400, 210);
+        $filename = $this->service->generateThumbnailFilename($this->post->url, $this->post->id);
+        $path = $this->service->getThumbnailPath($filename);
+        $this->service->screenshot($filename, $path, $this->post->url);
 
         if (file_exists($path)) {
             $this->post->image_path = $filename;

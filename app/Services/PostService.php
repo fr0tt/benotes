@@ -274,7 +274,7 @@ class PostService
             return;
         }
 
-        $filename = 'thumbnail_' . md5($image_path) . '_' . $post->id . '.jpg';
+        $filename = $this->generateThumbnailFilename($image_path, $post->id);
         $image = $image->fit(400, 210)->limitColors(255);
         Storage::put('thumbnails/' . $filename, $image->stream());
 
@@ -286,6 +286,7 @@ class PostService
     {
         // use googlebot in order to avoid among others cookie consensus banners
         $useragent = 'Googlebot/2.1 (+http://www.google.com/bot.html)';
+        $browser = config('benotes.browser') === 'chromium' ? 'chromium-browser' : 'google-chrome';
 
         if (Cache::has('socket')) {
 
@@ -293,7 +294,7 @@ class PostService
             try {
                 $browser = BrowserFactory::connectToBrowser($socket);
             } catch (\HeadlessChromium\Exception\BrowserConnectionFailed $e) {
-                $factory = new BrowserFactory('chromium-browser');
+                $factory = new BrowserFactory($browser);
                 $browser = $factory->createBrowser([
                     'keepAlive' => true,
                     'userAgent' => $useragent,
@@ -302,7 +303,7 @@ class PostService
                 Cache::put('socket', $browser->getSocketUri());
             }
         } else {
-            $factory = new BrowserFactory('chromium-browser');
+            $factory = new BrowserFactory($browser);
             $browser = $factory->createBrowser([
                 'keepAlive' => true,
                 'userAgent' => $useragent,
@@ -324,13 +325,21 @@ class PostService
             if (!$image) {
                 return;
             }
-            $image = $image->fit($width, $height)->limitColors(255);
+            $image = $image->fit($width, $height);
             Storage::put('thumbnails/' . $filename, $image->stream());
         } finally {
             $browser->close();
         }
     }
+    public function generateThumbnailFilename($name, $id)
+    {
+        return 'thumbnail_' . md5($name) . '_' . $id . '.jpg';
+    }
 
+    public function getThumbnailPath($filename)
+    {
+        return storage_path('app/public/thumbnails/' . $filename);
+    }
     public function boolValue($value = null): bool
     {
         return filter_var($value, FILTER_VALIDATE_BOOLEAN);
