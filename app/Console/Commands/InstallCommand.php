@@ -65,6 +65,7 @@ class InstallCommand extends Command
         $username = $this->ask('Username', 'Admin');
         $email = $this->ask('Email');
         $password = $this->secret('Password');
+        $password2 = $this->secret('Re-entered password');
 
         $validator = Validator::make([
             'username' => $username,
@@ -73,6 +74,11 @@ class InstallCommand extends Command
             'username' => 'string',
             'email' => 'email',
         ]);
+
+        if ($password !== $password2) {
+            $this->error('Re-entered password does not match password');
+            return;
+        }
 
         if ($validator->fails()) {
             foreach ($validator->errors()->all() as $error) {

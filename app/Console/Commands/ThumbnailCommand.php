@@ -46,11 +46,12 @@ class ThumbnailCommand extends Command
         $this->info('What post would you like to "improve" ?');
         $post_id = $this->ask('Please specify a post id or type all');
         if ($post_id === 'all') {
-            $this->info('This can take several minutes...');
             $posts = Post::whereNull('deleted_at')
                 ->where('type', Post::POST_TYPE_LINK)
                 ->whereNull('image_path');
-            foreach ($posts as $post) {
+            $this->info($posts->count() . ' potential posts found. This could take several minutes.');
+            foreach ($posts->get() as $post) {
+                $this->info('Process post ' . $post->id . '...');
                 $this->createThumbnail($post);
             }
             return 0;

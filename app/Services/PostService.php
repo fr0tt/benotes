@@ -296,6 +296,7 @@ class PostService
             } catch (\HeadlessChromium\Exception\BrowserConnectionFailed $e) {
                 $factory = new BrowserFactory($browser);
                 $browser = $factory->createBrowser([
+                    'noSandbox' => true,
                     'keepAlive' => true,
                     'userAgent' => $useragent,
                 ]);
@@ -305,6 +306,7 @@ class PostService
         } else {
             $factory = new BrowserFactory($browser);
             $browser = $factory->createBrowser([
+                'noSandbox' => true,
                 'keepAlive' => true,
                 'userAgent' => $useragent,
                 'customFlags' => [
