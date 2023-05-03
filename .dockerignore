@@ -1,0 +1,12 @@
+/node_modules
+/notes
+/playwright
+/.vscode
+npm-debug.log
+.phpunit.result.cache
+Dockerfile*
+docker-compose*
+.dockerignore
+.git
+.gitignore
+README.md
