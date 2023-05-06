@@ -15,7 +15,7 @@
         </router-link>
         <div v-else class="p-6 h-full">
             <div
-                class="text-gray-900 text-xl outline-none h-full w-full"
+                class="text-gray-900 text-xl overflow-x-hidden outline-none h-full w-full"
                 :class="{ 'overflow-hidden cursor-pointer': !isActive }"
                 @click="edit()">
                 <input
