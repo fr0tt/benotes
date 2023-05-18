@@ -42,6 +42,28 @@ class CollectionTest extends TestCase
         $this->assertEquals($rootCollection->id, $childCollection->parent_id);
     }
 
+    public function testRemoveChildCollection()
+    {
+        $user = User::factory()->create([
+            'permission' => 255
+        ]);
+        $rootCollection = Collection::factory()->create([
+            'user_id' => $user->id
+        ]);
+        $childCollection = Collection::factory()->create([
+            'user_id' => $user->id,
+            'parent_id' => $rootCollection->id
+        ]);
+
+        $this->assertEquals($rootCollection->id, $childCollection->parent_id);
+
+        $response = $this->actingAs($user)->json('PATCH', 'api/collections/' . $childCollection->id, [
+            'is_root' => true
+        ]);
+        $this->assertEquals(200, $response->status());
+        $this->assertEmpty(Collection::find($childCollection->id)->parent_id);
+    }
+
     public function testDeleteNestedCollection()
     {
         $user = User::factory()->create([
@@ -140,11 +162,11 @@ class CollectionTest extends TestCase
             'user_id' => $user->id
         ]);
 
-        // use nested flag on purpose "wrong"
+        // use nested flag intentional incorrect
         $response = $this->actingAs($user)->json('DELETE', 'api/collections/' .
             $collection->id . '?nested=true');
         $this->assertEquals(204, $response->status());
         $this->assertEquals(1, Collection::count());
-        $this->assertNull(Collection::find($collection));
+        $this->assertEmpty(Collection::find($collection));
     }
 }
