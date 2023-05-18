@@ -232,6 +232,7 @@ Request body:
 | name      | Required. Specify a new name for your existing collection                      |
 | parent_id | Optional. Specify a parent collection (in order to nest collections)           |
 | icon_id   | Optional. Specify a icon_id to be use. Be careful e.g. 109-200 does not exist. |
+| is_root   | Optional. Specify if this is a root collection meaning is has no parent.       |
 
 Example request:
 
@@ -248,7 +249,9 @@ Example Response:
     "data": [
         {
             "id": 1,
-            "name": "News & Newsletters"
+            "name": "News & Newsletters",
+            "icon_id": null,
+            "parent_id": null
         }
     ]
 }
@@ -420,12 +423,12 @@ PATCH /api/posts/{id}
 
 Request body:
 
-| Attribute     | Value                                                                                                                                                               |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| collection_id | Optional. Specify a collection you want to save your post to instead. To patch a post from the uncategorized collection simply use 0 as value for the collection_id |
-| title         | Optional. Change your posts title                                                                                                                                   |
-| content       | Optional. Change your posts content                                                                                                                                 |
-| order         | Optional. Specify a new order you wish to move your post to                                                                                                         |
+| Attribute     | Value                                                                |
+| ------------- | -------------------------------------------------------------------- |
+| collection_id | Optional. Specify a collection you want to save your post to instead |
+| title         | Optional. Change your posts title                                    |
+| content       | Optional. Change your posts content                                  |
+| order         | Optional. Specify a new order you wish to move your post to          |
 
 Example Request:
 

@@ -88,6 +88,7 @@ export default {
                     name: name,
                     parent_id: parentId,
                     icon_id: iconId,
+                    is_root: parentId == null
                 })
                 .then((response) => {
                     context.dispatch('fetchCollections', {

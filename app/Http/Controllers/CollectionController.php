@@ -47,9 +47,9 @@ class CollectionController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name'      => 'required|string',
+            'name' => 'required|string',
             'parent_id' => 'nullable|integer',
-            'icon_id'   => 'nullable|integer'
+            'icon_id' => 'nullable|integer'
         ]);
 
         $parent_id = null;
@@ -63,10 +63,10 @@ class CollectionController extends Controller
         }
 
         $collection = Collection::create([
-            'name'      => $request->name,
-            'user_id'   => Auth::user()->id,
+            'name' => $request->name,
+            'user_id' => Auth::user()->id,
             'parent_id' => $parent_id,
-            'icon_id'   => $request->icon_id
+            'icon_id' => $request->icon_id
         ]);
 
         return response()->json(['data' => $collection], 201);
@@ -75,16 +75,23 @@ class CollectionController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'name'      => 'required|string',
+            'name' => 'nullable|string',
+            'icon_id' => 'nullable|integer',
             'parent_id' => 'nullable|integer',
-            'icon_id'   => 'nullable|integer'
+            'is_root' => 'nullable|boolean',
         ]);
+
+        $request->is_root = boolval($request->is_root);
 
         $collection = Collection::find($id);
         $this->authorize('update', $collection);
 
-        $collection->name = $request->name;
-        $collection->icon_id = $request->icon_id;
+        if (isset($request->name)) {
+            $collection->name = $request->name;
+        }
+        if (isset($request->icon_id)) {
+            $collection->icon_id = $request->icon_id;
+        }
 
         if (isset($request->parent_id)) {
             if ($collection->id === $request->parent_id)
@@ -95,6 +102,10 @@ class CollectionController extends Controller
             }
             $this->authorize('inherit', $parent_collection);
             $collection->parent_id = $parent_collection->id;
+        }
+
+        if ($request->is_root) {
+            $collection->parent_id = null;
         }
 
         $collection->save();
