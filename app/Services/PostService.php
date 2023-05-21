@@ -86,6 +86,34 @@ class PostService
         return $posts->orderBy('order', 'desc')->get();
     }
 
+    public function store($title, $content, $collection_id, $tags, $user_id): Post
+    {
+        $content = $this->sanitize($content);
+        $info = $this->computePostData($title, $content);
+
+        $attributes = array_merge([
+            'title' => $title,
+            'content' => $content,
+            'collection_id' => $collection_id,
+            'user_id' => $user_id
+        ], $info);
+
+        $attributes['order'] = Post::where('collection_id', Collection::getCollectionId($collection_id))
+            ->max('order') + 1;
+
+        $post = Post::create($attributes);
+
+        if ($info['type'] === Post::POST_TYPE_LINK) {
+            $this->saveImage($info['image_path'], $post);
+        }
+        if (isset($tags)) {
+            $this->saveTags($post->id, $tags);
+        }
+
+        $post->tags = $post->tags()->get();
+        return $post;
+    }
+
     public function delete(Post $post): void
     {
         Post::where('collection_id', $post->collection_id)
@@ -164,12 +192,12 @@ class PostService
 
         if (!str_contains($content_type, 'text/html')) {
             return [
-                'url'         => substr($url, 0, 512),
-                'base_url'    => substr($base_url, 0, 255),
-                'title'       => substr($url, 0, 255),
+                'url' => substr($url, 0, 512),
+                'base_url' => substr($base_url, 0, 255),
+                'title' => substr($url, 0, 255),
                 'description' => null,
-                'color'       => null,
-                'image_path'  => null,
+                'color' => null,
+                'image_path' => null,
             ];
         }
 
@@ -211,12 +239,12 @@ class PostService
         }
 
         return [
-            'url'         => substr($url, 0, 512),
-            'base_url'    => substr($base_url, 0, 255),
-            'title'       => substr($title, 0, 255),
+            'url' => substr($url, 0, 512),
+            'base_url' => substr($base_url, 0, 255),
+            'title' => substr($title, 0, 255),
             'description' => (empty($description)) ? null : $description,
-            'color'       => (empty($color)) ? null : $color,
-            'image_path'  => (empty($image_path)) ? null : $image_path,
+            'color' => (empty($color)) ? null : $color,
+            'image_path' => (empty($image_path)) ? null : $image_path,
         ];
     }
 
@@ -282,7 +310,7 @@ class PostService
         $post->save();
     }
 
-    public function screenshot(String $filename, String $path, String $url, int $width = 400, int $height = 210)
+    public function screenshot(string $filename, string $path, string $url, int $width = 400, int $height = 210)
     {
         // use googlebot in order to avoid among others cookie consensus banners
         $useragent = 'Googlebot/2.1 (+http://www.google.com/bot.html)';
