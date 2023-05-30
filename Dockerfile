@@ -41,8 +41,8 @@ RUN docker-php-ext-configure gd \
     --enable-gd \
     --with-jpeg
 
+# https://github.com/mlocati/docker-php-extension-installer#supported-php-extensions
 RUN docker-php-ext-install \
-    pdo \
     pdo_mysql \
     mysqli \
     pgsql \
@@ -52,9 +52,6 @@ RUN docker-php-ext-install \
     pcntl \
     bcmath \
     gd \
-    curl \
-    dom \
-    xml \
     sockets
 
 # install composer
@@ -84,14 +81,15 @@ RUN mkdir -p /run/nginx/ && touch /run/nginx/nginx.pid
 
 RUN ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/nginx/error.log
 
+
 WORKDIR /var/www
 
 # will be overriden by bind mount - if used
 COPY . .
 
 RUN chown -R $user:$user /var/www && \
-chown -R :www-data storage && chmod -R 775 storage && \
-chown -R :www-data bootstrap/cache && chmod -R 775 bootstrap/cache
+    chown -R :www-data storage && chmod -R 775 storage && \
+    chown -R :www-data bootstrap/cache && chmod -R 775 bootstrap/cache
 
 
 USER $user
