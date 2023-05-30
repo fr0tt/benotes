@@ -22,7 +22,7 @@ class ProcessMissingThumbnail implements ShouldQueue
      *
      * @var int
      */
-    // public $tries = 3;
+    public $tries = 3;
 
     /**
      * Create a new job instance.
