@@ -73,7 +73,7 @@ return [
     |
     */
 
-    'thumbnail_filler_interval' => env('THUMBNAIL_FILLER_INTERVAL', '0 */6 * * *'),
+    'thumbnail_filler_interval' => env('THUMBNAIL_FILLER_INTERVAL', '0 */2 * * *'),
 
     'browser' => env('BROWSER', 'chromium')
 
