@@ -29,6 +29,7 @@ RUN apk --no-cache update && apk --no-cache add \
     openssl \
     nginx \
     supervisor \
+    busybox-suid \
     bash \
     su-exec \
     chromium
@@ -60,7 +61,8 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 RUN addgroup -S $user && adduser -S --uid 1000 -G $user $user && adduser $user www-data
 
-RUN echo '0 */1 * * * application php /var/www/artisan schedule:run >> /dev/null 2>&1' >> /etc/crontab && crontab /etc/crontab
+# cron
+COPY ./docker/crontab /etc/crontabs/application
 
 # configure supervisor
 RUN mkdir -p /etc/supervisor.d/

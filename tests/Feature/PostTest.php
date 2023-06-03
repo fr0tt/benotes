@@ -522,7 +522,7 @@ class PostTest extends TestCase
     public function testChangeCollection()
     {
         $user = User::factory()->create();
-        $collection  = Collection::factory()->create();
+        $collection = Collection::factory()->create();
         $collection2 = Collection::factory()->create();
 
         $post = Post::factory()->create([
