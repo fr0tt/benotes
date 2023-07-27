@@ -63,6 +63,7 @@ class PostService
         }
 
         if ($filter !== '' && $auth_type === User::API_USER) {
+            $filter = strtolower($filter);
             $posts = $posts->where(function ($query) use ($filter) {
                 $query->where('title', 'LIKE', "%{$filter}%")
                     ->orWhere('content', 'LIKE', "%{$filter}%");
@@ -312,43 +313,25 @@ class PostService
 
     public function screenshot(string $filename, string $path, string $url, int $width = 400, int $height = 210)
     {
-        // use googlebot in order to avoid among others cookie consensus banners
+        // use googlebot in order to avoid, among others, cookie consensus banners
         $useragent = 'Googlebot/2.1 (+http://www.google.com/bot.html)';
         $browser = config('benotes.browser') === 'chromium' ? 'chromium-browser' : 'google-chrome';
 
-        if (Cache::has('socket')) {
-
-            $socket = Cache::get('socket');
-            try {
-                $browser = BrowserFactory::connectToBrowser($socket);
-            } catch (\HeadlessChromium\Exception\BrowserConnectionFailed $e) {
-                $factory = new BrowserFactory($browser);
-                $browser = $factory->createBrowser([
-                    'noSandbox' => true,
-                    'keepAlive' => true,
-                    'userAgent' => $useragent,
-                ]);
-
-                Cache::put('socket', $browser->getSocketUri());
-            }
-        } else {
-            $factory = new BrowserFactory($browser);
-            $browser = $factory->createBrowser([
-                'noSandbox' => true,
-                'keepAlive' => true,
-                'userAgent' => $useragent,
-                'customFlags' => [
-                    '--disable-dev-shm-usage',
-                ],
-            ]);
-
-            Cache::put('socket', $browser->getSocketUri());
-        }
+        $factory = new BrowserFactory($browser);
+        $browser = $factory->createBrowser([
+            'noSandbox' => true,
+            'keepAlive' => true,
+            'userAgent' => $useragent,
+            'customFlags' => [
+                '--disable-dev-shm-usage',
+            ],
+            'debugLogger' => config('app.debug') ? storage_path('logs/browser.log') : null
+        ]);
 
         try {
             $page = $browser->createPage();
             $page->navigate($url)->waitForNavigation();
-            // $page->navigate($url)->waitForNavigation(\HeadlessChromium\Page::DOM_CONTENT_LOADED, 10000);
+            sleep(3); // in order to make sure that the site is reallly loaded
             $page->screenshot()->saveToFile($path);
             // temporally store the image
             $image = Image::make($path);
@@ -357,6 +340,8 @@ class PostService
             }
             $image = $image->fit($width, $height);
             Storage::put('thumbnails/' . $filename, $image->stream());
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::debug('Attempt to create thumbnail failed');
         } finally {
             $browser->close();
         }
