@@ -59,7 +59,7 @@ RUN docker-php-ext-install \
 # install composer
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
-RUN addgroup -S $user && adduser -S --uid 1000 -G $user $user && adduser $user www-data
+RUN addgroup -S --gid 1000 $user && adduser -S --uid 1000 -G $user $user && adduser $user www-data
 
 # cron
 COPY ./docker/crontab /etc/crontabs/application
@@ -92,13 +92,16 @@ WORKDIR /var/www
 # will be overriden by bind mount - if used
 COPY . .
 
+# storage needs to be owned not only by group but also user www-data because of bind mounts
+# however it doesn't magically solves the bind mount permission issue
 RUN chown -R $user:$user /var/www && \
-    chown -R :www-data storage && chmod -R 775 storage && \
-    chown -R :www-data bootstrap/cache && chmod -R 775 bootstrap/cache
+    chown -R www-data:www-data storage && chmod -R 775 storage && \
+    chown -R www-data:www-data bootstrap/cache && chmod -R 775 bootstrap/cache
 
 
 USER $user
 
+RUN ln -snf ../storage/app/public/ public/storage
 
 ARG USE_COMPOSER=true
 RUN if [ "$USE_COMPOSER" = "true" ] ; \
@@ -115,9 +118,6 @@ RUN if [ "$INSTALL_NODE" = "true" ] ; \
     then \
     apk --no-cache add nodejs npm ; \
     fi
-
-# will be overriden by bind mount - if used
-RUN ln -snf ../storage/app/public/ public/storage
 
 EXPOSE 80
 CMD ["/entrypoint.sh"]
