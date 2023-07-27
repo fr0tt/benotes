@@ -65,8 +65,8 @@ class PostService
         if ($filter !== '' && $auth_type === User::API_USER) {
             $filter = strtolower($filter);
             $posts = $posts->where(function ($query) use ($filter) {
-                $query->where('title', 'LIKE', "%{$filter}%")
-                    ->orWhere('content', 'LIKE', "%{$filter}%");
+                $query->whereRaw('title LIKE ?', "%{$filter}%")
+                    ->orWhereRaw('LOWER(`content`) LIKE ?', "%{$filter}%");
             });
         }
 
