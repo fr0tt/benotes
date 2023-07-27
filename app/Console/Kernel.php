@@ -22,7 +22,7 @@ class Kernel extends ConsoleKernel
             $schedule->command('backup:run')->cron(config('benotes.backup_interval'));
         }
         if (config('benotes.generate_missing_thumbnails')) {
-            $schedule->command('queue:work --max-jobs=10 --stop-when-empty')
+            $schedule->command('queue:work --max-jobs=10 --tries=3 --stop-when-empty')
                 ->cron(config('benotes.thumbnail_filler_interval'));
         }
     }

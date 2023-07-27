@@ -10,3 +10,4 @@ docker-compose*
 .git
 .gitignore
 README.md
+/storage/app/public/thumbnails
