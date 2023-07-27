@@ -747,6 +747,43 @@ class PostTest extends TestCase
         $this->assertEquals(403, $response->status());
     }
 
+    public function testSearchInsideACollection()
+    {
+        $user = User::factory()->create();
+        $collection = Collection::factory()->create();
+        $collection2 = Collection::factory()->create();
+        $post1 = Post::factory()->create([
+            'content' => 'my Test is so great',
+            'collection_id' => $collection->id
+        ]);
+        $post2 = Post::factory()->create([
+            'content' => 'my test is so great',
+            'collection_id' => $collection->id
+        ]);
+        $post3 = Post::factory()->create([
+            'content' => 'my tESt is so great',
+            'collection_id' => $collection->id
+        ]);
+        $post4 = Post::factory()->create([
+            'content' => 'my test is so great',
+            'collection_id' => $collection2->id
+        ]);
+
+
+        $response = $this->actingAs($user)->json('GET', 'api/posts', [
+            'filter' => 'test',
+            'collection_id' => $collection->id
+        ]);
+        $data = $response->getData()->data;
+        $this->assertEquals(count($data), 3);
+        $post_ids = array_map(function ($post) {
+            return $post->id;
+        }, $data);
+        $this->assertContains($post1->id, $post_ids);
+        $this->assertContains($post2->id, $post_ids);
+        $this->assertContains($post3->id, $post_ids);
+    }
+
     public function testCreatePostWithAndWithoutStorage()
     {
         Config::set('benotes.use_filesystem', false);
