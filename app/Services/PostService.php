@@ -43,7 +43,7 @@ class PostService
 
         if ($auth_type === User::API_USER) {
             if ($collection_id > 0 && $filter !== '') {
-                $collection_ids = Collection::with('nested')
+                $collection_ids = Collection::with('children')
                     ->where('parent_id', $collection_id)
                     ->pluck('id')->all();
                 $collection_ids[] = $collection_id;

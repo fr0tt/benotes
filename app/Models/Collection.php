@@ -64,6 +64,6 @@ class Collection extends Model
 
     public function nested(): Relations\HasMany
     {
-        return $this->children()->with('nested');
+        return $this->children()->with('nested')->orderBy('name');
     }
 }
