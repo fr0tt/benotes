@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations;
 
 class Collection extends Model
 {
@@ -17,7 +18,10 @@ class Collection extends Model
      * @var array
      */
     protected $casts = [
-        'user_id' => 'integer', // because of SQLite
+        'user_id'   => 'integer',
+        // because of SQLite
+        'icon_id'   => 'integer',
+        'parent_id' => 'integer',
     ];
 
     /**
@@ -26,7 +30,11 @@ class Collection extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'user_id', 'icon_id', 'parent_id'
+        'name',
+        'user_id',
+        'icon_id',
+        'parent_id',
+        'root_id'
     ];
 
     /**
@@ -35,7 +43,8 @@ class Collection extends Model
      * @var array
      */
     protected $hidden = [
-        'user_id', 'deleted_at'
+        'user_id',
+        'deleted_at'
     ];
 
     public static function getCollectionId($id, $is_uncategorized = false)
@@ -43,17 +52,17 @@ class Collection extends Model
         return $is_uncategorized || $id === null ? null : intval($id);
     }
 
-    public function parent()
+    public function parent(): Relations\BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');
     }
 
-    public function children()
+    public function children(): Relations\HasMany
     {
         return $this->hasMany(self::class, 'parent_id');
     }
 
-    public function nested()
+    public function nested(): Relations\HasMany
     {
         return $this->children()->with('nested');
     }

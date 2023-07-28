@@ -1,9 +1,16 @@
 {
     "name": "fr0tt/benotes",
     "description": "App for bookmarks and notes.",
-    "keywords": ["laravel", "bookmark", "bookmarks", "notes", "posts", "todo"],
+    "keywords": [
+        "laravel",
+        "bookmark",
+        "bookmarks",
+        "notes",
+        "posts",
+        "todo"
+    ],
     "license": "MIT",
-    "version": "2.7.0",
+    "version": "2.7.1",
     "type": "project",
     "require": {
         "php": "^7.3|^8.0",

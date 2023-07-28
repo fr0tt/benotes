@@ -4,33 +4,18 @@
         @submit.prevent="search">
         <svg-vue icon="remix/search-line" class="flex-none w-5 mx-3 fill-current text-gray-600" />
         <div v-show="searchCollection" class="flex-none my-auto">
-            <div
-                class="px-2 py-0.5 rounded-xl font-medium text-white border-2 border-orange-500 bg-orange-500">
+            <div class="px-2 py-0.5 rounded-xl font-medium text-white border-2 border-orange-500 bg-orange-500">
                 {{ searchCollectionName }}
             </div>
         </div>
-        <input
-            id="search"
-            placeholder="Type to search"
+        <input id="search" placeholder="Type to search"
             class="flex-auto w-full px-2 py-1.5 bg-transparent text-gray-700 font-medium rounded outline-none duration-200 ease-in-out transition-colors"
-            autocomplete="off"
-            type="text"
-            @keydown.down="onArrowDown"
-            @keydown.up="onArrowUp"
-            @keyup.delete="onBackspace"
-            @click="searchInput"
-            @input="searchInput" />
-        <ul
-            v-if="showOptions && options.length > 0"
-            class="absolute w-full mt-10 -ml-0.5 py-1 bg-gray-200 z-40 rounded text-gray-800 shadow-sm"
-            role="listbox">
-            <li
-                v-for="(item, i) in options"
-                :key="item.id"
-                class="pl-14 pr-4 py-1 font-medium searchOption cursor-pointer"
-                :class="{ isActive: i === arrowCount }"
-                role="option"
-                @click="selectOption(item)">
+            autocomplete="off" type="text" @keydown.down="onArrowDown" @keydown.up="onArrowUp" @keyup.delete="onBackspace"
+            @click="searchInput" @input="searchInput" />
+        <ul v-if="showOptions && options.length > 0"
+            class="absolute w-full mt-10 -ml-0.5 py-1 bg-gray-200 z-40 rounded text-gray-800 shadow-sm" role="listbox">
+            <li v-for="(item, i) in options" :key="item.id" class="pl-14 pr-4 py-1 font-medium searchOption cursor-pointer"
+                :class="{ isActive: i === arrowCount }" role="option" @click="selectOption(item)">
                 {{ item.name }}
             </li>
         </ul>
@@ -52,12 +37,7 @@ export default {
     },
     computed: {
         collections() {
-            return [
-                {
-                    id: 0,
-                    name: 'Uncategorized',
-                },
-            ].concat(this.$store.state.collection.collections)
+            return this.$store.state.collection.collectionNames
         },
         searchCollectionName() {
             // yes this is necessary in order to use v-show instead of v-if
@@ -85,11 +65,23 @@ export default {
             }
 
             if (input.length === 0) {
-                this.options = this.collections.slice(0, 4)
+                const entries = this.collections.entries()
+                for (let i = 0; i < 4 && i < this.collections.size; i++) {
+                    const collection = entries.next().value
+                    this.options.push({
+                        id: collection[0],
+                        name: collection[1]
+                    })
+                }
             } else {
                 const inputValue = input.toLowerCase()
-                this.options = this.collections.filter((col) => {
-                    return col.name.toLowerCase().includes(inputValue)
+                // this.options = this.collections.filter((col) => {
+                //     return col.name.toLowerCase().includes(inputValue)
+                // })
+                this.options = []
+                this.collections.forEach((name, id) => {
+                    if (name.toLowerCase().includes(inputValue))
+                        this.options.push({ id, name })
                 })
             }
 
@@ -153,12 +145,15 @@ export default {
 .searchbar .searchOption:hover {
     @apply text-orange-600 bg-orange-200; //@apply bg-gray-400;
 }
+
 .focus-in\:border-orange-500:focus-within {
     @apply border-orange-500;
 }
+
 .focus-in\:bg-white:focus-within {
     @apply bg-white;
 }
+
 .pl-14 {
     padding-left: 3.5rem;
 }
