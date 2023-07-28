@@ -42,7 +42,14 @@ class PostService
         }
 
         if ($auth_type === User::API_USER) {
-            if ($collection_id > 0 || $is_uncategorized === true) {
+            if ($collection_id > 0 && $filter !== '') {
+                $collection_ids = Collection::with('nested')
+                    ->where('parent_id', $collection_id)
+                    ->pluck('id')->all();
+                $posts = $posts
+                    ->whereIn('collection_id', $collection_ids)
+                    ->where('user_id', '=', Auth::user()->id);
+            } else if ($collection_id > 0 || $is_uncategorized === true) {
                 $collection_id = Collection::getCollectionId(
                     $collection_id,
                     $is_uncategorized
@@ -58,14 +65,15 @@ class PostService
             $share = Auth::guard('share')->user();
             $posts = $posts->where([
                 'collection_id' => $share->collection_id,
-                'user_id' => $share->created_by
+                'user_id'       => $share->created_by
             ]);
         }
 
         if ($filter !== '' && $auth_type === User::API_USER) {
             $filter = strtolower($filter);
             $posts = $posts->where(function ($query) use ($filter) {
-                $query->whereRaw('title LIKE ?', "%{$filter}%")
+                $query
+                    ->whereRaw('title LIKE ?', "%{$filter}%")
                     ->orWhereRaw('LOWER(`content`) LIKE ?', "%{$filter}%");
             });
         }
@@ -81,7 +89,9 @@ class PostService
         }
 
         if ($is_archived) {
-            return $posts->onlyTrashed()->orderBy('deleted_at', 'desc')->get();
+            return $posts
+                ->onlyTrashed()
+                ->orderBy('deleted_at', 'desc')->get();
         }
 
         return $posts->orderBy('order', 'desc')->get();
@@ -93,10 +103,10 @@ class PostService
         $info = $this->computePostData($title, $content);
 
         $attributes = array_merge([
-            'title' => $title,
-            'content' => $content,
+            'title'         => $title,
+            'content'       => $content,
             'collection_id' => $collection_id,
-            'user_id' => $user_id
+            'user_id'       => $user_id
         ], $info);
 
         $attributes['order'] = Post::where('collection_id', Collection::getCollectionId($collection_id))
@@ -193,12 +203,12 @@ class PostService
 
         if (!str_contains($content_type, 'text/html')) {
             return [
-                'url' => substr($url, 0, 512),
-                'base_url' => substr($base_url, 0, 255),
-                'title' => substr($url, 0, 255),
+                'url'         => substr($url, 0, 512),
+                'base_url'    => substr($base_url, 0, 255),
+                'title'       => substr($url, 0, 255),
                 'description' => null,
-                'color' => null,
-                'image_path' => null,
+                'color'       => null,
+                'image_path'  => null,
             ];
         }
 
@@ -240,12 +250,12 @@ class PostService
         }
 
         return [
-            'url' => substr($url, 0, 512),
-            'base_url' => substr($base_url, 0, 255),
-            'title' => substr($title, 0, 255),
+            'url'         => substr($url, 0, 512),
+            'base_url'    => substr($base_url, 0, 255),
+            'title'       => substr($title, 0, 255),
             'description' => (empty($description)) ? null : $description,
-            'color' => (empty($color)) ? null : $color,
-            'image_path' => (empty($image_path)) ? null : $image_path,
+            'color'       => (empty($color)) ? null : $color,
+            'image_path'  => (empty($image_path)) ? null : $image_path,
         ];
     }
 
@@ -277,7 +287,7 @@ class PostService
             if (!in_array($tag_id, $old_tags)) {
                 PostTag::create([
                     'post_id' => $post_id,
-                    'tag_id' => $tag_id
+                    'tag_id'  => $tag_id
                 ]);
             }
         }
@@ -319,9 +329,9 @@ class PostService
 
         $factory = new BrowserFactory($browser);
         $browser = $factory->createBrowser([
-            'noSandbox' => true,
-            'keepAlive' => true,
-            'userAgent' => $useragent,
+            'noSandbox'   => true,
+            'keepAlive'   => true,
+            'userAgent'   => $useragent,
             'customFlags' => [
                 '--disable-dev-shm-usage',
             ],
