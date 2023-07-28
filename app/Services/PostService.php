@@ -46,6 +46,7 @@ class PostService
                 $collection_ids = Collection::with('nested')
                     ->where('parent_id', $collection_id)
                     ->pluck('id')->all();
+                $collection_ids[] = $collection_id;
                 $posts = $posts
                     ->whereIn('collection_id', $collection_ids)
                     ->where('user_id', '=', Auth::user()->id);
