@@ -74,8 +74,8 @@ class PostService
             $filter = strtolower($filter);
             $posts = $posts->where(function ($query) use ($filter) {
                 $query
-                    ->whereRaw('title LIKE ?', "%{$filter}%")
-                    ->orWhereRaw('LOWER(`content`) LIKE ?', "%{$filter}%");
+                    ->whereRaw('LOWER(title) LIKE ?', "%{$filter}%")
+                    ->orWhereRaw('LOWER(content) LIKE ?', "%{$filter}%");
             });
         }
 
