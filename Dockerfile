@@ -21,6 +21,8 @@ RUN apk --no-cache update && apk --no-cache add \
     libmcrypt-dev \
     libpq \
     postgresql-dev \
+    postgresql-client \
+    mysql-client \
     sqlite \
     zip \
     unzip \
@@ -54,7 +56,8 @@ RUN docker-php-ext-install \
     bcmath \
     gd \
     sockets \
-    pcntl
+    pcntl \
+    zip
 
 # install composer
 COPY --from=composer /usr/bin/composer /usr/bin/composer
