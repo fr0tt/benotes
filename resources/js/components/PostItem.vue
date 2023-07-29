@@ -1,17 +1,9 @@
 <template>
     <li class="md:inline-block mx-6 md:mx-4 my-4 relative text-left post" :post-id="post.id">
-        <PostItemLink
-            v-if="post.type === 'link'"
-            :post="post"
-            :show-context-menu="showContextMenu"
-            :permission="permission"
+        <PostItemLink v-if="post.type === 'link'" :post="post" :show-context-menu="showContextMenu" :permission="permission"
             :restore="restore" />
-        <PostItemText
-            v-else-if="post.type === 'text'"
-            :post="post"
-            :show-context-menu="showContextMenu"
-            :permission="permission"
-            :restore="restore" />
+        <PostItemText v-else-if="post.type === 'text'" :post="post" :show-context-menu="showContextMenu"
+            :permission="permission" :restore="restore" />
         <PostItemPlaceholder v-else />
         <div v-if="debug" class="absolute bottom-0 w-full">
             <span class="px-1 bg-orange-200">id:{{ post.id }}</span>
@@ -73,40 +65,50 @@ export default {
     transition: background-color 0.3s;
     -webkit-transition: background-color 0.3s;
     -moz-transition: background-color 0.3s;
+
     .h-cover {
         height: 10.5rem;
     }
+
     .description {
         height: 3rem;
     }
+
     .img-vertical-align {
         margin-top: -4px;
     }
+
     .more-icon,
     .restore-icon {
         @apply w-5 h-5 absolute cursor-pointer;
         right: 0.75rem;
         bottom: 1rem;
     }
+
     .restore-icon {
         right: 1rem;
     }
+
     .editorContent {
         font-size: 1.1rem;
         line-height: 1.45;
+
         .unfurling-link {
             span {
                 @apply text-base;
             }
+
             img {
                 @apply w-8 h-8;
             }
+
             .ul-link {
                 @apply hidden;
             }
         }
     }
 }
+
 @screen md {
     .card {
         @apply block;
@@ -114,21 +116,26 @@ export default {
         height: 21.5rem;
     }
 }
+
 .card::-webkit-scrollbar {
     width: 2px;
     background-color: #f5f5f5;
 }
+
 .card::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     background-color: rgba(255, 255, 255, 0.8);
 }
+
 .card::-webkit-scrollbar-thumb {
     @apply bg-orange-500;
     border-radius: 8px;
 }
+
 .card.active {
     @apply bg-orange-100 rounded border border-orange-300 overflow-auto;
 }
+
 .ProseMirror {
     outline: none;
 }
