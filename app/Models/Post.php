@@ -22,8 +22,9 @@ class Post extends Model
      * @var array
      */
     protected $casts = [
-        'user_id' => 'integer', // because of SQLite
-        'order' => 'integer', // because of SQLite
+        'user_id' => 'integer',
+        // because of SQLite
+        'order'   => 'integer', // because of SQLite
     ];
 
     /**
@@ -32,8 +33,17 @@ class Post extends Model
      * @var array
      */
     protected $fillable = [
-        'content', 'type', 'url', 'base_url', 'title', 'description',
-        'color', 'image_path', 'user_id', 'collection_id', 'order'
+        'content',
+        'type',
+        'url',
+        'base_url',
+        'title',
+        'description',
+        'color',
+        'image_path',
+        'user_id',
+        'collection_id',
+        'order'
     ];
 
     /**
@@ -42,7 +52,8 @@ class Post extends Model
      * @var array
      */
     protected $hidden = [
-        'user_id', 'deleted_at'
+        'user_id',
+        'deleted_at'
     ];
 
     public function getTypeAttribute($value)
@@ -74,6 +85,8 @@ class Post extends Model
 
     public function setImagePathAttribute($value)
     {
+        if (empty($this->attributes['image_path']))
+            return;
         $this->attributes['image_path'] = (strlen($value) > 512) ? null : $value;
     }
 
@@ -115,13 +128,13 @@ class Post extends Model
         Post::create([
             'title'         => 'Text Post 📝',
             'content'       => '<p>This post demonstrates different features of Benotes. <br>' .
-                'You can write <strong>bold</strong>, ' .
-                '<em>italic</em> or <strong>combine <em>them</em></strong><em>.</em></p>' .
-                '<blockquote><p>Blockquotes are also a thing</p></blockquote>' .
-                '<hr> <p>You can also use Markdown in order to type faster. <br>' .
-                'If you are not familiar with the syntax have a look at</p>' .
-                '<unfurling-link href="https://www.markdownguide.org/cheat-sheet/" ' .
-                'data-title="Markdown Cheat Sheet | Markdown Guide"></unfurling-link>',
+            'You can write <strong>bold</strong>, ' .
+            '<em>italic</em> or <strong>combine <em>them</em></strong><em>.</em></p>' .
+            '<blockquote><p>Blockquotes are also a thing</p></blockquote>' .
+            '<hr> <p>You can also use Markdown in order to type faster. <br>' .
+            'If you are not familiar with the syntax have a look at</p>' .
+            '<unfurling-link href="https://www.markdownguide.org/cheat-sheet/" ' .
+            'data-title="Markdown Cheat Sheet | Markdown Guide"></unfurling-link>',
             'type'          => self::POST_TYPE_TEXT,
             'description'   => null,
             'collection_id' => $collection_id,
