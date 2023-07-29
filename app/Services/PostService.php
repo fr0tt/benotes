@@ -202,7 +202,11 @@ class PostService
         $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
         curl_close($ch);
 
-        if (!str_contains($content_type, 'text/html')) {
+        if (empty($html) && !$act_as_bot) {
+            return $this->getInfo($url, true);
+        }
+
+        if (empty($html) || !str_contains($content_type, 'text/html')) {
             return [
                 'url'         => substr($url, 0, 512),
                 'base_url'    => substr($base_url, 0, 255),
@@ -254,9 +258,9 @@ class PostService
             'url'         => substr($url, 0, 512),
             'base_url'    => substr($base_url, 0, 255),
             'title'       => substr($title, 0, 255),
-            'description' => (empty($description)) ? null : $description,
-            'color'       => (empty($color)) ? null : $color,
-            'image_path'  => (empty($image_path)) ? null : $image_path,
+            'description' => $description ?? null,
+            'color'       => $color ?? null,
+            'image_path'  => $image_path ?? null,
         ];
     }
 

@@ -85,8 +85,10 @@ class Post extends Model
 
     public function setImagePathAttribute($value)
     {
-        if (empty($this->attributes['image_path']))
+        if (empty($value)) {
+            $this->attributes['image_path'] = null;
             return;
+        }
         $this->attributes['image_path'] = (strlen($value) > 512) ? null : $value;
     }
 
