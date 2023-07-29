@@ -27,7 +27,7 @@ class PostTest extends TestCase
         $collection = Collection::factory()->create();
 
         $response = $this->actingAs($user)->json('POST', 'api/posts', [
-            'content' => $content,
+            'content'       => $content,
             'collection_id' => $collection->id
         ]);
 
@@ -49,19 +49,38 @@ class PostTest extends TestCase
     public function createPostsProvider()
     {
         return [
-            1 => ['https://go-rel.github.io/', 'link'],
-            2 => ['https://www.youtube.com/watch?v=ZyURjdnYQaU', 'link'],
-            3 => ['https://github.com/verlok/vanilla-lazyload', 'link'],
-            4 => ['https://www.amazon.com/Design-Everyday-Things-Revised-Expanded/dp/0465050654/ref=sr_1_1?dchild=1&keywords=don+norman&link_code=qs&qid=1608495907&sr=8-1&tag=operabrowser-21', 'link'],
-            5 => ['<a href="https://www.wolframalpha.com" rel="noopener noreferrer nofollow">https://www.wolframalpha.com</a>', 'link'],
-            6 => ['<p class="">dfgd adijfds https://google.com</p>', 'text'],
-            7 => ['<p>https://www.wolframalpha.com</p><p>https://laravel.com</p>', 'text'],
-            8 => ['Hdfgd fijsdoij <a href="https://slack.com" rel="noopener noreferrer nofollow">https://slack.com</a>', 'text'],
-            9 => ['https://laravel.com', 'link'],
+            1  => ['https://go-rel.github.io/', 'link'],
+            2  => ['https://www.youtube.com/watch?v=ZyURjdnYQaU', 'link'],
+            3  => ['https://github.com/verlok/vanilla-lazyload', 'link'],
+            4  => ['https://www.amazon.com/Design-Everyday-Things-Revised-Expanded/dp/0465050654/ref=sr_1_1?dchild=1&keywords=don+norman&link_code=qs&qid=1608495907&sr=8-1&tag=operabrowser-21', 'link'],
+            5  => ['<a href="https://www.wolframalpha.com" rel="noopener noreferrer nofollow">https://www.wolframalpha.com</a>', 'link'],
+            6  => ['<p class="">dfgd adijfds https://google.com</p>', 'text'],
+            7  => ['<p>https://www.wolframalpha.com</p><p>https://laravel.com</p>', 'text'],
+            8  => ['Hdfgd fijsdoij <a href="https://slack.com" rel="noopener noreferrer nofollow">https://slack.com</a>', 'text'],
+            9  => ['https://laravel.com', 'link'],
             10 => ['Lorem ipsum https://fonts.adobe.com/fonts/realist', 'text'],
             11 => ['https://gamesindustry.biz', 'link'],
             12 => ['https://www.php.net/manual/en/function.parse-url.php', 'link'],
         ];
+    }
+
+    public function testCreatePostWithThumbnail()
+    {
+        $this->assertTrue(config('benotes.use_filesystem'));
+        $user = User::factory()->create();
+        $collection = Collection::factory()->create();
+
+        $response = $this->actingAs($user)->json('POST', 'api/posts', [
+            'content'       => 'https://nyt.com',
+            'collection_id' => $collection->id
+        ]);
+
+        $this->assertEquals(201, $response->status());
+        $data = $response->getData()->data;
+        $this->assertEquals('link', $data->type);
+        $this->assertNotEmpty($data->image_path);
+        $this->assertStringStartsWith(url('/storage/thumbnails/thumbnail_'), $data->image_path);
+        $this->assertStringStartsNotWith('https://', $data->image_path);
     }
 
     public function testCreatePostWithInvalidLink()
@@ -72,7 +91,7 @@ class PostTest extends TestCase
         $content = 'https://sdoifhpsuidfsiuedhsdiuhfuidhipdh.com';
 
         $response = $this->actingAs($user)->json('POST', 'api/posts', [
-            'content' => $content,
+            'content'       => $content,
             'collection_id' => $collection->id
         ]);
 
@@ -95,7 +114,7 @@ class PostTest extends TestCase
             '<p>It\'s amazing 👏 <br>– mom</p></blockquote>';
 
         $response = $this->actingAs($user)->json('POST', 'api/posts', [
-            'content' => $content,
+            'content'       => $content,
             'collection_id' => $collection->id
         ]);
 
@@ -139,9 +158,9 @@ class PostTest extends TestCase
         $content = 'https://github.com';
 
         $response = $this->actingAs($user)->json('POST', 'api/posts', [
-            'content' => $content,
+            'content'       => $content,
             'collection_id' => $collection->id,
-            'tags' => [$tag1->id, $tag2->id]
+            'tags'          => [$tag1->id, $tag2->id]
         ]);
 
         $this->assertEquals(201, $response->status());
@@ -167,7 +186,7 @@ class PostTest extends TestCase
             '<p>It\'s amazing 👏 <br>– mom</p></blockquote>';
 
         $response = $this->actingAs($user)->json('POST', 'api/posts', [
-            'content' => $content,
+            'content'       => $content,
             'collection_id' => $collection->id
         ]);
 
@@ -195,9 +214,9 @@ class PostTest extends TestCase
         $content = 'This is a very basic example.';
 
         $response = $this->actingAs($user)->json('POST', 'api/posts', [
-            'content' => $content,
+            'content'       => $content,
             'collection_id' => $collection->id,
-            'tags' => [$tag1->id]
+            'tags'          => [$tag1->id]
         ]);
 
         $this->assertEquals(201, $response->status());
@@ -222,19 +241,19 @@ class PostTest extends TestCase
 
         $post = Post::factory()->create([
             'collection_id' => $collection->id,
-            'order' => 1
+            'order'         => 1
         ]);
         $post2 = Post::factory()->create([
             'collection_id' => $collection->id,
-            'order' => 2
+            'order'         => 2
         ]);
         $post3 = Post::factory()->create([
             'collection_id' => $collection->id,
-            'order' => 3
+            'order'         => 3
         ]);
         $post4 = Post::factory()->create([
             'collection_id' => $collection->id,
-            'order' => 4
+            'order'         => 4
         ]);
 
         // instead of 4 3 2 1 --> 4 1 3 2
@@ -255,11 +274,11 @@ class PostTest extends TestCase
 
         $post = Post::factory()->create([
             'collection_id' => $collection->id,
-            'order' => 1
+            'order'         => 1
         ]);
         $post2 = Post::factory()->create([
             'collection_id' => $collection->id,
-            'order' => 2
+            'order'         => 2
         ]);
 
         // instead of 2 1 --> 1 2
@@ -278,11 +297,11 @@ class PostTest extends TestCase
 
         $post = Post::factory()->create([
             'collection_id' => $collection->id,
-            'order' => 1
+            'order'         => 1
         ]);
         $post2 = Post::factory()->create([
             'collection_id' => $collection->id,
-            'order' => 2
+            'order'         => 2
         ]);
 
         $response = $this->actingAs($user)->json('PATCH', 'api/posts/' . $post->id, [
@@ -300,19 +319,19 @@ class PostTest extends TestCase
 
         $post = Post::factory()->create([
             'collection_id' => $collection->id,
-            'order' => 1
+            'order'         => 1
         ]);
         $post2 = Post::factory()->create([
             'collection_id' => $collection->id,
-            'order' => 2
+            'order'         => 2
         ]);
         $post3 = Post::factory()->create([
             'collection_id' => $collection->id,
-            'order' => 3
+            'order'         => 3
         ]);
         $post4 = Post::factory()->create([
             'collection_id' => $collection->id,
-            'order' => 4
+            'order'         => 4
         ]);
 
         // 4 3 2 1 --> 4 -3- 2 1 --> 4 1 2 --> 1 4 2
@@ -348,7 +367,7 @@ class PostTest extends TestCase
 
         $post = Post::factory()->create([
             'collection_id' => $collection->id,
-            'user_id' => $user->id
+            'user_id'       => $user->id
         ]);
         $response = $this->actingAs($user)->json('DELETE', 'api/posts/' . $post->id);
         $this->assertEquals(Response::HTTP_NO_CONTENT, $response->status());
@@ -356,7 +375,7 @@ class PostTest extends TestCase
 
         $post2 = Post::factory()->create([
             'collection_id' => $collection->id,
-            'user_id' => $user->id
+            'user_id'       => $user->id
         ]);
         $response = $this->actingAs($user)->json('PATCH', 'api/posts/' . $post2->id, [
             'is_archived' => true
@@ -377,8 +396,8 @@ class PostTest extends TestCase
         array_map(function ($order) use ($collection, $user) {
             Post::factory()->create([
                 'collection_id' => $collection->id,
-                'user_id' => $user->id,
-                'order' => $order
+                'user_id'       => $user->id,
+                'order'         => $order
             ]);
         }, [1, 2, 3, 4]);
 
@@ -426,8 +445,8 @@ class PostTest extends TestCase
         array_map(function ($order) use ($collection, $user) {
             Post::factory()->create([
                 'collection_id' => $collection->id,
-                'user_id' => $user->id,
-                'order' => $order
+                'user_id'       => $user->id,
+                'order'         => $order
             ]);
         }, [1, 2, 3]);
 
@@ -476,8 +495,8 @@ class PostTest extends TestCase
             function ($order) use ($collection, $user) {
                 Post::factory()->create([
                     'collection_id' => $collection->id,
-                    'user_id' => $user->id,
-                    'order' => $order
+                    'user_id'       => $user->id,
+                    'order'         => $order
                 ]);
             },
             [1, 2, 3, 4, 5]
@@ -527,19 +546,19 @@ class PostTest extends TestCase
 
         $post = Post::factory()->create([
             'collection_id' => $collection->id,
-            'order' => 1
+            'order'         => 1
         ]);
         $post2 = Post::factory()->create([
             'collection_id' => $collection->id,
-            'order' => 2
+            'order'         => 2
         ]);
         $post3 = Post::factory()->create([
             'collection_id' => $collection->id,
-            'order' => 3
+            'order'         => 3
         ]);
         $post4 = Post::factory()->create([
             'collection_id' => $collection2->id,
-            'order' => 1
+            'order'         => 1
         ]);
 
         $response = $this->actingAs($user)->json('PATCH', 'api/posts/' . $post->id, [
@@ -565,7 +584,7 @@ class PostTest extends TestCase
         $content = 'https://github.com';
 
         $response = $this->actingAs($user)->json('POST', 'api/posts', [
-            'content' => $content,
+            'content'       => $content,
             'collection_id' => $collection->id
         ]);
 
@@ -573,9 +592,9 @@ class PostTest extends TestCase
         $post = $response->getData()->data;
 
         $response = $this->actingAs($user)->json('PATCH', 'api/posts/' . $post->id, [
-            'collection_id' => $collection2->id,
+            'collection_id'    => $collection2->id,
             'is_uncategorized' => false,
-            'tags' => [],
+            'tags'             => [],
         ]);
 
         $this->assertEquals(200, $response->status());
@@ -591,15 +610,15 @@ class PostTest extends TestCase
 
         $posts = [
             [
-                'content' => 'foo bar',
+                'content'       => 'foo bar',
                 'collection_id' => $collection->id
             ],
             [
-                'content' => 'foo bar',
+                'content'          => 'foo bar',
                 'is_uncategorized' => true
             ],
             [
-                'content' => 'foo bar',
+                'content'          => 'foo bar',
                 'is_uncategorized' => false
             ],
             [
@@ -658,7 +677,7 @@ class PostTest extends TestCase
         ]);
 
         $response = $this->actingAs($user2)->json('POST', 'api/posts', [
-            'content' => 'foo bar',
+            'content'       => 'foo bar',
             'collection_id' => $collection->id
         ]);
         $this->assertEquals(403, $response->status());
@@ -753,25 +772,25 @@ class PostTest extends TestCase
         $collection = Collection::factory()->create();
         $collection2 = Collection::factory()->create();
         $post1 = Post::factory()->create([
-            'content' => 'my Test is so great',
+            'content'       => 'my Test is so great',
             'collection_id' => $collection->id
         ]);
         $post2 = Post::factory()->create([
-            'content' => 'my test is so great',
+            'content'       => 'my test is so great',
             'collection_id' => $collection->id
         ]);
         $post3 = Post::factory()->create([
-            'content' => 'my tESt is so great',
+            'content'       => 'my tESt is so great',
             'collection_id' => $collection->id
         ]);
         $post4 = Post::factory()->create([
-            'content' => 'my test is so great',
+            'content'       => 'my test is so great',
             'collection_id' => $collection2->id
         ]);
 
 
         $response = $this->actingAs($user)->json('GET', 'api/posts', [
-            'filter' => 'test',
+            'filter'        => 'test',
             'collection_id' => $collection->id
         ]);
         $data = $response->getData()->data;
@@ -793,7 +812,7 @@ class PostTest extends TestCase
         $collection = Collection::factory()->create();
 
         $response = $this->actingAs($user)->json('POST', 'api/posts', [
-            'content' => 'https://nyt.com',
+            'content'       => 'https://nyt.com',
             'collection_id' => $collection->id
         ]);
 
@@ -808,7 +827,7 @@ class PostTest extends TestCase
         $this->assertTrue(config('benotes.use_filesystem'));
 
         $response = $this->actingAs($user)->json('POST', 'api/posts', [
-            'content' => 'https://nyt.com',
+            'content'       => 'https://nyt.com',
             'collection_id' => $collection->id
         ]);
 
