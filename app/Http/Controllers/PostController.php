@@ -26,18 +26,18 @@ class PostController extends Controller
     {
 
         $this->validate($request, [
-            'collection_id' => 'integer|nullable',
+            'collection_id'    => 'integer|nullable',
             'is_uncategorized' => 'nullable',
             // should support: 0, 1, true, false, "true", "false" because
             // it should/could be used in a query string
-            'tag_id' => 'integer|nullable',
-            'withTags' => 'nullable',
-            'filter' => 'string|nullable',
-            'is_archived' => 'nullable',
+            'tag_id'           => 'integer|nullable',
+            'withTags'         => 'nullable',
+            'filter'           => 'string|nullable',
+            'is_archived'      => 'nullable',
             // same as is_uncategorized
-            'after_id' => 'integer|nullable',
-            'offset' => 'integer|nullable',
-            'limit' => 'integer|nullable',
+            'after_id'         => 'integer|nullable',
+            'offset'           => 'integer|nullable',
+            'limit'            => 'integer|nullable',
         ]);
 
         $auth_type = User::getAuthenticationType();
@@ -117,11 +117,11 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'title' => 'string|nullable',
-            'content' => 'required|string',
+            'title'         => 'string|nullable',
+            'content'       => 'required|string',
             'collection_id' => 'integer|nullable',
-            'tags' => 'array|nullable',
-            'tags.*' => 'integer',
+            'tags'          => 'array|nullable',
+            'tags.*'        => 'integer',
         ]);
 
         if (isset($request->collection_id)) {
@@ -132,8 +132,11 @@ class PostController extends Controller
         }
 
         $post = $this->service->store(
-            $request->title, $request->content,
-            $request->collection_id, $request->tags,
+            $request->title,
+            $request->content,
+            $request->collection_id,
+            null,
+            $request->tags,
             Auth::user()->id
         );
 
@@ -144,14 +147,14 @@ class PostController extends Controller
     {
 
         $validatedData = $this->validate($request, [
-            'title' => 'string|nullable',
-            'content' => 'string|nullable',
-            'collection_id' => 'integer|nullable',
+            'title'            => 'string|nullable',
+            'content'          => 'string|nullable',
+            'collection_id'    => 'integer|nullable',
             'is_uncategorized' => 'boolean|nullable',
-            'tags' => 'array|nullable',
-            'tags.*' => 'integer|required_with:tags',
-            'order' => 'integer|nullable',
-            'is_archived' => 'boolean|nullable'
+            'tags'             => 'array|nullable',
+            'tags.*'           => 'integer|required_with:tags',
+            'order'            => 'integer|nullable',
+            'is_archived'      => 'boolean|nullable'
         ]);
 
         $post = Post::withTrashed()->find($id);
