@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Jobs\ProcessMissingThumbnail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use \HeadlessChromium\BrowserFactory;
@@ -237,9 +238,8 @@ class PostService
             } else if ($meta->getAttribute('property') === 'og:image') {
                 if ($meta->getAttribute('content') != '') {
                     $image_path = $meta->getAttribute('content');
-                    $base_image_url = parse_url($image_path);
-                    if ($base_image_url['path'] === $image_path) {
-                        $image_path = $base_url . $image_path;
+                    if (parse_url($image_path)['path'] === $image_path) {
+                        $image_path = $this->composeImagePath($image_path, $base_url, $url);
                     }
                 }
             }
@@ -373,5 +373,16 @@ class PostService
     public function boolValue($value = null): bool
     {
         return filter_var($value, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    private function composeImagePath(string $image_path, string $base_url, string $url): string
+    {
+        if (str_starts_with($image_path, './')) {
+            return $url . Str::replaceFirst('./', '/', $image_path);
+        } else if (str_starts_with($image_path, '../')) {
+            return preg_replace('/\/\w+\/$/', '/', $url) .
+                Str::replaceFirst('../', '', $image_path);
+        }
+        return $base_url . $image_path;
     }
 }
