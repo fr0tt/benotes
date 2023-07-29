@@ -10,7 +10,7 @@
         "todo"
     ],
     "license": "MIT",
-    "version": "2.7.1",
+    "version": "2.7.2",
     "type": "project",
     "require": {
         "php": "^7.3|^8.0",

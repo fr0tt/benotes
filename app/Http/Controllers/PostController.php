@@ -135,7 +135,6 @@ class PostController extends Controller
             $request->title,
             $request->content,
             $request->collection_id,
-            null,
             $request->tags,
             Auth::user()->id
         );
