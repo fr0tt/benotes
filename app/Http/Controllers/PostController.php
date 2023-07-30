@@ -120,6 +120,7 @@ class PostController extends Controller
             'title'         => 'string|nullable',
             'content'       => 'required|string',
             'collection_id' => 'integer|nullable',
+            'description'   => 'string|nullable',
             'tags'          => 'array|nullable',
             'tags.*'        => 'integer',
         ]);
@@ -135,6 +136,7 @@ class PostController extends Controller
             $request->title,
             $request->content,
             $request->collection_id,
+            $request->description,
             $request->tags,
             Auth::user()->id
         );

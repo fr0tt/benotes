@@ -78,6 +78,8 @@ class PostTest extends TestCase
         $this->assertEquals(201, $response->status());
         $data = $response->getData()->data;
         $this->assertEquals('link', $data->type);
+        $this->assertNotEmpty($data->description);
+        $this->assertNotEmpty($data->title);
         $this->assertNotEmpty($data->image_path);
         $this->assertStringStartsWith(url('/storage/thumbnails/thumbnail_'), $data->image_path);
         $this->assertStringStartsNotWith('https://', $data->image_path);
