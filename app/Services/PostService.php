@@ -14,7 +14,6 @@ use App\Models\Collection;
 use App\Models\User;
 use App\Models\PostTag;
 use ColorThief\ColorThief;
-use Illuminate\Support\Facades\Cache;
 
 class PostService
 {
@@ -99,15 +98,16 @@ class PostService
         return $posts->orderBy('order', 'desc')->get();
     }
 
-    public function store($title, $content, $collection_id, $tags, $user_id): Post
+    public function store($title, $content, $collection_id, $description, $tags, $user_id): Post
     {
         $content = $this->sanitize($content);
-        $info = $this->computePostData($title, $content);
+        $info = $this->computePostData($title, $content, $description);
 
         $attributes = array_merge([
             'title'         => $title,
             'content'       => $content,
             'collection_id' => $collection_id,
+            'description'   => $description,
             'user_id'       => $user_id
         ], $info);
 
@@ -150,7 +150,7 @@ class PostService
         return $post;
     }
 
-    public function computePostData(string $title = null, string $content)
+    public function computePostData(string $title = null, string $content, string $description = null)
     {
         // more explicit: https?(:\/\/)((\w|-)+\.)+(\w+)(\/\w+)*(\?)?(\w=\w+)?(&\w=\w+)*
         preg_match_all('/(https?:\/\/)((\S+?\.|localhost:)\S+?)(?=\s|<|"|$)/', $content, $matches);
@@ -162,6 +162,9 @@ class PostService
 
         if (!empty($title)) {
             unset($info['title']);
+        }
+        if (!empty($description)) {
+            unset($info['description']);
         }
 
         $stripped_content = strip_tags($content);
