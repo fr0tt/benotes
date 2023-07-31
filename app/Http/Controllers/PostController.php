@@ -184,6 +184,9 @@ class PostController extends Controller
         if (isset($validatedData['content'])) {
             $validatedData['content'] = $this->service->sanitize($validatedData['content']);
             $info = $this->service->computePostData($request->title, $validatedData['content']);
+            if (empty($info['image_path']) && $validatedData['content'] === $post->content) {
+                unset($info['image_path']);
+            }
         } else {
             $info = array();
             $info['type'] = $post->getRawOriginal('type');
