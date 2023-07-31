@@ -193,7 +193,7 @@ class PostService
         $base_url = $base_url['scheme'] . '://' . $base_url['host'];
 
         $useragent = $act_as_bot ? 'Googlebot/2.1 (+http://www.google.com/bot.html)' :
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36';
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36';
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
@@ -342,6 +342,7 @@ class PostService
             'userAgent'   => $useragent,
             'customFlags' => [
                 '--disable-dev-shm-usage',
+                '--disable-gpu'
             ],
             'debugLogger' => config('app.debug') ? storage_path('logs/browser.log') : null
         ]);
