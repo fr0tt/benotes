@@ -13,7 +13,7 @@ class ThumbnailCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'thumbnail:generate';
+    protected $signature = 'thumbnail:generate {id?}';
 
     /**
      * The console command description.
@@ -43,8 +43,12 @@ class ThumbnailCommand extends Command
     public function handle()
     {
 
-        $this->info('What post would you like to "improve" ?');
-        $post_id = $this->ask('Please specify a post id or type all');
+        $post_id = $this->argument('id');
+        if (empty($post_id)) {
+            $this->info('What post would you like to "improve" ?');
+            $post_id = $this->ask('Please specify a post id or type all');
+        }
+
         if ($post_id === 'all') {
             $posts = Post::whereNull('deleted_at')
                 ->where('type', Post::POST_TYPE_LINK)
