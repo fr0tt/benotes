@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpFoundation\Response;
@@ -83,6 +84,36 @@ class PostTest extends TestCase
         $this->assertNotEmpty($data->image_path);
         $this->assertStringStartsWith(url('/storage/thumbnails/thumbnail_'), $data->image_path);
         $this->assertStringStartsNotWith('https://', $data->image_path);
+    }
+
+    public function testCreatePostWithScreenshot()
+    {
+        $this->assertTrue(config('benotes.use_filesystem'));
+        $user = User::factory()->create();
+        $collection = Collection::factory()->create();
+
+        $response = $this->actingAs($user)->json('POST', 'api/posts', [
+            'content'       => 'https://en.wikipedia.org/wiki/Wikipedia:About',
+            'collection_id' => $collection->id
+        ]);
+
+        $this->assertEquals(201, $response->status());
+        $data = $response->getData()->data;
+        $this->assertEquals('link', $data->type);
+        $this->assertNotEmpty($data->title);
+        $this->assertEmpty($data->image_path);
+
+        Artisan::call('thumbnail:generate ' . $data->id);
+
+        $post = Post::find($data->id);
+        $this->assertNotEmpty($post->image_path);
+        $this->assertStringStartsNotWith('https://', $post->image_path);
+        $this->assertStringStartsWith(url('/storage/thumbnails/thumbnail_'), $post->image_path);
+        $this->assertFileExists(
+            storage_path(
+                'app/public/thumbnails/' . $post->getRawOriginal('image_path')
+            )
+        );
     }
 
     public function testCreatePostWithInvalidLink()
@@ -803,6 +834,7 @@ class PostTest extends TestCase
         $this->assertContains($post1->id, $post_ids);
         $this->assertContains($post2->id, $post_ids);
         $this->assertContains($post3->id, $post_ids);
+        $this->assertNotContains($post4->id, $post_ids);
     }
 
     public function testCreatePostWithAndWithoutStorage()
