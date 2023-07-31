@@ -229,14 +229,16 @@ class PostController extends Controller
             $request->is_archived = filter_var($request->is_archived, FILTER_VALIDATE_BOOLEAN);
             $is_currently_archived = $post->trashed();
             if ($request->is_archived === true && $is_currently_archived === false) {
-                $post = $this->service->delete($post);
+                $this->service->delete($post);
+                $post = Post::withTrashed()->find($post->id);
             } else if ($request->is_archived === false && $is_currently_archived === true) {
                 $post = $this->service->restore($post);
             }
         }
 
         if ($info['type'] === Post::POST_TYPE_LINK && isset($validatedData['content'])) {
-            $this->service->saveImage($info['image_path'], $post);
+            if (empty($post->image_path) || $validatedData['content'] !== $post->content)
+                $this->service->saveImage($info['image_path'], $post);
         }
 
         if (isset($newValues['tags'])) {
