@@ -77,7 +77,7 @@ class ThumbnailCommand extends Command
 
         $filename = $this->service->generateThumbnailFilename($post->url, $post->id);
         $path = $this->service->getThumbnailPath($filename);
-        $this->service->screenshot($filename, $path, $post->url);
+        $this->service->crawlWithChrome($filename, $path, $post->url, $post->id);
         if (file_exists($path)) {
             $post->image_path = $filename;
             $post->save();

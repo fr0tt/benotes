@@ -68,7 +68,7 @@ class ProcessMissingThumbnail implements ShouldQueue
 
         $filename = $this->service->generateThumbnailFilename($this->post->url, $this->post->id);
         $path = $this->service->getThumbnailPath($filename);
-        $this->service->screenshot($filename, $path, $this->post->url);
+        $this->service->crawlWithChrome($filename, $path, $this->post->url, $this->post->id);
 
         if (file_exists($path)) {
             $this->post->image_path = $filename;

@@ -329,8 +329,11 @@ class PostService
         $post->save();
     }
 
-    public function screenshot(string $filename, string $path, string $url, int $width = 400, int $height = 210)
+    public function crawlWithChrome(string $filename, string $path, string $url, int $postId)
     {
+        $imagePath = $path;
+        $width = 400;
+        $height = 210;
         // use googlebot in order to avoid, among others, cookie consensus banners
         $useragent = 'Googlebot/2.1 (+http://www.google.com/bot.html)';
         $browser = config('benotes.browser') === 'chromium' ? 'chromium-browser' : 'google-chrome';
@@ -351,9 +354,34 @@ class PostService
             $page = $browser->createPage();
             $page->navigate($url)->waitForNavigation();
             sleep(3); // in order to make sure that the site is reallly loaded
-            $page->screenshot()->saveToFile($path);
+
+            $title = $page->dom()->querySelector('title')->getText();
+            $descriptionEl = $page->dom()->querySelector('head meta[name=description]');
+            $description = $descriptionEl ? $descriptionEl->getAttribute('content') : null;
+            $imageEl = $page->dom()->querySelector('head meta[property=\'og:image\']');
+            $imagePathOG = $imageEl ? $imageEl->getAttribute('content') : null;
+
+            $post = Post::find($postId);
+
+            if (!empty($title) && $title !== $post->title) {
+                $post->title = $title;
+                $post->save();
+            }
+            if (!empty($description) && empty($post->description)) {
+                $post->description = $description;
+                $post->save();
+            }
+
+            if (!empty($imagePathOG)) {
+                // if crawling the website with chromium reveals an already 
+                // existing thumbnail, use it instead
+                $imagePath = $imagePathOG;
+            } else {
+                $page->screenshot()->saveToFile($imagePath);
+            }
+
             // temporally store the image
-            $image = Image::make($path);
+            $image = Image::make($imagePath);
             if (!$image) {
                 return;
             }
@@ -365,6 +393,7 @@ class PostService
             $browser->close();
         }
     }
+
     public function generateThumbnailFilename($name, $id)
     {
         return 'thumbnail_' . md5($name) . '_' . $id . '.jpg';
