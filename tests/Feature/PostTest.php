@@ -237,6 +237,69 @@ class PostTest extends TestCase
         $this->assertEquals($new_content, $data->content);
     }
 
+    public function testUpdatePostWithLink()
+    {
+
+        $user = User::factory()->create();
+        $collection = Collection::factory()->create();
+
+        $response = $this->actingAs($user)->json('POST', 'api/posts', [
+            'content'       => 'https://gitlab.com',
+            'collection_id' => $collection->id
+        ]);
+
+        $this->assertEquals(201, $response->status());
+        $post = $response->getData()->data;
+        $this->assertNotEmpty($post->description);
+        $this->assertNotEmpty($post->image_path);
+
+        $post = Post::find($post->id);
+        $post->title = 'FooBar';
+        $post->description = null;
+        $post->image_path = null;
+        $post->save();
+        $this->assertEmpty($post->description);
+        $this->assertEmpty($post->image_path);
+
+        $response = $this->actingAs($user)->json('PATCH', 'api/posts/' . $post->id, [
+            'content' => 'https://gitlab.com'
+        ]);
+
+        $this->assertEquals(200, $response->status());
+        $data = $response->getData()->data;
+        $this->assertEquals($post->title, $data->title);
+        $this->assertNotEmpty($data->description);
+        $this->assertNotEmpty($data->image_path);
+    }
+
+    public function testUpdatePostWithLinkWithoutThumbnail()
+    {
+
+        Config::set('benotes.generate_missing_thumbnails', false);
+        $this->assertFalse(config('benotes.generate_missing_thumbnails'));
+
+        $user = User::factory()->create();
+        $collection = Collection::factory()->create();
+
+        $response = $this->actingAs($user)->json('POST', 'api/posts', [
+            'content'       => 'https://en.wikipedia.org/wiki/Wikipedia:About',
+            'collection_id' => $collection->id
+        ]);
+
+        $this->assertEquals(201, $response->status());
+        $post = $response->getData()->data;
+        $this->assertEmpty($post->image_path);
+
+        $response = $this->actingAs($user)->json('PATCH', 'api/posts/' . $post->id, [
+            'content' => 'https://en.wikipedia.org/wiki/Wikipedia:About'
+        ]);
+
+        $this->assertEquals(200, $response->status());
+        $data = $response->getData()->data;
+        $this->assertEquals($post->title, $data->title);
+        $this->assertEquals('', $data->image_path);
+    }
+
     public function testUpdatePostWithTag()
     {
         $user = User::factory()->create();
