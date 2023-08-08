@@ -14,10 +14,12 @@ export default {
         setAppbar(state, appbar) {
             state.title = appbar.title
             state.hint = appbar.hint
-            state.button = {
-                label: appbar.button.label,
-                callback: appbar.button.callback,
-                icon: appbar.button.icon,
+            if (typeof appbar.button !== 'undefined' && appbar.button) {
+                state.button = {
+                    label: appbar.button.label,
+                    callback: appbar.button.callback,
+                    icon: appbar.button.icon,
+                }
             }
             state.options = appbar.options
         },
