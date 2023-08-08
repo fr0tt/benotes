@@ -16,6 +16,12 @@
                         </router-link>
                     </li>
                     <li>
+                        <router-link to="/import" class="collection theme__sidebar__collection">
+                            <svg-vue class="w-5 fill-current -ml-0.5 mr-1.5" icon="remix/git-repository-commits-line" />
+                            <span class="align-middle text-gray-700 theme__sidebar__label">Import & Export</span>
+                        </router-link>
+                    </li>
+                    <li>
                         <router-link to="/restore" class="collection theme__sidebar__collection" :class="{
                             'router-link-exact-active': isActiveLink('/restore'),
                         }">

@@ -12,6 +12,9 @@ import Tag from './components/pages/Tag'
 import Login from './components/pages/Login'
 import Forgot from './components/pages/Forgot'
 import Reset from './components/pages/Reset'
+import ImExport from './components/pages/ImExport'
+import ImportBookmarks from './components/pages/ImportBookmarks'
+import ExportBookmarks from './components/pages/ExportBookmarks'
 
 import store from './store'
 
@@ -92,6 +95,28 @@ export default [
                 path: 'restore',
                 name: 'restore',
                 component: Restore,
+                meta: {
+                    authUser: true,
+                },
+            },
+            {
+                path: 'import',
+                name: 'imexport',
+                component: ImExport,
+                meta: {
+                    authUser: true,
+                },
+            },
+            {
+                path: 'import/bookmarks',
+                component: ImportBookmarks,
+                meta: {
+                    authUser: true,
+                },
+            },
+            {
+                path: 'export/bookmarks',
+                component: ExportBookmarks,
                 meta: {
                     authUser: true,
                 },
