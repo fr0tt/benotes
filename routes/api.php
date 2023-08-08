@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ExportController;
+use App\Http\Controllers\ImportController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
@@ -60,6 +62,10 @@ Route::group([
     Route::post('shares', [ShareController::class, 'store']);
     Route::patch('shares/{id}', [ShareController::class, 'update']);
     Route::delete('shares/{id}', [ShareController::class, 'destroy']);
+
+    Route::post('imports', [ImportController::class, 'store']);
+    Route::get('exports', [ExportController::class, 'index']);
+
 });
 
 Route::group([
