@@ -31,6 +31,7 @@ class NetscapeBookmarkEncoder
             "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">\n" .
             "<TITLE>Bookmarks</TITLE>\n" .
             "<H1>Bookmarks</H1>\n" .
+            "\n" .
             "<DL><p>\n";
 
         $collections = Collection::where('user_id', $this->user_id)
@@ -62,10 +63,20 @@ class NetscapeBookmarkEncoder
             $dates = Post::select('created_at', 'updated_at')
                 ->where('collection_id', $collection->id)
                 ->latest()
-                ->first()
-                ->only('created_at', 'updated_at');
-            $dates['created_at'] = strtotime($dates['created_at']);
-            $dates['updated_at'] = strtotime($dates['updated_at']);
+                ->first();
+
+            if (empty($dates)) {
+                // there is no data that could be used
+                $dates = [
+                    'created_at' => '',
+                    'updated_at' => ''
+                ];
+            } else {
+                $dates = $dates->only('created_at', 'updated_at');
+                $dates['created_at'] = strtotime($dates['created_at']);
+                $dates['updated_at'] = strtotime($dates['updated_at']);
+            }
+
             $content .= "{$this->tabs($level)}<DT><H3 " .
                 "ADD_DATE=\"{$dates['created_at']}\" " .
                 "LAST_MODIFIED=\"{$dates['updated_at']}\">" .
@@ -73,6 +84,7 @@ class NetscapeBookmarkEncoder
 
             $content .= $this->tabs($level) . "<DL><p>\n";
             $content .= $this->getPosts($collection->id, $level + 1);
+
             if (!empty($collection->nested)) {
                 $content .= $this->collectionsRecursive($collection->nested, $level);
             }
@@ -94,6 +106,7 @@ class NetscapeBookmarkEncoder
         foreach ($posts as $post) {
             $createdAt = strtotime($post->created_at);
             $updatedAt = strtotime($post->updated_at);
+            $description = trim($post->description);
             $content .= "{$this->tabs($level)}" .
                 "<DT><A HREF=\"{$post->url}\" " .
                 "ADD_DATE=\"{$createdAt}\" " .
@@ -102,7 +115,7 @@ class NetscapeBookmarkEncoder
                 "TAGS=\"{$post->tags->join(', ')}\"" .
                 ">{$post->title}</A>\n" .
                 "{$this->tabs($level)}" .
-                "<DD>{$post->description}\n";
+                "<DD>{$description}\n";
         }
         return $content;
     }

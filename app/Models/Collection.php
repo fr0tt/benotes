@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations;
 class Collection extends Model
 {
     public $timestamps = false;
+    const IMPORTED_COLLECTION_NAME = 'Imported Bookmarks';
     use SoftDeletes, HasFactory;
 
     /**

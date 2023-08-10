@@ -26,7 +26,7 @@ class ImportController extends Controller
         ]);
 
         $collection = Collection::firstOrCreate([
-            'name'    => 'Imported Bookmarks',
+            'name'    => Collection::IMPORTED_COLLECTION_NAME,
             'user_id' => Auth()->user()->id
         ]);
 
