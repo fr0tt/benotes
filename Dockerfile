@@ -14,9 +14,12 @@ RUN apk --no-cache update && apk --no-cache add \
     curl \
     curl-dev \
     zlib-dev \
+    freetype-dev \
     libpng-dev \
+    jpeg-dev \
     libjpeg-turbo \
     libjpeg-turbo-dev \
+    libwebp-dev \
     libxml2-dev \
     libmcrypt-dev \
     libpq \
@@ -40,9 +43,7 @@ RUN apk --no-cache update && apk --no-cache add \
 RUN sed -i 's/bin\/ash/bin\/bash/g' /etc/passwd 
 
 
-RUN docker-php-ext-configure gd \
-    --enable-gd \
-    --with-jpeg
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
 
 # https://github.com/mlocati/docker-php-extension-installer#supported-php-extensions
 RUN docker-php-ext-install \
