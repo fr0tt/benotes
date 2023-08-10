@@ -6,6 +6,12 @@ module.exports = {
             './resources/views/**/*.blade.php',
             './resources/views/**/*.twig',
         ],
+        safelist: [
+            'text-red-600',
+            'text-green-600',
+            'border-red-600',
+            'border-green-600',
+        ]
     },
     theme: {
         extend: {
