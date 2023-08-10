@@ -235,7 +235,7 @@ class PostService
         for ($i = 0; $i < $metas->length; $i++) {
             $meta = $metas->item($i);
             if ($meta->getAttribute('name') === 'description') {
-                $description = $meta->getAttribute('content');
+                $description = trim($meta->getAttribute('content'));
             } else if ($meta->getAttribute('name') === 'theme-color') {
                 $color = $meta->getAttribute('content');
             } else if ($meta->getAttribute('property') === 'og:image') {
