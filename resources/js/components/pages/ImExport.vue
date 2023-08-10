@@ -9,7 +9,11 @@
                             <svg-vue icon="remix/git-repository-commits-line" class="icon" />
                         </span>
                     </div>
-                    <div class="flex-1">
+                    <div class="flex-1 relative">
+                        <span class="absolute right-0 top-0 px-1 text-xs font-medium 
+                            text-orange-600  border rounded border-orange-600">
+                            Beta
+                        </span>
                         <span class="title">Import Bookmarks</span>
                         <p class="leading-5 text-gray-800">Import bookmarks from your favorite browser as .html file</p>
                     </div>
@@ -20,7 +24,11 @@
                             <svg-vue icon="remix/git-repository-commits-line" class="icon" />
                         </span>
                     </div>
-                    <div class="flex-1">
+                    <div class="flex-1 relative">
+                        <span class="absolute right-0 top-0 px-1 text-xs font-medium 
+                            text-orange-600  border rounded border-orange-600">
+                            Beta
+                        </span>
                         <span class="title">Export Bookmarks</span>
                         <p class="leading-5 text-gray-800">Export bookmarks as .zip in order for file you to use them
                             somewhere else</p>
