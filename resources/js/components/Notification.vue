@@ -3,10 +3,10 @@
         enter-to-class="transform translate-y-0"
         leave-active-class="transition ease-in duration-300 opacity-0 translate-y-64 transform">
         <div v-if="isVisible" class="relative ml-auto mr-8 mb-6 max-w-sm bg-white -shadow-md border-1.5"
-            :class="'border-' + color(type)">
+            :class="color('border', type)">
             <div class=" relative px-6 py-4 flex">
                 <div>
-                    <svg class="icon mr-6" :class="'text-' + color(type) + ' ' + verticalAdjustment(type)"
+                    <svg class="icon mr-6" :class="color('text', type) + ' ' + verticalAdjustment(type)"
                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" v-html="icon(type)"></svg>
                 </div>
                 <div class="flex-1">
@@ -51,15 +51,16 @@ export default {
                     return ''
             }
         },
-        color(type) {
-            switch (type) {
+        color(classType, notificationType) {
+            // requires tailwind's safelist
+            switch (notificationType) {
                 case 'success':
-                    return 'green-600'
+                    return classType + '-green-600'
                 default:
-                    return 'red-600'
+                    return classType + '-red-600'
             }
         }
-    },
+    }
 }
 </script>
 
