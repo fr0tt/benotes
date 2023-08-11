@@ -107,12 +107,14 @@ class NetscapeBookmarkEncoder
             $createdAt = strtotime($post->created_at);
             $updatedAt = strtotime($post->updated_at);
             $description = trim($post->description);
+            $tags = $post->tags->implode('name', ', ');
+
             $content .= "{$this->tabs($level)}" .
                 "<DT><A HREF=\"{$post->url}\" " .
                 "ADD_DATE=\"{$createdAt}\" " .
                 "LAST_MODIFIED=\"{$updatedAt}\" " .
                 "ICON=\"{$this->icon($post->base_url)}\" " .
-                "TAGS=\"{$post->tags->join(', ')}\"" .
+                "TAGS=\"{$tags}\"" .
                 ">{$post->title}</A>\n" .
                 "{$this->tabs($level)}" .
                 "<DD>{$description}\n";

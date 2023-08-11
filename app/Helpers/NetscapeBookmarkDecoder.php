@@ -4,6 +4,8 @@ namespace App\Helpers;
 
 use App\Models\Collection;
 use App\Services\PostService;
+use App\Services\TagService;
+use Illuminate\Support\Str;
 
 /*
  * This file is heavily inspired by:
@@ -38,6 +40,7 @@ class NetscapeBookmarkDecoder
 {
     protected $items;
     private PostService $postService;
+    private TagService $tagService;
     private $userId;
 
     const TRUE_PATTERN = 'y|yes|on|checked|ok|1|true|array|\+|okay|yes|t|one';
@@ -50,6 +53,7 @@ class NetscapeBookmarkDecoder
     public function __construct(int $userId)
     {
         $this->postService = new PostService();
+        $this->tagService = new TagService();
         $this->userId = $userId;
     }
 
@@ -119,10 +123,11 @@ class NetscapeBookmarkDecoder
                 $tags = array();
 
                 if (preg_match('/(tags?|labels?|folders?)="(.*?)"/i', $line, $m7)) {
-                    $tags = array_merge(
-                        $tags,
-                        explode(' ', strtr($m7[2], ',', ' '))
-                    );
+                    if (Str::contains($m7[2], ',')) {
+                        $tags = preg_split('/\s*,\s*/', $m7[2]);
+                    } else {
+                        $tags = preg_split('/\s+/', $m7[2]);
+                    }
                 }
                 $this->items[$i]['tags'] = $tags;
 
@@ -268,9 +273,20 @@ class NetscapeBookmarkDecoder
             $url,
             $collectionId,
             $description,
-            count($tags) > 0 ? $tags : null,
+            $this->createTags($tags),
             $this->userId,
         );
+    }
+
+    private function createTags(array $tagNames): array|null
+    {
+        if (count($tagNames) === 0) {
+            return null;
+        }
+        return array_map(function ($tagName) {
+            $tag = $this->tagService->saveTag($tagName, $this->userId);
+            return $tag->id;
+        }, $tagNames);
     }
 
 }
