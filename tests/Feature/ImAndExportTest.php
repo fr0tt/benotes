@@ -84,10 +84,11 @@ class ImAndExportTest extends TestCase
             'content'       => 'https://www.mozilla.org/en-US/',
             'collection_id' => $personal->id
         ])->exists());
-        $this->assertTrue(Post::where([
+        $post = Post::where([
             'content'       => 'https://www.bbc.com/',
             'collection_id' => $collectionA->id
-        ])->exists());
+        ]);
+        $this->assertTrue($post->exists());
         $this->assertTrue(Post::where([
             'content'       => 'https://www.theguardian.com/international',
             'collection_id' => $collectionA1->id
@@ -104,6 +105,11 @@ class ImAndExportTest extends TestCase
             'content'       => 'https://attrakdiff.de/index-en.html',
             'collection_id' => $collectionB->id
         ])->exists());
+
+        $post = $post->with('tags')->first();
+        $this->assertEquals(2, count($post->tags));
+        $this->assertEquals('british', $post->tags[0]->name);
+        $this->assertEquals('tea time', $post->tags[1]->name);
 
     }
 
@@ -180,6 +186,8 @@ class ImAndExportTest extends TestCase
 
         $exported = file_get_contents($response->getFile());
         $original = file_get_contents(base_path('tests/bookmarks.html'));
+
+        $this->assertStringContainsString('TAGS="british, tea time">BBC', $exported);
 
         $original = strip_tags($original, ['dl', 'p', 'dt', 'h3', 'a', 'dd']);
         // $original = preg_replace('/(^.*(?:\n.*))*?<DL>/m', '<DL>', $original, 1);
