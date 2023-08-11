@@ -3,12 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\PostTag;
+use App\Services\TagService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Tag;
 
 class TagController extends Controller
 {
+
+    private $service;
+
+    public function __construct()
+    {
+        $this->service = new TagService();
+    }
 
     public function index()
     {
@@ -33,7 +41,7 @@ class TagController extends Controller
     {
 
         $this->validate($request, [
-            'name' => 'required_without:tags|string',
+            'name'        => 'required_without:tags|string',
             'tags.*.name' => 'required_without:name|string',
         ]);
 
@@ -41,14 +49,14 @@ class TagController extends Controller
         $tags = [];
 
         if (isset($request->name)) {
-            $tag = $this->saveTag($request->name, $user_id);
+            $tag = $this->service->saveTag($request->name, $user_id);
             if ($tag) {
                 return response()->json(['data' => $tag], 201);
             }
             return response()->json('Tag does already exist', 400);
         } else if (isset($request->tags)) {
             foreach ($request->tags as $tag_request_object) {
-                $tag = $this->saveTag($tag_request_object['name'], $user_id);
+                $tag = $this->service->saveTag($tag_request_object['name'], $user_id);
                 if ($tag) {
                     $tags[] = $tag;
                 }
@@ -91,19 +99,4 @@ class TagController extends Controller
         return response()->json('', 204);
     }
 
-    private function saveTag(string $name, int $user_id)
-    {
-        if (Tag::where('name', $name)
-            ->where('user_id', $user_id)->exists()
-        ) {
-            return null;
-        }
-
-        $tag = Tag::create([
-            'name' => $name,
-            'user_id' => $user_id
-        ]);
-
-        return $tag;
-    }
 }
