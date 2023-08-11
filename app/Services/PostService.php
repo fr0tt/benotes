@@ -4,10 +4,12 @@ namespace App\Services;
 
 use App\Jobs\ProcessMissingThumbnail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
+use Intervention\Image\Exception\RuntimeException;
 use Illuminate\Support\Facades\Storage;
-use \HeadlessChromium\BrowserFactory;
+use HeadlessChromium\BrowserFactory;
 
 use App\Models\Post;
 use App\Models\Collection;
@@ -210,7 +212,7 @@ class PostService
             return $this->getInfo($url, true);
         }
 
-        if (empty($html) || !str_contains($content_type, 'text/html')) {
+        if (empty($html) || !Str::contains($content_type, 'text/html')) {
             return [
                 'url'         => substr($url, 0, 512),
                 'base_url'    => substr($base_url, 0, 255),
@@ -316,7 +318,11 @@ class PostService
             return;
         }
 
-        $image = Image::make($image_path);
+        try {
+            $image = Image::make($image_path);
+        } catch (RuntimeException $e) {
+            Log::debug('Image could not be created');
+        }
         if (!$image) {
             return;
         }
