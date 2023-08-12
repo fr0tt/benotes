@@ -11,7 +11,7 @@ module.exports = {
             'text-green-600',
             'border-red-600',
             'border-green-600',
-        ]
+        ],
     },
     theme: {
         extend: {
