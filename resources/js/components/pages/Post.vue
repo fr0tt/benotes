@@ -239,10 +239,10 @@ export default {
                             this.$store.dispatch('post/addPost', response.data.data)
                         }
                     })
-                    .catch(() => {
+                    .catch((error) => {
                         this.$store.dispatch('notification/setNotification', {
                             type: 'error',
-                            title: 'Error',
+                            title: 'Error ' + error.response.status,
                             description: 'Post could not be created.',
                         })
                     })

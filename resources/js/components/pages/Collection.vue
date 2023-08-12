@@ -229,7 +229,7 @@ export default {
                             message = toString(error).substring(0, 60)
                         this.$store.dispatch('notification/setNotification', {
                             type: 'error',
-                            title: 'Error',
+                            title: 'Error ' + error.response.status,
                             description: message,
                         })
                     })
