@@ -2,12 +2,16 @@
     <div v-if="editor" class="menubar inline-block bg-gray-200 px-4 py-1">
         <button class="menubar-button styles" @click="showStyles = !showStyles">
             {{ style }}
-            <svg-vue class="editor-icon inline-block ml-2" icon="material/arrow_drop_down" />
+            <svg-vue
+                class="editor-icon inline-block ml-2"
+                icon="material/arrow_drop_down" />
             <transition name="fade">
                 <ol
                     v-if="showStyles"
                     class="absolute bg-white shadow-lg z-50 text-left w-full mt-1 left-0">
-                    <li class="style font-normal" @click="styleClick('Normal', 0)">Normal</li>
+                    <li class="style font-normal" @click="styleClick('Normal', 0)">
+                        Normal
+                    </li>
                     <li
                         class="style font-black"
                         :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
@@ -115,19 +119,34 @@
             <svg-vue class="editor-icon" icon="material/art_track" />
         </button>
 
+        <button class="menubar-button relative cursor-pointer" title="Image">
+            <input
+                class="absolute left-0 right-0 top-0 bottom-0 text-0 opacity-0 cursor-pointer"
+                type="file"
+                @input="uploadImage" />
+            <svg-vue class="editor-icon" icon="material/image" />
+        </button>
+
         <i class="delimiter" />
 
-        <button class="menubar-button" title="Undo" @click="editor.chain().focus().undo().run()">
+        <button
+            class="menubar-button"
+            title="Undo"
+            @click="editor.chain().focus().undo().run()">
             <svg-vue class="editor-icon" icon="material/undo" />
         </button>
 
-        <button class="menubar-button" title="Redo" @click="editor.chain().focus().redo().run()">
+        <button
+            class="menubar-button"
+            title="Redo"
+            @click="editor.chain().focus().redo().run()">
             <svg-vue class="editor-icon" icon="material/redo" />
         </button>
     </div>
 </template>
 
 <script>
+import axios from 'axios'
 export default {
     props: ['editor'],
     data() {
@@ -145,6 +164,35 @@ export default {
                 this.editor.chain().focus().setParagraph().run()
             }
         },
+        uploadImage() {
+            const file = document.querySelector('input[type=file]').files[0]
+            if (typeof file === 'undefined') {
+                return
+            }
+            const formData = new FormData()
+            formData.append('file', file)
+
+            axios
+                .post('/api/files', formData, {
+                    headers: {
+                        Accept: 'application/json',
+                    },
+                })
+                .then((response) => {
+                    if (response.status !== 201) {
+                        return
+                    }
+                    const path = response.data.data.path
+                    this.editor.commands.setImage({ src: path })
+                })
+                .catch((error) => {
+                    this.$store.dispatch('notification/setNotification', {
+                        type: 'error',
+                        title: 'Error ' + error.response.status,
+                        description: 'Image could not be uploaded.',
+                    })
+                })
+        },
     },
 }
 </script>
@@ -153,6 +201,11 @@ export default {
     padding-top: 0.375rem;
     padding-bottom: 0.375rem;
 }
+
+.text-0 {
+    font-size: 0rem;
+}
+
 @media (max-width: 768px) {
     .menubar {
         overflow-x: scroll;
@@ -160,28 +213,36 @@ export default {
         @apply py-1.5;
     }
 }
+
 .delimiter {
     @apply inline-block align-middle h-6 mx-2 border border-gray-400;
 }
+
 .menubar-button {
     @apply px-1 py-1 align-middle text-gray-600 font-semibold;
+
     .editor-icon {
         @apply w-6 fill-current;
     }
+
     .style {
         @apply px-3 py-1.5;
     }
+
     .style:hover {
         @apply bg-gray-200;
     }
 }
+
 .menubar-button:hover {
     @apply bg-gray-100;
 }
+
 .menubar-button.is-active,
 .menubar-button .is-active {
     @apply text-gray-800 bg-white;
 }
+
 .menubar-button.styles {
     @apply relative px-3;
 }

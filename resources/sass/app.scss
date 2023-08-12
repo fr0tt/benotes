@@ -2,10 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "theme";
+@import 'theme';
 
 html {
-  font-family: 'Inter', 'Noto Sans', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif';
+    font-family: 'Inter', 'Noto Sans', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI',
+        'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif';
 }
 
 .-ml-0\.5 {
@@ -94,16 +95,19 @@ label.label {
     @apply block text-gray-600 font-semibold text-sm uppercase mb-2;
 }
 
-.router-fade-enter-active, .router-fade-leave-active {
-    transition: opacity .2s ease;
+.router-fade-enter-active,
+.router-fade-leave-active {
+    transition: opacity 0.2s ease;
 }
 
-.router-fade-enter, .router-fade-leave-to {
+.router-fade-enter,
+.router-fade-leave-to {
     opacity: 0;
 }
 
 .open-sans {
-    font-family: -apple-system, BlinkMacSystemFont, 'Open Sans', 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Open Sans', 'Segoe UI', Roboto,
+        Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
 }
 
 .ProseMirror {
@@ -133,7 +137,8 @@ label.label {
             @apply text-gray-100;
         }
     }
-    ul, ol {
+    ul,
+    ol {
         padding: 0 1.25rem;
     }
     ul {
@@ -142,7 +147,7 @@ label.label {
     ol {
         list-style-type: decimal;
     }
-    ul[data-type=taskList] {
+    ul[data-type='taskList'] {
         list-style: none;
         padding: 0;
         li {
@@ -167,6 +172,9 @@ label.label {
     hr {
         @apply mt-4 mb-4;
         border-top: 2px solid #e6e6e6;
+    }
+    img.ProseMirror-selectednode {
+        outline: 1.5px solid #000;
     }
 }
 
