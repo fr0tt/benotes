@@ -1,15 +1,16 @@
 <?php
 
-use App\Http\Controllers\ExportController;
-use App\Http\Controllers\ImportController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\PostController;
 use App\Http\Controllers\CollectionController;
+use App\Http\Controllers\ExportController;
+use App\Http\Controllers\FileController;
+use App\Http\Controllers\ImportController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\ShareController;
 use App\Http\Controllers\TestingController;
 use App\Http\Controllers\TagController;
-use App\Http\Controllers\ShareController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,6 +63,8 @@ Route::group([
     Route::post('shares', [ShareController::class, 'store']);
     Route::patch('shares/{id}', [ShareController::class, 'update']);
     Route::delete('shares/{id}', [ShareController::class, 'destroy']);
+
+    Route::post('files', [FileController::class, 'store']);
 
     Route::post('imports', [ImportController::class, 'store']);
     Route::get('exports', [ExportController::class, 'index']);
