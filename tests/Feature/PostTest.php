@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,8 +20,9 @@ class PostTest extends TestCase
     /**
      * @dataProvider createPostsProvider
      */
-    public function testCreatePost($content, $type)
+    public function testCreatePost($content, $type, $thumbnail = false)
     {
+        Config::set('benotes.generate_missing_thumbnails', false);
         $user = User::factory()->create();
 
         $collection = Collection::factory()->create();
@@ -37,9 +37,12 @@ class PostTest extends TestCase
         $this->assertEquals(201, $response->status());
         $data = $response->getData()->data;
         $this->assertEquals($type, $data->type);
-        if ($data->type === 'link') {
-            $this->assertNotEquals(null, $data->color);
-            $this->assertNotEquals(null, $data->url);
+        if ($type === 'link') {
+            $this->assertNotEmpty($data->color);
+            $this->assertNotEmpty($data->url);
+            $this->assertNotEmpty($data->base_url);
+            $this->assertEquals($thumbnail, !empty($data->image_path));
+
         }
         $this->assertNotEquals(null, $data->collection_id);
     }
@@ -50,18 +53,19 @@ class PostTest extends TestCase
     public function createPostsProvider()
     {
         return [
-            1  => ['https://go-rel.github.io/', 'link'],
-            2  => ['https://www.youtube.com/watch?v=ZyURjdnYQaU', 'link'],
-            3  => ['https://github.com/verlok/vanilla-lazyload', 'link'],
+            1  => ['https://go-rel.github.io/', 'link', true],
+            2  => ['https://www.youtube.com/watch?v=ZyURjdnYQaU', 'link', true],
+            3  => ['https://github.com/verlok/vanilla-lazyload', 'link', true],
             4  => ['https://www.amazon.com/Design-Everyday-Things-Revised-Expanded/dp/0465050654/ref=sr_1_1?dchild=1&keywords=don+norman&link_code=qs&qid=1608495907&sr=8-1&tag=operabrowser-21', 'link'],
-            5  => ['<a href="https://www.wolframalpha.com" rel="noopener noreferrer nofollow">https://www.wolframalpha.com</a>', 'link'],
+            5  => ['<a href="https://www.wolframalpha.com" rel="noopener noreferrer nofollow">https://www.wolframalpha.com</a>', 'link', true],
             6  => ['<p class="">dfgd adijfds https://google.com</p>', 'text'],
             7  => ['<p>https://www.wolframalpha.com</p><p>https://laravel.com</p>', 'text'],
             8  => ['Hdfgd fijsdoij <a href="https://slack.com" rel="noopener noreferrer nofollow">https://slack.com</a>', 'text'],
-            9  => ['https://laravel.com', 'link'],
+            9  => ['https://laravel.com', 'link', true],
             10 => ['Lorem ipsum https://fonts.adobe.com/fonts/realist', 'text'],
-            11 => ['https://gamesindustry.biz', 'link'],
+            11 => ['https://gamesindustry.biz', 'link', true],
             12 => ['https://www.php.net/manual/en/function.parse-url.php', 'link'],
+            13 => ['https://github.com/fr0tt/benotes/blob/master/tests/Feature/PostTest.php', 'link', true]
         ];
     }
 
@@ -88,6 +92,8 @@ class PostTest extends TestCase
 
     public function testCreatePostWithScreenshot()
     {
+        Config::set('benotes.generate_missing_thumbnails', true);
+        $this->assertTrue(config('benotes.generate_missing_thumbnails'));
         $this->assertTrue(config('benotes.use_filesystem'));
         $user = User::factory()->create();
         $collection = Collection::factory()->create();
@@ -103,7 +109,8 @@ class PostTest extends TestCase
         $this->assertNotEmpty($data->title);
         $this->assertEmpty($data->image_path);
 
-        Artisan::call('thumbnail:generate ' . $data->id);
+        // not necessary because of QUEUE_CONNECTION=sync
+        // Artisan::call('thumbnail:generate ' . $data->id);
 
         $post = Post::find($data->id);
         $this->assertNotEmpty($post->image_path);
