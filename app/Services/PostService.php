@@ -243,8 +243,8 @@ class PostService
                 $color = $meta->getAttribute('content');
             } else if ($meta->getAttribute('property') === 'og:image') {
                 if ($meta->getAttribute('content') != '') {
-                    $image_path = $meta->getAttribute('content');
-                    if (parse_url($image_path)['path'] === $image_path) {
+                    $image_path = $meta->getAttribute('content'); 
+                    if (Str::startsWith($image_path, parse_url($image_path)['path'])) {
                         $image_path = $this->composeImagePath($image_path, $base_url, $url);
                     }
                 }
@@ -380,7 +380,7 @@ class PostService
             }
 
             if (!empty($imagePathOG)) {
-                // if crawling the website with chromium reveals an already 
+                // if crawling the website with chromium reveals an already
                 // existing thumbnail, use it instead
                 $imagePath = $imagePathOG;
             } else {
