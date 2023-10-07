@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Share;
 use App\Models\Collection;
 
-class ShareController extends Controller
+class PublicShareController extends Controller
 {
 
     public function index(Request $request)
