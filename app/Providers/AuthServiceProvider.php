@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\PublicShare;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
-use App\Models\Share;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -32,7 +32,7 @@ class AuthServiceProvider extends ServiceProvider
 
         $this->app['auth']->viaRequest('token', function ($request) {
             if ($request->bearerToken()) {
-                return Share::where('token', $request->bearerToken())->where('is_active', true)->first();
+                return PublicShare::where('token', $request->bearerToken())->where('is_active', true)->first();
             }
         });
     }

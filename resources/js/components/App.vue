@@ -10,7 +10,7 @@
             <div
                 id="view"
                 class="pt-16 view-slide-transition"
-                :class="{ 'xl:pl-1/6 lg:pl-64 md:pl-48': showSidebar }">
+                :class="{ 'xl:pl-1/6 lg:pl-64 md:pl-48': showSidebar & !staticAuth }">
                 <transition name="router-fade" mode="out-in">
                     <router-view />
                 </transition>
