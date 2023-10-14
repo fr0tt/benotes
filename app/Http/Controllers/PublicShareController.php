@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Models\PublicShare;
 use App\Models\Collection;
+use Illuminate\Http\Response;
 
 class PublicShareController extends Controller
 {
@@ -30,14 +31,19 @@ class PublicShareController extends Controller
 
     public function store(Request $request)
     {
+
         $this->validate($request, [
             'token' => 'required|string',
             'collection_id' => 'required|integer',
             'is_active' => 'required|boolean'
         ]);
 
-        // @TODO does this even work like this ???
-        $this->authorize('share', Collection::findOrFail($request->collection_id));
+        $collection = Collection::findOrFail($request->collection_id);
+        $this->authorize('share', $collection);
+
+        if (PublicShare::where('collection_id', $collection->id)->exists()) {
+            return response()->json('', Response::HTTP_BAD_REQUEST);
+        }
 
         $share = new PublicShare;
         $share->token = $request->token;
@@ -72,12 +78,10 @@ class PublicShareController extends Controller
             $collection = Collection::find($share->collection_id);
         }
 
-        // @TODO does this even work like this ???
         $this->authorize('share', $collection);
 
         if (isset($request->is_active)) {
-            // apparently updating validatedData seems no to work properly when it comes to boolean
-            $share->is_active = $request->is_active;
+            $validatedData['is_active'] = boolval($request->is_active);
         }
 
         $share->update($validatedData);

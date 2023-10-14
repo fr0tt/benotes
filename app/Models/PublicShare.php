@@ -28,7 +28,7 @@ class PublicShare extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'token', 'collection_id',
+        'token', 'collection_id', 'is_active', 'created_by'
     ];
 
     /**
