@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
@@ -34,8 +35,11 @@ class AuthController extends Controller
         return response()->json(['data' => $request->user()]);
     }
 
-    public function refresh()
+    public function refresh(Request $request)
     {
+        if (!auth('api')->check()) {
+            return response()->json('', Response::HTTP_BAD_REQUEST);
+        }
         $data = [
             "token" => [
                 "access_token" => Auth::refresh(),
