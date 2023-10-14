@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Models\Share;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class SharePolicy
+class PublicSharePolicy
 {
     use HandlesAuthorization;
 
