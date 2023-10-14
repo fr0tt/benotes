@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-use App\Models\Share;
+use App\Models\PublicShare;
 use App\Models\Collection;
 
 class PublicShareController extends Controller
@@ -18,9 +18,9 @@ class PublicShareController extends Controller
         ]);
 
         if (empty($request->collection_id)) {
-            $shares = Share::where('created_by', Auth::user()->id)->get();
+            $shares = PublicShare::where('created_by', Auth::user()->id)->get();
         } else {
-            $shares = Share::where('created_by', Auth::user()->id)
+            $shares = PublicShare::where('created_by', Auth::user()->id)
                 ->where('collection_id', $request->collection_id)
                 ->get();
         }
@@ -36,9 +36,10 @@ class PublicShareController extends Controller
             'is_active' => 'required|boolean'
         ]);
 
+        // @TODO does this even work like this ???
         $this->authorize('share', Collection::findOrFail($request->collection_id));
 
-        $share = new Share;
+        $share = new PublicShare;
         $share->token = $request->token;
         $share->collection_id = $request->collection_id;
         $share->permission = 4;
@@ -57,7 +58,7 @@ class PublicShareController extends Controller
             'is_active' => 'boolean|required'
         ]);
 
-        $share = Share::find($id);
+        $share = PublicShare::find($id);
         if (!$share) {
             return response()->json('Share not found', 404);
         }
@@ -71,6 +72,7 @@ class PublicShareController extends Controller
             $collection = Collection::find($share->collection_id);
         }
 
+        // @TODO does this even work like this ???
         $this->authorize('share', $collection);
 
         if (isset($request->is_active)) {
@@ -85,7 +87,7 @@ class PublicShareController extends Controller
 
     public function destroy($id)
     {
-        $share = Share::find($id);
+        $share = PublicShare::find($id);
 
         if ($share) {
             $this->authorize('delete', $share);
