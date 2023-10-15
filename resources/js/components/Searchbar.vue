@@ -2,20 +2,37 @@
     <form
         class="flex relative searchbar w-full max-w-2xl shadow-sm bg-gray-200 rounded text-gray-600 border-2 focus-in:border-orange-500 focus-in:bg-white"
         @submit.prevent="search">
-        <svg-vue icon="remix/search-line" class="flex-none w-5 mx-3 fill-current text-gray-600" />
+        <svg-vue
+            icon="remix/search-line"
+            class="flex-none w-5 mx-3 fill-current text-gray-600" />
         <div v-show="searchCollection" class="flex-none my-auto">
-            <div class="px-2 py-0.5 rounded-xl font-medium text-white border-2 border-orange-500 bg-orange-500">
+            <div
+                class="px-2 py-0.5 rounded-xl font-medium text-white border-2 border-orange-500 bg-orange-500">
                 {{ searchCollectionName }}
             </div>
         </div>
-        <input id="search" placeholder="Type to search"
+        <input
+            id="search"
+            placeholder="Type to search"
             class="flex-auto w-full px-2 py-1.5 bg-transparent text-gray-700 font-medium rounded outline-none duration-200 ease-in-out transition-colors"
-            autocomplete="off" type="text" @keydown.down="onArrowDown" @keydown.up="onArrowUp" @keyup.delete="onBackspace"
-            @click="searchInput" @input="searchInput" />
-        <ul v-if="showOptions && options.length > 0"
-            class="absolute w-full mt-10 -ml-0.5 py-1 bg-gray-200 z-40 rounded text-gray-800 shadow-sm" role="listbox">
-            <li v-for="(item, i) in options" :key="item.id" class="pl-14 pr-4 py-1 font-medium searchOption cursor-pointer"
-                :class="{ isActive: i === arrowCount }" role="option" @click="selectOption(item)">
+            autocomplete="off"
+            type="text"
+            @keydown.down="onArrowDown"
+            @keydown.up="onArrowUp"
+            @keyup.delete="onBackspace"
+            @click="searchInput"
+            @input="searchInput" />
+        <ul
+            v-if="showOptions && options.length > 0"
+            class="absolute w-full mt-10 -ml-0.5 py-1 bg-gray-200 z-40 rounded text-gray-800 shadow-sm"
+            role="listbox">
+            <li
+                v-for="(item, i) in options"
+                :key="item.id"
+                class="pl-14 pr-4 py-1 font-medium searchOption cursor-pointer"
+                :class="{ isActive: i === arrowCount }"
+                role="option"
+                @click="selectOption(item)">
                 {{ item.name }}
             </li>
         </ul>
@@ -70,7 +87,7 @@ export default {
                     const collection = entries.next().value
                     this.options.push({
                         id: collection[0],
-                        name: collection[1]
+                        name: collection[1],
                     })
                 }
             } else {
@@ -84,7 +101,6 @@ export default {
                         this.options.push({ id, name })
                 })
             }
-
             if (!this.showOptions) {
                 this.showOptions = true
                 document.querySelector('#app').addEventListener('click', this.hideResults)
@@ -98,15 +114,14 @@ export default {
                 return
             }
             this.showOptions = false
+            this.options = []
             document.querySelector('#app').removeEventListener('click', this.hideResults)
-            document.querySelector('#search').focus()
         },
         selectOption(option) {
             this.searchCollection = option
             this.searchValue = ''
             this.arrowCount = -1
             this.showOptions = false
-            document.querySelector('#app').removeEventListener('click', this.hideResults)
             document.querySelector('#search').value = ''
             document.querySelector('#search').focus()
         },
