@@ -50,9 +50,10 @@ class RunBackupCommand extends Command
         $dumper = $this->dumpDatabase();
         $dbDumpFilename = 'database.sql';
         $pathToDbDump = $tempDirectory->path($dbDumpFilename);
-        $dumper->dumpToFile($pathToDbDump);
 
         try {
+
+            $dumper->dumpToFile($pathToDbDump);
 
             $this->info('Zipping files and directories...');
 
@@ -81,12 +82,10 @@ class RunBackupCommand extends Command
             Storage::disk(config('benotes.backup_disk'))
                 ->putFileAs('', $pathToZip, $backupFilename);
 
-        } catch (Exception $exception) {
-
-            $this->error("Backup failed: {$exception->getMessage()}.");
+        } catch (\Exception $exception) {
+            $this->error('Backup attempt failed.');
+            $this->warn($exception->getMessage());
             $tempDirectory->delete();
-            throw $exception;
-
         }
 
         $tempDirectory->delete();
@@ -100,28 +99,36 @@ class RunBackupCommand extends Command
         $parser = new ConfigurationUrlParser();
         try {
             $dbConfig = $parser->parseConfiguration(config("database.connections.{$dbConnection}"));
-        } catch (Exception $e) {
-            throw 'Unsupported driver for ' . $dbConnection;
+        } catch (\Exception $e) {
+            throw new \Exception('Unsupported driver for ' . $dbConnection);
         }
 
         $driver = strtolower(config("database.connections.{$dbConnection}.driver"));
 
         if ($driver === 'mysql' || $driver === 'mariadb') {
-            $dbDumper = new MySql();
+            $dumper = new MySql();
         } else if ($driver === 'pgsql') {
-            $dbDumper = new PostgreSql();
+            $dumper = new PostgreSql();
         } else if ($driver === 'sqlite') {
-            $dbDumper = new Sqlite();
+            $dumper = new Sqlite();
         }
 
-        $dumper = $dbDumper
-            ->setHost(Arr::first(Arr::wrap($dbConfig['host'] ?? '')))
-            ->setDbName($dbConfig['database'])
-            ->setUserName($dbConfig['username'] ?? '')
-            ->setPassword($dbConfig['password'] ?? '')
-            ->setPort($dbConfig['port']);
+        if (!empty($dbConfig['url'])) {
+            return $dumper->setDatabaseUrl($dbConfig['url']);
+        }
 
-        return $dumper;
+        if ($driver === 'sqlite') {
+            // put here, just in case someone might use sqlite 
+            // and provides a database url
+            return $dumper->setDbName($dbConfig['database']);
+        }
+
+        return $dumper
+            ->setHost($dbConfig['host'])
+            ->setDbName($dbConfig['database'])
+            ->setUserName($dbConfig['username'])
+            ->setPassword($dbConfig['password'])
+            ->setPort($dbConfig['port']);
     }
 
 }
