@@ -6,8 +6,8 @@ use App\Jobs\ProcessMissingThumbnail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Intervention\Image\Exception\ImageException;
 use Intervention\Image\Facades\Image;
-use Intervention\Image\Exception\RuntimeException;
 use Illuminate\Support\Facades\Storage;
 use HeadlessChromium\BrowserFactory;
 
@@ -243,7 +243,7 @@ class PostService
                 $color = $meta->getAttribute('content');
             } else if ($meta->getAttribute('property') === 'og:image') {
                 if ($meta->getAttribute('content') != '') {
-                    $image_path = $meta->getAttribute('content'); 
+                    $image_path = $meta->getAttribute('content');
                     if (Str::startsWith($image_path, parse_url($image_path)['path'])) {
                         $image_path = $this->composeImagePath($image_path, $base_url, $url);
                     }
@@ -321,10 +321,10 @@ class PostService
 
         try {
             $image = Image::make($image_path);
-        } catch (RuntimeException $e) {
+        } catch (ImageException $e) {
             Log::debug('Image could not be created');
         }
-        if (!$image) {
+        if (!isset($image)) {
             return;
         }
 
