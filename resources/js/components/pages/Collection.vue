@@ -7,7 +7,7 @@
                     v-model="posts"
                     tag="ol"
                     :disabled="isUpdating"
-                    :delay="90"
+                    :delay="180"
                     :delay-on-touch-only="true"
                     v-bind="{ animation: 200 }"
                     class="pt-4 pb-16"
