@@ -2,6 +2,8 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -56,8 +58,10 @@ class Handler extends ExceptionHandler
     {
         if ($exception instanceof \PHPOpenSourceSaver\JWTAuth\Exceptions\TokenExpiredException) {
             return response()->json('Token has expired', 401);
-        } else if ($exception instanceof \PHPOpenSourceSaver\JWTAuth\Exceptions\TokenBlacklistedException ||
-                   $exception instanceof \PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException) {
+        } else if (
+            $exception instanceof \PHPOpenSourceSaver\JWTAuth\Exceptions\TokenBlacklistedException ||
+            $exception instanceof \PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException
+        ) {
             return response()->json('Token is invalid', 401);
         } else if ($exception instanceof \Intervention\Image\Exception\NotWritableException) {
             return response()->json('Storage path not writable.', 403);
@@ -65,11 +69,11 @@ class Handler extends ExceptionHandler
             return response()->json('This action is unauthorized.', 403);
         } else if ($exception instanceof ModelNotFoundException) {
             return response()->json(
-                str_replace('App\\', '', $exception->getModel()) . ' not found.'
-            , 404);
+                str_replace('App\\', '', $exception->getModel()) . ' not found.',
+                404
+            );
         }
 
         return parent::render($request, $exception);
     }
-
 }
