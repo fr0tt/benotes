@@ -322,7 +322,7 @@ class PostService
         try {
             $image = Image::make($image_path);
         } catch (ImageException $e) {
-            Log::debug('Image could not be created');
+            Log::notice('Image could not be created');
         }
         if (!isset($image)) {
             return;
