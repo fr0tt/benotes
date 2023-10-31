@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends Controller
 {
@@ -37,17 +38,23 @@ class AuthController extends Controller
 
     public function refresh(Request $request)
     {
-        if (!auth('api')->check()) {
+        if ($request->bearerToken() === 'null') {
             return response()->json('', Response::HTTP_BAD_REQUEST);
         }
-        $data = [
-            "token" => [
-                "access_token" => Auth::refresh(),
-                "token_type"   => 'Bearer',
-                "expire"       => (int) config('jwt.ttl')
-            ]
-        ];
-        return response()->json(compact('data'));
+
+        try {
+            $data = [
+                "token" => [
+                    "access_token" => Auth::refresh(),
+                    "token_type"   => 'Bearer',
+                    "expire"       => (int) config('jwt.ttl')
+                ]
+            ];
+            return response()->json(compact('data'));
+        } catch (JWTException $e) {
+            return response()->json('', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     public function logout()
@@ -79,8 +86,8 @@ class AuthController extends Controller
     public function reset(Request $request)
     {
         $this->validate($request, [
-            'token' => 'required',
-            'email' => 'required|email',
+            'token'    => 'required',
+            'email'    => 'required|email',
             'password' => 'required|confirmed',
         ]);
 
