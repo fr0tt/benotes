@@ -82,6 +82,7 @@ export default {
             }
 
             if (input.length === 0) {
+                this.options = []
                 const entries = this.collections.entries()
                 for (let i = 0; i < 4 && i < this.collections.size; i++) {
                     const collection = entries.next().value
@@ -105,6 +106,7 @@ export default {
                 this.showOptions = true
                 document.querySelector('#app').addEventListener('click', this.hideResults)
             }
+            this.lastSearchLength = input.length
         },
         hideResults(event) {
             if (document.querySelector('#search') == event.target) {
