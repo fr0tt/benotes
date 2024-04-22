@@ -98,7 +98,7 @@ class CollectionTest extends TestCase
 
         $response = $this->actingAs($user)->json('DELETE', 'api/collections/' . $grandChildCollection->id);
         $this->assertEquals(204, $response->status());
-        $this->assertEquals(3, Collection::count());
+        $this->assertEquals(2, Collection::count());
 
         $response = $this->actingAs($user)->json('DELETE', 'api/collections/' . $rootCollection->id);
         $this->assertEquals(204, $response->status());
@@ -162,11 +162,11 @@ class CollectionTest extends TestCase
             'user_id' => $user->id
         ]);
 
-        // use nested flag intentional incorrect
+        // use nested flag intentionally incorrect
         $response = $this->actingAs($user)->json('DELETE', 'api/collections/' .
             $collection->id . '?nested=true');
         $this->assertEquals(204, $response->status());
         $this->assertEquals(1, Collection::count());
-        $this->assertEmpty(Collection::find($collection));
+        $this->assertEmpty(Collection::find($collection->id));
     }
 }
