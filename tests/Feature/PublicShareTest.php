@@ -10,7 +10,7 @@ use App\Models\Post;
 use App\Models\PublicShare;
 use Illuminate\Testing\Fluent\AssertableJson;
 
-class ShareTest extends TestCase
+class PublicShareTest extends TestCase
 {
 
     use RefreshDatabase;
@@ -23,9 +23,9 @@ class ShareTest extends TestCase
         $token = $this->faker->slug();
 
         $response = $this->actingAs($user)->json('POST', 'api/shares/public', [
-            'token' => $token,
+            'token'         => $token,
             'collection_id' => $collection->id,
-            'is_active' => true
+            'is_active'     => true
         ]);
 
         $this->assertEquals(201, $response->status());
@@ -43,10 +43,10 @@ class ShareTest extends TestCase
         $token = $this->faker->slug();
 
         PublicShare::create([
-            'token' => $token,
+            'token'         => $token,
             'collection_id' => $collection->id,
-            'is_active' => true,
-            'created_by' => $user->id
+            'is_active'     => true,
+            'created_by'    => $user->id
         ]);
 
         $requestWithToken = $this->withHeaders([
@@ -65,7 +65,7 @@ class ShareTest extends TestCase
         $response = $requestWithToken->json('GET', 'api/posts?collection_id=' . $collection2->id);
         $this->assertEquals(1, count($response->getData()->data));
         $response->assertJson(
-            fn (AssertableJson $json) =>
+            fn(AssertableJson $json) =>
             $json->where('data.0.collection_id', $collection->id)
         );
     }
@@ -78,9 +78,9 @@ class ShareTest extends TestCase
         $token = $this->faker->slug();
 
         $response = $this->actingAs($user)->json('POST', 'api/shares/public', [
-            'token' => $token,
+            'token'         => $token,
             'collection_id' => $collection->id,
-            'is_active' => true
+            'is_active'     => true
         ]);
 
         $this->assertEquals(201, $response->status());
