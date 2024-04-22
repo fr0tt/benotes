@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios'
-import { refresh } from './../../api/auth'
+import { refresh } from '../../api/auth'
 
 export default {
     namespaced: true,
@@ -26,37 +26,33 @@ export default {
     },
     actions: {
         fetchAuthUser(context) {
-            axios
+            return axios
                 .get('/api/auth/me')
                 .then((response) => {
                     const user = response.data.data
                     context.commit('isAuthenticated', true)
                     context.commit('setAuthUser', user)
+                    context.commit('setStaticAuth', null)
+                    context.dispatch('setPermission', 7)
+                    context.dispatch('hideSidebarOnMobile', null, { root: true })
                 })
                 .catch((error) => {
                     console.log(error)
                 })
         },
-        getAuthUser(context) {
+        login({ dispatch }) {
             return new Promise((resolve, reject) => {
-                if (context.state.authUser) {
-                    context.commit('setStaticAuth', null)
-                    resolve(context.state.authUser)
-                }
                 if (!Vue.cookie.get('token')) {
-                    resolve(null)
+                    resolve()
                 }
                 const token = Vue.cookie.get('token')
                 axios.defaults.headers.common = { Authorization: `Bearer ${token}` }
-                axios
-                    .get('/api/auth/me')
-                    .then((response) => {
-                        const user = response.data.data
-                        context.commit('setStaticAuth', null)
-                        context.commit('setAuthUser', user)
-                        resolve(user)
+                dispatch('fetchAuthUser')
+                    .then(() => {
+                        resolve()
                     })
                     .catch((error) => {
+                        console.log(error)
                         if (error.response.status === 401) {
                             refresh()
                                 .then((response) => {

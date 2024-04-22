@@ -4,35 +4,18 @@ import VueCookie from 'vue-cookie'
 import SvgVue from 'svg-vue'
 import VueLazyload from 'vue-lazyload'
 import axios from 'axios'
+import createAuthRefreshInterceptor from 'axios-auth-refresh'
 
 import routes from './routes.js'
 import store from './store'
 
 import { refresh } from './api/auth'
 
-axios.interceptors.response.use(
-    function (response) {
-        return response
-    },
-    function (error) {
-        if (error.response.status !== 401) {
-            return Promise.reject(error)
-        }
-
-        if (error.response.config.url.includes('/api/auth')) {
-            return Promise.reject(error)
-        }
-
-        refresh()
-            .then((response) => {
-                return Promise.resolve(response)
-            })
-            .catch((error) => {
-                return Promise.reject(error)
-            })
-
-        return Promise.reject(error)
-    }
+createAuthRefreshInterceptor(axios, (failedRequest) =>
+    refresh().then(() => {
+        failedRequest.response.config.headers = axios.defaults.headers.common
+        return Promise.resolve()
+    })
 )
 
 Vue.use(VueCookie)
@@ -61,16 +44,18 @@ router.beforeEach((to, from, next) => {
                 next({ path: '/login' })
             })
     } else if (to.matched.some((record) => record.meta.authUser)) {
+        if (store.state.auth.authUser) {
+            next()
+            return
+        }
         store
-            .dispatch('auth/getAuthUser')
-            .then((authUser) => {
-                if (!authUser) {
-                    next({ path: '/login' })
-                } else {
-                    store.dispatch('auth/setPermission', 7)
-                    store.dispatch('hideSidebarOnMobile')
+            .dispatch('auth/login')
+            .then(() => {
+                if (store.state.auth.authUser) {
                     next()
+                    return
                 }
+                next({ path: '/login' })
             })
             .catch(() => {
                 next({ path: '/login' })
@@ -85,20 +70,6 @@ router.beforeEach((to, from, next) => {
     router,
     store,
 })
-
-let refreshTimer = setInterval(() => {
-    if (Vue.cookie.get('token')) {
-        store
-            .dispatch('auth/getAuthUser')
-            .then((authUser) => {
-                if (!authUser) window.location = '/login'
-            })
-            .catch((error) => {
-                console.log(error)
-                clearInterval(refreshTimer)
-            })
-    }
-}, 11 * 60 * 1000)
 
 if (!Vue.config.devtools) {
     // if not dev env

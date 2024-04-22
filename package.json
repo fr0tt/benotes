@@ -48,6 +48,7 @@
     "@tiptap/extension-underline": "^2.0.4",
     "@tiptap/starter-kit": "^2.0.4",
     "@tiptap/vue-2": "^2.0.4",
+    "axios-auth-refresh": "^3.3.6",
     "dotenv": "^8.2.0",
     "laravel-mix-svg-vue": "^0.3.6",
     "tailwindcss": "^2.2.16",
