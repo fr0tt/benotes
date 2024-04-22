@@ -2,16 +2,50 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Traits\Hierarchy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations;
 
+/**
+ * App\Models\Collection
+ *
+ * @property int $id
+ * @property string $name
+ * @property int $user_id
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property int|null $icon_id
+ * @property int|null $parent_id
+ * @property int|null $left
+ * @property int|null $right
+ * @property int|null $root_collection_id
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Collection> $children
+ * @property-read int|null $children_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Collection> $nested
+ * @property-read int|null $nested_count
+ * @property-read Collection|null $parent
+ * @method static \Database\Factories\CollectionFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|Collection newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Collection newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Collection onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Collection query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Collection whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Collection whereIconId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Collection whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Collection whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Collection whereParentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Collection whereRootId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Collection whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Collection withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Collection withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Collection extends Model
 {
+    use SoftDeletes, HasFactory, Hierarchy;
+
     public $timestamps = false;
     const IMPORTED_COLLECTION_NAME = 'Imported Bookmarks';
-    use SoftDeletes, HasFactory;
 
     /**
      * The attributes that should be cast to native types.
@@ -19,10 +53,11 @@ class Collection extends Model
      * @var array
      */
     protected $casts = [
-        'user_id'   => 'integer',
+        'user_id'         => 'integer',
+        'is_being_shared' => 'boolean',
         // because of SQLite
-        'icon_id'   => 'integer',
-        'parent_id' => 'integer',
+        'icon_id'         => 'integer',
+        'parent_id'       => 'integer',
     ];
 
     /**
@@ -35,7 +70,9 @@ class Collection extends Model
         'user_id',
         'icon_id',
         'parent_id',
-        'root_id'
+        'is_being_shared',
+        'left'
+        // root_collection_id and depth should not be needed
     ];
 
     /**
@@ -44,8 +81,10 @@ class Collection extends Model
      * @var array
      */
     protected $hidden = [
-        'user_id',
-        'deleted_at'
+        'deleted_at',
+        'root_collection_id',
+        'depth',
+        'local_order',
     ];
 
     public static function getCollectionId($id, $is_uncategorized = false)
@@ -53,18 +92,11 @@ class Collection extends Model
         return $is_uncategorized || $id === null ? null : intval($id);
     }
 
-    public function parent(): Relations\BelongsTo
+    public static function getOwner($id)
     {
-        return $this->belongsTo(self::class, 'parent_id');
+        if ($id == null)
+            return auth()->user()->id;
+        return Collection::find($id)->user_id;
     }
 
-    public function children(): Relations\HasMany
-    {
-        return $this->hasMany(self::class, 'parent_id');
-    }
-
-    public function nested(): Relations\HasMany
-    {
-        return $this->children()->with('nested')->orderBy('name');
-    }
 }
