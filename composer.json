@@ -13,25 +13,25 @@
     "version": "2.8.2",
     "type": "project",
     "require": {
-        "php": "^7.3|^8.0",
+        "php": "^8.0.2",
         "chrome-php/chrome": "^1.9",
         "doctrine/dbal": "^3.5",
         "fruitcake/laravel-cors": "^2.0",
-        "guzzlehttp/guzzle": "^7.0.1",
+        "guzzlehttp/guzzle": "7.2",
         "intervention/image": "^2.7",
         "ksubileau/color-thief-php": "^2.0",
-        "laravel/framework": "^8.75",
-        "laravel/tinker": "^2.5",
-        "league/flysystem-aws-s3-v3": "^1.0",
+        "laravel/framework": "^9.19",
+        "laravel/tinker": "^2.7",
+        "league/flysystem-aws-s3-v3": "^3.0",
         "php-open-source-saver/jwt-auth": "^2.0",
         "spatie/db-dumper": "^3.4",
         "spatie/temporary-directory": "^1.3"
     },
     "require-dev": {
-        "facade/ignition": "^2.5",
+        "spatie/laravel-ignition": "^1.0",
         "fakerphp/faker": "^1.9.1",
         "mockery/mockery": "^1.4.4",
-        "nunomaduro/collision": "^5.10",
+        "nunomaduro/collision": "^6.1",
         "phpunit/phpunit": "^9.5.10"
     },
     "autoload": {
