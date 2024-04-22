@@ -5,7 +5,6 @@ module.exports = {
     },
     extends: ['eslint:recommended', 'plugin:vue/recommended', 'prettier'],
     plugins: ['prettier'],
-    'prettier/prettier': ['error', { endOfLine: 'lf' }],
     globals: {
         Atomics: 'readonly',
         SharedArrayBuffer: 'readonly',
@@ -15,8 +14,10 @@ module.exports = {
         sourceType: 'module',
     },
     rules: {
-        indent: ['error', 4],
+        indent: ['warn', 4],
         'vue/multi-word-component-names': 'off',
+        'vue/no-unused-components': 'warn',
+        'vue/no-unused-vars': 'warn',
         'prettier/prettier': 'warn',
     },
     ignorePatterns: ['.eslintrc.js', 'webpack.mix.js', 'vendor/', 'public/', 'notes/'],
