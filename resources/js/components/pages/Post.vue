@@ -28,7 +28,7 @@
                                 }
                             "
                             placeholder=""
-                            :tabIndex="2"
+                            :tab-index="2"
                             class="inline-block w-80" />
                     </div>
 
@@ -129,7 +129,7 @@ export default {
     computed: {
         ...mapState('collection', ['currentCollection']),
         ...mapState('collection', ['collections']),
-        ...mapState('post', ['posts']),
+        ...mapState('collection', ['sharedCollections']),
     },
     mounted() {
         if (!this.shareTargetApi) {
@@ -153,7 +153,9 @@ export default {
         const uncategorized = { name: 'Uncategorized', id: 0, nested: null }
         this.optionsCollections.push(uncategorized)
         this.$store.dispatch('collection/fetchCollections', { nested: true }).then(() => {
-            this.optionsCollections = this.optionsCollections.concat(this.collections)
+            this.optionsCollections = this.optionsCollections
+                .concat(this.sharedCollections)
+                .concat(this.collections)
         })
 
         axios.get('/api/tags').then((response) => {
@@ -235,9 +237,13 @@ export default {
                         tags: tags === null ? null : tags.map((tag) => tag.id),
                     })
                     .then((response) => {
-                        if (this.posts !== null) {
-                            this.$store.dispatch('post/addPost', response.data.data)
-                        }
+                        this.$store.dispatch('post/addPost', response.data.data)
+                        this.$router.push({
+                            path:
+                                this.selectedCollectionId === null
+                                    ? '/'
+                                    : '/c/' + this.selectedCollectionId,
+                        })
                     })
                     .catch((error) => {
                         this.$store.dispatch('notification/setNotification', {
@@ -246,21 +252,19 @@ export default {
                             description: 'Post could not be created.',
                         })
                     })
-                this.$router.push({
-                    path:
-                        this.selectedCollectionId === null
-                            ? '/'
-                            : '/c/' + this.selectedCollectionId,
-                })
             } else {
+                const originCollectionId = this.post.collection_id
                 this.post.title = this.title
                 this.post.content = content
                 this.post.collection_id = this.selectedCollectionId
                 this.post.tags = tags
-                this.$store.dispatch('post/updatePost', { post: this.post })
-                const originCollectionId = this.post.collection_id
-                this.$router.push({
-                    path: originCollectionId === null ? '/' : '/c/' + originCollectionId,
+                this.$store.dispatch('post/updatePost', { post: this.post }).then(() => {
+                    this.$router.push({
+                        path:
+                            originCollectionId === null
+                                ? '/'
+                                : '/c/' + originCollectionId,
+                    })
                 })
             }
         },

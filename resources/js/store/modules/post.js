@@ -151,39 +151,43 @@ export default {
             if (restore) {
                 params.is_archived = false
             }
-            axios
-                .patch('/api/posts/' + post.id, params)
-                .then((response) => {
-                    const newPost = response.data.data
-                    if (context.state.posts === null) {
-                        return
-                    }
-                    const index = context.state.posts.findIndex((item) => {
-                        return post.id === item.id
-                    })
+            return new Promise((resolve, reject) => {
+                axios
+                    .patch('/api/posts/' + post.id, params)
+                    .then((response) => {
+                        const newPost = response.data.data
+                        if (context.state.posts === null) {
+                            return
+                        }
+                        const index = context.state.posts.findIndex((item) => {
+                            return post.id === item.id
+                        })
 
-                    if (transfer) {
-                        context.commit('deletePost', index)
-                        return
-                    }
+                        if (transfer) {
+                            context.commit('deletePost', index)
+                            return
+                        }
 
-                    context.commit('setPost', {
-                        post: newPost,
-                        index: index,
+                        context.commit('setPost', {
+                            post: newPost,
+                            index: index,
+                        })
+                        resolve()
                     })
-                })
-                .catch(() => {
-                    post.isUpdating = false
-                    context.dispatch(
-                        'notification/setNotification',
-                        {
-                            type: 'error',
-                            title: 'Error',
-                            description: 'Post could not be updated.',
-                        },
-                        { root: true }
-                    )
-                })
+                    .catch((error) => {
+                        post.isUpdating = false
+                        context.dispatch(
+                            'notification/setNotification',
+                            {
+                                type: 'error',
+                                title: 'Error',
+                                description: 'Post could not be updated.',
+                            },
+                            { root: true }
+                        )
+                        reject(error)
+                    })
+            })
         },
         setPostById(context, { id, post }) {
             const index = context.state.posts.findIndex((item) => {
