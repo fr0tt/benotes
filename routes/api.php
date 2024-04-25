@@ -7,6 +7,7 @@ use App\Http\Controllers\FileController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PublicShareController;
+use App\Http\Controllers\PrivateShareController;
 use App\Http\Controllers\TestingController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
@@ -48,6 +49,7 @@ Route::group([
     Route::delete('tags/{id}', [TagController::class, 'destroy']);
 
     Route::get('collections', [CollectionController::class, 'index']);
+    Route::get('collections/shared', [CollectionController::class, 'indexShared']);
     Route::get('collections/{id}', [CollectionController::class, 'show']);
     Route::post('collections', [CollectionController::class, 'store']);
     Route::patch('collections/{id}', [CollectionController::class, 'update']);
@@ -63,6 +65,12 @@ Route::group([
     Route::post('shares/public', [PublicShareController::class, 'store']);
     Route::patch('shares/public/{id}', [PublicShareController::class, 'update']);
     Route::delete('shares/public/{id}', [PublicShareController::class, 'destroy']);
+
+    Route::get('shares/private', [PrivateShareController::class, 'index']);
+    Route::get('shares/private/{id}', [PrivateShareController::class, 'show']);
+    Route::post('shares/private', [PrivateShareController::class, 'store']);
+    Route::patch('shares/private/{id}', [PrivateShareController::class, 'update']);
+    Route::delete('shares/private/{id}', [PrivateShareController::class, 'destroy']);
 
     Route::post('files', [FileController::class, 'store']);
 
