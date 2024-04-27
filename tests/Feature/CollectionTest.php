@@ -102,7 +102,7 @@ class CollectionTest extends TestCase
 
         $response = $this->actingAs($user)->json('DELETE', 'api/collections/' . $rootCollection->id);
         $this->assertEquals(204, $response->status());
-        $this->assertEquals(2, Collection::count());
+        $this->assertEquals(0, Collection::count());
     }
 
     public function testDeleteNestedCollectionCompletely()

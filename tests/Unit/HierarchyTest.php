@@ -1201,7 +1201,7 @@ class HierarchyTest extends TestCase
 
     }
 
-    public function testMoveNestedCollectionToOtherUsersRoot()
+    public function testMoveNestedCollectionToOtherUser()
     {
         $user1 = User::factory()->create();
         $user2 = User::factory()->create();
@@ -1283,7 +1283,7 @@ class HierarchyTest extends TestCase
 
     }
 
-    public function testMoveNestedCollectionToOtherUsersRootAndKeepCoincidentallyPosition()
+    public function testMoveNestedCollectionToOtherUserAndKeepCoincidentallyPosition()
     {
         $user1 = User::factory()->create();
         $user2 = User::factory()->create();
