@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Collection;
@@ -39,7 +40,7 @@ class PublicShareTest extends TestCase
     {
         $user = User::factory()->create();
         $collection = Collection::factory()->create();
-        Post::factory(['collection_id' => $collection->id])->create();
+        $post = Post::factory(['collection_id' => $collection->id])->create();
         $token = $this->faker->slug();
 
         PublicShare::create([
@@ -54,20 +55,29 @@ class PublicShareTest extends TestCase
         ]);
 
         $collection2 = Collection::factory()->create();
-        Post::factory(['collection_id' => $collection2->id])->create();
+        $post2 = Post::factory(['collection_id' => $collection2->id])->create();
 
         $response = $requestWithToken->json('GET', 'api/posts');
-        $this->assertEquals(200, $response->status());
-
-        $response = $requestWithToken->json('GET', 'api/posts?collection_id=' . $collection->id);
-        $this->assertEquals(200, $response->status());
+        $this->assertEquals(Response::HTTP_OK, $response->status());
 
         $response = $requestWithToken->json('GET', 'api/posts?collection_id=' . $collection2->id);
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+
+        $response = $requestWithToken->json('GET', 'api/posts?collection_id=' . $collection->id);
+        $this->assertEquals(Response::HTTP_OK, $response->status());
         $this->assertEquals(1, count($response->getData()->data));
         $response->assertJson(
             fn(AssertableJson $json) =>
             $json->where('data.0.collection_id', $collection->id)
         );
+
+        $response = $requestWithToken->json('GET', 'api/posts/' . $post2->id);
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+
+        $response = $requestWithToken->json('GET', 'api/posts/' . $post->id);
+        $this->assertEquals(Response::HTTP_OK, $response->status());
+        $this->assertEquals($response->getData()->data->content, $post->content);
+
     }
 
     public function testDeleteShare()
