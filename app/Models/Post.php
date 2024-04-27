@@ -19,7 +19,7 @@ class Post extends Model
     /**
      * The attributes that should be cast to native types.
      *
-     * @var array
+     * @property array
      */
     protected $casts = [
         'user_id' => 'integer',
@@ -30,7 +30,7 @@ class Post extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @property array
      */
     protected $fillable = [
         'content',
@@ -49,10 +49,9 @@ class Post extends Model
     /**
      * The attributes excluded from the model's JSON form.
      *
-     * @var array
+     * @property array
      */
     protected $hidden = [
-        'user_id',
         'deleted_at'
     ];
 
@@ -130,13 +129,13 @@ class Post extends Model
         Post::create([
             'title'         => 'Text Post 📝',
             'content'       => '<p>This post demonstrates different features of Benotes. <br>' .
-            'You can write <strong>bold</strong>, ' .
-            '<em>italic</em> or <strong>combine <em>them</em></strong><em>.</em></p>' .
-            '<blockquote><p>Blockquotes are also a thing</p></blockquote>' .
-            '<hr> <p>You can also use Markdown in order to type faster. <br>' .
-            'If you are not familiar with the syntax have a look at</p>' .
-            '<unfurling-link href="https://www.markdownguide.org/cheat-sheet/" ' .
-            'data-title="Markdown Cheat Sheet | Markdown Guide"></unfurling-link>',
+                'You can write <strong>bold</strong>, ' .
+                '<em>italic</em> or <strong>combine <em>them</em></strong><em>.</em></p>' .
+                '<blockquote><p>Blockquotes are also a thing</p></blockquote>' .
+                '<hr> <p>You can also use Markdown in order to type faster. <br>' .
+                'If you are not familiar with the syntax have a look at</p>' .
+                '<unfurling-link href="https://www.markdownguide.org/cheat-sheet/" ' .
+                'data-title="Markdown Cheat Sheet | Markdown Guide"></unfurling-link>',
             'type'          => self::POST_TYPE_TEXT,
             'description'   => null,
             'collection_id' => $collection_id,
