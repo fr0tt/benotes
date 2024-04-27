@@ -92,9 +92,9 @@ class Collection extends Model
         return $is_uncategorized || $id === null ? null : intval($id);
     }
 
-    public static function getOwner($id)
+    public static function getOwner(int|null $id)
     {
-        if ($id == null)
+        if ($id === null)
             return auth()->user()->id;
         return Collection::find($id)->user_id;
     }
