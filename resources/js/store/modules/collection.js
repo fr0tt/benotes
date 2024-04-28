@@ -1,11 +1,20 @@
 import axios from 'axios'
 
 let collectionsPromise
+let collectionNames = new Map()
+
+function recursiveCollectionNameMapping(collections) {
+    collections.forEach((collection) => {
+        collectionNames.set(collection.id, collection.name)
+        recursiveCollectionNameMapping(collection.nested)
+    })
+}
 
 export default {
     namespaced: true,
     state: {
         collections: null,
+        sharedCollections: null,
         collectionNames: new Map(),
         currentCollection: {
             id: null,
@@ -19,6 +28,9 @@ export default {
     mutations: {
         setCollections(state, collections) {
             state.collections = collections
+        },
+        setSharedCollections(state, sharedCollections) {
+            state.sharedCollections = sharedCollections
         },
         addCollection(state, collection) {
             state.collections.push(collection)
@@ -40,22 +52,24 @@ export default {
         },
     },
     actions: {
-        fetchCollections(context, { force = false, nested = false }) {
+        fetchCollections(context, { force = false }) {
             if (collectionsPromise) {
                 return collectionsPromise
             }
-            if (context.state.collections !== null && force == false) {
+            if (context.state.collections !== null && force === false) {
                 return
             }
             collectionsPromise = axios
                 .get('/api/collections', {
                     params: {
-                        nested: nested,
+                        nested: true,
+                        withShared: true,
                     },
                 })
                 .then((response) => {
                     const collections = response.data.data
-                    context.commit('setCollections', collections)
+                    context.commit('setSharedCollections', collections.shared_collections)
+                    context.commit('setCollections', collections.collections)
                     context.dispatch('setCollectionNames', collections)
                     collectionsPromise = null
                 })
@@ -65,18 +79,11 @@ export default {
             return collectionsPromise
         },
         setCollectionNames(context, nestedCollections) {
-            const collectionNames = new Map()
+            const ownAndSharedCollections = nestedCollections.collections.concat(
+                nestedCollections.shared_collections
+            )
             collectionNames.set(0, 'Uncategorized')
-            nestedCollections.forEach((col) => {
-                let collections = col.nested
-                while (collections.length > 0) {
-                    collections.forEach((childCol) => {
-                        collectionNames.set(childCol.id, childCol.name)
-                        collections = childCol.nested
-                    })
-                }
-                collectionNames.set(col.id, col.name)
-            })
+            recursiveCollectionNameMapping(ownAndSharedCollections)
             context.commit('setCollectionNames', collectionNames)
         },
         addCollection(context, collection) {

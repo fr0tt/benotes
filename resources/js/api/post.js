@@ -28,6 +28,7 @@ function getPosts(
             limit: limit,
             after_id: after_id,
             withTags: withTags,
+            withDescendants: filter?.length > 0,
         },
     })
 }
