@@ -2,9 +2,12 @@
 
 namespace App\Policies;
 
+use App\Models\Collection;
+use App\Models\PrivateShare;
+use App\Models\PublicShare;
 use App\Models\User;
 use App\Models\Post;
-use App\Models\Share;
+use App\Services\CollectionService;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PostPolicy
@@ -28,12 +31,21 @@ class PostPolicy
      * @param  \App\Models\Post  $post
      * @return mixed
      */
-    public function view($user, Post $post)
+    public function view(User|PublicShare $user, Post $post)
     {
-        if ($user instanceof User)
-            return $user->id === $post->user_id;
-        else if ($user instanceof Share)
+        if ($user instanceof User && $user->id === $post->user_id) {
+            return true;
+        }
+        if ($user instanceof PublicShare) {
             return $user->collection_id === $post->collection_id;
+        }
+        // potential shared collection
+        if (empty($post->collection_id))
+            return false;
+        return CollectionService::isSharedWith(
+            $user,
+            Collection::find($post->collection_id)
+        );
     }
 
     /**
@@ -45,7 +57,17 @@ class PostPolicy
      */
     public function update(User $user, Post $post)
     {
-        return $user->id === $post->user_id;
+        if ($user->id === $post->user_id)
+            return true;
+
+        // uncategorized posts should only belong to $user
+        if (empty($post->collection_id))
+            return false;
+
+        return CollectionService::isSharedWith(
+            $user,
+            Collection::find($post->collection_id)
+        );
     }
 
     /**
@@ -57,6 +79,15 @@ class PostPolicy
      */
     public function delete(User $user, Post $post)
     {
-        return $user->id === $post->user_id;
+        if ($user->id === $post->user_id)
+            return true;
+
+        if (empty($post->collection_id))
+            return false;
+
+        return CollectionService::isSharedWith(
+            $user,
+            Collection::find($post->collection_id)
+        );
     }
 }

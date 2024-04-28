@@ -32,6 +32,8 @@ class PostController extends Controller
             // it should/could be used in a query string
             'tag_id'           => 'integer|nullable',
             'withTags'         => 'nullable',
+            'withDescendants'     => 'nullable',
+            'withShared'       => 'nullable',
             'filter'           => 'string|nullable',
             'is_archived'      => 'nullable',
             // same as is_uncategorized
@@ -58,6 +60,7 @@ class PostController extends Controller
             if ($after_post == null) {
                 return response()->json('after_id does not exist', Response::HTTP_NOT_FOUND);
             }
+
             $this->authorize('view', $after_post);
             $collection_id = Collection::getCollectionId(
                 $request->collection_id,
@@ -74,11 +77,17 @@ class PostController extends Controller
             }
         }
 
+        if (!empty($request->collection_id)) {
+            $this->authorize('view', Collection::find($request->collection_id));
+        }
+
         $posts = $this->service->all(
             intval($request->collection_id),
             $this->service->boolValue($request->is_uncategorized),
             intval($request->tag_id),
             $this->service->boolValue($request->withTags),
+            $this->service->boolValue($request->withDescendants),
+            $this->service->boolValue($request->withShared),
             strval($request->filter),
             $auth_type,
             $this->service->boolValue($request->is_archived),
@@ -125,11 +134,11 @@ class PostController extends Controller
             'tags.*'        => 'integer',
         ]);
 
-        if (isset($request->collection_id)) {
+        $user_id = Auth::user()->id;
+        if (!empty($request->collection_id)) {
             $collection = Collection::findOrFail($request->collection_id);
-            if (Auth::user()->id !== $collection->user_id) {
-                return response()->json('Not authorized', Response::HTTP_FORBIDDEN);
-            }
+            $this->authorize('fill', $collection);
+            $user_id = $collection->user_id;
         }
 
         $post = $this->service->store(
@@ -138,7 +147,7 @@ class PostController extends Controller
             $request->collection_id,
             $request->description,
             $request->tags,
-            Auth::user()->id
+            $user_id
         );
 
         return response()->json(['data' => $post], Response::HTTP_CREATED);
@@ -157,6 +166,7 @@ class PostController extends Controller
             'order'            => 'integer|nullable',
             'is_archived'      => 'boolean|nullable'
         ]);
+        $request->is_uncategorized = boolval($request->is_uncategorized);
 
         $post = Post::withTrashed()->find($id);
         if (!$post) {
@@ -164,8 +174,6 @@ class PostController extends Controller
         }
 
         $this->authorize('update', $post);
-
-        $request->is_uncategorized = boolval($request->is_uncategorized);
 
         if (empty($request->collection_id) && $request->is_uncategorized === false) {
             // request contains no knowledge about a collection
@@ -179,6 +187,12 @@ class PostController extends Controller
 
         if (!empty($validatedData['collection_id'])) {
             Collection::findOrFail($validatedData['collection_id']);
+        }
+
+        if ($validatedData['collection_id'] !== $post->collection_id) {
+            if (!empty($validatedData['collection_id']))
+                $this->authorize('fill',
+                    Collection::find($validatedData['collection_id']));
         }
 
         if (isset($validatedData['content'])) {
@@ -197,7 +211,7 @@ class PostController extends Controller
         }
 
         $newValues = array_merge($validatedData, $info);
-        $newValues['user_id'] = Auth::user()->id;
+        $newValues['user_id'] = Collection::getOwner($validatedData['collection_id']);
 
         if ($post->collection_id !== $validatedData['collection_id']) {
             // post wants to have a different collection than before

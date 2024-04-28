@@ -25,6 +25,8 @@ class PostService
         bool $is_uncategorized = false,
         int $tag_id = -1,
         bool $withTags = false,
+        bool $withDescendants = false,
+        bool $withShared = false,
         string $filter = '',
         int $auth_type = User::UNAUTHORIZED_USER,
         bool $is_archived = false,
@@ -44,25 +46,28 @@ class PostService
         }
 
         if ($auth_type === User::API_USER) {
-            if ($collection_id > 0 && $filter !== '') {
-                $collection_ids = Collection::with('children')
-                    ->where('parent_id', $collection_id)
-                    ->pluck('id')->all();
+            if ($collection_id > 0 && $withDescendants) {
+                $collection_ids = Collection::find($collection_id)
+                    ->descendants()
+                    ->pluck('id');
                 $collection_ids[] = $collection_id;
-                $posts = $posts
-                    ->whereIn('collection_id', $collection_ids)
-                    ->where('user_id', '=', Auth::user()->id);
+                $posts = $posts->whereIn('collection_id', $collection_ids);
             } else if ($collection_id > 0 || $is_uncategorized === true) {
                 $collection_id = Collection::getCollectionId(
                     $collection_id,
                     $is_uncategorized
                 );
-                $posts = $posts->where([
-                    ['collection_id', '=', $collection_id],
-                    ['user_id', '=', Auth::user()->id]
-                ]);
+                $posts = $posts->where('collection_id', $collection_id);
+            } else if ($withShared) {
+                $user_id = Auth::id();
+                $shared_root_ids = CollectionService::getSharedRootCollectionIds($user_id);
+                $posts = $posts->where(function ($query) use ($shared_root_ids, $user_id) {
+                    $query->where('user_id', $user_id)
+                          ->orWhereIn('root_collection_id', $shared_root_ids)
+                          ->orWhereIn('id', $shared_root_ids);
+                });
             } else {
-                $posts = $posts->where('user_id', Auth::user()->id);
+                $posts = $posts->where('user_id', Auth::id());
             }
         } else if ($auth_type === User::SHARE_USER) {
             $share = Auth::guard('share')->user();
@@ -110,7 +115,7 @@ class PostService
             'content'       => $content,
             'collection_id' => $collection_id,
             'description'   => $description,
-            'user_id'       => $user_id
+            'user_id'       => Collection::getOwner($collection_id)
         ], $info);
 
         $attributes['order'] = Post::where('collection_id', Collection::getCollectionId($collection_id))
