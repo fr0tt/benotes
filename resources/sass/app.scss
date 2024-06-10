@@ -29,6 +29,14 @@ html {
     border-width: 1.5px;
 }
 
+.min-h-10 {
+    min-height: 2.5rem;
+}
+
+.min-w-30 {
+    min-width: 7.5rem;
+}
+
 button {
     transition: color, background-color 0.2s;
 }

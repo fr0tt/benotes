@@ -6,32 +6,40 @@
                 <router-link to="/import/bookmarks" class="import-card">
                     <div class="pr-4">
                         <span class="icon-wrapper">
-                            <svg-vue icon="remix/git-repository-commits-line" class="icon" />
+                            <svg-vue
+                                icon="remix/git-repository-commits-line"
+                                class="icon" />
                         </span>
                     </div>
                     <div class="flex-1 relative">
-                        <span class="absolute right-0 top-0 px-1 text-xs font-medium 
-                            text-orange-600  border rounded border-orange-600">
+                        <span
+                            class="absolute right-0 top-0 px-1 text-xs font-medium text-orange-600 border rounded border-orange-600">
                             Beta
                         </span>
                         <span class="title">Import Bookmarks</span>
-                        <p class="leading-5 text-gray-800">Import bookmarks from your favorite browser as .html file</p>
+                        <p class="leading-5 text-gray-800">
+                            Import bookmarks from your favorite browser as .html file
+                        </p>
                     </div>
                 </router-link>
                 <router-link to="/export/bookmarks" class="import-card">
                     <div class="pr-4">
                         <span class="icon-wrapper">
-                            <svg-vue icon="remix/git-repository-commits-line" class="icon" />
+                            <svg-vue
+                                icon="remix/git-repository-commits-line"
+                                class="icon" />
                         </span>
                     </div>
                     <div class="flex-1 relative">
-                        <span class="absolute right-0 top-0 px-1 text-xs font-medium 
-                            text-orange-600  border rounded border-orange-600">
+                        <span
+                            class="absolute right-0 top-0 px-1 text-xs font-medium text-orange-600 border rounded border-orange-600">
                             Beta
                         </span>
                         <span class="title">Export Bookmarks</span>
-                        <p class="leading-5 text-gray-800">Export bookmarks as .zip in order for file you to use them
-                            somewhere else</p>
+                        <p class="leading-5 text-gray-800">
+                            Export bookmarks as .zip in order for file you to use them
+                            somewhere else
+                        </p>
                     </div>
                 </router-link>
             </div>
@@ -47,6 +55,12 @@ export default {
         ...mapState('post', ['isLoading']),
     },
     created() {
+        this.$store.commit('post/setPosts', [])
+        this.$store.dispatch('appbar/setAppbar', {
+            title: 'Import & Export',
+            options: null,
+            button: null,
+        })
     },
     methods: {
         goToCreatePost() {
@@ -59,7 +73,7 @@ export default {
 .import {
     .import-card {
         @apply flex px-4 py-4 mb-10 max-w-sm;
-        box-shadow: 0px 3px 10px -2px rgba(0, 0, 0, 0.20);
+        box-shadow: 0px 3px 10px -2px rgba(0, 0, 0, 0.2);
 
         .title {
             @apply block text-lg font-medium mb-1;
@@ -77,7 +91,5 @@ export default {
     .import-card:hover {
         @apply bg-gray-100;
     }
-
-
 }
 </style>

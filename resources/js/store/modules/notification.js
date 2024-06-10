@@ -22,7 +22,7 @@ export default {
             context.commit('showNotification', true)
             setTimeout(function () {
                 context.commit('showNotification', false)
-            }, 3 * 1000)
+            }, 5 * 1000)
         },
     },
 }

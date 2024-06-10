@@ -20,6 +20,12 @@ export default {
                     callback: appbar.button.callback,
                     icon: appbar.button.icon,
                 }
+            } else {
+                state.button = {
+                    label: '',
+                    icon: '',
+                    callback: null,
+                }
             }
             state.options = appbar.options
         },

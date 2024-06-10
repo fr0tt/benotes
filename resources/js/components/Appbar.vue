@@ -1,9 +1,15 @@
 <template>
-    <div class="fixed top-0 right-0 w-full bg-white z-50 border-b-2 border-orange-600 theme__appbar">
+    <div
+        class="fixed top-0 right-0 w-full bg-white z-50 border-b-2 border-orange-600 theme__appbar">
         <div class="flex sm:px-8 px-4 py-3">
             <div class="w-16 my-auto">
-                <button v-if="authUser" class="align-bottom theme__appbar__menu_icon" @click="toggleSidebar()">
-                    <svg-vue class="w-6 fill-current cursor-pointer" icon="remix/menu-line" />
+                <button
+                    v-if="authUser"
+                    class="align-bottom theme__appbar__menu_icon"
+                    @click="toggleSidebar()">
+                    <svg-vue
+                        class="w-6 fill-current cursor-pointer"
+                        icon="remix/menu-line" />
                 </button>
             </div>
             <div class="flex-1 mb-0 my-auto text-center">
@@ -11,21 +17,41 @@
                     title
                 }}</span>
             </div>
-            <div v-if="permission >= 6">
-                <button v-if="button.callback" class="button -mr-1" :title="hint" @click="button.callback">
-                    <svg class="button-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+            <div v-if="permission >= 6" class="min-h-10 min-w-30">
+                <button
+                    v-if="button.callback"
+                    class="button -mr-1"
+                    :title="hint"
+                    @click="button.callback">
+                    <svg
+                        class="button-icon"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
                         v-html="icon(button.icon)"></svg>
                     {{ button.label }}
                 </button>
                 <div v-if="options" class="inline-block">
-                    <button v-if="isMobile" id="appbar-options-button" class="button gray ml-2" title="Options"
+                    <button
+                        v-if="isMobile"
+                        id="appbar-options-button"
+                        class="button gray ml-2"
+                        title="Options"
                         @click="toggleBottomSheet">
                         <svg-vue icon="remix/settings-3-line" class="button-icon remix" />
                         Options
                     </button>
-                    <button v-for="option in filteredOptions" v-else :key="option.label" :title="option.longLabel"
-                        class="button ml-2" :class="option.color" @click="option.callback">
-                        <svg class="button-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                    <button
+                        v-for="option in filteredOptions"
+                        v-else
+                        :key="option.label"
+                        :title="option.longLabel"
+                        class="button ml-2"
+                        :class="option.color"
+                        @click="option.callback">
+                        <svg
+                            class="button-icon"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
                             v-html="icon(option.icon)"></svg>
                         {{ option.label }}
                     </button>
