@@ -43,7 +43,7 @@ class Post extends Model
         'image_path',
         'user_id',
         'collection_id',
-        'order'
+        'order',
     ];
 
     /**

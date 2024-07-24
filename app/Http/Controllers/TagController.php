@@ -20,7 +20,7 @@ class TagController extends Controller
 
     public function index()
     {
-        $tags = Tag::where('user_id', Auth::user()->id)->orderBy('name')->get();
+        $tags = Tag::where('user_id', Auth::user()->id)->orderBy('id', 'desc')->get();
         return response()->json(['data' => $tags]);
     }
 

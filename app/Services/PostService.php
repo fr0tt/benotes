@@ -97,7 +97,7 @@ class PostService
                 ->orderBy('deleted_at', 'desc')->get();
         }
 
-        return $posts->orderBy('order', 'desc')->get();
+        return $posts->orderBy('created_at', 'desc')->get();
     }
 
     public function store($title, $content, $collection_id, $description, $tags, $user_id): Post
