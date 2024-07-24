@@ -23,4 +23,4 @@ yarn-error.log
 /playwright/.cache/
 /playwright/state.json
 *.zip
-
+/docker/data/nginx

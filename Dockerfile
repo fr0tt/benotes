@@ -3,11 +3,13 @@ FROM php:8.1-fpm-alpine
 LABEL mantainer="github.com/fr0tt"
 LABEL description="Benotes"
 
-ENV user application
+ENV user webuser
 
-ENV TZ=UTC
+ENV TZ="Asia/Tokyo"
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
+ENV LC_ALL ja_JP.UTF-8
+ENV LANG ja_JP.UTF-8
+ENV LANGUAGE ja_JP:ja
 
 RUN apk --no-cache update && apk --no-cache add \
     git \
@@ -63,7 +65,7 @@ RUN docker-php-ext-install \
 # install composer
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
-RUN addgroup -S --gid 1000 $user && adduser -S --uid 1000 -G $user $user && adduser $user www-data
+RUN addgroup -S --gid 1001 $user && adduser -S --uid 1001 -G $user $user && adduser $user www-data
 
 # cron
 COPY ./docker/crontab /etc/crontabs/application
@@ -98,10 +100,13 @@ COPY . .
 
 # storage needs to be owned not only by group but also user www-data because of bind mounts
 # however it doesn't magically solves the bind mount permission issue
-RUN chown -R $user:$user /var/www && \
-    chown -R www-data:www-data storage && chmod -R 775 storage && \
-    chown -R www-data:www-data bootstrap/cache && chmod -R 775 bootstrap/cache
+#RUN chown -R $user:$user /var/www && \
+#    chown -R www-data:www-data storage && chmod -R 775 storage && \
+#    chown -R www-data:www-data bootstrap/cache && chmod -R 775 bootstrap/cache
 
+RUN chown -R $user:$user /var/www
+RUN chmod -R 775 storage
+RUN chmod -R 775 bootstrap/cache
 
 USER $user
 

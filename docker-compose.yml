@@ -1,16 +1,16 @@
 version: "3.6"
 services:
     app:
-        container_name: app
+        container_name: benotes
         build:
             args:
-                - USE_COMPOSER=${USE_COMPOSER}
-                - INSTALL_NODE=${INSTALL_NODE}
+                - USE_COMPOSER=true
+                - INSTALL_NODE=true
             context: ./
         restart: unless-stopped
         environment:
             DB_CONNECTION: ${DB_CONNECTION}
-            RUN_MIGRATIONS: ${RUN_MIGRATIONS}
+            RUN_MIGRATIONS: true
         ports:
             - ${APP_PORT}:80
         volumes:
