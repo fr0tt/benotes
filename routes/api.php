@@ -39,6 +39,7 @@ Route::group([
     Route::post('posts', [PostController::class, 'store']);
     Route::patch('posts/{id}', [PostController::class, 'update']);
     Route::delete('posts/{id}', [PostController::class, 'destroy']);
+    Route::delete('posts', [PostController::class, 'destroySoftDeletes']);
 
     Route::get('meta', [PostController::class, 'getUrlInfo']);
 

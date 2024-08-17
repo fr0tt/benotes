@@ -21,6 +21,12 @@
                 </ul>
             </transition>
         </div>
+        <Confirmation
+            v-if="showPopup"
+            :action="clearRecycleBin"
+            :hide="() => (showPopup = false)"
+            confirmation-text="Delete"
+            description="Type 'delete' if you wish to delete your trashed posts for all eternity. " />
         <PostLoader :is-archived="true" />
     </div>
 </template>
@@ -29,11 +35,19 @@
 import { mapState } from 'vuex'
 import Post from '../PostItem.vue'
 import PostLoader from '../PostLoader.vue'
+import axios from 'axios'
+import Confirmation from '../Confirmation.vue'
 
 export default {
     components: {
+        Confirmation,
         Post,
         PostLoader,
+    },
+    data() {
+        return {
+            showPopup: false,
+        }
     },
     computed: {
         ...mapState('post', ['posts']),
@@ -44,9 +58,9 @@ export default {
         this.$store.dispatch('appbar/setAppbar', {
             title: 'Recycle Bin',
             button: {
-                label: null,
-                callback: null,
-                icon: null,
+                label: 'Clear',
+                callback: () => (this.showPopup = true),
+                icon: 'delete',
             },
             options: null,
         })
@@ -57,6 +71,20 @@ export default {
     methods: {
         goToCreatePost() {
             this.$router.push(`/c/0/p/create`)
+        },
+        clearRecycleBin() {
+            axios
+                .delete('/api/posts?is_trashed=1')
+                .catch(() => {
+                    this.$store.dispatch('notification/setNotification', {
+                        type: 'error',
+                        title: 'Error',
+                        description: 'Recycle Bin could not be cleared.',
+                    })
+                })
+                .then(() => {
+                    this.$store.commit('post/setPosts', [])
+                })
         },
     },
 }

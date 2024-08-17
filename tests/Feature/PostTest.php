@@ -19,6 +19,7 @@ class PostTest extends TestCase
 
     /**
      * @dataProvider createPostsProvider
+     * @group external
      */
     public function testCreatePost($content, $type, $thumbnail = false)
     {
@@ -667,6 +668,32 @@ class PostTest extends TestCase
         ]);
     }
 
+    public function testForceDeletePosts()
+    {
+        $user = User::factory()->create();
+        $collection = Collection::factory()->create([
+            'user_id' => $user->id
+        ]);
+
+        $post = Post::factory()->create([
+            'collection_id' => $collection->id,
+            'user_id'       => $user->id
+        ]);
+        $response = $this->actingAs($user)->json('DELETE', 'api/posts/' . $post->id);
+        $this->assertEquals(Response::HTTP_NO_CONTENT, $response->status());
+        $this->assertTrue(Post::onlyTrashed()->find($post->id)->trashed());
+
+        $post2 = Post::factory()->create([
+            'collection_id' => $collection->id,
+            'user_id'       => $user->id
+        ]);
+        $response = $this->actingAs($user)->json('DELETE', 'api/posts?is_trashed=1');
+        $this->assertEquals(Response::HTTP_NO_CONTENT, $response->status());
+        $this->assertFalse(Post::withTrashed()->find($post2->id)->trashed());
+        $this->assertEquals(1, Post::withTrashed()->count());
+        $this->assertFalse(Post::withTrashed()->where('id', $post->id)->exists());
+    }
+
     public function testChangeCollection()
     {
         $user = User::factory()->create();
@@ -869,7 +896,7 @@ class PostTest extends TestCase
         $this->assertEquals(401, $response->status());
     }
 
-    public function testGetPostFromOwnerOnly()
+    public function testGetPostsFromOwnerOnly()
     {
         $user = User::factory()->create();
         $user2 = User::factory()->create();
@@ -887,6 +914,32 @@ class PostTest extends TestCase
         $amountOfPosts = count($response->getData()->data);
         $this->assertEquals(200, $response->status());
         $response = $this->actingAs($user2)->json('GET', 'api/posts');
+        $amountOfPosts2 = count($response->getData()->data);
+        $this->assertEquals(200, $response->status());
+        $this->assertLessThan($amountOfPosts, $amountOfPosts2);
+
+        $response = $this->actingAs($user2)->json('GET', 'api/posts/' . $post->id);
+        $this->assertEquals(403, $response->status());
+    }
+
+    public function testGetUncategorizedPostsFromOwnerOnly()
+    {
+        $user = User::factory()->create();
+        $user2 = User::factory()->create();
+        $post = Post::factory()->create([
+            'user_id' => $user->id
+        ]);
+        Post::factory()->create([
+            'user_id' => $user->id
+        ]);
+        Post::factory()->create([
+            'user_id' => $user2->id
+        ]);
+
+        $response = $this->actingAs($user)->json('GET', 'api/posts?is_uncategorized=1');
+        $amountOfPosts = count($response->getData()->data);
+        $this->assertEquals(200, $response->status());
+        $response = $this->actingAs($user2)->json('GET', 'api/posts?is_uncategorized=1');
         $amountOfPosts2 = count($response->getData()->data);
         $this->assertEquals(200, $response->status());
         $this->assertLessThan($amountOfPosts, $amountOfPosts2);

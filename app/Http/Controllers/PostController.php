@@ -285,6 +285,22 @@ class PostController extends Controller
         return response()->json('', Response::HTTP_NO_CONTENT);
     }
 
+    public function destroySoftDeletes(Request $request)
+    {
+        $this->validate($request, [
+            'is_trashed' => 'required|boolean'
+        ]);
+        $request->is_trashed = boolval($request->is_trashed);
+        if (!$request->is_trashed) {
+            return response()->json('', Response::HTTP_BAD_REQUEST);
+        }
+        Post::onlyTrashed()
+            ->where('user_id', Auth::id())
+            ->forceDelete();
+
+        return response()->json('', Response::HTTP_NO_CONTENT);
+    }
+
     public function getUrlInfo(Request $request)
     {
         $this->validate($request, [
