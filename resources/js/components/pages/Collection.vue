@@ -182,6 +182,26 @@ export default {
                     })
                 })
                 .catch((error) => {
+                    // reverse order
+                    let changes = new Map()
+                    changes.set(
+                        event.oldIndex,
+                        this.$store.state.post.posts[event.newIndex]
+                    )
+                    if (event.newIndex > event.oldIndex) {
+                        // was moved to the right
+                        for (let index = event.oldIndex; index < event.newIndex; index++)
+                            changes.set(index + 1, this.$store.state.post.posts[index])
+                    } else {
+                        // was moved to the left
+                        for (let index = event.newIndex; index < event.oldIndex; index++)
+                            changes.set(index, this.$store.state.post.posts[index + 1])
+                    }
+                    console.log(changes)
+                    for (const [index, post] of changes) {
+                        this.$store.state.post.posts[index] = post
+                    }
+
                     this.$store.commit('post/isUpdating', false)
                     this.$store.dispatch('notification/setNotification', {
                         type: 'error',
