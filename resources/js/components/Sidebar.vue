@@ -50,8 +50,8 @@
                 </ol>
                 <router-link to="/" class="collection mb-4 theme__sidebar__collection"
                     :class="{ 'router-link-exact-active': isActiveLink('/') }">
-                    <svg-vue icon="remix/folder-unknow-fill" class="w-4 fill-current align-text-bottom mr-2" />
-                    <span class="align-middle text-gray-700 theme__sidebar__label">Uncategorized</span>
+                    <svg-vue icon="remix/home-smile-fill" class="w-4 fill-current align-text-bottom mr-2" />
+                    <span class="align-middle text-gray-700 theme__sidebar__label">Home</span>
                 </router-link>
                 <span class="mb-2 md:px-8 px-4 block text-xs text-gray-700 font-medium uppercase theme__sidebar__subhead">
                     Collections

@@ -1,6 +1,6 @@
 <template>
     <div class="card theme__post_item bg-gray-100" :class="{ active: isActive }">
-        <router-link v-if="isMobile" :to="'/p/' + post.id" class="block w-full">
+        <router-link :to="'/p/' + post.id" class="block w-full">
             <div class="p-6 h-full">
                 <div class="text-gray-900 text-xl outline-none h-full w-full">
                     <p
@@ -13,7 +13,7 @@
                 <PostItemTags :tags="post.tags" class="item-text" />
             </div>
         </router-link>
-        <div v-else class="p-6 h-full">
+        <!-- div v-else class="p-6 h-full">
             <div
                 class="text-gray-900 text-xl overflow-x-clip outline-none h-full w-full"
                 :class="{ 'overflow-hidden cursor-pointer': !isActive }"
@@ -25,7 +25,7 @@
                 <EditorContent :editor="editor" class="editorContent" />
             </div>
             <PostItemTags v-if="!isActive" :tags="post.tags" class="item-text" />
-        </div>
+        </div -->
         <svg
             v-if="permission > 4"
             class="more-icon"

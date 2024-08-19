@@ -66,7 +66,7 @@ export default {
         },
         setCollectionNames(context, nestedCollections) {
             const collectionNames = new Map()
-            collectionNames.set(0, 'Uncategorized')
+            collectionNames.set(0, 'Home')
             nestedCollections.forEach((col) => {
                 let collections = col.nested
                 while (collections.length > 0) {
@@ -128,7 +128,7 @@ export default {
             if (id === 0) {
                 const collection = {
                     id: 0,
-                    name: 'Uncategorized',
+                    name: 'Home',
                 }
                 context.commit('setCurrentCollection', collection)
                 return new Promise((resolve) => {

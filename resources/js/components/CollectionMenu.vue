@@ -56,7 +56,7 @@ export default {
         ...mapState('collection', ['collectionMenu']),
     },
     created() {
-        const uncategorized = { name: 'Uncategorized', id: 0, nested: null }
+        const uncategorized = { name: 'Home', id: 0, nested: null }
         this.optionsCollections.push(uncategorized)
         this.$store.dispatch('collection/fetchCollections', { nested: true }).then(() => {
             this.optionsCollections = this.optionsCollections.concat(this.collections)
