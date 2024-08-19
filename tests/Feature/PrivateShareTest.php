@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Post;
+use App\Models\PostTag;
+use App\Models\Tag;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -83,6 +85,34 @@ class PrivateShareTest extends TestCase
         $this->assertEquals($owner->id, $share->created_by);
         $collectionByOwner = Collection::find($collectionByOwner->id);
         $this->assertTrue($collectionByOwner->is_being_shared);
+
+    }
+
+    public function testPreventCreateNestedShareFromNestedShare()
+    {
+
+        $owner = User::factory()->create();
+        $user = User::factory()->create();
+        $friend = User::factory()->create();
+        $collection = Collection::factory([
+            'user_id' => $owner->id
+        ])->create();
+        Collection::factory([
+            'parent_id' => $collection->id,
+            'user_id' => $owner->id
+        ])->create();
+
+        $response = $this->actingAs($owner)->json('POST', 'api/shares/private', [
+            'user_id'       => $user->id,
+            'collection_id' => $collection->id,
+        ]);
+        $this->assertEquals(Response::HTTP_CREATED, $response->status());
+
+        $response = $this->actingAs($user)->json('POST', 'api/shares/private', [
+            'user_id'       => $friend->id,
+            'collection_id' => $collection->id,
+        ]);
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
 
     }
 
@@ -233,8 +263,7 @@ class PrivateShareTest extends TestCase
         $this->assertEquals(Response::HTTP_OK, $response->status());
         $collection = $response->getData()->data;
         $this->assertEquals($s->grandChildCollection->id, $collection->id);
-        //dd(Collection::find($s->grandChildCollection->id)->is_being_shared);
-        $this->assertTrue($collection->is_being_shared); // @TODO fails
+        $this->assertTrue($collection->is_being_shared);
 
         $response = $this->actingAs($s->user)->json(
             'GET',
@@ -576,6 +605,76 @@ class PrivateShareTest extends TestCase
         $this->assertFalse($newCollection->is_being_shared);
     }
 
+    public function testTransferNestedCollectionToNestedShareWithoutTags()
+    {
+        $s = $this->setupNestedShare();
+
+        $collection = Collection::factory([
+            'parent_id' => null,
+            'user_id'   => $s->user->id
+        ])->create();
+        $childCollection = Collection::factory([
+            'parent_id' => $collection->id,
+            'user_id'   => $s->user->id
+        ])->create();
+
+        $post = Post::factory()->create([
+            'content'       => 'this is some content',
+            'collection_id' => $childCollection->id,
+            'user_id'       => $childCollection->user_id
+        ]);
+        $tagNames = ['tag1', 'tag2', 'tag3'];
+        $this->createTags($tagNames, $post->id, $post->user_id);
+        $this->assertEquals(count($tagNames), PostTag::count());
+
+        $this->actingAs($s->user)->json(
+            'PATCH',
+            'api/collections/' . $collection->id,
+            [
+                'parent_id' => $s->childCollection->id,
+            ]
+        );
+        $this->assertEquals(0, Tag::where('user_id', $s->owner->id)->count());
+        $this->assertEquals(count($tagNames), Tag::where('user_id', $s->user->id)->count());
+        $this->assertEquals(0, PostTag::count());
+
+    }
+
+    public function testTransferNestedCollectionWithTagsFromNestedShare()
+    {
+        $s = $this->setupNestedShare();
+
+        $postOfGrandChild = Post::factory([
+            'collection_id' => $s->grandChildCollection->id,
+            'user_id'       => $s->owner->id
+        ])->create();
+        $post2OfGrandChild = Post::factory([
+            'collection_id' => $s->grandChildCollection->id,
+            'user_id'       => $s->owner->id
+        ])->create();
+
+        $tagNames = ['tag1', 'tag2', 'tag3'];
+        $this->createTags($tagNames, $postOfGrandChild->id, $postOfGrandChild->user_id);
+        $this->createTags($tagNames, $post2OfGrandChild->id, $post2OfGrandChild->user_id);
+        $this->assertEquals(count($tagNames) * 2, PostTag::count());
+
+        $newCollection = Collection::factory()->create([
+            'parent_id' => null,
+            'user_id'   => $s->user->id
+        ]);
+
+        $this->actingAs($s->user)->json(
+            'PATCH',
+            'api/collections/' . $s->grandChildCollection->id,
+            [
+                'parent_id' => $newCollection->id,
+            ]
+        );
+        $this->assertEquals(count($tagNames) * 2, Tag::where('user_id', $s->owner->id)->count());
+        $this->assertEquals(0, Tag::where('user_id', $s->user->id)->count());
+        $this->assertEquals(0, PostTag::count());
+    }
+
     public function testTransferNestedCollectionFromNestedShareToRoot()
     {
         $s = $this->setupNestedShare();
@@ -884,7 +983,7 @@ class PrivateShareTest extends TestCase
             'collection_id' => $s->childCollection->id,
             'user_id'       => $s->owner->id
         ]);
-/*
+
         $response = $this->actingAs($s->user)->json(
             'PATCH',
             'api/posts/' . $post->id,
@@ -903,7 +1002,7 @@ class PrivateShareTest extends TestCase
             ]
         );
         $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
-*/
+
         $response = $this->actingAs($s->user)->json(
             'PATCH',
             'api/posts/' . $post->id,
@@ -980,7 +1079,7 @@ class PrivateShareTest extends TestCase
     public function testTransferPostFromNestedShare()
     {
         $s = $this->setupNestedShare();
-/*
+
         $post = Post::factory()->create([
             'content'       => 'this is some content',
             'collection_id' => $s->collection->id,
@@ -1008,7 +1107,7 @@ class PrivateShareTest extends TestCase
         $post = $response->getData()->data;
         $this->assertEquals($collection->id, $post->collection_id);
         $this->postBelongsToOwner($post, $s->user);
-*/
+
         $post = Post::factory()->create([
             'content'       => 'this is some content',
             'collection_id' => $s->grandChildCollection->id,
@@ -1021,6 +1120,137 @@ class PrivateShareTest extends TestCase
         $post = $response->getData()->data;
         $this->assertEmpty($post->collection_id);
         $this->postBelongsToOwner($post, $s->user);
+    }
+
+    public function testTransferPostWithTagsToNestedShare()
+    {
+        $s = $this->setupNestedShare();
+
+        $collection = Collection::factory()->create([
+            'user_id' => $s->user->id
+        ]);
+        $post = Post::factory()->create([
+            'content'       => 'this is some content',
+            'collection_id' => $collection->id,
+            'user_id'       => $s->user->id
+        ]);
+        $tags = ['tag1', 'tag2', 'tag3'];
+        $oldTags = $this->createTags($tags, $post->id, $s->user->id);
+
+        $this->actingAs($s->user)->json(
+            'PATCH', 'api/posts/' . $post->id, [
+            'collection_id' => $s->childCollection->id,
+            'tag_names' => $tags
+        ]);
+
+        $this->assertFalse(PostTag::whereIn('tag_id', $oldTags->pluck('id'))->exists());
+        $newTags = Tag::whereIn('name', $tags)
+            ->where('user_id', $s->owner->id);
+        $this->assertTrue(PostTag::whereIn('tag_id', $newTags->pluck('id'))->exists());
+        $this->assertEquals(count($tags), $newTags->count());
+        $this->assertEquals(count($tags), PostTag::count());
+    }
+
+    public function testTransferPostToNestedShareAndRemoveTags()
+    {
+        $s = $this->setupNestedShare();
+
+        $collection = Collection::factory()->create([
+            'user_id' => $s->user->id
+        ]);
+        $post = Post::factory()->create([
+            'content'       => 'this is some content',
+            'collection_id' => $collection->id,
+            'user_id'       => $s->user->id
+        ]);
+        $tags = ['tag1', 'tag2', 'tag3'];
+        $oldTags = $this->createTags($tags, $post->id, $s->user->id);
+
+        $this->actingAs($s->user)->json(
+            'PATCH', 'api/posts/' . $post->id, [
+            'collection_id' => $s->childCollection->id,
+            'tag_names' => []
+        ]);
+
+        $this->assertFalse(
+            PostTag::whereIn('tag_id', $oldTags->pluck('id'))->exists());
+        $this->assertFalse(Tag::whereIn('name', $tags)
+            ->where('user_id', $s->owner->id)
+            ->exists());
+    }
+
+    public function testTransferPostWithTagsFromUncategorizedToNestedShare()
+    {
+        $s = $this->setupNestedShare();
+
+        $post = Post::factory()->create([
+            'content'       => 'this is some content',
+            'collection_id' => null,
+            'user_id'       => $s->user->id
+        ]);
+        $tags = ['tag1', 'tag2', 'tag3'];
+        $oldTags = $this->createTags($tags, $post->id, $s->user->id);
+
+        $this->actingAs($s->user)->json('PATCH', 'api/posts/' . $post->id, [
+            'collection_id' => $s->grandChildCollection->id,
+            'tag_names' => $tags
+        ]);
+
+        $this->assertFalse(PostTag::whereIn('tag_id', $oldTags->pluck('id'))->exists());
+        $newTags = Tag::whereIn('name', $tags)->where('user_id', $s->owner->id);
+        $this->assertTrue(PostTag::whereIn('tag_id', $newTags->pluck('id'))->exists());
+        $this->assertEquals(count($tags), $newTags->count());
+        $this->assertEquals(count($tags), PostTag::count());
+    }
+
+    public function testTransferPostWithTagsFromNestedShare()
+    {
+        $s = $this->setupNestedShare();
+
+        $post = Post::factory()->create([
+            'content'       => 'this is some content',
+            'collection_id' => $s->childCollection->id,
+            'user_id'       => $s->owner->id
+        ]);
+        $tags = ['tag1', 'tag2', 'tag3'];
+        $oldTags = $this->createTags($tags, $post->id, $post->user_id);
+
+        $collection = Collection::factory()->create([
+            'user_id' => $s->user->id
+        ]);
+
+        $this->actingAs($s->user)->json('PATCH', 'api/posts/' . $post->id, [
+            'collection_id' => $collection->id,
+            'tag_names' => $tags
+        ]);
+
+        $this->assertFalse(PostTag::whereIn('tag_id', $oldTags->pluck('id'))->exists());
+        $newTags = Tag::whereIn('name', $tags)->where('user_id', $s->user->id);
+        $this->assertTrue(PostTag::whereIn('tag_id', $newTags->pluck('id'))->exists());
+        $this->assertEquals(count($tags), $newTags->count());
+    }
+
+    public function testTransferPostWithTagsFromNestedShareToUncategorized()
+    {
+        $s = $this->setupNestedShare();
+
+        $post = Post::factory()->create([
+            'content'       => 'this is some content',
+            'collection_id' => $s->grandChildCollection->id,
+            'user_id'       => $s->owner->id
+        ]);
+        $tags = ['tag1', 'tag2', 'tag3'];
+        $oldTags = $this->createTags($tags, $post->id, $post->user_id);
+
+        $this->actingAs($s->user)->json('PATCH', 'api/posts/' . $post->id, [
+            'is_uncategorized' => true,
+            'tag_names' => $tags
+        ]);
+
+        $this->assertFalse(PostTag::whereIn('tag_id', $oldTags->pluck('id'))->exists());
+        $newTags = Tag::whereIn('name', $tags)->where('user_id', $s->user->id);
+        $this->assertTrue(PostTag::whereIn('tag_id', $newTags->pluck('id'))->exists());
+        $this->assertEquals(count($tags), $newTags->count());
     }
 
     public function testDeletePostInNestedShare()
@@ -1272,6 +1502,23 @@ class PrivateShareTest extends TestCase
             ->descendantsAndSelf()
             ->update(['is_being_shared' => 'true']);
         return $share;
+    }
+
+    private function createTags(array $names, int $post_id, int $user_id): \Illuminate\Support\Collection
+    {
+        $tags = collect();
+        foreach ($names as $name) {
+            $tag = Tag::factory()->create([
+                'name' => $name,
+                'user_id' => $user_id,
+            ]);
+            PostTag::create([
+                'post_id' => $post_id,
+                'tag_id' => $tag->id
+            ]);
+            $tags->add($tag);
+        }
+        return $tags;
     }
 
 }

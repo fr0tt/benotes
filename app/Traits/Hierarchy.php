@@ -12,7 +12,7 @@ trait Hierarchy
 {
     protected static $scope = 'user_id';
 
-    protected static $parent = 'parent_id'; // unused
+    protected static $parent = 'parent_id'; // unused so far
 
     private static $parentChildMap = [];
 
@@ -24,9 +24,9 @@ trait Hierarchy
     // booted() won't allow accessing the id in created()
     protected static function boot()
     {
-        // observers are a bad idea because you can not
+        // observers didn't work because you can not
         // pass the $scope parameter
-        // however eloquent events listeners should be possible..
+        // however eloquent events listeners should be possible...
 
         parent::boot();
 
@@ -73,7 +73,6 @@ trait Hierarchy
 
         static::updating(function ($model) {
 
-            // echo 'updating';
             $parent_id = $model->parent_id;
             $old_parent_id = $model->getOriginal('parent_id');
             $left = $model->left;
