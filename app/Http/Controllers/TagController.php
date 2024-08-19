@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Collection;
+use App\Models\Post;
 use App\Models\PostTag;
+use App\Services\CollectionService;
 use App\Services\TagService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Tag;
+use Symfony\Component\HttpFoundation\Response;
 
 class TagController extends Controller
 {
 
-    private $service;
+    private TagService $service;
 
     public function __construct()
     {
@@ -20,7 +24,9 @@ class TagController extends Controller
 
     public function index()
     {
-        $tags = Tag::where('user_id', Auth::user()->id)->orderBy('name')->get();
+        $tags = Tag::where('user_id', Auth::user()->id)
+            ->orderBy('name')
+            ->get();
         return response()->json(['data' => $tags]);
     }
 

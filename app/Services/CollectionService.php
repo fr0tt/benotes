@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\PostTag;
 use App\Models\PrivateShare;
 use App\Models\User;
 use App\Models\Collection;
@@ -57,6 +58,9 @@ class CollectionService
             Post::whereIn('collection_id', $ids)
                 ->where('user_id', '!=', $user_id)
                 ->update(['user_id' => $user_id]);
+            // delete tags when crossing user boundaries
+            $post_ids = Post::whereIn('collection_id', $ids)->pluck('id');
+            PostTag::whereIn('post_id', $post_ids)->delete();
         }
 
         $collection->update($attributes);

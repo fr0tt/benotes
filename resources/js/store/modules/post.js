@@ -147,7 +147,7 @@ export default {
             params.content = post.content
             params.collection_id = post.collection_id
             params.is_uncategorized = (post.collection_id <= 0) | 0
-            params.tags = post.tags.map((tag) => tag.id)
+            params.tag_names = post.tag_names
             if (restore) {
                 params.is_archived = false
             }

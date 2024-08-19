@@ -1,9 +1,19 @@
 <template>
-    <li class="md:inline-block mx-6 md:mx-4 my-4 relative text-left post" :post-id="post.id">
-        <PostItemLink v-if="post.type === 'link'" :post="post" :show-context-menu="showContextMenu" :permission="permission"
+    <li
+        class="md:inline-block mx-6 md:mx-4 my-4 relative text-left post"
+        :post-id="post.id">
+        <PostItemLink
+            v-if="post.type === 'link'"
+            :post="post"
+            :show-context-menu="showContextMenu"
+            :permission="permission"
             :restore="restore" />
-        <PostItemText v-else-if="post.type === 'text'" :post="post" :show-context-menu="showContextMenu"
-            :permission="permission" :restore="restore" />
+        <PostItemText
+            v-else-if="post.type === 'text'"
+            :post="post"
+            :show-context-menu="showContextMenu"
+            :permission="permission"
+            :restore="restore" />
         <PostItemPlaceholder v-else />
         <div v-if="debug" class="absolute bottom-0 w-full">
             <span class="px-1 bg-orange-200">id:{{ post.id }}</span>
@@ -29,7 +39,7 @@ export default {
     props: ['post', 'permission', 'restore'],
     data() {
         return {
-            debug: false,
+            debug: true,
         }
     },
     methods: {
@@ -60,8 +70,8 @@ export default {
     @apply flex relative overflow-hidden shadow-lg;
     @apply w-full;
     height: 10.5rem;
-    font-family: Inter, Noto Sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: Inter, Noto Sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     transition: background-color 0.3s;
     -webkit-transition: background-color 0.3s;
     -moz-transition: background-color 0.3s;

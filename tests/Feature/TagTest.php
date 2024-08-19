@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Tag;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 use App\Models\User;
 
@@ -45,4 +47,18 @@ class TagTest extends TestCase
         $this->assertNotEquals(null, $data);
         $this->assertEquals($tags[0]['name'], $data[0]->name);
     }
+
+    public function testDeleteTag()
+    {
+
+        $user = User::factory()->create();
+        $tag = Tag::factory()->create([
+            'user_id' => $user->id
+        ]);
+
+        $response = $this->actingAs($user)->json('DELETE', 'api/tags/' . $tag->id);
+        $this->assertEquals(Response::HTTP_NO_CONTENT, $response->status());
+        $this->assertEquals(0, Tag::count());
+    }
+
 }

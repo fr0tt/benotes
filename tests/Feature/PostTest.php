@@ -215,6 +215,30 @@ class PostTest extends TestCase
             PostTag::where('post_id', $data->id)->where('tag_id', $tag2->id)->exists()
         );
     }
+    public function testCreatePostWithTagNames()
+    {
+        $user = User::factory()->create();
+        $collection = Collection::factory()->create();
+
+        $tags = ['tag1', 'tag2', 'tag3'];
+
+        $content = 'this is some content';
+        $response = $this->actingAs($user)->json(
+        'POST', 'api/posts/', [
+            'content' => $content,
+            'collection_id' => $collection->id,
+            'tag_names' => $tags
+        ]);
+        $data = $response->getData()->data;
+        $this->assertEquals($content, $data->content);
+        $this->assertTrue(
+            PostTag::where('post_id', $data->id)
+                ->join('tags', 'post_tag.tag_id', '=', 'tags.id')
+                ->where('name', $tags[0])
+                ->exists()
+        );
+        $this->assertEquals(3, PostTag::count());
+    }
 
     public function testUpdatePost()
     {
@@ -362,6 +386,38 @@ class PostTest extends TestCase
         $this->assertEquals(200, $response->status());
         $data = $response->getData()->data;
         $this->assertEquals(0, count($data->tags));
+        $this->assertEquals(0, PostTag::count());
+    }
+
+    public function testUpdatePostRemoveTagByName()
+    {
+        $user = User::factory()->create();
+        $collection = Collection::factory()->create();
+        $tag1 = Tag::factory()->create();
+        $tag2 = Tag::factory()->create();
+
+        $response = $this->actingAs($user)->json('POST', 'api/posts', [
+            'content'       => 'This is a very basic example.',
+            'collection_id' => $collection->id,
+            'tags'          => [$tag1->id, $tag2->id]
+        ]);
+        $this->assertEquals(201, $response->status());
+        $id = $response->getData()->data->id;
+
+        $response = $this->actingAs($user)->json('PATCH', 'api/posts/' . $id, [
+            'tag_names' => [$tag1->name]
+        ]);
+
+        $this->assertEquals(200, $response->status());
+        $data = $response->getData()->data;
+        $this->assertEquals(1, count($data->tags));
+        $this->assertEquals(1, PostTag::count());
+        $this->assertEquals($tag1->id, Post::find($id)->tags()->first()->id);
+
+        $this->actingAs($user)->json('PATCH', 'api/posts/' . $id, [
+            'tag_names' => []
+        ]);
+        $this->assertEquals(0, PostTag::count());
     }
 
     public function testUpdatePostOrder()

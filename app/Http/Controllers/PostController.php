@@ -131,14 +131,16 @@ class PostController extends Controller
             'collection_id' => 'integer|nullable',
             'description'   => 'string|nullable',
             'tags'          => 'array|nullable',
-            'tags.*'        => 'integer',
+            'tags.*'        => 'integer|required_with:tags',
+            'tag_names'     => 'array|nullable',
+            'tag_names.*'   => 'alpha_num|required_with:tag_names',
         ]);
 
-        $user_id = Auth::user()->id;
+        $owner_id = Auth::id();
         if (!empty($request->collection_id)) {
             $collection = Collection::findOrFail($request->collection_id);
             $this->authorize('fill', $collection);
-            $user_id = $collection->user_id;
+            $owner_id = $collection->user_id;
         }
 
         $post = $this->service->store(
@@ -147,7 +149,8 @@ class PostController extends Controller
             $request->collection_id,
             $request->description,
             $request->tags,
-            $user_id
+            $request->tag_names,
+            $owner_id
         );
 
         return response()->json(['data' => $post], Response::HTTP_CREATED);
@@ -163,6 +166,8 @@ class PostController extends Controller
             'is_uncategorized' => 'boolean|nullable',
             'tags'             => 'array|nullable',
             'tags.*'           => 'integer|required_with:tags',
+            'tag_names'        => 'array|nullable',
+            'tag_names.*'      => 'alpha_num|required_with:tag_names',
             'order'            => 'integer|nullable',
             'is_archived'      => 'boolean|nullable'
         ]);
@@ -262,8 +267,14 @@ class PostController extends Controller
                 $this->service->saveImage($info['image_path'], $post);
         }
 
+        // isset() instead of empty() because [] is a possible value when deleting all tags
         if (isset($newValues['tags'])) {
-            $this->service->saveTags($post->id, $newValues['tags']);
+            $this->service->updateTags($post->id, $newValues['tags']);
+        } else if (isset($newValues['tag_names'])) {
+            $tag_ids = $this->service->getOrGenerateTagIds(
+                $newValues['tag_names'], $newValues['user_id']
+            );
+            $this->service->updateTags($post->id, $tag_ids);
         }
         $post->tags = $post->tags()->get();
 

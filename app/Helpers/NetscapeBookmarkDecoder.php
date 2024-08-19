@@ -5,28 +5,29 @@ namespace App\Helpers;
 use App\Models\Collection;
 use App\Services\PostService;
 use App\Services\TagService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 /*
  * This file is heavily inspired by:
- * 
+ *
  * Original: Generic Netscape bookmark parser by https://github.com/kafene
  * Source: https://github.com/kafene/netscape-bookmark-parser/blob/master/NetscapeBookmarkParser.php
- * 
+ *
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2015-2016 Kafene and contributors
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -71,7 +72,7 @@ class NetscapeBookmarkDecoder
     }
 
     /**
-     * 
+     *
      * @param string $bookmarkString String containing Netscape bookmarks
      *
      * @return array An associative array containing parsed links
@@ -258,24 +259,28 @@ class NetscapeBookmarkDecoder
 
     private function createCollection($name, $parent_id): Collection
     {
-        $collection = Collection::create([
+        return Collection::create([
             'name'      => $name,
             'parent_id' => $parent_id,
             'user_id'   => $this->userId,
         ]);
-        return $collection;
     }
 
     private function createPost($title, $collectionId, $url, $description, $tags = null)
     {
-        $this->postService->store(
-            $title,
-            $url,
-            $collectionId,
-            $description,
-            $this->createTags($tags),
-            $this->userId,
-        );
+        try {
+            $this->postService->store(
+                $title,
+                $url,
+                $collectionId,
+                $description,
+                $this->createTags($tags),
+                null,
+                $this->userId,
+            );
+        } catch (\Exception $e) {
+            Log::error("Post ${title} (${url}) could not be created");
+        }
     }
 
     private function createTags(array $tagNames): array|null

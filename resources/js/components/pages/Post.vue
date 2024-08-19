@@ -217,7 +217,11 @@ export default {
                 return
             }
 
-            let tags = await this.saveTags()
+            let tag_names = null
+            if (this.tags)
+                tag_names = this.tags.map((tag) => {
+                    return typeof tag.name === 'undefined' ? tag : tag.name
+                })
 
             const matches = content.match(/^<p>(?<content>.(?:(?!<p>)(?!<\/p>).)*)<\/p>$/)
             if (matches !== null) {
@@ -234,7 +238,7 @@ export default {
                                 ? this.selectedCollectionId
                                 : null,
                         is_uncategorized: this.selectedCollectionId === null || 0,
-                        tags: tags === null ? null : tags.map((tag) => tag.id),
+                        tag_names: tag_names,
                     })
                     .then((response) => {
                         this.$store.dispatch('post/addPost', response.data.data)
@@ -257,7 +261,7 @@ export default {
                 this.post.title = this.title
                 this.post.content = content
                 this.post.collection_id = this.selectedCollectionId
-                this.post.tags = tags
+                this.post.tag_names = tag_names
                 this.$store.dispatch('post/updatePost', { post: this.post }).then(() => {
                     this.$router.push({
                         path:
@@ -271,49 +275,6 @@ export default {
         keySave(event) {
             event.preventDefault()
             this.save()
-        },
-        async saveTags() {
-            let newTags = []
-            let existingTags = []
-            if (!this.tags) {
-                return null
-            }
-
-            this.tags.forEach((tag) => {
-                if (typeof tag.id === 'undefined') {
-                    if (typeof tag.name === 'undefined') {
-                        newTags.push({ name: tag })
-                    } else {
-                        newTags.push(tag)
-                    }
-                } else {
-                    existingTags.push(tag)
-                }
-            })
-            return this.combineTags(existingTags, newTags)
-        },
-        combineTags(existingTags, newTags) {
-            return new Promise((resolve) => {
-                if (newTags.length === 0) {
-                    return resolve(existingTags)
-                }
-                axios
-                    .post('/api/tags', {
-                        tags: newTags,
-                    })
-                    .then((response) => {
-                        existingTags = existingTags.concat(response.data.data)
-                        resolve(existingTags)
-                    })
-                    .catch(() => {
-                        this.$store.dispatch('notification/setNotification', {
-                            type: 'error',
-                            title: 'Error',
-                            description: 'Tag(s) could not be created.',
-                        })
-                        resolve(existingTags)
-                    })
-            })
         },
         delete() {
             this.$store.dispatch('post/deletePost', this.id)

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Jobs\ProcessMissingThumbnail;
+use App\Models\Tag;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -57,14 +58,15 @@ class PostService
                     $collection_id,
                     $is_uncategorized
                 );
-                $posts = $posts->where('collection_id', $collection_id);
+                $posts = $posts->where('collection_id', $collection_id)
+                    ->where('user_id', Auth::id());
             } else if ($withShared) {
                 $user_id = Auth::id();
                 $shared_root_ids = CollectionService::getSharedRootCollectionIds($user_id);
                 $posts = $posts->where(function ($query) use ($shared_root_ids, $user_id) {
                     $query->where('user_id', $user_id)
-                          ->orWhereIn('root_collection_id', $shared_root_ids)
-                          ->orWhereIn('id', $shared_root_ids);
+                        ->orWhereIn('root_collection_id', $shared_root_ids)
+                        ->orWhereIn('id', $shared_root_ids);
                 });
             } else {
                 $posts = $posts->where('user_id', Auth::id());
@@ -73,7 +75,7 @@ class PostService
             $share = Auth::guard('share')->user();
             $posts = $posts->where([
                 'collection_id' => $share->collection_id,
-                'user_id'       => $share->created_by
+                'user_id' => $share->created_by
             ]);
         }
 
@@ -105,29 +107,41 @@ class PostService
         return $posts->orderBy('order', 'desc')->get();
     }
 
-    public function store($title, $content, $collection_id, $description, $tags, $user_id): Post
-    {
+    public function store(
+        $title,
+        $content,
+        $collection_id,
+        $description,
+        array|null $tags,
+        array|null $tag_names,
+        $owner_id
+    ): Post {
         $content = $this->sanitize($content);
         $info = $this->computePostData($title, $content, $description);
 
         $attributes = array_merge([
-            'title'         => $title,
-            'content'       => $content,
+            'title' => $title,
+            'content' => $content,
             'collection_id' => $collection_id,
-            'description'   => $description,
-            'user_id'       => Collection::getOwner($collection_id)
+            'description' => $description,
+            'user_id' => $owner_id
         ], $info);
 
-        $attributes['order'] = Post::where('collection_id', Collection::getCollectionId($collection_id))
-            ->max('order') + 1;
+        $attributes['order'] = Post::where('collection_id',
+                Collection::getCollectionId($collection_id))
+                ->max('order') + 1;
 
         $post = Post::create($attributes);
 
         if ($info['type'] === Post::POST_TYPE_LINK) {
             $this->saveImage($info['image_path'], $post);
         }
-        if (isset($tags)) {
-            $this->saveTags($post->id, $tags);
+
+        if (!empty($tags)) {
+            $this->updateTags($post->id, $tags);
+        } else if (!empty($tag_names)) {
+            $tag_ids = $this->getOrGenerateTagIds($tag_names, $owner_id);
+            $this->updateTags($post->id, $tag_ids);
         }
 
         $post->tags = $post->tags()->get();
@@ -157,8 +171,11 @@ class PostService
         return $post;
     }
 
-    public function computePostData(string $title = null, string $content, string $description = null)
-    {
+    public function computePostData(
+        string $title = null,
+        string $content,
+        string $description = null
+    ) {
         // more explicit: https?(:\/\/)((\w|-)+\.)+(\w+)(\/\w+)*(\?)?(\w=\w+)?(&\w=\w+)*
         preg_match_all('/(https?:\/\/)((\S+?\.|localhost:)\S+?)(?=\s|<|"|$)/', $content, $matches);
         $matches = $matches[0];
@@ -220,12 +237,12 @@ class PostService
 
         if (empty($html) || !Str::contains($content_type, 'text/html')) {
             return [
-                'url'         => substr($url, 0, 512),
-                'base_url'    => substr($base_url, 0, 255),
-                'title'       => substr($url, 0, 255),
+                'url' => substr($url, 0, 512),
+                'base_url' => substr($base_url, 0, 255),
+                'title' => substr($url, 0, 255),
                 'description' => null,
-                'color'       => null,
-                'image_path'  => null,
+                'color' => null,
+                'image_path' => null,
             ];
         }
 
@@ -266,12 +283,12 @@ class PostService
         }
 
         return [
-            'url'         => substr($url, 0, 512),
-            'base_url'    => substr($base_url, 0, 255),
-            'title'       => substr($title, 0, 255),
+            'url' => substr($url, 0, 512),
+            'base_url' => substr($base_url, 0, 255),
+            'title' => substr($title, 0, 255),
             'description' => $description ?? null,
-            'color'       => $color ?? null,
-            'image_path'  => $image_path ?? null,
+            'color' => $color ?? null,
+            'image_path' => $image_path ?? null,
         ];
     }
 
@@ -291,7 +308,7 @@ class PostService
         return $hex;
     }
 
-    public function saveTags(int $post_id, array $tag_ids)
+    public function updateTags(int $post_id, array $tag_ids)
     {
         $old_tags_obj = PostTag::select('tag_id')->where('post_id', $post_id)->get();
         $old_tags = [];
@@ -303,18 +320,32 @@ class PostService
             if (!in_array($tag_id, $old_tags)) {
                 PostTag::create([
                     'post_id' => $post_id,
-                    'tag_id'  => $tag_id
+                    'tag_id' => $tag_id
                 ]);
             }
         }
         PostTag::whereNotIn('tag_id', $tag_ids)->where('post_id', $post_id)->delete();
     }
 
+    public function getOrGenerateTagIds(array $tag_names, int $owner_id): array
+    {
+        $tag_ids = array();
+        foreach ($tag_names as $name) {
+            $tag = Tag::firstOrCreate([
+                'user_id' => $owner_id,
+                'name' => $name,
+            ]);
+            $tag_ids[] = $tag->id;
+        }
+        return $tag_ids;
+    }
+
     public function saveImage($image_path, Post $post)
     {
 
         if (empty($image_path)) {
-            ProcessMissingThumbnail::dispatchIf(config('benotes.generate_missing_thumbnails'), $post);
+            ProcessMissingThumbnail::dispatchIf(config('benotes.generate_missing_thumbnails'),
+                $post);
             return;
         }
 
@@ -352,9 +383,9 @@ class PostService
 
         $factory = new BrowserFactory($browser);
         $browser = $factory->createBrowser([
-            'noSandbox'   => true,
-            'keepAlive'   => true,
-            'userAgent'   => $useragent,
+            'noSandbox' => true,
+            'keepAlive' => true,
+            'userAgent' => $useragent,
             'customFlags' => [
                 '--disable-dev-shm-usage',
                 '--disable-gpu'
@@ -415,6 +446,7 @@ class PostService
     {
         return storage_path('app/public/thumbnails/' . $filename);
     }
+
     public function boolValue($value = null): bool
     {
         return filter_var($value, FILTER_VALIDATE_BOOLEAN);
