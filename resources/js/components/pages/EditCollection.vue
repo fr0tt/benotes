@@ -4,16 +4,13 @@
             <h1 class="text-3xl font-bold mb-4">
                 {{ headline }}
             </h1>
-            <p class="text-xl mb-16">
-                {{ description }}
-            </p>
-
+            <p class="text-lg mb-16">{{ description }}</p>
             <div class="mb-10">
                 <label class="label">Name of Collection</label>
                 <input v-model="name" placeholder="Name" autofocus class="input" />
             </div>
 
-            <div class="mb-10">
+            <div v-if="isAllowed" class="mb-10">
                 <label class="label">Subcollection of</label>
                 <Treeselect
                     v-model="parentCollection"
@@ -26,11 +23,14 @@
                                 id: node.id,
                                 label: node.name,
                                 children:
-                                    node.nested.length > 0 ? node.nested : node.children,
+                                    typeof node.nested !== 'undefined' &&
+                                    node.nested.length > 0
+                                        ? node.nested
+                                        : node.children,
                             }
                         }
                     "
-                    placeholder=""
+                    placeholder="None"
                     class="inline-block w-80" />
             </div>
 
@@ -38,6 +38,7 @@
                 <label class="label">Collection Icon</label>
                 <p class="mt-2 mb-4">Select an optional icon for your collection.</p>
                 <button
+                    id="iconPickerButton"
                     class="border-2 border-gray-400 rounded py-2 px-2"
                     @click="openPicker()">
                     <svg-vue
@@ -55,12 +56,88 @@
                 <transition name="fade">
                     <IconPicker
                         v-if="showPicker"
-                        @iconSelected="iconSelect"
-                        class="mt-2" />
+                        class="mt-2"
+                        @iconSelected="iconSelect" />
                 </transition>
             </div>
+            <div v-if="!isNew && isOwner" class="mb-10 relative private-share">
+                <label class="label">Share with Users</label>
+                <p class="mt-2 mb-4">Share your collection with other members.</p>
+                <div>
+                    <label class="label label-sm mt-6 mb-6">Active Members</label>
+                    <ul class="mt-2 py-1 px-2">
+                        <li class="my-2 show-button">
+                            <svg-vue
+                                icon="remix/user-star-fill"
+                                class="icon w-4 h-4 fill-current text-orange-600" />
+                            <span class="ml-1">{{ owner.name }} (me)</span>
+                        </li>
+                        <li
+                            v-for="member in inheritedMembers"
+                            :key="member.id"
+                            class="my-2 show-button">
+                            <svg-vue
+                                icon="remix/user-fill"
+                                class="icon w-4 h-4 fill-current text-orange-600" />
+                            <span class="ml-1">{{ member.name }}</span>
+                            <button
+                                title="Parent collection is shared with this user"
+                                class="cursor-not-allowed">
+                                <svg-vue
+                                    icon="remix/user-unfollow-line"
+                                    class="icon w-4 h-4 fill-current text-gray-600" />
+                            </button>
+                        </li>
+                    </ul>
+                    <hr />
+                    <ul class="mb-2 py-1 px-2">
+                        <li
+                            v-for="member in members"
+                            :key="member.id"
+                            class="my-2 show-button">
+                            <svg-vue
+                                icon="remix/user-fill"
+                                class="icon w-4 h-4 fill-current text-orange-600" />
+                            <span class="ml-1">{{ member.name }}</span>
+                            <button title="Remove user" @click="removeUser(member)">
+                                <svg-vue
+                                    icon="remix/user-unfollow-line"
+                                    class="icon w-4 h-4 fill-current text-red-600" />
+                            </button>
+                        </li>
+                    </ul>
+                    <label class="label label-sm mt-6 mb-4">Invite Members</label>
+                </div>
+                <input
+                    placeholder="Search by Username"
+                    class="input relative z-10"
+                    @input="searchForUsers" />
+                <ul v-if="searchResults.length > 0" class="filter-results">
+                    <li v-for="user in searchResults" :key="user.id" class="py-1 px-2">
+                        {{ user.name }}
+                        <button
+                            v-if="getMember(user)"
+                            class="ml-1"
+                            title="Remove user"
+                            @click="removeUser(user)">
+                            <svg-vue
+                                icon="remix/user-unfollow-line"
+                                class="icon w-4 h-4 fill-current text-red-600 cursor-pointer" />
+                        </button>
+                        <button
+                            v-else
+                            class="ml-1"
+                            title="Add user"
+                            @click="addUser(user)">
+                            <svg-vue
+                                icon="remix/user-add-line"
+                                class="icon w-4 h-4 fill-current text-orange-600 cursor-pointer" />
+                        </button>
+                    </li>
+                </ul>
+            </div>
 
-            <div v-if="!isNew" class="mt-16 mb-16">
+            <div v-if="!isNew && isAllowed" class="mt-16 mb-16">
                 <label class="label inline-block">Collection Url</label>
                 <button
                     class="switch"
@@ -99,7 +176,7 @@
                 </p>
             </div>
 
-            <div v-if="!isNew" class="mb-14 py-6 px-6 bg-red-400 rounded">
+            <div v-if="!isNew && isAllowed" class="mb-14 py-6 px-6 bg-red-400 rounded">
                 <h3 class="text-xl font-semibold mb-1">Delete collection</h3>
                 <p class="mb-4">Delete this collection and all its content.</p>
                 <button
@@ -120,6 +197,7 @@ import { collectionIconIsInline } from './../../api/collection'
 import IconPicker from '../IconPicker.vue'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+
 export default {
     components: {
         IconPicker,
@@ -134,14 +212,19 @@ export default {
             is_active: false,
             switch: this.is_active ? 'active' : 'inactive',
             headline: this.isNew ? 'Create Collection' : 'Collection Settings',
-            description: this.isNew
-                ? 'Specify a name for your new collection.'
-                : "Update your collection's title and public available URL.",
+            description: '',
             isSupported: null,
             iconId: null,
             showPicker: false,
             optionsCollections: [],
             parentCollection: null,
+            userId: null,
+            isBeingShared: false,
+            users: [],
+            owner: null,
+            members: [],
+            inheritedMembers: [],
+            searchResults: [],
         }
     },
     methods: {
@@ -202,7 +285,7 @@ export default {
         },
         getShares() {
             axios
-                .get('/api/shares/', {
+                .get('/api/shares/public', {
                     params: {
                         collection_id: this.id,
                     },
@@ -228,7 +311,7 @@ export default {
             if (this.is_active && this.token !== '') {
                 if (this.share) {
                     axios
-                        .patch('/api/shares/' + this.share.id, {
+                        .patch('/api/shares/public/' + this.share.id, {
                             token: this.token,
                             collection_id: this.id,
                             is_active: this.is_active,
@@ -238,7 +321,7 @@ export default {
                         })
                 } else {
                     axios
-                        .post('/api/shares', {
+                        .post('/api/shares/public', {
                             token: this.token,
                             collection_id: this.id,
                             is_active: this.is_active,
@@ -248,22 +331,28 @@ export default {
                         })
                 }
             } else if (!this.is_active && this.share) {
-                axios.delete('/api/shares/' + this.share.id).catch((error) => {
+                axios.delete('/api/shares/public/' + this.share.id).catch((error) => {
                     console.log(error.response.data)
                 })
             }
         },
         openPicker() {
+            if (this.showPicker) {
+                this.showPicker = false
+                return
+            }
             this.showPicker = true
             document
                 .querySelector('#app')
                 .addEventListener('click', this.hidePicker, true)
         },
-        hidePicker() {
+        hidePicker(event) {
             if (document.querySelector('#iconPicker').contains(event.target)) {
                 return
             }
-            this.showPicker = false
+            if (!document.querySelector('#iconPickerButton').contains(event.srcElement)) {
+                this.showPicker = false
+            }
             document
                 .querySelector('#app')
                 .removeEventListener('click', this.hidePicker, true)
@@ -274,6 +363,47 @@ export default {
             document
                 .querySelector('#app')
                 .removeEventListener('click', this.hidePicker, true)
+        },
+        searchForUsers(event) {
+            if (!event.target.value) {
+                this.searchResults = []
+                return
+            }
+            const needle = event.target.value.toLowerCase()
+            this.searchResults = this.users.filter(
+                (user) =>
+                    user.name.toLowerCase().includes(needle) && user.id !== this.owner.id
+            )
+        },
+        addUser(user) {
+            axios
+                .post('/api/shares/private', {
+                    collection_id: this.id,
+                    user_id: user.id,
+                })
+                .then((response) => {
+                    this.members.push(response.data.data.user)
+                })
+                .catch((error) => {
+                    console.log(error.response.data)
+                })
+        },
+        removeUser(user) {
+            axios
+                .delete('/api/shares/private/' + this.getMember(user).id)
+                .then(() => {
+                    this.members.splice(
+                        // index could have changed in the meantime
+                        this.members.findIndex((m) => m.user.id === user.id),
+                        1
+                    )
+                })
+                .catch((error) => {
+                    console.log(error.response.data)
+                })
+        },
+        getMember(user) {
+            return this.members.find((m) => m.id === user.id)
         },
         collectionIconIsInline,
     },
@@ -288,9 +418,24 @@ export default {
         domain() {
             return origin + '/s?token='
         },
-        ...mapState('collection', ['collections']),
+        isAllowed() {
+            if (this.isNew) return true
+            if (this.isBeingShared) return true
+            if (this.isOwner) return true
+            return false
+        },
+        isOwner() {
+            return this.userId === this.authUser.id
+        },
+        ...mapState('collection', ['collections', 'sharedCollections']),
+        ...mapState('auth', ['authUser']),
     },
     created() {
+        this.description = this.isNew
+            ? 'Specify a name, its parent and and icon for your new collection.'
+            : this.isAllowed
+            ? "Update your collection's title, icon and share it with other members or friends."
+            : "Update this collection's title and icon and parent."
         if (!this.isNew) {
             if (parseInt(this.id) === 0) {
                 this.$router.push({ path: '/' })
@@ -303,6 +448,14 @@ export default {
                     this.name = collection.name
                     this.iconId = collection.icon_id
                     this.parentCollection = collection.parent_id
+                    this.isBeingShared = collection.is_being_shared
+                    this.userId = collection.user_id
+                    if (this.isOwner) this.owner = this.authUser
+                    else {
+                        axios.get('/api/users/' + this.userId).then((response) => {
+                            this.owner = response.data.data
+                        })
+                    }
                 })
                 .catch((error) => {
                     console.log(error.response.data)
@@ -326,10 +479,25 @@ export default {
                     icon: 'checkmark',
                 },
             })
+            this.owner = this.authUser
         }
         this.$store.dispatch('collection/fetchCollections', {}).then(() => {
-            this.optionsCollections = this.optionsCollections.concat(this.collections)
+            this.optionsCollections = [...this.sharedCollections, ...this.collections]
         })
+        axios.get('/api/users').then((response) => (this.users = response.data.data))
+        axios
+            .get('/api/shares/private', {
+                params: {
+                    collection_id: this.id,
+                },
+            })
+            .then((response) => {
+                response.data.data.forEach((share) => {
+                    if (share.root_collection_id === Number(this.id))
+                        this.members.push(share.user)
+                    else this.inheritedMembers.push(share.user)
+                })
+            })
         navigator.permissions
             .query({ name: 'clipboard-write' })
             .then((result) => {
@@ -348,18 +516,47 @@ button.switch {
     padding-bottom: 0.125rem;
     transition: color, background-color 0.2s;
 }
+
 button.switch:hover {
     @apply bg-white text-orange-600;
 }
+
 .collection {
     input.readonly {
         @apply text-white border-gray-700 bg-gray-600 w-auto;
     }
+
     .label.inline-block {
         display: inline-block;
     }
 }
+
 .button.red:hover {
     border-color: #fff;
+}
+
+label.label-sm {
+    @apply text-xs text-orange-600;
+}
+
+.private-share {
+    .filter-results {
+        @apply absolute w-full px-2 py-2 border-2 border-gray-400 bg-gray-100;
+        margin-top: -2px;
+        border-bottom-left-radius: 0.25rem;
+        border-bottom-right-radius: 0.25rem;
+    }
+
+    svg {
+        margin-top: -0.15rem;
+    }
+
+    .show-button button {
+        @apply opacity-0 transition-opacity;
+    }
+
+    .show-button:hover button {
+        @apply opacity-100;
+    }
 }
 </style>

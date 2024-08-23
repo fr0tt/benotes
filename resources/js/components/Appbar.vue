@@ -12,12 +12,12 @@
                         icon="remix/menu-line" />
                 </button>
             </div>
-            <div class="flex-1 mb-0 my-auto text-center">
+            <div class="flex-1 mb-0.25 my-auto text-center">
                 <span class="text-gray-800 font-medium text-xl theme__appbar__title">{{
                     title
                 }}</span>
             </div>
-            <div v-if="permission >= 6" class="min-h-10 min-w-30">
+            <div v-if="permission >= 6" class="min-w-30 min-h-8 md:min-h-10">
                 <button
                     v-if="button.callback"
                     class="button -mr-1"
@@ -122,3 +122,13 @@ export default {
     },
 }
 </script>
+<style lang="scss">
+.min-h-8 {
+    min-height: 2rem;
+}
+@screen md {
+    .md\:min-h-10 {
+        min-height: 2.5rem;
+    }
+}
+</style>
