@@ -36,6 +36,13 @@
 
         <i class="delimiter" />
 
+        <input
+          type="color"
+          @input="editor.chain().focus().setColor($event.target.value).run()"
+          :value="editor.getAttributes('textStyle').color"
+          style="padding: 2px !important; vertical-align: middle; width: 30px;"
+        >
+
         <button
             class="menubar-button"
             :class="{ 'is-active': editor.isActive('bold') }"

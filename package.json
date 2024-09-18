@@ -39,11 +39,13 @@
   "dependencies": {
     "@riophae/vue-treeselect": "^0.4.0",
     "@tiptap/core": "^2.0.4",
+    "@tiptap/extension-color": "^2.7.1",
     "@tiptap/extension-image": "^2.0.4",
     "@tiptap/extension-link": "^2.0.4",
     "@tiptap/extension-placeholder": "^2.0.4",
     "@tiptap/extension-task-item": "^2.0.4",
     "@tiptap/extension-task-list": "^2.0.4",
+    "@tiptap/extension-text-style": "^2.7.1",
     "@tiptap/extension-typography": "^2.0.4",
     "@tiptap/extension-underline": "^2.0.4",
     "@tiptap/starter-kit": "^2.0.4",

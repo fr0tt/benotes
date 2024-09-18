@@ -8,9 +8,9 @@
                         class="text-orange-600 text-xl bg-transparent font-semibold">
                         {{ post.title }}
                     </p>
+                    <PostItemTags :tags="post.tags" />
                     <EditorContent :editor="editor" class="editorContent" />
                 </div>
-                <PostItemTags :tags="post.tags" class="item-text" />
             </div>
         </router-link>
         <!-- div v-else class="p-6 h-full">
@@ -63,6 +63,8 @@ import Link from '@tiptap/extension-link'
 import TaskList from '@tiptap/extension-task-list'
 import TaskItem from '@tiptap/extension-task-item'
 import Image from '@tiptap/extension-image'
+import { Color } from '@tiptap/extension-color'
+import TextStyle from '@tiptap/extension-text-style'
 import UnfurlingLink from '../UnfurlingLink'
 import PostItemTags from './PostItemTags.vue'
 
@@ -84,9 +86,11 @@ export default {
                     Underline,
                     Link,
                     TaskList,
-                    TaskItem,
+                    TaskItem.configure({ nested: true }),
                     Image,
                     UnfurlingLink,
+                    TextStyle,
+                    Color.configure({types: ['textStyle'],}),
                 ],
                 content: this.post.content,
             }),

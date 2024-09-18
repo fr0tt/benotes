@@ -81,6 +81,8 @@ import Link from '@tiptap/extension-link'
 import TaskList from '@tiptap/extension-task-list'
 import TaskItem from '@tiptap/extension-task-item'
 import Image from '@tiptap/extension-image'
+import { Color } from '@tiptap/extension-color'
+import TextStyle from '@tiptap/extension-text-style'
 import UnfurlingLink from '../../UnfurlingLink'
 
 export default {
@@ -119,9 +121,11 @@ export default {
                     }),
                     Link,
                     TaskList,
-                    TaskItem,
+                    TaskItem.configure({ nested: true }),
                     Image,
                     UnfurlingLink,
+                    TextStyle,
+                    Color.configure({types: ['textStyle'],}),
                 ],
             }),
         }
@@ -165,10 +169,18 @@ export default {
             this.$store.dispatch('appbar/setAppbar', {
                 title: 'Create Post',
                 button: {
-                    label: 'Save',
+                    label: 'Save & Close',
                     callback: this.save,
                     icon: 'checkmark',
                 },
+                options: [
+                    {
+                        label: 'Save',
+                        callback: this.saveOnly,
+                        icon: 'checkmark',
+                        condition: true,
+                    },
+                ],
             })
         } else {
             // edit post
@@ -188,11 +200,23 @@ export default {
             this.$store.dispatch('appbar/setAppbar', {
                 title: 'Edit Post',
                 button: {
-                    label: 'Save',
+                    label: 'Save & Close',
                     callback: this.save,
                     icon: 'checkmark',
                 },
                 options: [
+                    {
+                        label: 'Save',
+                        callback: this.saveOnly,
+                        icon: 'checkmark',
+                        condition: true,
+                    },
+                    {
+                        label: 'Close',
+                        callback: this.close,
+                        icon: 'checkmark',
+                        condition: true,
+                    },
                     {
                         label: 'Delete',
                         longLabel: 'Delete Post',
@@ -264,6 +288,52 @@ export default {
                 })
             }
         },
+        async saveOnly() {
+            let content = this.editor.getHTML()
+            if (content === '' || this.currentCollection === null) {
+                return
+            }
+
+            let tags = await this.saveTags()
+
+            const matches = content.match(/^<p>(?<content>.(?:(?!<p>)(?!<\/p>).)*)<\/p>$/)
+            if (matches !== null) {
+                content = matches[1]
+            }
+
+            if (this.isNewPost) {
+                axios
+                    .post('/api/posts', {
+                        title: this.title,
+                        content: content,
+                        collection_id:
+                            this.selectedCollectionId > 0
+                                ? this.selectedCollectionId
+                                : null,
+                        is_uncategorized: this.selectedCollectionId === null || 0,
+                        tags: tags === null ? null : tags.map((tag) => tag.id),
+                    })
+                    .then((response) => {
+                        if (this.posts !== null) {
+                            this.$store.dispatch('post/addPost', response.data.data)
+                        }
+                    })
+                    .catch((error) => {
+                        this.$store.dispatch('notification/setNotification', {
+                            type: 'error',
+                            title: 'Error ' + error.response.status,
+                            description: 'Post could not be created.',
+                        })
+                    })
+            } else {
+                this.post.title = this.title
+                this.post.content = content
+                this.post.collection_id = this.selectedCollectionId
+                this.post.tags = tags
+                this.$store.dispatch('post/updatePost', { post: this.post })
+                const originCollectionId = this.post.collection_id
+            }
+        },
         keySave(event) {
             event.preventDefault()
             this.save()
@@ -313,6 +383,11 @@ export default {
         },
         delete() {
             this.$store.dispatch('post/deletePost', this.id)
+            const route =
+                this.post.collection_id > 0 ? '/c/' + this.post.collection_id : '/'
+            this.$router.push(route)
+        },
+        close() {
             const route =
                 this.post.collection_id > 0 ? '/c/' + this.post.collection_id : '/'
             this.$router.push(route)
