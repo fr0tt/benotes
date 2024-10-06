@@ -40,7 +40,7 @@
                 <button
                     id="iconPickerButton"
                     class="border-2 border-gray-400 rounded py-2 px-2"
-                    @click="openPicker()">
+                    @click="togglePicker()">
                     <svg-vue
                         v-if="collectionIconIsInline(iconId)"
                         :icon="'glyphs/' + iconId"
@@ -98,7 +98,7 @@
                             <svg-vue
                                 icon="remix/user-fill"
                                 class="icon w-4 h-4 fill-current text-orange-600" />
-                            <span class="ml-1">{{ member.name }}</span>
+                            <span class="ml-1">{{ member.user.name }}</span>
                             <button title="Remove user" @click="removeUser(member)">
                                 <svg-vue
                                     icon="remix/user-unfollow-line"
@@ -109,10 +109,14 @@
                     <label class="label label-sm mt-6 mb-4">Invite Members</label>
                 </div>
                 <input
+                    ref="userSearch"
                     placeholder="Search by Username"
                     class="input relative z-10"
                     @input="searchForUsers" />
-                <ul v-if="searchResults.length > 0" class="filter-results">
+                <ul
+                    v-if="searchResults.length > 0"
+                    id="searchResults"
+                    class="filter-results">
                     <li v-for="user in searchResults" :key="user.id" class="py-1 px-2">
                         {{ user.name }}
                         <button
@@ -336,7 +340,7 @@ export default {
                 })
             }
         },
-        openPicker() {
+        togglePicker() {
             if (this.showPicker) {
                 this.showPicker = false
                 return
@@ -366,14 +370,37 @@ export default {
         },
         searchForUsers(event) {
             if (!event.target.value) {
-                this.searchResults = []
+                // this.searchResults = []
+                this.hideSearchResults()
                 return
             }
+            this.displaySearchResults()
             const needle = event.target.value.toLowerCase()
             this.searchResults = this.users.filter(
                 (user) =>
                     user.name.toLowerCase().includes(needle) && user.id !== this.owner.id
             )
+        },
+        displaySearchResults() {
+            if (this.searchResults.length > 0) return
+            document
+                .querySelector('#app')
+                .addEventListener('click', this.hideSearchResultsEvent, true)
+        },
+        hideSearchResultsEvent(event) {
+            if (document.querySelector('#searchResults').contains(event.target)) {
+                return
+            }
+            if (this.$refs.userSearch.contains(event.target)) {
+                return
+            }
+            this.hideSearchResults()
+        },
+        hideSearchResults() {
+            this.searchResults = []
+            document
+                .querySelector('#app')
+                .removeEventListener('click', this.hideSearchResultsEvent, true)
         },
         addUser(user) {
             axios
@@ -382,28 +409,32 @@ export default {
                     user_id: user.id,
                 })
                 .then((response) => {
-                    this.members.push(response.data.data.user)
+                    this.members.push(response.data.data)
+                    this.hideSearchResults()
                 })
                 .catch((error) => {
                     console.log(error.response.data)
                 })
         },
-        removeUser(user) {
+        removeUser(share) {
             axios
-                .delete('/api/shares/private/' + this.getMember(user).id)
+                .delete('/api/shares/private/' + share.id)
                 .then(() => {
                     this.members.splice(
                         // index could have changed in the meantime
-                        this.members.findIndex((m) => m.user.id === user.id),
+                        this.members.findIndex((m) => m.id === share.id),
                         1
                     )
+                    // search results are going to be automatically hidden
+                    // by the event listener
                 })
                 .catch((error) => {
-                    console.log(error.response.data)
+                    if (error.response) console.log(error.response.data)
+                    console.log(error)
                 })
         },
         getMember(user) {
-            return this.members.find((m) => m.id === user.id)
+            return this.members.find((m) => m.user.id === user.id)
         },
         collectionIconIsInline,
     },
@@ -494,7 +525,7 @@ export default {
             .then((response) => {
                 response.data.data.forEach((share) => {
                     if (share.root_collection_id === Number(this.id))
-                        this.members.push(share.user)
+                        this.members.push(share)
                     else this.inheritedMembers.push(share.user)
                 })
             })
