@@ -11,8 +11,6 @@ use App\Models\Post;
 class CollectionService
 {
 
-    private $parentChildMap = [];
-
     public function store($name, $owner_id, $parent_collection_id, $icon_id)
     {
         $is_being_shared = empty($parent_collection_id)
@@ -27,7 +25,7 @@ class CollectionService
         ]);
     }
 
-    public function update(int $id, string|null $name, Collection|null $parentCollection, int|null $icon_id, int $user_id)
+    public function update(int $id, string|null $name, Collection|null $parentCollection, int|null $icon_id, int $user_id, int $local_order = -1): Collection
     {
         $attributes = collect([
             'name'    => $name,
@@ -65,9 +63,7 @@ class CollectionService
 
         $collection->update($attributes);
 
-        if ($collection->parent_id !== $parent_id) {
-            $collection->moveTo($parent_id, -1, $user_id);
-        }
+        $collection->moveTo($parent_id, $local_order, $user_id);
 
         return $collection;
     }
@@ -112,8 +108,6 @@ class CollectionService
     {
         return PrivateShare
             ::where('collection_id', $collection->id)
-            //->where('user_id', $user->id)
-            //->where('created_by', $collection->user_id)
             ->exists();
     }
 

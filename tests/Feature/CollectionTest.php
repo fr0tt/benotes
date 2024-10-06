@@ -42,6 +42,103 @@ class CollectionTest extends TestCase
         $this->assertEquals($rootCollection->id, $childCollection->parent_id);
     }
 
+    public function testMoveNestedCollectionDownwards()
+    {
+        $user = User::factory()->create([
+            'permission' => 255
+        ]);
+        $rootCollection = Collection::factory()->create([
+            'user_id' => $user->id
+        ]);
+        $childCollection = Collection::factory()->create([
+            'user_id' => $user->id,
+            'parent_id' => $rootCollection->id
+        ]);
+        $grandChildCollection = Collection::factory()->create([
+            'user_id' => $user->id,
+            'parent_id' => $childCollection->id
+        ]);
+        $childCollection2 = Collection::factory()->create([
+            'user_id' => $user->id,
+            'parent_id' => $rootCollection->id
+        ]);
+        $rootCollection2 = Collection::factory()->create([
+            'user_id' => $user->id
+        ]);
+        /*
+         * $rootCollection
+         *   $childCollection
+         *     $grandChildCollection
+         *   $childCollection2
+         * $rootCollection2
+         */
+        $response = $this->actingAs($user)->json(
+            'PATCH', 'api/collections/' . $rootCollection->id, [
+            'parent_id' => $childCollection->id,
+            'local_order' => 1
+        ]);
+        $this->assertEquals(200, $response->status());
+        $data = $response->getData()->data;
+        $this->assertEquals($childCollection->id, $data->parent_id);
+
+        $rootCollection = Collection::find($rootCollection->id);
+        $rootCollection2 = Collection::find($rootCollection2->id);
+        $childCollection = Collection::find($childCollection->id);
+        $grandChildCollection = Collection::find($grandChildCollection->id);
+
+        $this->assertEquals(1, $rootCollection->getLocalOrder());
+        $this->assertEquals($childCollection->id, $rootCollection->parent_id);
+        $this->assertEquals(1, $rootCollection2->getLocalOrder());
+        $this->assertEquals(1, $childCollection->getLocalOrder());
+        $this->assertEquals(2, $grandChildCollection->getLocalOrder());
+    }
+
+    public function testMoveNestedCollectionUpwards()
+    {
+        $user = User::factory()->create([
+            'permission' => 255
+        ]);
+        $rootCollection = Collection::factory()->create([
+            'user_id' => $user->id
+        ]);
+        $childCollection = Collection::factory()->create([
+            'user_id' => $user->id,
+            'parent_id' => $rootCollection->id
+        ]);
+        $grandChildCollection = Collection::factory()->create([
+            'user_id' => $user->id,
+            'parent_id' => $childCollection->id
+        ]);
+        $childCollection2 = Collection::factory()->create([
+            'user_id' => $user->id,
+            'parent_id' => $rootCollection->id
+        ]);
+        $rootCollection2 = Collection::factory()->create([
+            'user_id' => $user->id
+        ]);
+
+        $response = $this->actingAs($user)->json(
+            'PATCH', 'api/collections/' . $childCollection->id, [
+            'parent_id' => null,
+            'is_root' => true,
+            'local_order' => 2
+        ]);
+        $this->assertEquals(200, $response->status());
+        $data = $response->getData()->data;
+        $this->assertEmpty($data->parent_id);
+
+        $rootCollection = Collection::find($rootCollection->id);
+        $rootCollection2 = Collection::find($rootCollection2->id);
+        $childCollection = Collection::find($childCollection->id);
+        $childCollection2 = Collection::find($childCollection2->id);
+
+        $this->assertEquals(1, $rootCollection->getLocalOrder());
+        $this->assertEquals(2, $childCollection->getLocalOrder());
+        $this->assertEquals(3, $rootCollection2->getLocalOrder());
+        $this->assertEquals(1, $childCollection2->getLocalOrder());
+
+    }
+
     public function testRemoveChildCollection()
     {
         $user = User::factory()->create([

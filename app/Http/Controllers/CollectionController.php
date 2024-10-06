@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 class CollectionController extends Controller
 {
 
-    private $service;
+    private CollectionService $service;
 
     public function __construct()
     {
@@ -28,8 +28,11 @@ class CollectionController extends Controller
         $request->nested = boolval($request->nested);
         $request->withShared = boolval($request->withShared);
         $collections = Collection::where('user_id', Auth::user()->id)
-            ->orderBy('name')
+            ->orderBy('root_collection_id')
+            ->orderBy('depth')
+            ->orderBy('left')
             ->get();
+
         if ($request->nested) {
             $collections = Collection::toNested($collections);
         }
@@ -100,10 +103,11 @@ class CollectionController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'name'      => 'nullable|string',
-            'icon_id'   => 'nullable|integer',
-            'parent_id' => 'nullable|integer',
-            'is_root'   => 'nullable|boolean',
+            'name'        => 'nullable|string',
+            'icon_id'     => 'nullable|integer',
+            'parent_id'   => 'nullable|integer',
+            'local_order' => 'nullable|integer',
+            'is_root'     => 'nullable|boolean',
         ]);
 
         $request->is_root = boolval($request->is_root);
@@ -133,12 +137,17 @@ class CollectionController extends Controller
             $this->authorize('move', [$collection, $parent]);
         }
 
+        $local_order = empty($request->local_order)
+            ? -1
+            : intval($request->local_order);
+
         $collection = $this->service->update(
             $id,
             $request->name,
             $parent,
             $request->icon_id,
-            Auth()->id()
+            Auth()->id(),
+            $local_order
         );
 
         return response()->json(['data' => $collection], 200);

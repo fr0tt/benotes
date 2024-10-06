@@ -84,7 +84,9 @@ class Collection extends Model
         'deleted_at',
         'root_collection_id',
         'depth',
-        'local_order',
+        // only for debugging purposes
+         'left',
+         'right'
     ];
 
     public static function getCollectionId($id, $is_uncategorized = false)
