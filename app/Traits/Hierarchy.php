@@ -136,9 +136,11 @@ trait Hierarchy
             if ($model->depth === 0) {
                 $right = $model->left + 1;
             } else if ($model->depth > 0 && $old_depth === 0) {
-                $new_left_right_dif = 2 +
-                    $model->where('parent_id', $model->id)->max('right') -
-                    $model->where('parent_id', $model->id)->min('left');
+                if ($model->where('parent_id', $model->id)->exists())
+                    $new_left_right_dif = 2 +
+                        $model->where('parent_id', $model->id)->max('right') -
+                        $model->where('parent_id', $model->id)->min('left');
+                else $new_left_right_dif = 1;
                 $right = $model->left + $new_left_right_dif;
             }
             $model->right = $right;
@@ -566,7 +568,8 @@ trait Hierarchy
             $parent = $this->find($parent_id);
             if ($parent->depth === 0)
                 return 1;
-            if ($this->left < $parent->left && intval($parent_id) > 0)
+            if ($this->left < $parent->left &&
+                $this->root_collection_id === $parent->root_collection_id)
                 return $parent->left - ($this->right - $this->left);
             return $parent->left + 1;
         }

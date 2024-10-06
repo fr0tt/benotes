@@ -917,6 +917,54 @@ class HierarchyTest extends TestCase
 
     }
 
+    public function testMoveCollectionToOtherRootAndInBetween()
+    {
+        User::factory()->create();
+        $rootCollection1 = Collection::factory()->create();
+        $collection1 = Collection::factory([
+            'parent_id' => $rootCollection1->id
+        ])->create();
+        $collection2 = Collection::factory([
+            'parent_id' => $rootCollection1->id
+        ])->create();
+        $collection3 = Collection::factory([
+            'parent_id' => $rootCollection1->id
+        ])->create();
+        $rootCollection2 = Collection::factory()->create();
+        $collectionOfRoot2 = Collection::factory([
+            'parent_id' => $rootCollection2->id
+        ])->create();
+
+        $this->assertEquals(4, $collectionOfRoot2
+            ->computeNewLeft($collection2->id));
+        $collectionOfRoot2->moveTo($collection2->id);
+
+        $rootCollection1 = Collection::find($rootCollection1->id);
+        $rootCollection2 = Collection::find($rootCollection2->id);
+        $collection1 = Collection::find($collection1->id);
+        $collection2 = Collection::find($collection2->id);
+        $collection3 = Collection::find($collection3->id);
+        $collectionOfRoot2 = Collection::find($collectionOfRoot2->id);
+
+        $this->assertEquals($rootCollection1->id, $collectionOfRoot2->root_collection_id);
+        $this->assertEquals($collection2->id, $collectionOfRoot2->parent_id);
+        $this->assertEquals(2, $collectionOfRoot2->depth);
+        $this->assertEquals(1, $rootCollection1->left);
+        $this->assertEquals(2, $rootCollection1->right);
+        $this->assertEquals(3, $rootCollection2->left);
+        $this->assertEquals(4, $rootCollection2->right);
+
+        $this->assertEquals(1, $collection1->left);
+        $this->assertEquals(2, $collection1->right);
+        $this->assertEquals(3, $collection2->left);
+        $this->assertEquals(4, $collectionOfRoot2->left);
+        $this->assertEquals(5, $collectionOfRoot2->right);
+        $this->assertEquals(6, $collection2->right);
+        $this->assertEquals(7, $collection3->left);
+        $this->assertEquals(8, $collection3->right);
+
+    }
+
     public function testMoveNestedCollectionToOtherRootAndInBetween()
     {
         User::factory()->create();
@@ -1210,6 +1258,45 @@ class HierarchyTest extends TestCase
         $this->assertEquals(6, $secondChildOfRoot1->right);
         $this->assertEquals(7, $rootCollection1->right);
         $this->assertEquals(8, $firstChildOfRoot2->right);
+
+    }
+
+    public function testMoveCollectionFromRootTwoLevels()
+    {
+        User::factory()->create();
+        $rootCollection1 = Collection::factory()->create();
+        $rootCollection2 = Collection::factory()->create();
+        $collection1 = Collection::factory([ //
+            'parent_id' => $rootCollection1->id
+        ])->create();
+        $collection2 = Collection::factory([ //
+            'parent_id' => $rootCollection1->id
+        ])->create();
+        $collection3 = Collection::factory([ //
+            'parent_id' => $rootCollection1->id
+        ])->create();
+
+        $rootCollection2->moveTo($collection2->id);
+
+        $rootCollection1 = Collection::find($rootCollection1->id);
+        $rootCollection2 = Collection::find($rootCollection2->id);
+        $collection1 = Collection::find($collection1->id);
+        $collection2 = Collection::find($collection2->id);
+        $collection3 = Collection::find($collection3->id);
+
+        $this->assertEquals($collection2->id, $rootCollection2->parent_id);
+        $this->assertEquals(2, $rootCollection2->depth);
+        $this->assertEquals(1, $rootCollection1->left);
+        $this->assertEquals(2, $rootCollection1->right);
+
+        $this->assertEquals(1, $collection1->left);
+        $this->assertEquals(2, $collection1->right);
+        $this->assertEquals(3, $collection2->left);
+        $this->assertEquals(4, $rootCollection2->left);
+        $this->assertEquals(5, $rootCollection2->right);
+        $this->assertEquals(6, $collection2->right);
+        $this->assertEquals(7, $collection3->left);
+        $this->assertEquals(8, $collection3->right);
 
     }
 
@@ -2155,6 +2242,56 @@ class HierarchyTest extends TestCase
         $this->assertEquals(4, $grandChildOfRoot4->left);
         $this->assertEquals(5, $grandChildOfRoot4->right);
         $this->assertEquals(6, $secondChildOfRoot4->right);
+
+    }
+
+    public function testFixCorruptedHierarchy()
+    {
+        User::factory()->create();
+        $rootCollection1 = Collection::factory()->create();
+        $firstChildOfRoot1 = Collection::factory([
+            'parent_id' => $rootCollection1->id
+        ])->create();
+        $secondChildOfRoot1 = Collection::factory([
+            'parent_id' => $rootCollection1->id,
+        ])->create();
+        $firstGrandChildOfRoot1 = Collection::factory([
+            'parent_id' => $firstChildOfRoot1->id,
+        ])->create();
+        $secondGrandChildOfRoot1 = Collection::factory([
+            'parent_id' => $firstChildOfRoot1->id,
+        ])->create();
+        $rootCollection2 = Collection::factory()->create();
+
+        // simulate mistakes
+        $secondGrandChildOfRoot1->right = 6;
+        $secondGrandChildOfRoot1->saveQuietly();
+        $secondChildOfRoot1->left = 9;
+        $secondChildOfRoot1->right = 8;
+        $secondChildOfRoot1->saveQuietly();
+
+        Collection::rebuildHierarchy();
+
+        $rootCollection1 = Collection::find($rootCollection1->id);
+        $rootCollection2 = Collection::find($rootCollection2->id);
+        $firstChildOfRoot1 = Collection::find($firstChildOfRoot1->id);
+        $secondChildOfRoot1 = Collection::find($secondChildOfRoot1->id);
+        $firstGrandChildOfRoot1 = Collection::find($firstGrandChildOfRoot1->id);
+        $secondGrandChildOfRoot1 = Collection::find($secondGrandChildOfRoot1->id);
+
+        $this->assertEquals(1, $rootCollection1->left);
+        $this->assertEquals(2, $rootCollection1->right);
+        $this->assertEquals(3, $rootCollection2->left);
+        $this->assertEquals(4, $rootCollection2->right);
+
+        $this->assertEquals(1, $firstChildOfRoot1->left);
+        $this->assertEquals(2, $firstGrandChildOfRoot1->left);
+        $this->assertEquals(3, $firstGrandChildOfRoot1->right);
+        $this->assertEquals(4, $secondGrandChildOfRoot1->left);
+        $this->assertEquals(5, $secondGrandChildOfRoot1->right);
+        $this->assertEquals(6, $firstChildOfRoot1->right);
+        $this->assertEquals(7, $secondChildOfRoot1->left);
+        $this->assertEquals(8, $secondChildOfRoot1->right);
 
     }
 
