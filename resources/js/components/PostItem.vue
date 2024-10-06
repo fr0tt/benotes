@@ -39,7 +39,7 @@ export default {
     props: ['post', 'permission', 'restore'],
     data() {
         return {
-            debug: true,
+            debug: false,
         }
     },
     methods: {

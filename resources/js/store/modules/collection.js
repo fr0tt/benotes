@@ -2,12 +2,31 @@ import axios from 'axios'
 
 let collectionsPromise
 let collectionNames = new Map()
+let wasUpdated = false
 
 function recursiveCollectionNameMapping(collections) {
     collections.forEach((collection) => {
         collectionNames.set(collection.id, collection.name)
         recursiveCollectionNameMapping(collection.nested)
     })
+}
+
+function recursiveCollectionPositionUpdate(collections, id, parentId, isBeingShared) {
+    for (let i = 0; i < collections.length; i++) {
+        if (collections[i].id === id) {
+            collections[i].parent_id = parentId
+            collections[i].is_being_shared = isBeingShared
+            wasUpdated = true
+        }
+        if (collections[i].nested)
+            collections[i].nested = recursiveCollectionPositionUpdate(
+                collections[i].nested,
+                id,
+                parentId,
+                collections[i].is_being_shared
+            )
+    }
+    return collections
 }
 
 export default {
@@ -20,6 +39,7 @@ export default {
             id: null,
             name: '',
         },
+        isUpdating: false,
         collectionMenu: {
             isVisible: false,
             post: null,
@@ -49,6 +69,9 @@ export default {
         },
         setCollectionMenu(state, collectionMenu) {
             state.collectionMenu = collectionMenu
+        },
+        isUpdating(state, isUpdating) {
+            state.isUpdating = isUpdating
         },
     },
     actions: {
@@ -86,10 +109,8 @@ export default {
             recursiveCollectionNameMapping(ownAndSharedCollections)
             context.commit('setCollectionNames', collectionNames)
         },
-        addCollection(context, collection) {
-            context.commit('addCollection', collection)
-        },
         updateCollection(context, { id, name, parentId, iconId }) {
+            context.commit('isUpdating', true)
             axios
                 .patch('/api/collections/' + id, {
                     name: name,
@@ -102,12 +123,33 @@ export default {
                         nested: true,
                         force: true,
                     })
+                    context.commit('isUpdating', false)
                 })
                 .catch((error) => {
                     console.log(error.response.data)
+                    context.commit('isUpdating', false)
                 })
         },
+        moveCollection(context, { id, parentId, localOrder }) {
+            context.commit('isUpdating', true)
+            context.dispatch('updateLocalCollection', { id, parentId })
+            axios
+                .patch('/api/collections/' + id, {
+                    parent_id: parentId,
+                    local_order: localOrder,
+                    is_root: parentId == null,
+                })
+                .catch((error) => {
+                    console.log(error)
+                    context.dispatch('fetchCollections', {
+                        nested: true,
+                        force: true,
+                    })
+                })
+            // not needed: context.commit('isUpdating', false)
+        },
         deleteCollection(context, { id, nested = false }) {
+            context.commit('isUpdating', true)
             axios
                 .delete('/api/collections/' + id, {
                     params: {
@@ -119,10 +161,29 @@ export default {
                         return collection.id === id
                     })
                     context.commit('deleteCollection', index)
+                    context.commit('isUpdating', false)
                 })
                 .catch((error) => {
                     console.log(error)
+                    context.commit('isUpdating', false)
                 })
+        },
+        updateLocalCollection(context, { id, parentId }) {
+            wasUpdated = false
+            const collections = recursiveCollectionPositionUpdate(
+                JSON.parse(JSON.stringify(context.state.collections)),
+                id,
+                parentId,
+                false
+            )
+            if (collections !== null) context.commit('setCollections', collections)
+            context.commit('isUpdating', false)
+            if (!wasUpdated) {
+                context.dispatch('fetchCollections', {
+                    nested: true,
+                    force: true,
+                })
+            }
         },
         getCurrentCollection(context, id) {
             if (id === null) {

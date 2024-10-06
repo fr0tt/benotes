@@ -114,23 +114,15 @@
                         icon="remix/share-line" />
                 </span>
                 <ol class="mb-4">
-                    <CollectionSidebar
-                        v-for="collection in sharedCollections"
-                        :key="collection.id"
-                        :collection="collection" />
+                    <CollectionSidebarWrapper v-model="sharedCollections" />
                 </ol>
 
                 <span
                     class="mb-2 md:px-8 px-4 block text-xs text-gray-700 font-medium uppercase theme__sidebar__subhead">
                     Collections
                 </span>
-                <ol>
-                    <CollectionSidebar
-                        v-for="collection in collections"
-                        :key="collection.id"
-                        :collection="collection"
-                        :show-share-state="true" />
-                </ol>
+
+                <CollectionSidebarWrapper v-model="collections" />
             </div>
             <router-link
                 to="/c/create"
@@ -154,22 +146,27 @@
 import { mapState } from 'vuex'
 import axios from 'axios'
 import { collectionIconIsInline } from './../api/collection'
-import CollectionSidebar from './CollectionSidebar.vue'
+import CollectionSidebarWrapper from './CollectionSidebarWrapper.vue'
 export default {
     name: 'Sidebar',
     components: {
-        CollectionSidebar,
-    },
-    data() {
-        return {
-            menuIsOpen: false,
-        }
+        CollectionSidebarWrapper,
     },
     computed: {
         ...mapState(['showSidebar']),
         ...mapState('auth', ['authUser']),
-        ...mapState('collection', ['collections', 'sharedCollections']),
+        ...mapState('collection', ['sharedCollections']),
         ...mapState(['isMobile']),
+        collections: {
+            get() {
+                return JSON.parse(
+                    JSON.stringify(this.$store.state.collection.collections)
+                )
+            },
+            set(value) {
+                this.$store.commit('collection/setCollections', value)
+            },
+        },
     },
     mounted() {
         this.init()
@@ -269,7 +266,7 @@ export default {
             margin-left: -0.25rem;
         }
         .collection {
-            @apply flex w-full py-1;
+            @apply flex w-full py-1 relative;
             @apply font-medium text-gray-500;
             @apply pl-4;
             border-left: 3px solid;
