@@ -97,14 +97,12 @@ trait Hierarchy
                 if ($moveToTheRight) {
                     $model->where('root_collection_id', $model->root_collection_id)
                           ->where(static::$scope, $model->{static::$scope})
-                          ->where('depth', $model->depth)
                           ->where('left', '>', $old_left)
                           ->where('left', '<=', $left)
                           ->decrementEach(['left' => 2, 'right' => 2]);
                 } else {
                     $model->where('root_collection_id', $model->root_collection_id)
                           ->where(static::$scope, $model->{static::$scope})
-                          ->where('depth', $model->depth)
                           ->where('left', '>=', $left)
                           ->where('left', '<', $old_left)
                           ->incrementEach(['left' => 2, 'right' => 2]);
@@ -169,19 +167,24 @@ trait Hierarchy
                 if ($left > $old_left) { // right
                     $model
                         ->where('root_collection_id', $old_root_collection_id)
+                        // not sure if this helps
+                        ->where('id', '!=', $model->id)
                         ->whereBetween('left', [$old_left, $right])
                         ->decrement('left', $old_left_right_dif + 1);
                     $model
                         ->where('root_collection_id', $old_root_collection_id)
+                        ->where('id', '!=', $model->id)
                         ->whereBetween('right', [$old_left, $right])
                         ->decrement('right', $old_left_right_dif + 1);
                 } else { // left
                     $model
                         ->where('root_collection_id', $old_root_collection_id)
+                        ->where('id', '!=', $model->id)
                         ->whereBetween('left', [$left, $old_right])
                         ->increment('left', $old_left_right_dif + 1);
                     $model
                         ->where('root_collection_id', $old_root_collection_id)
+                        ->where('id', '!=', $model->id)
                         ->whereBetween('right', [$left, $old_right])
                         ->increment('right', $old_left_right_dif + 1);
                 }
@@ -246,10 +249,13 @@ trait Hierarchy
                     ->where('left', '>=', $old_left)
                     // exclude $model because new root_collection is not saved yet
                     ->where('id', '!=', $model->id)
-                    ->decrementEach([
-                        'left' => $old_left_right_dif + 1,
-                        'right' => $old_left_right_dif + 1
-                    ]);
+                    ->decrement('left', $old_left_right_dif + 1);
+                $model
+                    ->where('root_collection_id', $old_root_collection_id)
+                    ->where(static::$scope, $old_user_id)
+                    ->where('right', '>=', $old_left)
+                    ->where('id', '!=', $model->id)
+                    ->decrement('right', $old_left_right_dif + 1);
             }
 
         });
@@ -288,7 +294,6 @@ trait Hierarchy
             $model->root_collection_id = null;
             if ($model->parent()->count() > 0) {
                 $parent = $model->parent()->first();
-                $model->user_id = $parent->user_id;
                 $model->depth = $parent->depth + 1;
                 $model->root_collection_id = empty($parent->root_collection_id)
                     ? $parent->id
@@ -304,11 +309,15 @@ trait Hierarchy
                 ->first();
             if (!empty($next_left)) {
                 $left = $next_left->left;
-            } else {
+            } else if ($model->depth <= 1) {
                 $left = $model
                     ->where('parent_id', $model->parent_id)
                     ->where(static::$scope, $model->{static::$scope})
                     ->max('right') + 1;
+            } else {
+                $left = $model
+                    ->select('right')
+                    ->where('id', $model->parent_id)->first()->right;
             }
 
             $model->left = $left;
@@ -322,19 +331,29 @@ trait Hierarchy
             $model
                 ->where('root_collection_id', $model->root_collection_id)
                 ->where(static::$scope, $model->{static::$scope})
-                ->where('right', '>', $model->left)
+                ->where('right', '>=', $model->left)
                 ->increment('right', $left_right_dif + 1);
 
             // restore descendants
             if ($model->depth === 0) {
+                $descendant_ids = $model
+                    ->onlyTrashed()
+                    ->where('root_collection_id', $model->id)
+                    ->pluck('id');
                 $model
-                    ->withTrashed()
+                    ->onlyTrashed()
                     ->where('root_collection_id', $old_root_collection_id ?? $model->id)
                     ->where('deleted_at', '>=', $model->deleted_at)
                     ->restore();
             } else {
+                $descendant_ids = $model
+                    ->onlyTrashed()
+                    ->where('root_collection_id', $old_root_collection_id)
+                    ->where('left', '>', $old_left)
+                    ->where('right', '<', $old_right)
+                    ->pluck('id');
                 $model
-                    ->withTrashed()
+                    ->onlyTrashed()
                     ->where('root_collection_id', $old_root_collection_id)
                     ->where('left', '>', $old_left)
                     ->where('right', '<', $old_right)
@@ -343,13 +362,13 @@ trait Hierarchy
                     ->restore();
             }
 
-            $model->descendants()->incrementEach([
-                'left' => $old_left - $left,
-                'right' => $old_left - $left,
-                'depth' => $old_depth - $model->depth
+            Collection::whereIn('id', $descendant_ids)->incrementEach([
+                'left' => $left - $old_left,
+                'right' => $left - $old_left,
+                'depth' => $model->depth - $old_depth
             ], [
                 'root_collection_id' => $model->root_collection_id,
-                'user_id' => $model->user_id
+                static::$scope => $model->{static::$scope}
             ]);
 
             $model->saveQuietly();
@@ -547,6 +566,8 @@ trait Hierarchy
             $parent = $this->find($parent_id);
             if ($parent->depth === 0)
                 return 1;
+            if ($this->left < $parent->left && intval($parent_id) > 0)
+                return $parent->left - ($this->right - $this->left);
             return $parent->left + 1;
         }
 
@@ -686,6 +707,7 @@ trait Hierarchy
         );
     }
 
+    // order is not always correct !
     public static function toNestedRecursive($collections): array
     {
         $children_ids = [];
@@ -709,27 +731,11 @@ trait Hierarchy
         return array_values($tree);
     }
 
-    public static function renderNestedList($scopeValue) : void
-    {
-        $nodes = self::where(self::$scope, $scopeValue)
-            ->orderBy('root_collection_id')
-            ->orderBy('depth')
-            ->orderBy('left')
-            ->get();
-        $traverse = function ($nodes, $prefix = '-') use (&$traverse) {
-            foreach ($nodes as $node) {
-                echo PHP_EOL . $prefix . ' ' . $node->name;
-                $traverse($node->children, $prefix . '-');
-            }
-        };
-        $traverse($nodes);
-    }
-
     public static function toNested(EloquentCollection|\Illuminate\Support\Collection $collections): array
     {
         // both work
-        //return self::toNestedWithParentId($collections);
-        return self::toNestedRecursive($collections);
+        return self::toNestedWithParentId($collections);
+        // return self::toNestedRecursive($collections);
     }
 
 }

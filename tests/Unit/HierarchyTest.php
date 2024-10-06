@@ -287,32 +287,35 @@ class HierarchyTest extends TestCase
     public function testMoveChildCollectionLeft()
     {
         User::factory()->create();
-        $parentCollection = Collection::factory()->create();
-        $collection1 = Collection::factory([
+        $parentCollection = Collection::factory()->create(); // 1 2
+        $collection1 = Collection::factory([ // 1 4 --> 3 6
             'parent_id' => $parentCollection->id
         ])->create();
-        $collection2 = Collection::factory([
-            'parent_id' => $parentCollection->id
+        $childCollection = Collection::factory([ // 2 3 --> 4 5
+            'parent_id' => $collection1->id
         ])->create();
-        $collection3 = Collection::factory([
+        $collection2 = Collection::factory([ // 5 6 --> 1 2
             'parent_id' => $parentCollection->id
         ])->create();
 
-        $collection3->update(['left' => 1]);
+        $childCollection = Collection::find($childCollection->id);
+        $this->assertEquals(2, $childCollection->left);
+
+        $collection2->update(['left' => 1]);
 
         $parentCollection = Collection::find($parentCollection->id);
         $collection1 = Collection::find($collection1->id);
+        $childCollection = Collection::find($childCollection->id);
         $collection2 = Collection::find($collection2->id);
-        $collection3 = Collection::find($collection3->id);
 
         $this->assertEquals(1, $parentCollection->left);
         $this->assertEquals(2, $parentCollection->right);
-        $this->assertEquals(1, $collection3->left);
-        $this->assertEquals(2, $collection3->right);
+        $this->assertEquals(1, $collection2->left);
+        $this->assertEquals(2, $collection2->right);
         $this->assertEquals(3, $collection1->left);
-        $this->assertEquals(4, $collection1->right);
-        $this->assertEquals(5, $collection2->left);
-        $this->assertEquals(6, $collection2->right);
+        $this->assertEquals(4, $childCollection->left);
+        $this->assertEquals(5, $childCollection->right);
+        $this->assertEquals(6, $collection1->right);
     }
 
     public function testMoveChildCollectionRight()
@@ -325,8 +328,8 @@ class HierarchyTest extends TestCase
         $collection2 = Collection::factory([
             'parent_id' => $parentCollection->id
         ])->create();
-        $collection3 = Collection::factory([
-            'parent_id' => $parentCollection->id
+        $childCollection = Collection::factory([
+            'parent_id' => $collection2->id
         ])->create();
 
         $collection1->update(['left' => 5]);
@@ -334,14 +337,14 @@ class HierarchyTest extends TestCase
         $parentCollection = Collection::find($parentCollection->id);
         $collection1 = Collection::find($collection1->id);
         $collection2 = Collection::find($collection2->id);
-        $collection3 = Collection::find($collection3->id);
+        $childCollection = Collection::find($childCollection->id);
 
         $this->assertEquals(1, $parentCollection->left);
         $this->assertEquals(2, $parentCollection->right);
         $this->assertEquals(1, $collection2->left);
-        $this->assertEquals(2, $collection2->right);
-        $this->assertEquals(3, $collection3->left);
-        $this->assertEquals(4, $collection3->right);
+        $this->assertEquals(2, $childCollection->left);
+        $this->assertEquals(3, $childCollection->right);
+        $this->assertEquals(4, $collection2->right);
         $this->assertEquals(5, $collection1->left);
         $this->assertEquals(6, $collection1->right);
 
@@ -614,6 +617,41 @@ class HierarchyTest extends TestCase
         $this->assertEquals(4, $childCollection1->right);
         $this->assertEquals(5, $childCollection2->left);
         $this->assertEquals(6, $childCollection2->right);
+    }
+
+    public function testMoveCollectionDownAsOnlyChildAndRight()
+    {
+        User::factory()->create();
+        $parentCollection = Collection::factory()->create();
+        $collection1 = Collection::factory([
+            'parent_id' => $parentCollection->id
+        ])->create();
+        $collection2 = Collection::factory([
+            'parent_id' => $parentCollection->id
+        ])->create();
+        $collection3 = Collection::factory([
+            'parent_id' => $parentCollection->id
+        ])->create();
+
+        $this->assertEquals(4,
+            $collection1->computeNewLeft($collection3->id));
+        $collection1->moveTo($collection3->id);
+
+        $collection1 = Collection::find($collection1->id);
+        $collection2 = Collection::find($collection2->id);
+        $collection3 = Collection::find($collection3->id);
+
+        $this->assertEquals($collection3->id, $collection1->parent_id);
+        $this->assertEquals(2, $collection1->depth);
+        $this->assertEquals(1, $collection3->depth);
+
+        $this->assertEquals(1, $collection2->left);
+        $this->assertEquals(2, $collection2->right);
+        $this->assertEquals(3, $collection3->left);
+        $this->assertEquals(4, $collection1->left);
+        $this->assertEquals(5, $collection1->right);
+        $this->assertEquals(6, $collection3->right);
+
     }
 
     public function testMoveCollectionDownToTheEnd()
@@ -1010,6 +1048,48 @@ class HierarchyTest extends TestCase
         $this->assertEquals(2, $grandChildCollection1->right);
         $this->assertEquals(3, $grandChildCollection2->left);
         $this->assertEquals(4, $grandChildCollection2->right);
+
+    }
+
+    public function testMoveCollectionToRootTwoLevels()
+    {
+        User::factory()->create();
+        $rootCollection1 = Collection::factory()->create();
+        $rootCollection2 = Collection::factory()->create();
+        $collection = Collection::factory([ // 1 4 -> 1 2
+            'parent_id' => $rootCollection2->id
+        ])->create();
+        $childCollection = Collection::factory([ // 2 3 -> ...
+            'parent_id' => $collection->id
+        ])->create();
+        $collection2 = Collection::factory([ // 5 6 -> ...
+            'parent_id' => $rootCollection2->id
+        ])->create();
+
+        $this->assertEquals(3,
+            $childCollection->computeNewLeft(null, 2));
+        $childCollection->moveTo(null, 2);
+
+        $rootCollection1 = Collection::find($rootCollection1->id);
+        $rootCollection2 = Collection::find($rootCollection2->id);
+        $collection = Collection::find($collection->id);
+        $collection2 = Collection::find($collection2->id);
+        $childCollection = Collection::find($childCollection->id);
+
+        $this->assertEmpty($childCollection->parent_id);
+        $this->assertEquals(0, $childCollection->depth);
+
+        $this->assertEquals(1, $rootCollection1->left);
+        $this->assertEquals(2, $rootCollection1->right);
+        $this->assertEquals(3, $childCollection->left);
+        $this->assertEquals(4, $childCollection->right);
+        $this->assertEquals(5, $rootCollection2->left);
+        $this->assertEquals(6, $rootCollection2->right);
+
+        $this->assertEquals(1, $collection->left);
+        $this->assertEquals(2, $collection->right);
+        $this->assertEquals(3, $collection2->left);
+        $this->assertEquals(4, $collection2->right);
 
     }
 
@@ -1766,9 +1846,89 @@ class HierarchyTest extends TestCase
     {
         $user1 = User::factory()->create();
         $user2 = User::factory()->create();
+        $rootCollection = Collection::factory([
+            'user_id' => $user1->id
+        ])->create();
+        $collection1 = Collection::factory([
+            'user_id' => $user1->id,
+            'parent_id' => $rootCollection->id
+        ])->create();
+        $childCollection = Collection::factory([
+            'user_id' => $user1->id,
+            'parent_id' => $collection1->id
+        ])->create();
+        $grandChildCollection = Collection::factory([
+            'user_id' => $user1->id,
+            'parent_id' => $childCollection->id
+        ])->create();
+        $collection2 = Collection::factory([
+            'user_id' => $user1->id,
+            'parent_id' => $rootCollection->id
+        ])->create();
+        $rootCollection2 = Collection::factory([
+            'user_id' => $user2->id
+        ])->create();
+
+        Collection::find($childCollection->id)->delete();
+
+        $childCollection = Collection::withTrashed()->find($childCollection->id);
+        $grandChildCollection = Collection::withTrashed()->find($grandChildCollection->id);
+        $this->assertTrue($childCollection->trashed());
+        $this->assertTrue($grandChildCollection->trashed());
+
+        Collection::find($collection1->id)
+            ->moveTo($rootCollection2->id, 1, $user2->id);
+
+        $collection1 = Collection::find($collection1->id);
+        $collection2 = Collection::find($collection2->id);
+        $this->assertEquals(1, $collection1->left);
+        $this->assertEquals(2, $collection1->right);
+        $this->assertEquals(1, $collection2->left);
+        $this->assertEquals(2, $collection2->right);
+
+        Collection::withTrashed()->find($childCollection->id)->restore();
+
+        $rootCollection = Collection::find($rootCollection->id);
+        $collection1 = Collection::find($collection1->id);
+        $collection2 = Collection::find($collection2->id);
+        $rootCollection2 = Collection::find($rootCollection2->id);
+        $childCollection = Collection::withTrashed()->find($childCollection->id);
+        $grandChildCollection = Collection::withTrashed()->find($grandChildCollection->id);
+
+        $this->assertFalse($childCollection->trashed());
+        $this->assertFalse($grandChildCollection->trashed());
+        $this->assertEquals($user1->id, $collection2->user_id);
+        $this->assertEquals($user2->id, $rootCollection2->user_id);
+        $this->assertEquals($user2->id, $collection1->user_id);
+        $this->assertEquals($user2->id, $childCollection->user_id);
+        $this->assertEquals($user2->id, $grandChildCollection->user_id);
+
+        $this->assertEquals(1, $rootCollection->left);
+        $this->assertEquals(1, $rootCollection2->left);
+        $this->assertEquals(1, $collection2->left);
+        $this->assertEquals(2, $collection2->right);
+
+        $this->assertEquals(1, $collection1->left);
+        $this->assertEquals(2, $childCollection->left);
+        $this->assertEquals(3, $grandChildCollection->left);
+        $this->assertEquals(4, $grandChildCollection->right);
+        $this->assertEquals(5, $childCollection->right);
+        $this->assertEquals(6, $collection1->right);
+    }
+
+    public function testRestoreNestedCollectionWithNewOwnerAsRoot()
+    {
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
         $rootCollection = Collection::factory()->create();
         $collection1 = Collection::factory([
             'parent_id' => $rootCollection->id
+        ])->create();
+        $childCollection = Collection::factory([
+            'parent_id' => $collection1->id
+        ])->create();
+        $grandChildCollection = Collection::factory([
+            'parent_id' => $childCollection->id
         ])->create();
         $collection2 = Collection::factory([
             'parent_id' => $rootCollection->id
@@ -1776,21 +1936,26 @@ class HierarchyTest extends TestCase
         $collection3 = Collection::factory([
             'parent_id' => $rootCollection->id
         ])->create();
-        $childCollection = Collection::factory([
-            'parent_id' => $collection1->id
-        ])->create();
-        $grandChildCollection = Collection::factory([
-            'parent_id' => $collection1->id
-        ])->create();
 
         $childCollection = Collection::find($childCollection->id);
         $this->assertEquals($user1->id, $childCollection->user_id);
 
         $childCollection->delete();
 
-        Collection::find($collection1->id)->moveTo(null, 1, $user2->id);
+        $childCollection = Collection::withTrashed()->find($childCollection->id);
+        $grandChildCollection = Collection::withTrashed()->find($grandChildCollection->id);
+        $this->assertTrue($childCollection->trashed());
+        $this->assertTrue($grandChildCollection->trashed());
 
-        $this->assertEquals(1, Collection::find($collection2->id)->left);
+        $collection1 = Collection::find($collection1->id);
+        $collection1->moveTo(null, 1, $user2->id);
+
+        $collection1 = Collection::find($collection1->id);
+        $collection2 = Collection::find($collection2->id);
+        $this->assertEquals(1, $collection1->left);
+        $this->assertEquals(2, $collection1->right);
+        $this->assertEquals(1, $collection2->left);
+        $this->assertEquals(2, $collection2->right);
         Collection::withTrashed()->find($childCollection->id)->restore();
 
         $rootCollection = Collection::find($rootCollection->id);
@@ -1817,9 +1982,9 @@ class HierarchyTest extends TestCase
         $this->assertEquals(1, $collection1->left);
         $this->assertEquals(2, $collection1->right);
         $this->assertEquals(1, $childCollection->left);
-        $this->assertEquals(2, $childCollection->right);
-        $this->assertEquals(3, $grandChildCollection->left);
-        $this->assertEquals(4, $grandChildCollection->right);
+        $this->assertEquals(2, $grandChildCollection->left);
+        $this->assertEquals(3, $grandChildCollection->right);
+        $this->assertEquals(4, $childCollection->right);
     }
 
     public function testGenerateHierarchWithMultipleUsers()
@@ -1867,7 +2032,7 @@ class HierarchyTest extends TestCase
             'parent_id' => $rootCollection4->id,
             'user_id' => $user2->id
         ])->create();
-        $grandChildOfRoot2 = Collection::factory([
+        $grandChildOfRoot4 = Collection::factory([
             'parent_id' => $secondChildOfRoot4->id,
             'user_id' => $user2->id
         ])->create();
@@ -1895,7 +2060,7 @@ class HierarchyTest extends TestCase
         $secondChildOfRoot4 = Collection::find($secondChildOfRoot4->id);
         $firstGrandChildOfRoot1 = Collection::find($firstGrandChildOfRoot1->id);
         $secondGrandChildOfRoot1 = Collection::find($secondGrandChildOfRoot1->id);
-        $grandChildOfRoot2 = Collection::find($grandChildOfRoot2->id);
+        $grandChildOfRoot4 = Collection::find($grandChildOfRoot4->id);
 
         Collection
             ::where('root_collection_id', '<=', $rootCollection2)
@@ -1972,23 +2137,24 @@ class HierarchyTest extends TestCase
                 ->where('depth', 2)
                 ->count()
         );
-//        $this->assertEquals(1, $firstChildOfRoot1->left);
-//        $this->assertEquals(2, $firstGrandChildOfRoot1->left);
-//        $this->assertEquals(3, $firstGrandChildOfRoot1->right);
-//        $this->assertEquals(4, $secondGrandChildOfRoot1->left);
-//        $this->assertEquals(5, $secondGrandChildOfRoot1->right);
-//        $this->assertEquals(6, $firstChildOfRoot1->right);
-//        $this->assertEquals(7, $secondChildOfRoot1->left);
-//        $this->assertEquals(8, $secondChildOfRoot1->right);
-//        $this->assertEquals(9, $thirdChildOfRoot1->left);
-//        $this->assertEquals(10, $thirdChildOfRoot1->right);
-//
-//        $this->assertEquals(1, $firstChildOfRoot4->left);
-//        $this->assertEquals(2, $firstChildOfRoot4->right);
-//        $this->assertEquals(2, $secondChildOfRoot4->left);
-//        $this->assertEquals(3, $grandChildOfRoot2->right);
-//        $this->assertEquals(4, $grandChildOfRoot2->left);
-//        $this->assertEquals(5, $secondChildOfRoot4->right);
+
+        $this->assertEquals(1, $firstChildOfRoot1->left);
+        $this->assertEquals(2, $firstGrandChildOfRoot1->left);
+        $this->assertEquals(3, $firstGrandChildOfRoot1->right);
+        $this->assertEquals(4, $secondGrandChildOfRoot1->left);
+        $this->assertEquals(5, $secondGrandChildOfRoot1->right);
+        $this->assertEquals(6, $firstChildOfRoot1->right);
+        $this->assertEquals(7, $secondChildOfRoot1->left);
+        $this->assertEquals(8, $secondChildOfRoot1->right);
+        $this->assertEquals(9, $thirdChildOfRoot1->left);
+        $this->assertEquals(10, $thirdChildOfRoot1->right);
+
+        $this->assertEquals(1, $firstChildOfRoot4->left);
+        $this->assertEquals(2, $firstChildOfRoot4->right);
+        $this->assertEquals(3, $secondChildOfRoot4->left);
+        $this->assertEquals(4, $grandChildOfRoot4->left);
+        $this->assertEquals(5, $grandChildOfRoot4->right);
+        $this->assertEquals(6, $secondChildOfRoot4->right);
 
     }
 
