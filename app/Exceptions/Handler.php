@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -57,21 +58,25 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         if ($exception instanceof \PHPOpenSourceSaver\JWTAuth\Exceptions\TokenExpiredException) {
-            return response()->json('Token has expired', 401);
+            return response()->json('Token has expired', Response::HTTP_UNAUTHORIZED);
         } else if (
             $exception instanceof \PHPOpenSourceSaver\JWTAuth\Exceptions\TokenBlacklistedException ||
             $exception instanceof \PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException
         ) {
-            return response()->json('Token is invalid', 401);
+            return response()->json('Token is invalid', Response::HTTP_UNAUTHORIZED);
         } else if ($exception instanceof \Intervention\Image\Exception\NotWritableException) {
-            return response()->json('Storage path not writable.', 403);
+            return response()->json('Storage path not writable.', Response::HTTP_INTERNAL_SERVER_ERROR);
         } else if ($exception instanceof AuthorizationException) {
-            return response()->json('This action is unauthorized.', 403);
+            return response()->json('This action is unauthorized.', Response::HTTP_UNAUTHORIZED);
         } else if ($exception instanceof ModelNotFoundException) {
             return response()->json(
                 str_replace('App\\', '', $exception->getModel()) . ' not found.',
-                404
+                Response::HTTP_NOT_FOUND
             );
+        } else if ($exception instanceof \UnexpectedValueException) {
+            if (!is_writable(storage_path()) || !is_writable(storage_path('logs'))) {
+                return response()->json('Storage path is not writable.', Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
         }
 
         return parent::render($request, $exception);
