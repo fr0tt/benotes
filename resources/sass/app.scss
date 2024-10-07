@@ -133,7 +133,7 @@ label.label {
         line-height: 1.45;
     }
     a {
-        @apply underline text-blue-600;
+        @apply underline text-blue-600 cursor-pointer;
     }
     blockquote {
         @apply italic border-gray-500 my-1 pl-2 text-gray-700;

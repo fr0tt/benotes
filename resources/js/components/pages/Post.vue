@@ -117,7 +117,9 @@ export default {
                     Placeholder.configure({
                         placeholder: 'Write something or paste a link',
                     }),
-                    Link,
+                    Link.extend({
+                        inclusive: false,
+                    }),
                     TaskList,
                     TaskItem,
                     Image,
