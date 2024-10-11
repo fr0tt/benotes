@@ -148,6 +148,105 @@ class PostService
         return $post;
     }
 
+    public function update(
+        Post $post,
+        int $owner_id,
+        string|null $title = null,
+        string|null $content = null,
+        int|null $collection_id = null,
+        string|null $description = null,
+        array|null $tags = null,
+        array|null $tag_names = null,
+        int|null $order = null,
+        bool|null $is_archived = null,
+    ): Post {
+
+        $info = array();
+        if (empty($content)) {
+            $info['type'] = $post->getRawOriginal('type');
+        } else {
+            $content = $this->sanitize($content);
+            $info = $this->computePostData($title, $content);
+            if ($content === $post->content) {
+                foreach (['title', 'description', 'image_path'] as $attr) {
+                    if (!empty($post->{$attr})) {
+                        unset($info[$attr]);
+                    }
+                }
+            }
+        }
+
+        $attributes = array();
+        $attributes['collection_id'] = $collection_id;
+        $attributes['user_id'] = $owner_id;
+        if (!empty($title)) $attributes['title'] = $title;
+        if (!empty($content)) $attributes['content'] = $content;
+        if (!empty($description)) $attributes['description'] = $description;
+
+        $attributes = array_merge($attributes, $info);
+
+        if ($post->collection_id !== $collection_id) {
+            // post wants to have a different collection than before
+            // compute order in new collection
+            $attributes['order'] = Post::where('collection_id', $collection_id)
+                    ->max('order') + 1;
+            // reorder old collection
+            Post::where('collection_id', $post->collection_id)
+                ->where('order', '>', $post->order)->decrement('order');
+        } else if (!empty($order)) {
+            // post wants to be positioned somewhere else
+            // staying in the same collection as before
+            $attributes['order'] = $order;
+
+            // check authenticity of order
+            if (!Post::where('collection_id', $post->collection_id)->where('order', $order)->exists()) {
+                $order = Post::where('collection_id', $post->collection_id)->max('order');
+                $attributes['order'] = $order;
+            }
+
+            $oldOrder = $post->order;
+            if ($order !== $oldOrder) {
+                if ($order > $oldOrder) {
+                    Post::where('collection_id', $post->collection_id)
+                        ->whereBetween('order', [$oldOrder + 1, $order])->decrement('order');
+                } else {
+                    Post::where('collection_id', $post->collection_id)
+                        ->whereBetween('order', [$order, $oldOrder - 1])->increment('order');
+                }
+            }
+        }
+
+        $post->update($attributes);
+
+        if ($is_archived !== null) {
+            $is_currently_archived = $post->trashed();
+            if ($is_archived === true && $is_currently_archived === false) {
+                $this->delete($post);
+                $post = Post::withTrashed()->find($post->id);
+            } else if ($is_archived === false && $is_currently_archived === true) {
+                $post = $this->restore($post);
+            }
+        }
+
+        if ($info['type'] === Post::POST_TYPE_LINK && !empty($content)) {
+            if (empty($post->image_path) || $content !== $post->content)
+                $this->saveImage($info['image_path'], $post);
+        }
+
+        // isset() instead of empty() because [] is a possible value when deleting all tags
+        if ($tags !== null) {
+            $this->updateTags($post->id, $tags);
+        } else if ($tag_names !== null) {
+            $tag_ids = $this->getOrGenerateTagIds(
+                $tag_names, $owner_id
+            );
+            $this->updateTags($post->id, $tag_ids);
+        }
+        $post->tags = $post->tags()->get();
+
+        return $post;
+    }
+
     public function delete(Post $post): void
     {
         Post::where('collection_id', $post->collection_id)

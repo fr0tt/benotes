@@ -85,7 +85,9 @@
                 {{ error }}
             </p>
 
-            <h2 class="text-xl my-2 text-gray-800">Preferences</h2>
+            <h2 v-if="isOwner" class="mt-8 mb-4 text-gray-800 text-lg font-medium">
+                Preferences
+            </h2>
 
             <div v-if="isOwner" class="mb-8">
                 <label class="label">Theme</label>

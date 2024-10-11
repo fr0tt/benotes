@@ -168,7 +168,7 @@ class PostController extends Controller
             'tags.*'           => 'integer|required_with:tags',
             'tag_names'        => 'array|nullable',
             'tag_names.*'      => 'alpha_num|required_with:tag_names',
-            'order'            => 'integer|nullable',
+            'order'            => 'integer|min:1|nullable',
             'is_archived'      => 'boolean|nullable'
         ]);
         $request->is_uncategorized = boolval($request->is_uncategorized);
@@ -200,83 +200,20 @@ class PostController extends Controller
                     Collection::find($validatedData['collection_id']));
         }
 
-        if (isset($validatedData['content'])) {
-            $validatedData['content'] = $this->service->sanitize($validatedData['content']);
-            $info = $this->service->computePostData($request->title, $validatedData['content']);
-            if ($validatedData['content'] === $post->content) {
-                foreach (['title', 'description', 'image_path'] as $attr) {
-                    if (!empty($post->{$attr})) {
-                        unset($info[$attr]);
-                    }
-                }
-            }
-        } else {
-            $info = array();
-            $info['type'] = $post->getRawOriginal('type');
-        }
-
-        $newValues = array_merge($validatedData, $info);
-        $newValues['user_id'] = Collection::getOwner($validatedData['collection_id']);
-
-        if ($post->collection_id !== $validatedData['collection_id']) {
-            // post wants to have a different collection than before
-            // compute order in new collection
-            $newValues['order'] = Post::where('collection_id', $validatedData['collection_id'])
-                ->max('order') + 1;
-            // reorder old collection
-            Post::where('collection_id', $post->collection_id)
-                ->where('order', '>', $post->order)->decrement('order');
-        } else if (isset($validatedData['order'])) {
-            // post wants to be positioned somewhere else
-            // staying in the same collection as before
-            $newOrder = $validatedData['order'];
-
-            // check authenticity of order
-            if (!Post::where('collection_id', $post->collection_id)->where('order', $newOrder)->exists()) {
-                $newOrder = Post::where('collection_id', $post->collection_id)->max('order');
-                $newValues['order'] = $newOrder;
-            }
-
-            $oldOrder = $post->order;
-            if ($newOrder !== $oldOrder) {
-                if ($newOrder > $oldOrder) {
-                    Post::where('collection_id', $post->collection_id)
-                        ->whereBetween('order', [$oldOrder + 1, $newOrder])->decrement('order');
-                } else {
-                    Post::where('collection_id', $post->collection_id)
-                        ->whereBetween('order', [$newOrder, $oldOrder - 1])->increment('order');
-                }
-            }
-        }
-
-        $post->update($newValues);
-
-        if (isset($request->is_archived)) {
-            $request->is_archived = filter_var($request->is_archived, FILTER_VALIDATE_BOOLEAN);
-            $is_currently_archived = $post->trashed();
-            if ($request->is_archived === true && $is_currently_archived === false) {
-                $this->service->delete($post);
-                $post = Post::withTrashed()->find($post->id);
-            } else if ($request->is_archived === false && $is_currently_archived === true) {
-                $post = $this->service->restore($post);
-            }
-        }
-
-        if ($info['type'] === Post::POST_TYPE_LINK && isset($validatedData['content'])) {
-            if (empty($post->image_path) || $validatedData['content'] !== $post->content)
-                $this->service->saveImage($info['image_path'], $post);
-        }
-
-        // isset() instead of empty() because [] is a possible value when deleting all tags
-        if (isset($newValues['tags'])) {
-            $this->service->updateTags($post->id, $newValues['tags']);
-        } else if (isset($newValues['tag_names'])) {
-            $tag_ids = $this->service->getOrGenerateTagIds(
-                $newValues['tag_names'], $newValues['user_id']
-            );
-            $this->service->updateTags($post->id, $tag_ids);
-        }
-        $post->tags = $post->tags()->get();
+        $this->service->update(
+            $post,
+            Collection::getOwner($validatedData['collection_id'] ?? null),
+            $validatedData['title'] ?? null,
+            $validatedData['content'] ?? null,
+            $validatedData['collection_id'] ?? null,
+            $validatedData['description'] ?? null,
+            $validatedData['tags'] ?? null,
+            $validatedData['tag_names'] ?? null,
+            $validatedData['order'] ?? null,
+            isset($validatedData['is_archived'])
+                ? filter_var($validatedData['is_archived'], FILTER_VALIDATE_BOOLEAN)
+                : null
+        );
 
         return response()->json(['data' => $post], Response::HTTP_OK);
     }

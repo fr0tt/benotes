@@ -57,7 +57,7 @@ class PostTest extends TestCase
             1  => ['https://go-rel.github.io/', 'link', true],
             2  => ['https://www.youtube.com/watch?v=ZyURjdnYQaU', 'link', true],
             3  => ['https://github.com/verlok/vanilla-lazyload', 'link', true],
-            4  => ['https://www.amazon.com/Design-Everyday-Things-Revised-Expanded/dp/0465050654/ref=sr_1_1?dchild=1&keywords=don+norman&link_code=qs&qid=1608495907&sr=8-1&tag=operabrowser-21', 'link'],
+            4  => ['https://www.amazon.com/Design-Everyday-Things-Revised-Expanded/dp/0465050654/ref=sr_1_1?dchild=1&keywords=don+norman&link_code=qs&qid=1608495907&sr=8-1&tag=operabrowser-21', 'link', true],
             5  => ['<a href="https://www.wolframalpha.com" rel="noopener noreferrer nofollow">https://www.wolframalpha.com</a>', 'link', true],
             6  => ['<p class="">dfgd adijfds https://google.com</p>', 'text'],
             7  => ['<p>https://www.wolframalpha.com</p><p>https://laravel.com</p>', 'text'],
@@ -65,7 +65,7 @@ class PostTest extends TestCase
             9  => ['https://laravel.com', 'link', true],
             10 => ['Lorem ipsum https://fonts.adobe.com/fonts/realist', 'text'],
             11 => ['https://gamesindustry.biz', 'link', true],
-            12 => ['https://www.php.net/manual/en/function.parse-url.php', 'link'],
+            12 => ['https://www.php.net/manual/en/function.parse-url.php', 'link', true],
             13 => ['https://github.com/fr0tt/benotes/blob/master/tests/Feature/PostTest.php', 'link', true]
         ];
     }
@@ -892,7 +892,7 @@ class PostTest extends TestCase
             'content'       => 'foo bar',
             'collection_id' => $collection->id
         ]);
-        $this->assertEquals(403, $response->status());
+        $this->assertEquals(401, $response->status());
     }
 
     public function testGetPostWithOffset()
@@ -975,7 +975,7 @@ class PostTest extends TestCase
         $this->assertLessThan($amountOfPosts, $amountOfPosts2);
 
         $response = $this->actingAs($user2)->json('GET', 'api/posts/' . $post->id);
-        $this->assertEquals(403, $response->status());
+        $this->assertEquals(401, $response->status());
     }
 
     public function testGetUncategorizedPostsFromOwnerOnly()
@@ -1001,7 +1001,7 @@ class PostTest extends TestCase
         $this->assertLessThan($amountOfPosts, $amountOfPosts2);
 
         $response = $this->actingAs($user2)->json('GET', 'api/posts/' . $post->id);
-        $this->assertEquals(403, $response->status());
+        $this->assertEquals(401, $response->status());
     }
 
     public function testSearchInsideACollection()

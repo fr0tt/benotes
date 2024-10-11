@@ -16,14 +16,15 @@ class PostFactory extends Factory
      */
     public function definition()
     {
+        $collection_id = Collection::count() > 0 ? Collection::first()->id : null;
         return [
             'id' => $this->faker->randomNumber(),
             'title' => $this->faker->title(),
             'content' => $this->faker->sentence(),
-            'collection_id' => (Collection::count() > 0) ? Collection::first()->id : null,
+            'collection_id' => $collection_id,
             'type' => Post::POST_TYPE_TEXT,
             'user_id' => User::first()->id,
-            'order' => Post::where('collection_id', null)->count()
+            'order' => Post::where('collection_id', $collection_id)->count()
         ];
     }
 }
