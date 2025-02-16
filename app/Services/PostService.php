@@ -199,10 +199,10 @@ class PostService
             $attributes['order'] = $order;
 
             // check authenticity of order
-            if (Post::where('collection_id', $post->collection_id)->where('order', $newOrder)->count() !== 1) {
+            if (Post::where('collection_id', $post->collection_id)->where('order', $order)->count() !== 1) {
                 $maxOrder = Post::where('collection_id', $post->collection_id)->max('order');
-                if ($newOrder > $maxOrder) $newOrder = $maxOrder;
-                $attributes['order'] = $newOrder;
+                if ($order > $maxOrder) $order = $maxOrder;
+                $attributes['order'] = $order;
             }
 
             $oldOrder = $post->order;
