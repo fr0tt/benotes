@@ -13,10 +13,11 @@
     "playwright": "npx playwright test",
     "playwright-debug": "npx playwright test --project=chromium --debug",
     "playwright-trace": "npx playwright test --project=chromium --trace on",
+    "playwright-ui": "npx playwright test --ui",
     "codegen": "npx playwright codegen"
   },
   "devDependencies": {
-    "@playwright/test": "^1.31.2",
+    "@playwright/test": "^1.48.2",
     "axios": "^0.21.4",
     "browser-sync": "^2.26.14",
     "browser-sync-webpack-plugin": "^2.3.0",

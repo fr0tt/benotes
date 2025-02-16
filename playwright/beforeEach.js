@@ -1,14 +1,12 @@
 import { expect } from '@playwright/test'
 
-const beforeEach = async ({ page, request }) => {
-    let response = null
-
+export const beforeEach = async ({ page, request }) => {
     const user = {
         email: Date.now() + 'test@benotes.org',
         password: 'password',
     }
 
-    response = await request.post('/api/__e2e__/user', {
+    let response = await request.post('/api/__e2e__/user', {
         data: user,
     })
     await expect(response.ok()).toBeTruthy()
@@ -23,4 +21,7 @@ const beforeEach = async ({ page, request }) => {
     //await page.waitForNavigation() // should work without it
 }
 
-export default beforeEach
+export const beforeEachSetup = async ({ page, request }) => {
+    let response = await page.request.post('/api/__e2e__/setup')
+    await expect(response.ok()).toBeTruthy()
+}

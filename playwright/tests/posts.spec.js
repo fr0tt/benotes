@@ -1,6 +1,6 @@
 // @ts-check
 import { expect, test } from '@playwright/test'
-import beforeEach from './../beforeEach'
+import { beforeEach } from './../beforeEach'
 
 test.beforeEach(beforeEach)
 
@@ -11,9 +11,15 @@ test('create link post without image', async ({ page }) => {
     await page.getByRole('button', { name: 'Save' }).click()
 
     await page.waitForLoadState('networkidle')
-    await expect.poll(async () => page.locator('#view div.card').count()).toBeGreaterThanOrEqual(1)
+    await expect
+        .poll(async () => page.locator('#view div.card').count())
+        .toBeGreaterThanOrEqual(1)
     expect(
-        await page.locator('#view div.card').nth(0).locator('a[title]').getAttribute('href'),
+        await page
+            .locator('#view div.card')
+            .nth(0)
+            .locator('a[title]')
+            .getAttribute('href'),
         link
     )
 
@@ -27,7 +33,12 @@ test('create link post without image', async ({ page }) => {
         .includes('Benotes')
 
     expect(
-        await page.locator('#view div.card').nth(0).locator('[title]').nth(0).getAttribute('title')
+        await page
+            .locator('#view div.card')
+            .nth(0)
+            .locator('[title]')
+            .nth(0)
+            .getAttribute('title')
     ).toContain('Benotes')
 })
 
@@ -40,11 +51,21 @@ test('create link post with image', async ({ page }) => {
     await page.waitForLoadState('networkidle')
     //await page.waitForResponse((res) => res.url().includes('/api/posts'))
 
-    await expect.poll(async () => page.locator('#view div.card').count()).toBeGreaterThanOrEqual(1)
-    await page.locator('#view div.card').nth(0).getByRole('link', { name: link }).isVisible()
+    await expect
+        .poll(async () => page.locator('#view div.card').count())
+        .toBeGreaterThanOrEqual(1)
+    await page
+        .locator('#view div.card')
+        .nth(0)
+        .getByRole('link', { name: link })
+        .isVisible()
 
     expect(
-        await page.locator('#view div.card').nth(0).locator('a[title]').getAttribute('href'),
+        await page
+            .locator('#view div.card')
+            .nth(0)
+            .locator('a[title]')
+            .getAttribute('href'),
         link
     )
 
@@ -76,7 +97,7 @@ test('infinite scroll', async ({ page, request }) => {
     const numberOfItems = 25
 
     await page.waitForLoadState('networkidle')
-    const token = await (await page.context().cookies()).at(0)?.value
+    const token = await (await page.context().cookies()).at(0).value
 
     for (let i = 0; i < numberOfItems; i++) {
         await request.post('/api/posts', {
@@ -110,9 +131,6 @@ test('paste link as new post with image', async ({ page }, testInfo) => {
      * otherwise the app is considered unsafe without ssl
      **/
     test.skip(testInfo.project.name !== 'chromium')
-
-    await page.goto('/')
-
     test.skip(!page.url().includes('localhost'))
 
     const link = 'https://github.com'
@@ -120,11 +138,21 @@ test('paste link as new post with image', async ({ page }, testInfo) => {
     await page.evaluate(() => window.navigator.clipboard.writeText('https://github.com'))
     await page.getByRole('button', { name: 'Paste' }).click()
 
-    await expect.poll(async () => page.locator('#view div.card').count()).toBeGreaterThanOrEqual(1)
-    await page.locator('#view div.card').nth(0).getByRole('link', { name: link }).isVisible()
+    await expect
+        .poll(async () => page.locator('#view div.card').count())
+        .toBeGreaterThanOrEqual(1)
+    await page
+        .locator('#view div.card')
+        .nth(0)
+        .getByRole('link', { name: link })
+        .isVisible()
 
     expect(
-        await page.locator('#view div.card').nth(0).locator('a[title]').getAttribute('href'),
+        await page
+            .locator('#view div.card')
+            .nth(0)
+            .locator('a[title]')
+            .getAttribute('href'),
         link
     )
 

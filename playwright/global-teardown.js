@@ -1,4 +1,4 @@
-const { request } = require('@playwright/test')
+const { request, expect } = require('@playwright/test')
 const fs = require('fs')
 
 module.exports = async (config) => {
@@ -12,5 +12,6 @@ module.exports = async (config) => {
         baseURL: baseURL,
     })
 
-    await requestContext.post(`${baseURL}/__e2e__/teardown`)
+    let response = await requestContext.post('/__e2e__/teardown')
+    await expect(response.ok()).toBeTruthy()
 }
