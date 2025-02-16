@@ -38,9 +38,9 @@ export default {
         setPost(state, { post, index }) {
             state.posts.splice(index, 1, post)
         },
-        updatePostOrders(state, { start, end, highestOrder }) {
-            for (let i = start; i <= end; i++) {
-                state.posts[i].order = highestOrder - (i - start)
+        updatePostOrders(state, { startIndex, endIndex, highestOrder }) {
+            for (let i = startIndex; i <= endIndex; i++) {
+                state.posts[i].order = highestOrder - (i - startIndex)
             }
             state.isUpdating = false
         },
@@ -202,13 +202,13 @@ export default {
             const highestOrder =
                 oldIndex > newIndex ? newOrder : context.state.posts[newIndex].order
             context.commit('updatePostOrders', {
-                start: Math.min(oldIndex, newIndex),
-                end: Math.max(newIndex, oldIndex),
+                startIndex: Math.min(oldIndex, newIndex),
+                endIndex: Math.max(newIndex, oldIndex),
                 highestOrder: highestOrder,
             })
         },
         deletePost(context, id) {
-            axios
+            return axios
                 .delete('/api/posts/' + id)
                 .then(() => {
                     const index = context.state.posts.findIndex((post) => {

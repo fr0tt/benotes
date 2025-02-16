@@ -12,6 +12,6 @@ module.exports = async (config) => {
         baseURL: baseURL,
     })
 
-    let response = await requestContext.post('/__e2e__/teardown')
+    let response = await requestContext.post('/api/__e2e__/teardown')
     await expect(response.ok()).toBeTruthy()
 }
