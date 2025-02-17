@@ -100,6 +100,7 @@ export default {
     data() {
         return {
             isNewPost: isNaN(this.id),
+            isSaving: false,
             post: null,
             title: null,
             selectedCollectionId: null,
@@ -231,6 +232,8 @@ export default {
             }
 
             if (this.isNewPost) {
+                if (this.isSaving) return
+                this.isSaving = true
                 axios
                     .post('/api/posts', {
                         title: this.title,
@@ -250,8 +253,10 @@ export default {
                                     ? '/'
                                     : '/c/' + this.selectedCollectionId,
                         })
+                        this.isSaving = false
                     })
                     .catch((error) => {
+                        this.isSaving = false
                         this.$store.dispatch('notification/setNotification', {
                             type: 'error',
                             title: 'Error ' + error.response.status,
