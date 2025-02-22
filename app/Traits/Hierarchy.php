@@ -83,24 +83,24 @@ trait Hierarchy
             $old_user_id = $model->getOriginal('user_id');
 
             if ($parent_id === $old_parent_id) {
+                if ($left === $old_left)
+                    return;
+                $model->checkLeftValue(false, $left);
+                $model->right = $model->left + $old_left_right_dif;
+            }
 
+            if (empty($parent_id) && empty($old_parent_id)) {
                 if ($old_user_id !== $model->user_id)
                     throw new RuntimeException(
                         "Root can not be moved as root to another user");
 
-                if ($left === $old_left)
-                    return;
-
-                $model->checkLeftValue(false, $old_left);
-
-                $moveToTheRight = $left > $old_left;
-                if ($moveToTheRight) {
+                if ($left > $old_left) { // right
                     $model->where('root_collection_id', $model->root_collection_id)
                           ->where(static::$scope, $model->{static::$scope})
                           ->where('left', '>', $old_left)
                           ->where('left', '<=', $left)
                           ->decrementEach(['left' => 2, 'right' => 2]);
-                } else {
+                } else { // left
                     $model->where('root_collection_id', $model->root_collection_id)
                           ->where(static::$scope, $model->{static::$scope})
                           ->where('left', '>=', $left)
@@ -108,8 +108,39 @@ trait Hierarchy
                           ->incrementEach(['left' => 2, 'right' => 2]);
                 }
 
-                $model->right = $model->left + $old_left_right_dif;
-
+                return;
+            } else if ($parent_id === $old_parent_id) {
+                $descendant_ids = $model
+                    ->where('root_collection_id', $old_root_collection_id)
+                    ->where('id', '!=', $model->id)
+                    ->where('left', '>', $old_left)
+                    ->where('right', '<', $old_right)
+                    ->pluck('id');
+                if ($left > $old_left) { // right
+                    $model
+                        ->where('root_collection_id', $old_root_collection_id)
+                        ->where('id', '!=', $model->id)
+                        ->where('left', '>', $old_right)
+                        ->where('right', '<=', $model->right)
+                        ->decrementEach([
+                            'left' => $old_left_right_dif + 1,
+                            'right' => $old_left_right_dif + 1
+                        ]);
+                } else { // left
+                    $model
+                        ->where('root_collection_id', $old_root_collection_id)
+                        ->where('id', '!=', $model->id)
+                        ->where('left', '>=', $left)
+                        ->where('right', '<', $old_left)
+                        ->incrementEach([
+                            'left' => $old_left_right_dif + 1,
+                            'right' => $old_left_right_dif + 1
+                        ]);
+                }
+                $model->whereIn('id', $descendant_ids)->incrementEach([
+                    'left' => $left - $old_left,
+                    'right' => $left - $old_left
+                ]);
                 return;
             }
 
@@ -562,6 +593,8 @@ trait Hierarchy
             throw new RuntimeException("Value is not possible");
         }
 
+        $left_right_dif = $this->right - $this->left;
+
         if ($positions->count() === 0) {
             if (empty($parent_id))
                 return 1;
@@ -570,7 +603,7 @@ trait Hierarchy
                 return 1;
             if ($this->left < $parent->left &&
                 $this->root_collection_id === $parent->root_collection_id)
-                return $parent->left - ($this->right - $this->left);
+                return $parent->left - $left_right_dif;
             return $parent->left + 1;
         }
 
@@ -580,17 +613,22 @@ trait Hierarchy
         if ($local_order <= 0 || ($positions->count() + 1) === $local_order) {
             return $rootCollectionHasChanged
                 ? $positions->last()->right + 1
-                : $positions->last()->right - ($this->right - $this->left);
+                : $positions->last()->right - $left_right_dif;
         }
 
-        $left = $positions->skip($local_order - 1)->first()->left;
-        if ($rootCollectionHasChanged || $this->parent_id === $parent_id)
-            return $left;
-        if ($this->left < $left) {
-            $left_right_dif = $this->right - $this->left;
-            return $left - ($left_right_dif + 1);
-        }
-        return $left;
+        $targetPosition = $positions->skip($local_order - 1)->first();
+        // left + horizontal/up/down + same root
+        // or: different root
+        if ($rootCollectionHasChanged || $targetPosition->left < $this->left)
+            return $targetPosition->left;
+        // right + horizontal + same root
+        if ($targetPosition->left > $this->left && $parent_id === $this->parent_id)
+            return $targetPosition->right - $left_right_dif;
+        // right + up/down + same root
+        if ($targetPosition->left > $this->left && $parent_id !== $this->parent_id)
+            return $targetPosition->left - $left_right_dif - 1;
+        // no movement (targetPosition->left === $this->left)
+        return $this->left;
     }
 
     public function getLocalOrder(): int
