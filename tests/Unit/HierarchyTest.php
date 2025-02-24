@@ -543,7 +543,7 @@ class HierarchyTest extends TestCase
         $this->assertEquals(6, $rootCollection1->right);
     }
 
-    public function testMoveCollectionUp()
+    public function testMoveCollectionUpAndRight()
     {
         User::factory()->create();
         $parentCollection = Collection::factory()->create();
@@ -709,6 +709,92 @@ class HierarchyTest extends TestCase
         $this->assertEquals(4, $childCollection1->right);
         $this->assertEquals(5, $childCollection2->left);
         $this->assertEquals(6, $childCollection2->right);
+    }
+
+    public function testMoveNestedCollectionUpAndLeft()
+    {
+        User::factory()->create();
+        $rootCollection = Collection::factory()->create();
+        $collection1 = Collection::factory([
+            'parent_id' => $rootCollection->id
+        ])->create(); // left: 1, right: 2
+        $collection2 = Collection::factory([
+            'parent_id' => $rootCollection->id
+        ])->create(); // left: 3, right: 8
+        $childCollection = Collection::factory([
+            'parent_id' => $collection2->id
+        ])->create(); // left: 4, right: 7
+        $grandChildCollection = Collection::factory([
+            'parent_id' => $childCollection->id
+        ])->create(); // left: 5, right: 6
+        $collection3 = Collection::factory([
+            'parent_id' => $rootCollection->id
+        ])->create(); // left: 9, right: 10
+
+        $childCollection = Collection::find($childCollection->id);
+        $childCollection->moveTo($rootCollection->id, 2);
+
+        $collection1 = Collection::find($collection1->id);
+        $collection2 = Collection::find($collection2->id);
+        $collection3 = Collection::find($collection3->id);
+        $childCollection = Collection::find($childCollection->id);
+        $grandChildCollection = Collection::find($grandChildCollection->id);
+
+        $this->assertEquals($rootCollection->id, $childCollection->parent_id);
+        $this->assertEquals(1, $childCollection->depth);
+        $this->assertEquals(2, $grandChildCollection->depth);
+
+        $this->assertEquals(1, $collection1->left);
+        $this->assertEquals(2, $collection1->right);
+        $this->assertEquals(3, $childCollection->left);
+        $this->assertEquals(4, $grandChildCollection->left);
+        $this->assertEquals(5, $grandChildCollection->right);
+        $this->assertEquals(6, $childCollection->right);
+        $this->assertEquals(7, $collection2->left);
+        $this->assertEquals(8, $collection2->right);
+        $this->assertEquals(9, $collection3->left);
+        $this->assertEquals(10, $collection3->right);
+    }
+
+    public function testMoveNestedCollectionUpAndRight()
+    {
+        User::factory()->create();
+        $rootCollection = Collection::factory()->create();
+        $collection1 = Collection::factory([
+            'parent_id' => $rootCollection->id
+        ])->create(); // left: 1, right: 2
+        $collection2 = Collection::factory([
+            'parent_id' => $rootCollection->id
+        ])->create(); // left: 3, right: 8
+        $childCollection = Collection::factory([
+            'parent_id' => $collection2->id
+        ])->create(); // left: 4, right: 7
+        $grandChildCollection = Collection::factory([
+            'parent_id' => $childCollection->id
+        ])->create(); // left: 5, right: 6
+        $collection3 = Collection::factory([
+            'parent_id' => $rootCollection->id
+        ])->create(); // left: 9, right: 10
+
+        $childCollection = Collection::find($childCollection->id);
+        $childCollection->moveTo($rootCollection->id, 3);
+
+        $collection1 = Collection::find($collection1->id);
+        $collection2 = Collection::find($collection2->id);
+        $collection3 = Collection::find($collection3->id);
+        $childCollection = Collection::find($childCollection->id);
+        $grandChildCollection = Collection::find($grandChildCollection->id);
+
+        $this->assertEquals(1, $collection1->left);
+        $this->assertEquals(2, $collection1->right);
+        $this->assertEquals(3, $collection2->left);
+        $this->assertEquals(4, $collection2->right);
+        $this->assertEquals(5, $childCollection->left);
+        $this->assertEquals(6, $grandChildCollection->left);
+        $this->assertEquals(7, $grandChildCollection->right);
+        $this->assertEquals(8, $childCollection->right);
+        $this->assertEquals(9, $collection3->left);
+        $this->assertEquals(10, $collection3->right);
     }
 
     public function testMoveCollectionDownAsOnlyChildAndRight()
@@ -946,6 +1032,103 @@ class HierarchyTest extends TestCase
         $this->assertEquals(5, $grandChildCollection->right);
         $this->assertEquals(6, $childCollection2->right);
 
+    }
+
+    public function testMoveNestedCollectionDownAndLeft()
+    {
+        User::factory()->create();
+        $rootCollection = Collection::factory()->create();
+        $collection1 = Collection::factory([
+            'parent_id' => $rootCollection->id
+        ])->create(); // left: 1, right: 4
+        $childCollection1 = Collection::factory([
+            'parent_id' => $collection1->id
+        ])->create(); // left: 2, right: 3
+        $collection2 = Collection::factory([
+            'parent_id' => $rootCollection->id
+        ])->create(); // left: 5, right: 10
+        $childCollection2 = Collection::factory([
+            'parent_id' => $collection2->id
+        ])->create(); // left: 6, right: 7
+        $childCollection3 = Collection::factory([
+            'parent_id' => $collection2->id
+        ])->create(); // left: 8, right: 9
+        $collection3 = Collection::factory([
+            'parent_id' => $rootCollection->id
+        ])->create(); // left: 11, right: 12
+
+        $collection2 = Collection::find($collection2->id);
+        $collection2->moveTo($collection1->id, 1);
+
+        $collection1 = Collection::find($collection1->id);
+        $collection2 = Collection::find($collection2->id);
+        $collection3 = Collection::find($collection3->id);
+        $childCollection1 = Collection::find($childCollection1->id);
+        $childCollection2 = Collection::find($childCollection2->id);
+        $childCollection3 = Collection::find($childCollection3->id);
+
+        $this->assertEquals($collection1->id, $collection2->parent_id);
+        $this->assertEquals(2, $childCollection1->depth);
+
+        $this->assertEquals(1, $collection1->left);
+        $this->assertEquals(2, $collection2->left);
+        $this->assertEquals(3, $childCollection2->left);
+        $this->assertEquals(4, $childCollection2->right);
+        $this->assertEquals(5, $childCollection3->left);
+        $this->assertEquals(6, $childCollection3->right);
+        $this->assertEquals(7, $collection2->right);
+        $this->assertEquals(8, $childCollection1->left);
+        $this->assertEquals(9, $childCollection1->right);
+        $this->assertEquals(10, $collection1->right);
+        $this->assertEquals(11, $collection3->left);
+        $this->assertEquals(12, $collection3->right);
+    }
+
+    public function testMoveNestedCollectionDownAndRight()
+    {
+        User::factory()->create();
+        $rootCollection = Collection::factory()->create();
+        $collection1 = Collection::factory([
+            'parent_id' => $rootCollection->id
+        ])->create(); // left: 1, right: 2
+        $collection2 = Collection::factory([
+            'parent_id' => $rootCollection->id
+        ])->create(); // left: 3, right: 8
+        $childCollection1 = Collection::factory([
+            'parent_id' => $collection2->id
+        ])->create(); // left: 4, right: 5
+        $childCollection2 = Collection::factory([
+            'parent_id' => $collection2->id
+        ])->create(); // left: 6, right: 7
+        $collection3 = Collection::factory([
+            'parent_id' => $rootCollection->id
+        ])->create(); // left: 9, right: 12
+        $childCollection3 = Collection::factory([
+            'parent_id' => $collection3->id
+        ])->create(); // left: 10, right: 11
+
+        $collection2 = Collection::find($collection2->id);
+        $collection2->moveTo($collection3->id, 2);
+
+        $collection1 = Collection::find($collection1->id);
+        $collection2 = Collection::find($collection2->id);
+        $collection3 = Collection::find($collection3->id);
+        $childCollection1 = Collection::find($childCollection1->id);
+        $childCollection2 = Collection::find($childCollection2->id);
+        $childCollection3 = Collection::find($childCollection3->id);
+
+        $this->assertEquals(1, $collection1->left);
+        $this->assertEquals(2, $collection1->right);
+        $this->assertEquals(3, $collection3->left);
+        $this->assertEquals(4, $childCollection3->left);
+        $this->assertEquals(5, $childCollection3->right);
+        $this->assertEquals(6, $collection2->left);
+        $this->assertEquals(7, $childCollection1->left);
+        $this->assertEquals(8, $childCollection1->right);
+        $this->assertEquals(9, $childCollection2->left);
+        $this->assertEquals(10, $childCollection2->right);
+        $this->assertEquals(11, $collection2->right);
+        $this->assertEquals(12, $collection3->right);
     }
 
     public function testMoveNestedCollectionToOtherRootToTheEnd()

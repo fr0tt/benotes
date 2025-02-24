@@ -182,12 +182,12 @@ trait Hierarchy
             $left_dif = $left - $old_left;
 
             if ($old_depth === 0) {
-                $selection_ids = $model
+                $descendant_ids = $model
                     ->select('id')
                     ->where('root_collection_id', $model->id)
                     ->pluck('id');
             } else {
-                $selection_ids = $model
+                $descendant_ids = $model
                     ->select('id')
                     ->where('root_collection_id', $old_root_collection_id)
                     ->where('id', '!=', $model->id)
@@ -200,30 +200,33 @@ trait Hierarchy
                 if ($left > $old_left) { // right
                     $model
                         ->where('root_collection_id', $old_root_collection_id)
-                        // not sure if this helps
                         ->where('id', '!=', $model->id)
+                        ->whereNotIn('id', $descendant_ids)
                         ->whereBetween('left', [$old_left, $right])
                         ->decrement('left', $old_left_right_dif + 1);
                     $model
                         ->where('root_collection_id', $old_root_collection_id)
                         ->where('id', '!=', $model->id)
+                        ->whereNotIn('id', $descendant_ids)
                         ->whereBetween('right', [$old_left, $right])
                         ->decrement('right', $old_left_right_dif + 1);
                 } else { // left
                     $model
                         ->where('root_collection_id', $old_root_collection_id)
                         ->where('id', '!=', $model->id)
+                        ->whereNotIn('id', $descendant_ids)
                         ->whereBetween('left', [$left, $old_right])
                         ->increment('left', $old_left_right_dif + 1);
                     $model
                         ->where('root_collection_id', $old_root_collection_id)
                         ->where('id', '!=', $model->id)
+                        ->whereNotIn('id', $descendant_ids)
                         ->whereBetween('right', [$left, $old_right])
                         ->increment('right', $old_left_right_dif + 1);
                 }
 
                 $model
-                    ->whereIn('id', $selection_ids)
+                    ->whereIn('id', $descendant_ids)
                     ->incrementEach([
                         'left' => $left_dif,
                         'right' => $left_dif,
@@ -251,7 +254,7 @@ trait Hierarchy
                 if ($model->depth === 0 && $old_depth === 0) {
 
                     $model
-                        ->whereIn('id', $selection_ids)
+                        ->whereIn('id', $descendant_ids)
                         ->update([
                             'root_collection_id' => $descendants_root_collection_id,
                             self::$scope => $model->{self::$scope}
@@ -265,7 +268,7 @@ trait Hierarchy
                         $left_dif = $model->left;
 
                     $model
-                        ->whereIn('id', $selection_ids)
+                        ->whereIn('id', $descendant_ids)
                         ->incrementEach([
                             'left' => $left_dif,
                             'right' => $left_dif,
