@@ -6,79 +6,85 @@
             <div class="list pt-2">
                 <ol class="mb-12">
                     <li>
-                        <router-link
-                            to="/search"
-                            class="collection theme__sidebar__collection">
+                        <a
+                            href="/search"
+                            class="collection theme__sidebar__collection"
+                            @click="navigateTo($event, '/search')">
                             <svg-vue
                                 class="w-4 fill-current mr-2"
                                 icon="remix/search-line" />
                             <span class="align-middle text-gray-700 theme__sidebar__label"
                                 >Search</span
                             >
-                        </router-link>
+                        </a>
                     </li>
                     <li>
-                        <router-link
-                            to="/tags"
-                            class="collection theme__sidebar__collection">
+                        <a
+                            href="/tags"
+                            class="collection theme__sidebar__collection"
+                            @click="navigateTo($event, '/tags')">
                             <svg-vue
                                 class="w-5 fill-current mr-1"
                                 icon="material/label" />
                             <span class="align-middle text-gray-700 theme__sidebar__label"
                                 >Tags</span
                             >
-                        </router-link>
+                        </a>
                     </li>
                     <li>
-                        <router-link
-                            to="/import"
-                            class="collection theme__sidebar__collection">
+                        <a
+                            href="/import"
+                            class="collection theme__sidebar__collection"
+                            @click="navigateTo($event, '/import')">
                             <svg-vue
                                 class="w-5 fill-current -ml-0.5 mr-1.5"
                                 icon="remix/git-repository-commits-line" />
                             <span class="align-middle text-gray-700 theme__sidebar__label"
                                 >Import & Export</span
                             >
-                        </router-link>
+                        </a>
                     </li>
                     <li>
-                        <router-link
-                            to="/restore"
+                        <a
+                            href="/restore"
                             class="collection theme__sidebar__collection"
                             :class="{
                                 'router-link-exact-active': isActiveLink('/restore'),
-                            }">
+                            }"
+                            @click="navigateTo($event, '/restore')">
                             <svg-vue
                                 icon="zondicons/trash"
                                 class="w-4 fill-current align-text-bottom mr-2" />
                             <span class="align-middle text-gray-700 theme__sidebar__label"
                                 >Recycle Bin</span
                             >
-                        </router-link>
+                        </a>
                     </li>
                     <li>
-                        <router-link
-                            to="/users"
-                            class="collection theme__sidebar__collection">
+                        <a
+                            href="/users"
+                            class="collection theme__sidebar__collection"
+                            @click="navigateTo($event, '/users')">
                             <svg-vue
                                 class="w-4 fill-current mr-2"
                                 icon="remix/group-fill" />
                             <span class="align-middle text-gray-700 theme__sidebar__label"
                                 >Users</span
                             >
-                        </router-link>
+                        </a>
                     </li>
                     <li>
-                        <router-link
-                            :to="'/users/' + authUser.id"
-                            class="collection theme__sidebar__collection">
+                        <a
+                            :href="'/users/' + authUser.id"
+                            class="collection theme__sidebar__collection"
+                            @click="navigateTo($event, '/users/' + authUser.id)">
                             <svg-vue
                                 class="w-4 fill-current mr-2"
                                 icon="remix/user-settings-fill" />
                             <span class="align-middle text-gray-700 theme__sidebar__label"
                                 >My Account</span
                             >
-                        </router-link>
+                        </a>
                     </li>
                     <li class="collection theme__sidebar__collection">
                         <a @click="logout()">
@@ -91,17 +97,18 @@
                         </a>
                     </li>
                 </ol>
-                <router-link
-                    to="/"
+                <a
+                    href="/"
                     class="collection mb-4 theme__sidebar__collection"
-                    :class="{ 'router-link-exact-active': isActiveLink('/') }">
+                    :class="{ 'router-link-exact-active': isActiveLink('/') }"
+                    @click="navigateTo($event, '/')">
                     <svg-vue
                         icon="remix/folder-unknow-fill"
                         class="w-4 fill-current align-text-bottom mr-2" />
                     <span class="align-middle text-gray-700 theme__sidebar__label"
                         >Uncategorized</span
                     >
-                </router-link>
+                </a>
                 <span
                     v-if="
                         sharedCollections != null &&
@@ -193,6 +200,11 @@ export default {
             this.$cookie.delete('token')
             // also resets vuex
             this.$router.go('/login')
+        },
+        navigateTo(event, route) {
+            event.preventDefault()
+            this.$store.dispatch('hideSidebarOnMobile')
+            this.$router.push(route)
         },
         isActiveLink(route) {
             return route === this.$route.path

@@ -15,7 +15,7 @@
             :permission="permission"
             :restore="restore" />
         <PostItemPlaceholder v-else />
-        <div v-if="debug" class="absolute bottom-0 w-full">
+        <div v-if="$options.debug" class="absolute bottom-0 w-full">
             <span class="px-1 bg-orange-200">id:{{ post.id }}</span>
             <span class="px-1 bg-orange-200 float-right">o:{{ post.order }}</span>
         </div>
@@ -36,12 +36,8 @@ export default {
         PostItemLink,
         PostItemPlaceholder,
     },
+    debug: false,
     props: ['post', 'permission', 'restore'],
-    data() {
-        return {
-            debug: false,
-        }
-    },
     methods: {
         showContextMenu(event) {
             this.$store.dispatch('post/setContextMenu', {

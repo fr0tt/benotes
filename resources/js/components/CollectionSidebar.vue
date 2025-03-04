@@ -8,12 +8,13 @@
                     : '',
             ]"
             :style="paddingLeft">
-            <router-link
+            <a
                 class="relative truncate"
                 :class="{
                     inline: isNested(collection),
                 }"
-                :to="'/c/' + collection.id">
+                :href="'/c/' + collection.id"
+                @click="navigateTo($event, '/c/' + collection.id)">
                 <svg-vue
                     v-if="collectionIconIsInline(collection.icon_id)"
                     :icon="'glyphs/' + collection.icon_id"
@@ -28,12 +29,12 @@
                 <svg-vue
                     v-if="collection.is_being_shared && showShareState"
                     icon="remix/share-fill"
-                    class="absolute w-3 left-2 bottom-0 fill-current text-blue-600 bg-white rounded-xl" />
+                    class="absolute w-3 left-3 bottom-0 fill-current text-blue-600 bg-white rounded-xl" />
                 <span class="theme__sidebar__label align-middle text-gray-700">{{
                     collection.name
                 }}</span>
-            </router-link>
-            <div v-if="debug" class="absolute bottom-0 right-0">
+            </a>
+            <div v-if="$options.debug" class="absolute bottom-0 right-0">
                 <span
                     class="px-1 text-xs text-gray-700 float-right"
                     :class="collection.parent_id ? 'bg-orange-200' : 'bg-gray-200'"
@@ -65,6 +66,7 @@
                     :key="nestedCollection.id"
                     :collection="nestedCollection"
                     :level="level + 1"
+                    :show-share-state="$options.debug"
                     class="nested -mb-1"
                     @addedOrMoved="addedOrMovedEvent" />
             </Draggable>
@@ -79,6 +81,7 @@ import { mapState } from 'vuex'
 export default {
     name: 'CollectionSidebar',
     components: { Draggable },
+    debug: false, // requires editing Collection.php for it to work
     props: {
         collection: {
             type: Object,
@@ -96,7 +99,6 @@ export default {
     data() {
         return {
             show: false,
-            debug: false, // requires editing Collection.php for it to work
         }
     },
     computed: {
@@ -169,6 +171,11 @@ export default {
         toggleNestedCollections() {
             if (this.show) this.hideNestedCollections()
             else this.showNestedCollections()
+        },
+        navigateTo(event, route) {
+            event.preventDefault()
+            this.$store.dispatch('hideSidebarOnMobile')
+            this.$router.push(route)
         },
     },
 }
