@@ -127,7 +127,7 @@ class CollectionService
             ->get();
         return $roots->flatMap(function ($root) {
             return $root->descendantsAndSelf()->get();
-        });
+        })->unique('id');
     }
 
 

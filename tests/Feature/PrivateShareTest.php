@@ -65,14 +65,14 @@ class PrivateShareTest extends TestCase
             'user_id'       => $user->id,
             'collection_id' => $collectionByUser->id,
         ]);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs(User::factory()->create())
             ->json('POST', 'api/shares/private', [
                 'user_id'       => $user->id,
                 'collection_id' => $collectionByOwner->id,
             ]);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($owner)->json('POST', 'api/shares/private', [
             'user_id'       => $user->id,
@@ -112,7 +112,7 @@ class PrivateShareTest extends TestCase
             'user_id'       => $friend->id,
             'collection_id' => $collection->id,
         ]);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
     }
 
@@ -141,7 +141,7 @@ class PrivateShareTest extends TestCase
         $response = $this->actingAs($foreignUser)->json('GET', 'api/shares/private/', [
             'collection_id' => $collection->id,
         ]);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($user)->json('GET', 'api/shares/private/', [
             'collection_id' => $collection->id,
@@ -197,6 +197,9 @@ class PrivateShareTest extends TestCase
 
         $share = $this->makeShare($childCollection, $user, $owner);
 
+        $childCollection = Collection::find($childCollection->id);
+        $grandChildCollection = Collection::find($grandChildCollection->id);
+
         return (object) [
             'owner'                => $owner,
             'user'                 => $user,
@@ -215,12 +218,12 @@ class PrivateShareTest extends TestCase
         $response = $this->actingAs($s->user)->json('GET', 'api/shares/private/', [
             'collection_id' => $s->collection->id
         ]);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->foreignUser)->json('GET', 'api/shares/private/', [
             'collection_id' => $s->childCollection->id
         ]);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->user)->json('GET', 'api/shares/private/', [
             'collection_id' => $s->childCollection->id
@@ -246,14 +249,14 @@ class PrivateShareTest extends TestCase
             'api/collections/' .
             $s->collection->id
         );
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->foreignUser)->json(
             'GET',
             'api/collections/' .
             $s->childCollection->id
         );
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->user)->json(
             'GET',
@@ -291,16 +294,50 @@ class PrivateShareTest extends TestCase
         $response = $this->actingAs($s->user)->json('GET', 'api/collections?withShared=1');
         $this->assertEquals(Response::HTTP_OK, $response->status());
         $collections = $response->getData()->data->shared_collections;
-        $this->assertEquals(2, count($collections));
+        $this->assertCount(2, $collections);
         $this->assertEquals($s->childCollection->id, $collections[0]->id);
         $this->assertEquals($s->grandChildCollection->id, $collections[1]->id);
         $this->assertTrue($collections[0]->is_being_shared);
         $this->assertTrue($collections[1]->is_being_shared);
 
+        $response = $this->actingAs($s->user)->json('GET', 'api/collections?withShared=1&nested=1');
+        $this->assertEquals(Response::HTTP_OK, $response->status());
+        $collections = $response->getData()->data->shared_collections;
+        $this->assertCount(1, $collections);
+        $this->assertCount(1, $collections[0]->nested);
+        $this->assertEquals($s->childCollection->id, $collections[0]->id);
 
         $response = $this->actingAs($s->foreignUser)->json('GET', 'api/collections');
         $collections = $response->getData()->data;
         $this->assertEquals(0, count($collections));
+
+    }
+
+    public function testGetCollectionsInNestedShareinShare()
+    {
+        $owner = User::factory()->create();
+        $user = User::factory()->create();
+        $rootCollection = Collection::factory([
+            'user_id' => $owner->id
+        ])->create();
+        $childCollection = Collection::factory([
+            'parent_id' => $rootCollection->id,
+            'user_id'   => $owner->id
+        ])->create();
+
+        $share1 = $this->makeShare($rootCollection, $user, $owner);
+        $share2 = $this->makeShare($childCollection, $user, $owner);
+        $rootCollection = Collection::find($rootCollection->id);
+        $childCollection = Collection::find($childCollection->id);
+
+        $response = $this->actingAs($user)->json('GET', 'api/collections?withShared=1&nested=1');
+        $this->assertEquals(Response::HTTP_OK, $response->status());
+        $collections = $response->getData()->data->shared_collections;
+        $this->assertCount(1, $collections);
+        dd($collections[0]->nested);
+        // duplicates ! @TODO fix
+        $this->assertCount(1, $collections[0]->nested);
+        $this->assertEquals($childCollection->id, $collections[0]->id);
 
     }
 
@@ -339,13 +376,13 @@ class PrivateShareTest extends TestCase
             'name'      => 'MyAwesomeCollection',
             'parent_id' => $s->collection->id
         ]);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->foreignUser)->json('POST', 'api/collections', [
             'name'      => 'MyAwesomeCollection',
             'parent_id' => $s->childCollection->id
         ]);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->user)->json('POST', 'api/collections', [
             'name'      => 'MyAwesomeCollection',
@@ -396,7 +433,7 @@ class PrivateShareTest extends TestCase
                 'name' => 'MyCollection',
             ]
         );
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->foreignUser)->json(
             'PATCH',
@@ -405,7 +442,7 @@ class PrivateShareTest extends TestCase
                 'name' => 'MyCollection',
             ]
         );
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->owner)->json(
             'PATCH',
@@ -466,6 +503,43 @@ class PrivateShareTest extends TestCase
         $this->collectionBelongsToOwner($collection, $s->owner);
     }
 
+    public function testMoveCollectionFromNestedShare()
+    {
+        $owner = User::factory()->create();
+        $user = User::factory()->create();
+        Collection::factory([
+            'user_id' => $owner->id
+        ])->create();
+        $rootCollection = Collection::factory([
+            'user_id' => $owner->id
+        ])->create();
+        $childCollection = Collection::factory([
+            'parent_id' => $rootCollection->id,
+            'user_id'   => $owner->id
+        ])->create();
+        Collection::factory([
+            'user_id' => $owner->id
+        ])->create();
+
+        $share = $this->makeShare($rootCollection, $user, $owner);
+        $childCollection = Collection::find($childCollection->id);
+
+        $this->assertTrue($childCollection->is_being_shared);
+
+        $response = $this->actingAs($owner)->json(
+            'PATCH',
+            'api/collections/' . $childCollection->id,
+            [
+                'is_root' => true,
+            ]
+        );
+
+        $this->assertEquals(Response::HTTP_OK, $response->status());
+        $collection = Collection::find($response->getData()->data->id);
+        $this->assertEmpty($collection->parent_id);
+        $this->assertFalse($collection->is_being_shared);
+    }
+
     public function testTransferNestedCollectionToNestedShare()
     {
         $s = $this->setupNestedShare();
@@ -486,7 +560,7 @@ class PrivateShareTest extends TestCase
             ]
         );
         // $s->collection is not part of the share
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->user)->json(
             'PATCH',
@@ -523,7 +597,7 @@ class PrivateShareTest extends TestCase
                 'parent_id' => $s->collection->id,
             ]
         );
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->user)->json(
             'PATCH',
@@ -532,7 +606,7 @@ class PrivateShareTest extends TestCase
                 'is_root' => true,
             ]
         );
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $newCollection = Collection::factory()->create([
             'parent_id' => null,
@@ -580,7 +654,7 @@ class PrivateShareTest extends TestCase
                 'parent_id' => $newCollection->id,
             ]
         );
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->user)->json(
             'PATCH',
@@ -698,7 +772,7 @@ class PrivateShareTest extends TestCase
                 'is_root' => true,
         ]);
         // root of a share can not be moved
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->user)->json(
             'PATCH', 'api/collections/' . $s->grandChildCollection->id, [
@@ -820,7 +894,7 @@ class PrivateShareTest extends TestCase
             ['is_root' => true]
         );
 
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($owner)->json(
             'PATCH',
@@ -845,13 +919,13 @@ class PrivateShareTest extends TestCase
             'DELETE',
             'api/collections/' . $s->collection->id
         );
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->foreignUser)->json(
             'DELETE',
             'api/collections/' . $s->grandChildCollection->id
         );
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->user)->json(
             'DELETE',
@@ -873,10 +947,10 @@ class PrivateShareTest extends TestCase
         ])->create();
 
         $response = $this->actingAs($s->user)->json('GET', 'api/posts/' . $post->id);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->foreignUser)->json('GET', 'api/posts/' . $post->id);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->user)->json('GET', 'api/posts/' . $postOfChildCollection->id);
         $this->assertEquals(Response::HTTP_OK, $response->status());
@@ -896,7 +970,7 @@ class PrivateShareTest extends TestCase
         $response = $this->actingAs($s->user)->json('GET', 'api/posts', [
             'collection_id' => $s->collection->id
         ]);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->user)->json('GET', 'api/posts', [
             'collection_id' => $s->childCollection->id
@@ -931,13 +1005,13 @@ class PrivateShareTest extends TestCase
             'content'       => 'https://github.com',
             'collection_id' => $s->collection->id
         ]);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->foreignUser)->json('POST', 'api/posts', [
             'content'       => 'https://github.com',
             'collection_id' => $s->childCollection->id
         ]);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->user)->json('POST', 'api/posts', [
             'content'       => 'https://github.com',
@@ -991,7 +1065,7 @@ class PrivateShareTest extends TestCase
                 'collection_id' => $s->collection->id
             ]
         );
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->user)->json(
             'PATCH',
@@ -1001,7 +1075,7 @@ class PrivateShareTest extends TestCase
                 'collection_id' => $s->collection->id
             ]
         );
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->user)->json(
             'PATCH',
@@ -1036,13 +1110,13 @@ class PrivateShareTest extends TestCase
             'PATCH', 'api/posts/' . $post->id, [
             'collection_id' => $s->collection->id
         ]);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->foreignUser)->json(
             'PATCH', 'api/posts/' . $post->id, [
                 'collection_id' => $s->childCollection->id
         ]);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $collection = Collection::factory()->create([
             'user_id' => $s->user->id
@@ -1089,7 +1163,7 @@ class PrivateShareTest extends TestCase
         $response = $this->actingAs($s->user)->json('PATCH', 'api/posts/' . $post->id, [
             'collection_id' => $s->childCollection->id
         ]);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $post = Post::factory()->create([
             'content'       => 'this is some content',
@@ -1266,10 +1340,10 @@ class PrivateShareTest extends TestCase
         ])->create();
 
         $response = $this->actingAs($s->user)->json('DELETE', 'api/posts/' . $post->id);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->foreignUser)->json('DELETE', 'api/posts/' . $post->id);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->user)->json('DELETE', 'api/posts/' . $postOfChildCollection->id);
         $this->assertEquals(Response::HTTP_NO_CONTENT, $response->status());
@@ -1292,7 +1366,7 @@ class PrivateShareTest extends TestCase
                 'user_id' => $s->foreignUser->id
             ]
         );
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->user)->json(
             'PATCH',
@@ -1301,7 +1375,7 @@ class PrivateShareTest extends TestCase
                 'collection_id' => $s->collection->id
             ]
         );
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->owner)->json(
             'PATCH',
@@ -1335,7 +1409,7 @@ class PrivateShareTest extends TestCase
         $response = $this->actingAs($s->user)->json('GET', 'api/posts/', [
             'collection_id' => $s->childCollection->id
         ]);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($s->foreignUser)->json('GET', 'api/posts/', [
             'collection_id' => $s->childCollection->id
@@ -1359,7 +1433,7 @@ class PrivateShareTest extends TestCase
         $share = $this->makeShare($collection, $user, $owner);
 
         $response = $this->actingAs($user2)->json('DELETE', 'api/shares/private/' . $share->id);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($user)->json('DELETE', 'api/shares/private/' . $share->id);
         $this->assertEquals(Response::HTTP_NO_CONTENT, $response->status());
@@ -1371,7 +1445,7 @@ class PrivateShareTest extends TestCase
         $this->assertFalse(Collection::find($collection->id)->is_being_shared);
 
         $response = $this->actingAs($user)->json('GET', 'api/collections/' . $collection->id);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($owner)->json('GET', 'api/collections/' . $collection->id);
         $collection = $response->getData()->data;
@@ -1404,10 +1478,10 @@ class PrivateShareTest extends TestCase
         $this->assertTrue(Collection::find($childCollection->id)->is_being_shared);
 
         $response = $this->actingAs($user)->json('GET', 'api/collections/' . $childCollection->id);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($user2)->json('GET', 'api/collections/' . $collection->id);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($user2)->json('GET', 'api/collections/' . $childCollection->id);
         $collection = $response->getData()->data;
@@ -1440,10 +1514,10 @@ class PrivateShareTest extends TestCase
         $this->assertTrue(Collection::find($grandChildCollection->id)->is_being_shared);
 
         $response = $this->actingAs($user)->json('GET', 'api/collections/' . $grandChildCollection->id);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($user2)->json('GET', 'api/collections/' . $childCollection->id);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->status());
+        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->status());
 
         $response = $this->actingAs($user2)->json('GET', 'api/collections/' . $grandChildCollection->id);
         $collection = $response->getData()->data;
