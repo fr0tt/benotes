@@ -123,10 +123,10 @@ class CollectionService
         $shares = PrivateShare::select('collection_id')
             ->where('user_id', $user_id);
         $roots = Collection::whereIn('id', $shares)
-            ->orderBy('name')
+            ->orderBy('left')
             ->get();
         return $roots->flatMap(function ($root) {
-            return $root->descendantsAndSelf()->get();
+            return $root->descendantsAndSelf()->orderBy('left')->get();
         })->unique('id');
     }
 

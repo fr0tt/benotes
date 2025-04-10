@@ -121,7 +121,9 @@
                         icon="remix/share-line" />
                 </span>
                 <ol class="mb-4">
-                    <CollectionSidebarWrapper v-model="sharedCollections" />
+                    <CollectionSidebarWrapper
+                        v-model="sharedCollections"
+                        :show-share-state="$options.debug" />
                 </ol>
 
                 <span
@@ -129,7 +131,9 @@
                     Collections
                 </span>
 
-                <CollectionSidebarWrapper v-model="collections" />
+                <CollectionSidebarWrapper
+                    v-model="collections"
+                    :show-share-state="true" />
             </div>
             <router-link
                 to="/c/create"
@@ -159,11 +163,21 @@ export default {
     components: {
         CollectionSidebarWrapper,
     },
+    debug: false,
     computed: {
         ...mapState(['showSidebar']),
         ...mapState('auth', ['authUser']),
-        ...mapState('collection', ['sharedCollections']),
         ...mapState(['isMobile']),
+        sharedCollections: {
+            get() {
+                return JSON.parse(
+                    JSON.stringify(this.$store.state.collection.sharedCollections)
+                )
+            },
+            set(value) {
+                this.$store.commit('collection/setSharedCollections', value)
+            },
+        },
         collections: {
             get() {
                 return JSON.parse(

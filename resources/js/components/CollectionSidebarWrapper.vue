@@ -12,7 +12,7 @@
             v-for="collection in value"
             :key="collection.id"
             :collection="collection"
-            :show-share-state="true"
+            :show-share-state="showShareState"
             @input="lowerLevelChange" />
     </Draggable>
 </template>
@@ -31,6 +31,10 @@ export default {
             required: false,
             type: Array,
             default: null,
+        },
+        showShareState: {
+            type: Boolean,
+            default: false,
         },
     },
     computed: {
